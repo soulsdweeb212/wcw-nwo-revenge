@@ -6,7 +6,7 @@ A matching decompilation of WCW / nWo  REVENGE for the Nintendo 64, started with
 
 ## Build
 
-1. Put your own copy of the game here as `baserom.z64` (it is in `.gitignore`; never commit it).
+1. Put your own copy of the game here as `baserom.z64`
 2. `python3 build.py` (it uses decompdecomp's period compiler and assembler, so decompdecomp must be installed).
 
 ## Layout
@@ -25,8 +25,7 @@ Keep going with any tool: write a function in C under `src/`, add it to `build.j
 run `build.py`. When it says *identical*, the function matches. This is the base for ports and mods: once
 everything is C, the game can be rebuilt, changed and moved to other platforms.
 
-The game's code and data belong to their rights holder: keep this tree to yourself unless you have the right to
-share it.
+The game's code and data belong to their rights holder
 
 ## Notes
 - `func_80018140`: kept as assembly, its own data isn't laid out like the game's
