@@ -1,0 +1,72 @@
+name: Wcw / Nwo  Revenge (North America)
+sha1: e1711a2511394b9357b5f1ac8ca5cc17bd674836
+options:
+  disassemble_all: true
+  auto_decompile_empty_functions: false
+  basename: wcw/nworevenge
+  target_path: baserom.z64
+  elf_path: build/wcw_nworevenge.elf
+  base_path: .
+  platform: n64
+  compiler: KMC
+  ld_script_path: wcw_nworevenge.ld
+  ld_dependencies: true
+  find_file_boundaries: true
+  header_encoding: ASCII
+  o_as_suffix: true
+  use_legacy_include_asm: false
+  mips_abi_float_regs: o32
+  symbol_addrs_path: [symbol_addrs.txt]
+  reloc_addrs_path: [reloc_addrs.txt]
+  extensions_path: tools/splat_ext
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+segments:
+- {name: header, type: header, start: 0}
+- {name: ipl3, type: bin, start: 64}
+- name: entry
+  type: code
+  start: 4096
+  vram: 2147484672
+  subsegments:
+  - [4096, hasm]
+- name: main
+  type: code
+  start: 4176
+  vram: 2147484752
+  follows_vram: entry
+  bss_size: 278896
+  subsegments:
+  - [4176, c, main]
+  - [182832, data]
+  - {type: bss, vram: 2147728080}
+- {type: bin, start: 247504, follows_vram: main}
+- name: code_80090000
+  type: code
+  start: 247664
+  vram: 2148073472
+  subsegments:
+  - [247664, c, code_80090000]
+- {type: bin, start: 297360}
+- name: code_8009D7A0
+  type: code
+  start: 592960
+  vram: 2148128672
+  subsegments:
+  - [592960, c, code_8009D7A0]
+- {type: bin, start: 712912}
+- name: code_800BBA00
+  type: code
+  start: 716448
+  vram: 2148252160
+  subsegments:
+  - [716448, c, code_800BBA00]
+- {type: bin, start: 855920}
+- name: code_800DE9C0
+  type: code
+  start: 859744
+  vram: 2148395456
+  subsegments:
+  - [859744, c, code_800DE9C0]
+- {type: bin, start: 876464}
+- [16777216]

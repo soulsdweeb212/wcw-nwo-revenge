@@ -1,0 +1,8 @@
+build/
+baserom*
+asm/
+assets/
+*.ld
+*_auto.txt
+.splat/
+*.d
