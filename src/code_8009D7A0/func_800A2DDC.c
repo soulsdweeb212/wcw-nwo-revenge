@@ -1,6 +1,6 @@
 #include "common.h"
 
-/* identical to func_80002C58 (matched), with its names changed by decomp.wtf */
+/* identical to func_80002C58 (matched), with its names changed by decompdecomp */
 /* machine draft (m2c), tried by autopilot */
 #ifndef M2C_DEFINES
 #define M2C_DEFINES

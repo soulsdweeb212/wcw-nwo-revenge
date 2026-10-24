@@ -1,7 +1,7 @@
 # WCW / nWo  REVENGE (decompilation)
 
 A matching decompilation of WCW / nWo  REVENGE for the Nintendo 64, started with [decompdecomp](https://github.com/n-delic/decompdecomp).
-1123 of 1361 functions are C that compiles to exactly the original code; the rest are still assembly.
+1266 of 1361 functions are C that compiles to exactly the original code; the rest are still assembly.
 `build.py` rebuilds the game from this tree and checks it against your original, byte for byte.
 
 ## Build
@@ -30,7 +30,11 @@ The game's code and data belong to their rights holder
 ## Notes
 - `func_80018140`: kept as assembly, its own data isn't laid out like the game's
 - `setAudioRegionParameter`: kept as assembly, its own data isn't laid out like the game's
+- `func_8001A490`: kept as assembly, no longer matches
+- `func_8001A65C`: kept as assembly, no longer matches
+- `func_8001A980`: kept as assembly, no longer matches
+- `func_8001AD00`: kept as assembly, no longer matches
 - `initAudioStream`: kept as assembly, its own data isn't laid out like the game's
 - `setAudioStreamRegionParameter`: kept as assembly, its own data isn't laid out like the game's
-- `updateSubstateChanceAction`: kept as assembly, no longer matches
 - `func_800DACE4`: kept as assembly, its own data isn't laid out like the game's
+- `func_800DBB80`: kept as assembly, its own data isn't laid out like the game's

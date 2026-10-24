@@ -1,5 +1,6 @@
 #include "common.h"
 
+/* identical to func_80000604 (matched), with its names changed by decompdecomp */
 /* machine draft (m2c), tried by autopilot */
 #ifndef M2C_DEFINES
 #define M2C_DEFINES
@@ -14,8 +15,8 @@ typedef s32 M2C_UNK32;
 #define M2C_OVERFLOW(a) (0)
 #endif
 
-extern M2C_UNK func_800DB4FC;
+extern s32 D_800DB688;
 
 s32 func_800966AC(void) {
-    return M2C_FIELD(&func_800DB4FC, s32 *, 0x18C);
+    return D_800DB688;
 }

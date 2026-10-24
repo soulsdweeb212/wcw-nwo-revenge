@@ -1,6 +1,6 @@
 #include "common.h"
 
-/* Identical to func_8002AD04 (matched), with its names changed by decomp.wtf */
+/* identical to func_8002AD04 (matched), with its names changed by decompdecomp */
 typedef struct {
     u8 **items;
     u16 count;
@@ -10,15 +10,15 @@ typedef struct {
 extern Tbl D_8003A4F8[];
 extern u8 D_8003A59C[];
 
-extern s32 func_80099734(s32 key);
-extern s32 func_800B600C(s32 id, s32 flags);
+extern s32 func_80099734(s32);
+extern s32 func_800B600C(s32, s32);
 
-/* Fetch the resource selected by `key` with `flags`; the returned handle is
- * discarded here (this only triggers the load). */
-void func_80099704(s32 key, s32 flags) {
-    func_800B600C(func_80099734(key), flags);
+/* Resolves the entry for id a and writes its variant-b record. */
+void func_80099704(s32 a, s32 b) {
+    func_800B600C(func_80099734(a), b);
 }
 
-s32 func_8002AD34(s32 key, s32 flags) {
-    return func_800B600C(func_80099734(key), flags) + 0x19;
+/* Returns the variant-b record address (0x19 bytes in) for id a. */
+s32 func_8002AD34(s32 a, s32 b) {
+    return func_800B600C(func_80099734(a), b) + 0x19;
 }

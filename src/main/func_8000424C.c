@@ -1,5 +1,7 @@
 #include "common.h"
 
+/* identical to func_80005BE4 in WWF No Mercy (matched), with its names changed by decompdecomp */
+/* identical to func_8000424C in WCW / nWo  REVENGE (matched), with its names changed by decompdecomp */
 s32 func_8001C990(s32 *, s32, s32);
 extern s32 D_800482F0;
 extern s8 D_800484F2;

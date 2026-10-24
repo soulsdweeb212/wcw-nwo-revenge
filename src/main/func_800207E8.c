@@ -1,6 +1,6 @@
 #include "common.h"
 
-/* identical to func_80017F44 (matched), with its names changed by decomp.wtf */
+/* identical to func_80017F44 (matched), with its names changed by decompdecomp */
 extern s32 *D_80037510;
 
 s32 *func_80017F18(void);

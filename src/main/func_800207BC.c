@@ -1,29 +1,19 @@
 #include "common.h"
 
-typedef struct Nw2FreeNode {
-    struct Nw2FreeNode *next;
-} Nw2FreeNode;
+/* identical to func_80017F18 (matched), with its names changed by decompdecomp */
+extern void *D_80037510;
 
-/* Manager object behind D_80037510; a singly-linked free list hangs off +0x2C. */
-typedef struct {
-    u8 pad0[0x2C];
-    Nw2FreeNode *freeList;
-} Nw2Manager37510;
+/* Pop and return a command packet from the free list at D_80037510+0x2C. */
+s32 *func_800207BC(void) {
+    s32 *pkt;
+    s32 *ret;
 
-extern Nw2Manager37510 *D_80037510;
-
-/* Pop the head of the D_80037510 free list and return it with its next pointer
- * cleared; returns NULL when the list is empty. */
-void *func_800207BC(void) {
-    Nw2FreeNode *node;
-    void *result;
-
-    node = D_80037510->freeList;
-    result = NULL;
-    if (node != NULL) {
-        result = node;
-        D_80037510->freeList = node->next;
-        node->next = NULL;
+    pkt = *(s32 **)((u8 *)D_80037510 + 0x2C);
+    ret = NULL;
+    if (pkt != NULL) {
+        ret = pkt;
+        *(s32 **)((u8 *)D_80037510 + 0x2C) = (s32 *) *ret;
+        *ret = NULL;
     }
-    return result;
+    return ret;
 }
