@@ -1,12 +1,12 @@
 # WCW / nWo  REVENGE (decompilation)
 
 A matching decompilation of WCW / nWo  REVENGE for the Nintendo 64, started with [decompdecomp](https://github.com/n-delic/decompdecomp).
-1266 of 1361 functions are C that compiles to exactly the original code; the rest are still assembly.
+1273 of 1359 functions are C that compiles to exactly the original code; the rest are still assembly.
 `build.py` rebuilds the game from this tree and checks it against your original, byte for byte.
 
 ## Build
 
-1. Put your own copy of the game here as `baserom.z64`
+1. Put your own copy of the game here as `baserom.z64` (it is in `.gitignore`; never commit it).
 2. `python3 build.py` (it uses decompdecomp's period compiler and assembler, so decompdecomp must be installed).
 
 ## Layout
@@ -19,13 +19,14 @@ A matching decompilation of WCW / nWo  REVENGE for the Nintendo 64, started with
 | `include/common.h` | Types, structs and prototypes worked out so far. |
 | `game.ld` | Places every function and data block at its original address. |
 | `build.json`, `build.py` | How each file is built, and the build. |
-| `objdiff.json` | Per-function units for [objdiff](https://github.com/encounter/objdiff). |
+| `objdiff.json` | Per-function units for [objdiff](https://github.com/encounter/objdiff) (`python3 build.py targets` makes their targets). |
 
 Keep going with any tool: write a function in C under `src/`, add it to `build.json` (see the existing entries),
 run `build.py`. When it says *identical*, the function matches. This is the base for ports and mods: once
 everything is C, the game can be rebuilt, changed and moved to other platforms.
 
-The game's code and data belong to their rights holder
+The game's code and data belong to their rights holder: keep this tree to yourself unless you have the right to
+share it.
 
 ## Notes
 - `func_80018140`: kept as assembly, its own data isn't laid out like the game's
