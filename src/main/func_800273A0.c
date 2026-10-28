@@ -14,12 +14,3 @@ s32 func_800273A0(s32 arg0) {
     }
     return r;
 }
-
-/* Return the cached PI handle value when the handle is open. */
-s32 func_80027950(void) {
-    s32 c = D_80037600;
-    if (c != 0) {
-        return D_80037608;
-    }
-    return c;
-}

@@ -304,7 +304,7 @@ def linker_script(provides: dict[str, str], placed: list[tuple[int, int, str]], 
     for fn in B["functions"]:
         for section, base in (fn.get("own") or {}).items():
             if c_source(fn):
-                lines.append(f"    .own_{n} 0x{base:08X} (NOLOAD) : {{ {provides[fn['name']]}({section}) }}")
+                lines.append(f"    .own_{n} 0x{base:08X} (NOLOAD) : SUBALIGN(4) {{ {provides[fn['name']]}({section}) }}")  # (not the 16 its .rodata asks for)
                 n += 1
     # own data of C functions nobody placed yet: kept out of the image; `build.py check` places it
     lines.append(f"    .unplaced 0xF0000000 (NOLOAD) : {{ build/src/*({OWN}) }}")
@@ -327,14 +327,14 @@ def linker_script(provides: dict[str, str], placed: list[tuple[int, int, str]], 
     for seg in B["segments"]:
         n, start = seg["name"], seg["start"]
         end = seg.get("end") if seg.get("end") is not None else image_size
-        lines += [f"{n}_ROM_START = 0x{start:X};", f"{n}_ROM_END = 0x{end:X};"]
+        lines += [f'"{n}_ROM_START" = 0x{start:X};', f'"{n}_ROM_END" = 0x{end:X};']  # (quoted: a name can start with a digit)
         if seg["kind"] == "code":
             vram = seg["vram"]
             bss_start = seg.get("bss_vram") or vram + end - start
             bss_end = bss_start + seg.get("bss_size", 0)
-            lines += [f"{n}_VRAM = 0x{vram:08X};", f"{n}_VRAM_END = 0x{bss_end:08X};",
-                      f"{n}_BSS_START = 0x{bss_start:08X};", f"{n}_BSS_END = 0x{bss_end:08X};",
-                      f"{n}_BSS_SIZE = 0x{bss_end - bss_start:X};"]
+            lines += [f'"{n}_VRAM" = 0x{vram:08X};', f'"{n}_VRAM_END" = 0x{bss_end:08X};',
+                      f'"{n}_BSS_START" = 0x{bss_start:08X};', f'"{n}_BSS_END" = 0x{bss_end:08X};',
+                      f'"{n}_BSS_SIZE" = 0x{bss_end - bss_start:X};']
     return "\n".join(lines) + "\n"
 
 

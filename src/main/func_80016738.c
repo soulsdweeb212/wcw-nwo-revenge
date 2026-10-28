@@ -32,25 +32,3 @@ u8 *func_80016738(u8 *arg0, u8 *arg1) {
     }
     return arg1;
 }
-
-/* Decode the animation frame descriptor: two 16-bit offsets and a base offset. */
-s32 func_80016784(S80016784 *arg0, u8 *arg1) {
-    s32 a;
-    s32 b;
-    s32 d;
-    s32 c;
-    s32 e;
-    s32 f;
-
-    a = *arg1++;
-    b = *arg1++;
-    c = *arg1++;
-    d = *arg1++;
-    arg0->unkC2 = 1;
-    arg0->unk4C = arg0->unkA8 + ((c << 8) + d);
-    e = arg1[0];
-    f = arg1[1];
-    arg0->unkC4 = 1;
-    arg0->unk48 = arg0->unkA4 + ((e << 8) + f);
-    return arg0->unk9C + ((a << 8) + b);
-}

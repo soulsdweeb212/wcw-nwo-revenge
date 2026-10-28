@@ -9,11 +9,6 @@ typedef struct {
 
 void func_8001B090(void *, void *);
 
-/* Steps the gameplay RNG seed. */
-void func_8001C580(void) {
-    D_80037230 = (u32)((D_80037230 * 4 + 2) * (D_80037230 * 4 + 3)) >> 2;
-}
-
 /* Builds a translation matrix (arg1/arg2/arg3) and converts it to fixed point
  * at arg0. */
 void func_8001C144(void *arg0, f32 arg1, f32 arg2, f32 arg3) {

@@ -4,15 +4,6 @@ extern u16 D_8006A2A4[];
 extern u8 D_80031060[];
 extern s16 D_80030DD4[];
 
-/* Resolves the sound id for anim arg0 / channel arg1 through the two-level
- * D_8006A2A4 / D_80031060 / D_80030DD4 tables. */
-s16 func_8000E4FC(s16 arg0, s16 arg1) {
-    s16 *p;
-
-    p = *(s16 **)(D_80031060 + ((D_8006A2A4[arg0] >> 6) & 0x7C));
-    return D_80030DD4[p[((D_8006A2A4[arg0] & 0x1F) - 1) * 2 + arg1]];
-}
-
 extern u16 D_800306A0[];
 s32 func_800032A4(s32, s32, s32, s32, s32);
 void func_80013F7C(s32, s32);

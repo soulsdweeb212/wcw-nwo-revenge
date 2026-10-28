@@ -10,18 +10,6 @@ extern S85E D_800706AC[];
 extern s32 D_8007BD38;
 extern f64 D_8003B130;
 
-s16 func_80008574(s32 arg0) {
-    return D_800669CE[(s16)arg0].f0;
-}
-
-f32 func_8000858C(s32 arg0) {
-    return (D_800669CC[(s16)arg0].f0 & 0x3FF) * D_8003B130;
-}
-
 u32 func_800085C8(s32 arg0) {
     return D_800669CC[(s16)arg0].f0 >> 0xA;
-}
-
-u32 func_800085E4(s32 arg0) {
-    return *(u8 *)(D_8007BD38 + (D_800706AC[(s16)arg0].f0 * 0x24 + 0xFFFDFFFC)) >> 4;
 }

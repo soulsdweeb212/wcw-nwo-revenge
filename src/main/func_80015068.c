@@ -14,18 +14,6 @@ typedef struct {
     u8 fFA;
 } Nw15468Obj;
 
-/* Snapshots the object's saved position/volume fields into its shadow copies. */
-void func_80015468(Nw15468Obj *p) {
-    s32 a = p->f58;
-    s32 b = p->f5C;
-    u8 c = p->fDD;
-
-    p->fF9 = 0;
-    p->fB0 = a;
-    p->fB4 = b;
-    p->fFA = c & 0x40;
-}
-
 typedef struct {
     u8 pad0[0x50];
     u64 f50;
@@ -62,25 +50,4 @@ void func_80015068(Nw15068Obj *p) {
     p->fE3 = 1;
     p->fE4 = p->fE0;
     p->fE5 = p->fDF;
-}
-
-/* Fills arg2 bytes at arg0 with arg1. */
-void func_80015ECC(u8 *arg0, u8 arg1, s32 arg2) {
-    s32 i;
-
-    for (i = arg2 - 1; i != -1; i--) {
-        *arg0 = arg1;
-        arg0++;
-    }
-}
-
-/* Copies arg2 bytes from arg0 to arg1. */
-void func_80015EF8(u8 *arg0, u8 *arg1, s32 arg2) {
-    s32 i;
-
-    for (i = arg2 - 1; i != -1; i--) {
-        *arg1 = *arg0;
-        arg0++;
-        arg1++;
-    }
 }

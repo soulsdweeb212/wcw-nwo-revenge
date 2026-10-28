@@ -45,28 +45,3 @@ typedef struct {
 
 extern Cmd8 D_8006A260[];
 extern u8 D_80070A98;
-
-void func_800213CC(u8 *arg0, s16 *arg1) {
-    s16 *d16 = arg1;
-    u8 *d8;
-    Cmd8 *src;
-    u32 res = 0;
-    s32 i;
-
-    src = D_8006A260;
-    i = 0;
-    d8 = (u8 *)arg1 + 2;
-    for (; i < D_80070A98; d16 += 2) {
-        Cmd8 t = src[i];
-        s32 v = (t.b2 & 0xC0) >> 4;
-        d8[1] = v;
-        if (v == 0) {
-            d16[0] = t.b4 | (t.b5 << 8);
-            res |= 1 << i;
-            d8[0] = t.b6;
-        }
-        i++;
-        d8 += 4;
-    }
-    *arg0 = res;
-}

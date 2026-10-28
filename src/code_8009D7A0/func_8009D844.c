@@ -17,29 +17,6 @@ extern void func_800D4AD0(void *);
 extern void beginEntityActionA8D8C(void *);
 extern void func_800C472C(s32, void *, s32);
 
-/* Two-state action on D_800EB408 (state +0xC): runs boundary correction, then
- * state 0 plays animation 0x109D and advances; state 1 waits for the timer and
- * then switches to action 1. */
-void func_8009F774(void) {
-    T_F408 *o;
-    s16 v;
-
-    func_800D2B64(D_800EB408, 0x40000000, 0, 0xFFFFE);
-    func_800D93DC(D_800EB408);
-    o = (T_F408 *)D_800EB408;
-    v = o->fC;
-    switch (v) {
-    case 0:
-        func_800D427C(o, 0x109D, 2);
-        ((T_F408 *)D_800EB408)->fC = (s16)((u16)((T_F408 *)D_800EB408)->fC + 1);
-        return;
-    case 1:
-        if (o->f4 > 0) return;
-        func_800A6C48(o, 1);
-        return;
-    }
-}
-
 /* Steps the overlay fade-out by 8 (down to 0x11), rebuilding the colour overlay
  * display list; sets the overlay's 0x80 flag when the fade is complete. Returns
  * 1 while it advanced. */
@@ -54,15 +31,4 @@ s32 func_8009D844(s32 arg0, s32 arg1, s32 arg2) {
     }
     *D_800F99D4 |= 0x80;
     return 0;
-}
-
-/* Runs boundary correction on the entity and, once its timer expires, tears the
- * action down, restarts the entity action and notifies the linked entity. */
-void func_800A3E54(void) {
-    func_800D2BEC(D_800EB408, D_800EB40C, 0, 0x40800000, 0, 0xFFFFE);
-    if (((T_F408 *)D_800EB408)->f4 <= 0) {
-        func_800D4AD0(D_800EB408);
-        beginEntityActionA8D8C(D_800EB408);
-        func_800C472C(D_800EB40C, D_800EB408, 2);
-    }
 }

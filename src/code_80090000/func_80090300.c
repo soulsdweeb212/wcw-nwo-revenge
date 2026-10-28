@@ -33,29 +33,3 @@ s32 func_800C5010(void);
 s32 func_800C51A0(void);
 s32 func_800C594C(void);
 extern s32 D_800D6D30;
-
-/* Main match loop: stops the current sound, runs the per-frame update chain
- * (audio, input, scene, entity actions) and blocks until the frame handler
- * D_800D6D30 reports a result, exiting when it goes positive. */
-void func_8009001C(void) {
-    s32 v;
-
-    func_8000E55C(-1, 0, 0);
-    func_80002C74();
-    do {
-        func_800C4D70();
-        func_800C5010();
-        D_800D6D30 = 0;
-        func_80002C74();
-        if (D_800D6D30 == 0) {
-            do {
-                v = func_800C594C();
-                D_800D6D30 = v;
-            } while (v == 0);
-        }
-        func_80002C58();
-        func_80002C74();
-        func_800C51A0();
-        func_80002C74();
-    } while (D_800D6D30 <= 0);
-}

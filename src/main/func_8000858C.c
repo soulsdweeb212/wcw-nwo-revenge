@@ -12,8 +12,3 @@ extern f64 D_8003B130;
 f32 func_8000858C(s32 arg0) {
     return (f32)((f64)(f32)(D_800669CC[(s16)arg0].f0 & 0x3FF) * D_8003B130);
 }
-
-/* Return the high nibble of entity arg0's record byte in the table at D_8007BD38. */
-u32 func_800085E4(s32 arg0) {
-    return D_8007BD38[D_800706AC[(s16)arg0].f0 * 0x24 + 0xFFFDFFFC] >> 4;
-}

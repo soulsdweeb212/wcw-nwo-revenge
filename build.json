@@ -28,6 +28,19 @@
     "-O2",
     "-ffast-math"
    ]
+  },
+  {
+   "start": 2147591296,
+   "end": 2147591304,
+   "toolchain": "gcc-2.7.2-kmc",
+   "flags": [
+    "-G0",
+    "-mips3",
+    "-mgp32",
+    "-mfp32",
+    "-O2",
+    "-ffast-math"
+   ]
   }
  ],
  "gp": 0,
@@ -3728,7 +3741,9 @@
    "seg": "main",
    "vram": 2147591296,
    "rom": 110720,
-   "asm": "asm/nonmatchings/main/nw2Sqrtf.s"
+   "asm": "asm/nonmatchings/main/nw2Sqrtf.s",
+   "c": "src/main/nw2Sqrtf.c",
+   "own": {}
   },
   {
    "name": "func_8001A490",
@@ -10370,20 +10385,6 @@
    "asm": "asm/nonmatchings/code_800BBA00/func_800C4C60.s"
   },
   {
-   "name": "func_800C4D74",
-   "seg": "code_800BBA00",
-   "vram": 2148289908,
-   "rom": 754196,
-   "asm": "asm/nonmatchings/code_800BBA00/func_800C4D74.s"
-  },
-  {
-   "name": "func_800C5010",
-   "seg": "code_800BBA00",
-   "vram": 2148290576,
-   "rom": 754864,
-   "asm": "asm/nonmatchings/code_800BBA00/func_800C5010.s"
-  },
-  {
    "name": "func_800C5190",
    "seg": "code_800BBA00",
    "vram": 2148290960,
@@ -10391,32 +10392,11 @@
    "asm": "asm/nonmatchings/code_800BBA00/func_800C5190.s"
   },
   {
-   "name": "func_800C5198",
-   "seg": "code_800BBA00",
-   "vram": 2148290968,
-   "rom": 755256,
-   "asm": "asm/nonmatchings/code_800BBA00/func_800C5198.s"
-  },
-  {
-   "name": "func_800C51A0",
-   "seg": "code_800BBA00",
-   "vram": 2148290976,
-   "rom": 755264,
-   "asm": "asm/nonmatchings/code_800BBA00/func_800C51A0.s"
-  },
-  {
    "name": "func_800C5440",
    "seg": "code_800BBA00",
    "vram": 2148291648,
    "rom": 755936,
    "asm": "asm/nonmatchings/code_800BBA00/func_800C5440.s"
-  },
-  {
-   "name": "func_800C594C",
-   "seg": "code_800BBA00",
-   "vram": 2148292940,
-   "rom": 757228,
-   "asm": "asm/nonmatchings/code_800BBA00/func_800C594C.s"
   },
   {
    "name": "func_800C5A28",
@@ -11307,9 +11287,7 @@
    "seg": "code_800BBA00",
    "vram": 2148349724,
    "rom": 814012,
-   "asm": "asm/nonmatchings/code_800BBA00/func_800D371C.s",
-   "c": "src/code_800BBA00/func_800D371C.c",
-   "own": {}
+   "asm": "asm/nonmatchings/code_800BBA00/func_800D371C.s"
   },
   {
    "name": "func_800D3744",
@@ -13553,6 +13531,15 @@
   "D_A4600000": 2757754880,
   "D_A4600010": 2757754896,
   "D_A4800000": 2759852032,
-  "D_A4800018": 2759852056
+  "D_A4800018": 2759852056,
+  "sceneNodeCallback5C50": 2148293712,
+  "sceneNodeCallback5AD0": 2148293328,
+  "D_800C5D10": 2148293904,
+  "func_840010BC": 2214596796,
+  "func_84001064": 2214596708,
+  "func_84001008": 2214596616,
+  "func_80096E2C": 2148101676,
+  "func_80096CC0": 2148101312,
+  "func_80096854": 2148100180
  }
 }

@@ -18,14 +18,3 @@ void func_800BF26C(u8 *arg0) {
     }
     *flags |= 0x1000000000000000ULL;
 }
-
-/* Returns the entity's per-slot byte (+0x34C+arg1), or 0x32 when flagged
- * 0x80000. */
-s32 func_800BF1E0(void *arg0, s16 arg1) {
-    s32 v = 0x32;
-
-    if ((*(u64 *)((u8 *)arg0 + 0x20) & 0x80000) == 0) {
-        v = *(s8 *)((u8 *)arg0 + arg1 + 0x34C);
-    }
-    return v;
-}

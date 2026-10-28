@@ -21,19 +21,6 @@ typedef struct {
     s32 c1;
 } Node80038820;
 
-void func_80027040(void) {
-    Node80038820 *p = g_80038820;
-    *(u64 *)&D_80070B20 = 0;
-    D_80065120 = 0;
-    D_80070480 = 0;
-    p->b = 0;
-    p->a = 0;
-    p->prev = p;
-    p->next = p;
-    p->c0 = 0;
-    p->c1 = 0;
-}
-
 /* Start a transfer into the fixed buffer 0x1FC007C0. Polls the controller/PI
  * status at 0xA4800018; if busy (bits 0-1) returns -1. Otherwise latches the
  * source address func_8001CE80(addr) into 0xA4800000 and the destination into
@@ -56,20 +43,4 @@ s32 func_80025810(s32 channel, s32 addr) {
         func_8001C5B0(addr, 0x40);
     }
     return 0;
-}
-
-s64 func_80028860(u32 a0, u32 a1, u32 a2, u32 a3) {
-    if (a2) {
-        return func_80028528(a0, a1, a2, a3);
-    }
-    return func_80028624(a0, a1, a2, a3);
-}
-
-s64 func_80028880(u32 a0, u32 a1, u32 a2, u32 a3) {
-    if (a2) {
-        func_80028528(a0, a1, a2, a3);
-        return ((s64)a0 << 32) | (u32)a1;
-    }
-    func_80028624(a0, a1, a2, a3);
-    return ((s64)0 << 32) | (u32)a3;
 }

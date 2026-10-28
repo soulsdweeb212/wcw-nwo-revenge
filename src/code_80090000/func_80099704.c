@@ -17,8 +17,3 @@ extern s32 func_800B600C(s32, s32);
 void func_80099704(s32 a, s32 b) {
     func_800B600C(func_80099734(a), b);
 }
-
-/* Returns the variant-b record address (0x19 bytes in) for id a. */
-s32 func_8002AD34(s32 a, s32 b) {
-    return func_800B600C(func_80099734(a), b) + 0x19;
-}

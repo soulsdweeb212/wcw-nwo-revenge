@@ -15,23 +15,6 @@ extern Nw2LookupTable D_8003A4F8[];
 extern Nw2LookupEntry D_8003A59C;
 extern u16 D_8003A4E8[];
 
-/* Returns the 1-based position of arg0 in the zero-terminated D_8003A4E8
- * table, or 0 if absent. */
-s32 func_8002B710(s32 arg0) {
-    u16 *p = D_8003A4E8;
-    s32 i = 0;
-
-    if (D_8003A4E8[0] == 0) {
-        return 0;
-    }
-    for (; *p != 0; p++, i++) {
-        if (*p == arg0) {
-            return i + 1;
-        }
-    }
-    return 0;
-}
-
 /* Returns subtable arg0's entry arg1 id, or the fallback id when out of range. */
 u16 func_8002B668(u32 arg0, s32 arg1) {
     Nw2LookupEntry *e;

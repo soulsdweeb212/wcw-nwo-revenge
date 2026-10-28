@@ -17,15 +17,3 @@ typedef struct {u8 b0,b1,b2,b3; u16 b4; s8 b6,b7;} ReadCmd;
 extern ReadCmd D_8006A260[];
 extern s32 D_8006A29C;
 extern u8 D_80070A98;
-/* Builds the controller read-command packet list D_8006A260 (0xFF/1/4/1 type
- * record plus a 0xFE terminator) for each active controller. */
-void packControllerReadCommands(void){
- s32 i; s32 *p; ReadCmd *q; ReadCmd tmp;
- q=D_8006A260;
- for(i=0xE,p=(s32*)((u8*)q+0x38);i>=0;i--){*p=0;p--;}
- D_8006A29C=1;
- tmp.b0=0xFF;tmp.b1=1;tmp.b2=4;tmp.b3=1;
- tmp.b4=0xFFFF;tmp.b6=-1;tmp.b7=-1;
- for(i=0;i<D_80070A98;i++){*q++=tmp;}
- *(u8*)q=0xFE;
-}

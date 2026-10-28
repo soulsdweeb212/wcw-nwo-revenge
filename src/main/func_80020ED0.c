@@ -16,16 +16,6 @@ typedef struct {
 
 extern S80038860 *__osViNext;
 
-s32 func_80020DA0(void *arg0) {
-    u32 v;
-
-    v = func_80027380();
-    if (v & 0x80) {
-        *(s32 *)((u8 *)arg0 + 4) = (*(s32 *)((u8 *)arg0 + 4) | ((v >> 8) & 1)) & ~2;
-    }
-    return (v >> 8) & 1;
-}
-
 /* Install a new VI mode into the pending (__osViNext) VI context: store the
  * mode pointer, mark the context ready, then copy the mode's +4 control word.
  * The context update runs with interrupts disabled. */

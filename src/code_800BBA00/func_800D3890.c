@@ -31,22 +31,3 @@ f32 func_800D3890(void *arg0, void *arg1, void *arg2) {
     }
     return v[1].f;
 }
-
-/* Same XZ delta but returns only the heading as an s32 (using D_800E6BA0). */
-s32 func_800D3940(void *arg0, void *arg1) {
-    f32 *p0 = arg0;
-    f32 *p1 = arg1;
-    NwFI v[4];
-    f32 dx;
-    f32 dz;
-    f32 dist;
-
-    dx = p1[0] - p0[0];
-    v[0].f = dx;
-    dz = p1[2] - p0[2];
-    v[2].f = dz;
-    dist = nw2Sqrtf(dx * dx + dz * dz);
-    v[1].f = dist;
-    v[3].i = (s32)((f64)func_80003A3C(dx, dz) * D_800E6BA0);
-    return v[3].i;
-}

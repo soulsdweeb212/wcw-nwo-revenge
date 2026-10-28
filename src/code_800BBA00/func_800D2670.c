@@ -2,21 +2,6 @@
 
 s8 func_800D2758(s32, s32, s32, s32, s32);
 
-/* Boundary correction with no records and direction mask -1. */
-s8 func_800D25D0(s32 arg0, s32 arg1) {
-    return func_800D2758(arg0, arg1, 0, -1, 1);
-}
-
-/* Boundary correction with a direction mask from arg1. */
-s8 func_800D2600(s32 arg0, s8 arg1, s32 arg2) {
-    return func_800D2758(arg0, arg2, 0, arg1, 1);
-}
-
-/* Boundary correction with a body-part mask from arg1. */
-s8 func_800D2638(s32 arg0, s32 arg1, s32 arg2) {
-    return func_800D2758(arg0, arg2, arg1 & 0xFFFF, -1, 1);
-}
-
 /* Boundary correction with no records and a two-pass direction mask. */
 s8 func_800D2670(s32 arg0, s32 arg1) {
     return func_800D2758(arg0, arg1, 0, -1, 2);
