@@ -3671,7 +3671,11 @@
    "seg": "main",
    "vram": 2147589248,
    "rom": 108672,
-   "asm": "asm/nonmatchings/main/setAudioRegionParameter.s"
+   "asm": "asm/nonmatchings/main/setAudioRegionParameter.s",
+   "c": "src/main/setAudioRegionParameter.c",
+   "own": {
+    ".rodata": 2147726576
+   }
   },
   {
    "name": "writeOscillatorSegment",
@@ -4364,7 +4368,11 @@
    "seg": "main",
    "vram": 2147612788,
    "rom": 132212,
-   "asm": "asm/nonmatchings/main/setAudioStreamRegionParameter.s"
+   "asm": "asm/nonmatchings/main/setAudioStreamRegionParameter.s",
+   "c": "src/main/setAudioStreamRegionParameter.c",
+   "own": {
+    ".rodata": 2147727440
+   }
   },
   {
    "name": "loadResampledAudioRingBuffer",
