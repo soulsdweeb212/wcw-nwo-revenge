@@ -141,9 +141,10 @@ def objects() -> tuple[list[tuple[str, str, str]], dict[str, str], list[tuple[in
         c = c_source(fn)
         if c:
             obj = f"build/{Path(c).with_suffix('.o').as_posix()}"
-            out.append(("c", c, obj))
+            if obj not in provides.values():  # (a source can hold several consecutive functions: placed once, at the first)
+                out.append(("c", c, obj))
+                placed.append((fn["vram"], fn["rom"], obj))
             provides[fn["name"]] = obj
-            placed.append((fn["vram"], fn["rom"], obj))
             runs.pop(fn["seg"], None)
             continue
         run, end = runs.get(fn["seg"], ([], None))

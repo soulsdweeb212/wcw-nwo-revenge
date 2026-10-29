@@ -11258,7 +11258,8 @@
    "seg": "code_800BBA00",
    "vram": 2148349724,
    "rom": 814012,
-   "asm": "asm/nonmatchings/code_800BBA00/func_800D371C.s"
+   "asm": "asm/nonmatchings/code_800BBA00/func_800D371C.s",
+   "c": "src/code_800BBA00/func_800D36E8.c"
   },
   {
    "name": "func_800D3744",
@@ -11266,6 +11267,7 @@
    "vram": 2148349764,
    "rom": 814052,
    "asm": "asm/nonmatchings/code_800BBA00/func_800D3744.s",
+   "c": "src/code_800BBA00/func_800D36E8.c",
    "own": {}
   },
   {
