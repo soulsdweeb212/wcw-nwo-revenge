@@ -10359,7 +10359,8 @@
    "seg": "code_800BBA00",
    "vram": 2148290960,
    "rom": 755248,
-   "asm": "asm/nonmatchings/code_800BBA00/func_800C5190.s"
+   "asm": "asm/nonmatchings/code_800BBA00/func_800C5190.s",
+   "c": "src/code_800BBA00/func_800C5190.c"
   },
   {
    "name": "func_800C5440",
@@ -11265,7 +11266,6 @@
    "vram": 2148349764,
    "rom": 814052,
    "asm": "asm/nonmatchings/code_800BBA00/func_800D3744.s",
-   "c": "src/code_800BBA00/func_800D3744.c",
    "own": {}
   },
   {
@@ -12464,6 +12464,7 @@
   }
  ],
  "symbols": {
+  "func_800C51A0": 2148290976,
   "D_800C5D90": 2148294032,
   "D_800C6568": 2148296040,
   "D_800C656C": 2148296044,
