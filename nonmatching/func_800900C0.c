@@ -52,7 +52,10 @@ void func_800900C0(s32 arg0) {
     NodeA900C0 *a;
     LinkA900C0 *l;
     NodeB900C0 *b;
+    u8 spill[0x40];
+    u8 *sp;
 
+    sp = spill;
     a = D_800DB3D0;
     l = &a->link;
     for (i = 0; i < 3; i++, a++, l++) {
