@@ -9686,7 +9686,8 @@
    "seg": "code_8009D7A0",
    "vram": 2148237944,
    "rom": 702232,
-   "asm": "asm/nonmatchings/code_8009D7A0/func_800B8278.s"
+   "asm": "asm/nonmatchings/code_8009D7A0/func_800B8278.s",
+   "c": "src/code_8009D7A0/func_800B8278.c"
   },
   {
    "name": "func_800B83CC",
@@ -12466,6 +12467,7 @@
   }
  ],
  "symbols": {
+  "func_800B82B8": 2148238008,
   "func_800C51A0": 2148290976,
   "D_800C5D90": 2148294032,
   "D_800C6568": 2148296040,
