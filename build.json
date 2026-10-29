@@ -3978,35 +3978,40 @@
    "seg": "main",
    "vram": 2147599792,
    "rom": 119216,
-   "asm": "asm/nonmatchings/main/func_8001C5B0.s"
+   "asm": "asm/nonmatchings/main/func_8001C5B0.s",
+   "c": "src/main/func_8001C5B0.c"
   },
   {
    "name": "func_8001C660",
    "seg": "main",
    "vram": 2147599968,
    "rom": 119392,
-   "asm": "asm/nonmatchings/main/func_8001C660.s"
+   "asm": "asm/nonmatchings/main/func_8001C660.s",
+   "c": "src/main/func_8001C660.c"
   },
   {
    "name": "func_8001C740",
    "seg": "main",
    "vram": 2147600192,
    "rom": 119616,
-   "asm": "asm/nonmatchings/main/func_8001C740.s"
+   "asm": "asm/nonmatchings/main/func_8001C740.s",
+   "c": "src/main/func_8001C740.c"
   },
   {
    "name": "func_8001C7E0",
    "seg": "main",
    "vram": 2147600352,
    "rom": 119776,
-   "asm": "asm/nonmatchings/main/func_8001C7E0.s"
+   "asm": "asm/nonmatchings/main/func_8001C7E0.s",
+   "c": "src/main/func_8001C7E0.c"
   },
   {
    "name": "func_8001C860",
    "seg": "main",
    "vram": 2147600480,
    "rom": 119904,
-   "asm": "asm/nonmatchings/main/func_8001C860.s"
+   "asm": "asm/nonmatchings/main/func_8001C860.s",
+   "c": "src/main/func_8001C860.c"
   },
   {
    "name": "func_8001C890",
@@ -4861,14 +4866,16 @@
    "seg": "main",
    "vram": 2147621952,
    "rom": 141376,
-   "asm": "asm/nonmatchings/main/func_80021C40.s"
+   "asm": "asm/nonmatchings/main/func_80021C40.s",
+   "c": "src/main/func_80021C40.c"
   },
   {
    "name": "func_80021F60",
    "seg": "main",
    "vram": 2147622752,
    "rom": 142176,
-   "asm": "asm/nonmatchings/main/func_80021F60.s"
+   "asm": "asm/nonmatchings/main/func_80021F60.s",
+   "c": "src/main/func_80021F60.c"
   },
   {
    "name": "func_80022000",
@@ -5271,49 +5278,56 @@
    "seg": "main",
    "vram": 2147639088,
    "rom": 158512,
-   "asm": "asm/nonmatchings/main/func_80025F30.s"
+   "asm": "asm/nonmatchings/main/func_80025F30.s",
+   "c": "src/main/func_80025F30.c"
   },
   {
    "name": "func_800264BC",
    "seg": "main",
    "vram": 2147640508,
    "rom": 159932,
-   "asm": "asm/nonmatchings/main/func_800264BC.s"
+   "asm": "asm/nonmatchings/main/func_800264BC.s",
+   "c": "src/main/func_800264BC.c"
   },
   {
    "name": "func_80026578",
    "seg": "main",
    "vram": 2147640696,
    "rom": 160120,
-   "asm": "asm/nonmatchings/main/func_80026578.s"
+   "asm": "asm/nonmatchings/main/func_80026578.s",
+   "c": "src/main/func_80026578.c"
   },
   {
    "name": "func_800265AC",
    "seg": "main",
    "vram": 2147640748,
    "rom": 160172,
-   "asm": "asm/nonmatchings/main/func_800265AC.s"
+   "asm": "asm/nonmatchings/main/func_800265AC.s",
+   "c": "src/main/func_800265AC.c"
   },
   {
    "name": "func_800266B4",
    "seg": "main",
    "vram": 2147641012,
    "rom": 160436,
-   "asm": "asm/nonmatchings/main/func_800266B4.s"
+   "asm": "asm/nonmatchings/main/func_800266B4.s",
+   "c": "src/main/func_800266B4.c"
   },
   {
    "name": "func_800266FC",
    "seg": "main",
    "vram": 2147641084,
    "rom": 160508,
-   "asm": "asm/nonmatchings/main/func_800266FC.s"
+   "asm": "asm/nonmatchings/main/func_800266FC.s",
+   "c": "src/main/func_800266FC.c"
   },
   {
    "name": "func_8002670C",
    "seg": "main",
    "vram": 2147641100,
    "rom": 160524,
-   "asm": "asm/nonmatchings/main/func_8002670C.s"
+   "asm": "asm/nonmatchings/main/func_8002670C.s",
+   "c": "src/main/func_8002670C.c"
   },
   {
    "name": "initializePiAndRdram",
@@ -5329,63 +5343,72 @@
    "seg": "main",
    "vram": 2147642096,
    "rom": 161520,
-   "asm": "asm/nonmatchings/main/func_80026AF0.s"
+   "asm": "asm/nonmatchings/main/func_80026AF0.s",
+   "c": "src/main/func_80026AF0.c"
   },
   {
    "name": "func_80026B00",
    "seg": "main",
    "vram": 2147642112,
    "rom": 161536,
-   "asm": "asm/nonmatchings/main/func_80026B00.s"
+   "asm": "asm/nonmatchings/main/func_80026B00.s",
+   "c": "src/main/func_80026B00.c"
   },
   {
    "name": "nw2DisableInterrupts",
    "seg": "main",
    "vram": 2147642128,
    "rom": 161552,
-   "asm": "asm/nonmatchings/main/nw2DisableInterrupts.s"
+   "asm": "asm/nonmatchings/main/nw2DisableInterrupts.s",
+   "c": "src/main/nw2DisableInterrupts.c"
   },
   {
    "name": "nw2RestoreInterrupts",
    "seg": "main",
    "vram": 2147642160,
    "rom": 161584,
-   "asm": "asm/nonmatchings/main/nw2RestoreInterrupts.s"
+   "asm": "asm/nonmatchings/main/nw2RestoreInterrupts.s",
+   "c": "src/main/nw2RestoreInterrupts.c"
   },
   {
    "name": "func_80026B50",
    "seg": "main",
    "vram": 2147642192,
    "rom": 161616,
-   "asm": "asm/nonmatchings/main/func_80026B50.s"
+   "asm": "asm/nonmatchings/main/func_80026B50.s",
+   "c": "src/main/func_80026B50.c"
   },
   {
    "name": "func_80026C10",
    "seg": "main",
    "vram": 2147642384,
    "rom": 161808,
-   "asm": "asm/nonmatchings/main/func_80026C10.s"
+   "asm": "asm/nonmatchings/main/func_80026C10.s",
+   "c": "src/main/func_80026C10.c"
   },
   {
    "name": "func_80026C20",
    "seg": "main",
    "vram": 2147642400,
    "rom": 161824,
-   "asm": "asm/nonmatchings/main/func_80026C20.s"
+   "asm": "asm/nonmatchings/main/func_80026C20.s",
+   "c": "src/main/func_80026C20.c"
   },
   {
    "name": "func_80026C30",
    "seg": "main",
    "vram": 2147642416,
    "rom": 161840,
-   "asm": "asm/nonmatchings/main/func_80026C30.s"
+   "asm": "asm/nonmatchings/main/func_80026C30.s",
+   "c": "src/main/func_80026C30.c"
   },
   {
    "name": "func_80026C80",
    "seg": "main",
    "vram": 2147642496,
    "rom": 161920,
-   "asm": "asm/nonmatchings/main/func_80026C80.s"
+   "asm": "asm/nonmatchings/main/func_80026C80.s",
+   "c": "src/main/func_80026C80.c"
   },
   {
    "name": "func_80026CE0",
@@ -5671,7 +5694,8 @@
    "seg": "main",
    "vram": 2147647744,
    "rom": 167168,
-   "asm": "asm/nonmatchings/main/func_80028100.s"
+   "asm": "asm/nonmatchings/main/func_80028100.s",
+   "c": "src/main/func_80028100.c"
   },
   {
    "name": "func_80028110",
@@ -6288,7 +6312,8 @@
    "seg": "main",
    "vram": 2147662912,
    "rom": 182336,
-   "asm": "asm/nonmatchings/main/func_8002BC40.s"
+   "asm": "asm/nonmatchings/main/func_8002BC40.s",
+   "c": "src/main/func_8002BC40.c"
   },
   {
    "name": "func_80090000",

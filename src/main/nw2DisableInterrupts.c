@@ -1,0 +1,20 @@
+/* Hand-written in the original; kept as top-level asm so the bytes match exactly. */
+asm(
+".set noreorder\n"
+".set noat\n"
+"\n"
+".globl nw2DisableInterrupts\n"
+".ent nw2DisableInterrupts\n"
+"nw2DisableInterrupts:\n"
+"mfc0 $t0, $12 /* handwritten instruction */\n"
+"addiu $at, $zero, -0x2\n"
+"and $t1, $t0, $at\n"
+"mtc0 $t1, $12 /* handwritten instruction */\n"
+"andi $v0, $t0, 0x1\n"
+"nop\n"
+"jr $ra\n"
+"nop\n"
+".end nw2DisableInterrupts\n"
+".set at\n"
+".set reorder\n"
+);
