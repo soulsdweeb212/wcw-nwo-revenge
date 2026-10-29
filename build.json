@@ -6498,7 +6498,11 @@
    "seg": "code_80090000",
    "vram": 2148084512,
    "rom": 258704,
-   "asm": "asm/nonmatchings/code_80090000/func_80092B20.s"
+   "asm": "asm/nonmatchings/code_80090000/func_80092B20.s",
+   "c": "src/code_80090000/func_80092B20.c",
+   "own": {
+    ".rodata": 2148360080
+   }
   },
   {
    "name": "func_80092DE0",
@@ -6708,7 +6712,8 @@
    "seg": "code_80090000",
    "vram": 2148105756,
    "rom": 279948,
-   "asm": "asm/nonmatchings/code_80090000/func_80097E1C.s"
+   "asm": "asm/nonmatchings/code_80090000/func_80097E1C.s",
+   "c": "src/code_80090000/func_80097E1C.c"
   },
   {
    "name": "emitTiledSprite98060",
@@ -9587,7 +9592,8 @@
    "seg": "code_8009D7A0",
    "vram": 2148228900,
    "rom": 693188,
-   "asm": "asm/nonmatchings/code_8009D7A0/func_800B5F24.s"
+   "asm": "asm/nonmatchings/code_8009D7A0/func_800B5F24.s",
+   "c": "src/code_8009D7A0/func_800B5F24.c"
   },
   {
    "name": "func_800B60C8",
@@ -12458,6 +12464,15 @@
   }
  ],
  "symbols": {
+  "D_800C5D90": 2148294032,
+  "D_800C6568": 2148296040,
+  "D_800C656C": 2148296044,
+  "D_800C6570": 2148296048,
+  "D_800C6574": 2148296052,
+  "D_800C657C": 2148296060,
+  "D_800C6588": 2148296072,
+  "func_80097EF4": 2148105972,
+  "func_800B600C": 2148229132,
   "L_B10": 2832,
   "L_BC8": 3016,
   "L_BD0": 3024,
