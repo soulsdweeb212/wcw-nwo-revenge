@@ -59,9 +59,11 @@ void unpackAnimationParameters(void *, void *);
 
 static inline void loadAnim83DC(E83DC *a, E83DC *b, s32 id)
 {
+    Anim83DC *t;
     a->f384 = a->f0;
     a->f386 = id;
-    unpackAnimationParameters(a->f38C, &D_80075468[a->f384].data[id * 24]);
+    t = &D_80075468[a->f384];
+    unpackAnimationParameters(a->f38C, &t->data[id * 24]);
     if (id < 0xEF) {
         if (a->f3AC & 0x8000) {
             a->flags |= 0x4000000000000000ULL;

@@ -1,9 +1,9 @@
 # WCW / nWo  REVENGE (decompilation)
 
 A matching decompilation of WCW / nWo  REVENGE for the Nintendo 64, started with [decompdecomp](https://github.com/n-delic/decompdecomp).
-1328 of 1345 functions build as C objects (98.7%). 35 of those are hand-written assembly routines wrapped in a top-level `asm()`
-block (see below), so 1293 are real C that compiles to exactly the original code; the other 17 functions are still plain assembly
-(15 have a draft in `nonmatching/`, and 2 are the first instructions of functions cut off by a segment boundary).
+1334 of 1345 functions build as C objects (99.2%). 35 of those are hand-written assembly routines wrapped in a top-level `asm()`
+block (see below), so 1299 are real C that compiles to exactly the original code; the other 11 functions are still plain assembly
+(9 have a draft in `nonmatching/`, and 2 are the first instructions of functions cut off by a segment boundary).
 `build.py` rebuilds the game from this tree and checks it against your original, byte for byte.
 
 ## Requirements
@@ -55,9 +55,22 @@ share it.
 - `tools/permute_run.py FUNC DRAFT.c MINUTES [WORKERS]` scores a C draft against the original bytes (0 = identical apart
   from relocations) and can random-walk it with decomp-permuter's generator. A score is a guide; `build.py` saying
   *identical* is the proof. The permuter's output is often mangled C, so read it before keeping anything.
+- m2c gives a first C draft of a function from its assembly. It does not match anything: it never runs the compiler or compares
+  with the ROM. Run it with the installed copy:
+  ```
+  ~/.local/share/decompnet/toolchains/m2c/venv/bin/m2c -t mips-gcc-c -f FUNC asm/nonmatchings/<segment>/FUNC.s
+  ```
+  `-f` picks the function; `--context FILE` adds your structs and prototypes (the file must already be preprocessed), which makes
+  the result much more readable. It prints C to the terminal with `extern` guesses at the top and placeholder names (`arg0`,
+  `var_fs0`, `sp10`, `?` for unknown types). Functions with a jump table stop with "the corresponding jump table is not provided",
+  because the `.s` files don't include the tables. Treat the output as a draft: put it in `nonmatching/FUNC.c`, fix the types and
+  structure, score it with `tools/permute_run.py`, and adjust it until `build.py` says *identical*. Most of the work is in that
+  last step, because code that does the right thing still isn't always the source that compiles to the same bytes.
 - `tools/check_rodata.py` rebuilds the jump tables and constants the compiler generates for functions with an `own` `.rodata`
   and looks for them in the ROM; `tools/relabel_switch.py` repairs `case` labels from the ROM's tables (see "Switch tables are
   checked against the ROM" below). Run the checker after a full build.
+- `tools/add_headers.py [--dry-run]` writes the `@header` block at the top of every file in `src/` (name, addresses, size, asm path) from
+  `symbol_addrs.txt` and `splat.yaml`. Rerun it after renaming a function; it updates the blocks in place.
 - `tools/asm_to_c.py FUNC...` wraps a function's assembly in an `asm()` block so it builds as a C object.
 - `nonmatching/` holds near-miss drafts that `build.py` does not compile (see its README for how far off each is).
 - A source file can hold several consecutive functions: give each the same `"c"` in `build.json`; the object is placed once,
@@ -85,7 +98,7 @@ those take a manual edit, using the ROM's instructions at the target address to 
 change; the ROM must stay identical.
 
 ### Still assembly, with a reason
-17 functions are not matched yet; `nonmatching/README.md` explains each one. In short:
+11 functions are not matched yet; `nonmatching/README.md` explains each one. In short:
 - **Complete C, a few instructions off (11 functions):** `func_8000A3DC`, `func_800900C0`, `func_80012CD0`, `func_800C0E44`,
   `func_800291C0`, `func_80006178`, `func_800A83DC`, `func_8000C91C`, `func_80095884`, `func_800C4C60`, `func_800B6DEC`. The
   structure is right; GCC 2.7.2 orders a few instructions or numbers a few registers differently. These are search problems

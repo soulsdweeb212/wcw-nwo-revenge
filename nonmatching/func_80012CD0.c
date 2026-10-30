@@ -54,7 +54,7 @@ void func_80012CD0(void) {
                 func_80011764(i);
                 func_800056CC(&px, &py, &pz);
                 m = obj + 0x1C;
-                func_8001A490(m, 0.0f, D_8007E010[i].x - px, D_8007E010[i].y - py, -(pz - D_8007E010[i].z));
+                func_8001A490(m, 0.0f, D_8007E010[i].x - px, D_8007E010[i].y - py, D_8007E010[i].z - pz);
             }
             func_80007E04(m, D_8007E010[i].x, D_8007E010[i].y, D_8007E010[i].z);
             func_80001DC4(obj);

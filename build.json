@@ -9662,7 +9662,8 @@
    "seg": "code_8009D7A0",
    "vram": 2148229612,
    "rom": 693900,
-   "asm": "asm/nonmatchings/code_8009D7A0/func_800B61EC.s"
+   "asm": "asm/nonmatchings/code_8009D7A0/func_800B61EC.s",
+   "c": "src/code_8009D7A0/func_800B61EC.c"
   },
   {
    "name": "func_800B678C",
@@ -9687,14 +9688,22 @@
    "seg": "code_8009D7A0",
    "vram": 2148232684,
    "rom": 696972,
-   "asm": "asm/nonmatchings/code_8009D7A0/func_800B6DEC.s"
+   "asm": "asm/nonmatchings/code_8009D7A0/func_800B6DEC.s",
+   "c": "src/code_8009D7A0/func_800B6DEC.c",
+   "own": {
+    ".rodata": 2148423112
+   }
   },
   {
    "name": "func_800B71F8",
    "seg": "code_8009D7A0",
    "vram": 2148233720,
    "rom": 698008,
-   "asm": "asm/nonmatchings/code_8009D7A0/func_800B71F8.s"
+   "asm": "asm/nonmatchings/code_8009D7A0/func_800B71F8.s",
+   "c": "src/code_8009D7A0/func_800B71F8.c",
+   "own": {
+    ".rodata": 2148423160
+   }
   },
   {
    "name": "resetMatchState",
@@ -10175,7 +10184,8 @@
    "seg": "code_800BBA00",
    "vram": 2148273732,
    "rom": 738020,
-   "asm": "asm/nonmatchings/code_800BBA00/func_800C0E44.s"
+   "asm": "asm/nonmatchings/code_800BBA00/func_800C0E44.s",
+   "c": "src/code_800BBA00/func_800C0E44.c"
   },
   {
    "name": "updateEntityAttachmentState",
@@ -10397,7 +10407,11 @@
    "seg": "code_800BBA00",
    "vram": 2148289632,
    "rom": 753920,
-   "asm": "asm/nonmatchings/code_800BBA00/func_800C4C60.s"
+   "asm": "asm/nonmatchings/code_800BBA00/func_800C4C60.s",
+   "c": "src/code_800BBA00/func_800C4C60.c",
+   "own": {
+    ".rodata": 2148424560
+   }
   },
   {
    "name": "func_800C5190",
@@ -12523,6 +12537,13 @@
   }
  ],
  "symbols": {
+  "func_800C1138": 2148274488,
+  "func_800C4D70": 2148289904,
+  "func_800C5010": 2148290576,
+  "D_8007EF2C": 2148003628,
+  "func_800B6F88": 2148233096,
+  "func_800B75D4": 2148234708,
+  "func_800B64EC": 2148230380,
   "func_800C594C": 2148292940,
   "func_800B82B8": 2148238008,
   "func_800C51A0": 2148290976,

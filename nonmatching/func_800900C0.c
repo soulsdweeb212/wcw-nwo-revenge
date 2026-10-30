@@ -4,6 +4,7 @@ extern u8 func_800DB348[];
 extern u8 func_800D6658[];
 extern u8 sceneNodeCallback5AD0[];
 extern u8 sceneNodeCallback5C50[];
+extern u8 D_C5B90[];
 void initializeTransformNode(void *, s32, f32, f32, f32);
 void func_800015AC(void *, s32);
 void func_80001544(void *);
@@ -15,7 +16,8 @@ void func_800900C0(s32 arg0) {
     s32 c1, c2, c3, c4, c5;
     f32 z;
     s16 m;
-    u8 pad[0x34];
+    void *cb;
+    u8 pad[0x3c];
 
     i = 0;
     p = func_800DB348 + 0x88;
@@ -48,12 +50,14 @@ void func_800900C0(s32 arg0) {
     c1 = 0xE7000000;
     c2 = 0xFA000000;
     c3 = 0xDE000000;
-    c4 = (s32)sceneNodeCallback5C50 - 0x800000C0;
+    c4 = (s32)D_C5B90;
     c5 = 0xDF000000;
     do {
         initializeTransformNode(q, 6, z, z, z);
-        *(void **)(q + 0xC) = sceneNodeCallback5AD0;
-        *(void **)(q + 0x10) = sceneNodeCallback5C50;
+        cb = sceneNodeCallback5AD0;
+        *(void **)(q + 0xC) = cb;
+        cb = sceneNodeCallback5C50;
+        *(void **)(q + 0x10) = cb;
         func_800015AC(q, 1);
         func_80001544(q);
         *(u8 *)(q + 0x18) = *(u8 *)(q + 0x18) | 0x80;

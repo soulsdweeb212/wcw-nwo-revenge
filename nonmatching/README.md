@@ -34,25 +34,30 @@ types, so it is not kept, only the number.
 | function | size | draft | search | what differs |
 |---|---|---|---|---|
 | `func_8000A3DC` | 0x694 | 4 | 4 | a `sra`/`mult` pair for `arg1 % 3` sits two slots later than in the ROM. The draft needs a dummy `tq = a1 & 1; if (tq >> 1)` to reach 4; plain `%` gives 9–13. |
-| `func_800900C0` | 0x240 | 6 | 2 | `v1` where the ROM uses `v0` for the callback-address temporaries (the `-1` stored later is created too early). The search's 2 uses `sb` where the ROM has `sw`, so it is not a real match. Display-list constants are kept in locals `c1..c5`; a `u8 pad[0x34]` local fixes the frame; changing the callees' return types alone does nothing. |
-| `func_80012CD0` | 0x3C8 | 6 | 3 | in the `mode >= 11` branch the ROM loads `pz` after computing `y - py`; ours loads it earlier and adds a `neg.s`. |
-| `func_800C0E44` | 0x458 | 10 | 5 | branch delay slots: the ROM leaves `nop`s where ours fills with `move a0,a2`. |
-| `func_800291C0` | 0x3F4 | 6 | 6 | jump table. `beql` vs `beq` and `a0` vs `v0` in three places. |
+| `func_800900C0` | 0x240 | 4 | - | `move a0,s1; li a1,1` sit after the two callback stores where the ROM has them before. The draft uses the real symbol `D_C5B90` (the old `sceneNodeCallback5C50 - 0x800000C0` was a hack) and `pad[0x3C]`. Storing both callbacks through one local `cb` fixed the `v0`/`v1` register, a hint from a permuter result that scored 0 but was unusable (it read an uninitialized variable). Type changes to `cb`, a block-scoped `cb` and inline constants do not fix the order. |
+| `func_80012CD0` | 0x3C8 | 8 | - | in the `mode >= 11` branch the ROM computes `y - py` before `z - pz`; ours does the stack argument first. The draft is now a plain `z - pz` with the right instruction count. Temporaries in any order, and `px`/`py`/`pz` as an array or struct, give the same output. |
+| `func_800291C0` | 0x3F4 | 6 | 2 | jump table. `off` lives in `a0` in the ROM and is copied to `t0` for its use in only one of the two glyph-size branches; ours keeps it in `v0`. The two uses are written as shifts in the source: plain `i * 72` / `i * 30` expand differently (score 13-31). Variants that keep `off` alive past the copy make both branches use `a0` (13). The search's 2 is mangled and leaves out the `move t0,a0`. |
 | `func_80006178` | 0x594 | 9 | 7 | the placement of one `lw` and the order of two float operations. |
-| `func_800A83DC` | 0x938 | 29 | 14 | jump table. One `beqzl`, and `index * 0x1A30` (built from shifts and subtracts) is scheduled in a different order in two places, which changes two registers. |
+| `func_800A83DC` | 0x938 | 3 | 3 | jump table. A local `Anim83DC *t` for the table entry fixed the `index * 0x1A30` registers (29 to 3). Left: the ROM folds the `+0x10` into the table address where ours adds it with an extra `addiu` in two places, and one `beqzl`. Folding it (any form tried) brings the register swap back; a single store for the `beqzl` breaks the rest of the function (score 42-70). |
 | `func_8000C91C` | 0x3FC | 40 | 18 | register numbering in the prologue (`s0`/`a2`/`t0`/`t1` swapped) that then runs through the whole function. The search got there with chained assignments in the init loop (`a[k] = (b[k] = -1)`) and different integer types, neither of which helps on its own. |
 | `func_80095884` | 0xE28 | 45 | 36 | load order in one block and float register numbers (`$f4` vs `$f6`) in another. |
-| `func_800C4C60` | 0x530 | 48 | 22 | jump table; decoded from the ROM this session. Structure is identical; the `fC++` / `D_800FABD8` block is scheduled earlier than in the ROM. Shares its last case with `func_800C5440`. |
-| `func_800B6DEC` | 0x40C | 31 | 27 | jump table; decoded from the ROM this session. The ROM keeps a separate copy of the same flag test in six cases, while GCC merges two of them in ours; the evaluation order of case 0 differs. |
 
 ### 3. Draft incomplete: needs more decoding from the ROM
 | function | size | how much exists | what is missing |
 |---|---|---|---|
-| `func_800B61EC` | 0x5A0 | 124 of 330 instructions | everything after the first third (float checks against `D_800E5510…D_800E5540`). |
-| `func_800B71F8` | 0x838 | 289 of 526 | jump table; roughly half of the cases. |
 | `func_8009773C` | 0x6E0 | whole function, 84 differences in 420 | a sine-warped tile quad builder (one function: the `func_8009786C` etc. labels are mid-function, and other code calls them, so they need `symbols` entries, as do `D_800D6078`/`D_800D6080`). GCC's loop pass hoists the `(t << 21) >> 16` terms out of the inner loop, which takes the registers `cols` needs. Reusing a variable stops the hoist, but then the scheduler moves that block and the frame grows by 8. |
 
 ## Findings that apply to several functions
+- GCC's CSE keeps a copy `t = r` only if `t` outlives the block and outlives `r`; otherwise it folds the copy. A `move` the ROM shows just before a test can mean the tested variable is reused later: in `func_800B61EC`, `t = r; if (t)` followed by `t = mode & 4` took the score from 5 to 0.
+- A small type shows up at the use, not the assignment: an `s16` local assigned constants is sign-extended (`sll`/`sra`) where it is read (`k` in `func_800B61EC`, `lvl` and `val` in `func_800B71F8`).
+- Search loops: `for (i = 0;; i++) { if (x >= T[i].lim) { val = T[i].val; break; } }` gives the ROM's shape where the first test and the result are duplicated with `i` folded to 0, which `while (x < T[i].lim) i++;` does not. GCC only duplicates a short exit body with no labels, so a long body, or one with an `if`, keeps a single test, and invariants after the loop are hoisted before it (`func_800B71F8`, cases 1 and 8; that case 1 went from 366 to 23 in one edit).
+- `a - b - c` can come out with `c` subtracted first; swap the operands when a subtraction chain is scheduled in the wrong order (`func_800B71F8`, case 4).
+- A branch's delay slot depends on whether the assignment is inside the `if`: `val = 1000; if (x) break;` and `if (x) { val = 1000; break; }` fill it differently (`func_800B71F8`, case 11).
+- Check `case` positions against the jump table instead of trusting a draft: in `func_800C4C60` `fC++` belongs to case 2 and `case 3` starts after it. The label also ends the CSE block, which is why the ROM reloads the pointer there.
+- GCC evaluates a call's `?:` argument late; a temp for it (`n = x ? 0x10 : 8; f(p, q, n);`) puts it before the other arguments (`func_800C4C60`, 30 to 6).
+- Assign a local array's elements directly and read them back (`v[0] = ...; x = v[0] - v[1] - v[2];`) rather than through temporaries; that fixed `func_800B6DEC`'s registers (21 to 0).
+- `func_800BF2FC` returns `s32` where the ROM uses the result without extending it, and `s16` otherwise. Give an external function's declaration the type its use in this function shows.
+- A large round constant passed to a function may be a float: `0x40000000` in `a1` is `2.0f`. The two load in a different order, which also moves delay slots (`func_800C0E44`, 10 to 2). Check `src/` for an existing prototype first.
 - Sharing one C variable between unrelated blocks makes it a global pseudo, which takes a register and changes what reload spills through. In `func_8009A878`, splitting `k` and giving the overlay block its own temporaries fixed every register and the whole frame (481 differences to 3).
 - Two stores in an if/else can be cross-jumped into one, and that gives `beqz` where a single store after a temp gives `beqzl` (`func_8009A878`).
 - Labels and fallthrough matter even when they generate no code: a `case` placed in the middle of a body, or a
