@@ -47,7 +47,7 @@ segments:
   vram: 2148073472
   subsegments:
   - [247664, c, code_80090000]
-- {type: bin, start: 308168}
+- {type: bin, start: 297360}
 - name: code_8009D7A0
   type: code
   start: 592960

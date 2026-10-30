@@ -92,8 +92,8 @@
   },
   {
    "kind": "asm",
-   "src": "asm/bin/4B3C8.s",
-   "obj": "build/asm/bin/4B3C8.o"
+   "src": "asm/bin/48990.s",
+   "obj": "build/asm/bin/48990.o"
   },
   {
    "kind": "asm",
@@ -181,7 +181,7 @@
    "name": "code_80090000",
    "kind": "code",
    "start": 247664,
-   "end": 308168,
+   "end": 297360,
    "vram": 2148073472,
    "bss_vram": null,
    "bss_size": 0,
@@ -189,14 +189,14 @@
    "bss": []
   },
   {
-   "name": "4B3C8",
+   "name": "48990",
    "kind": "raw",
-   "start": 308168,
+   "start": 297360,
    "objects": [
-    "build/asm/bin/4B3C8.o"
+    "build/asm/bin/48990.o"
    ],
-   "stub": "asm/bin/4B3C8.s",
-   "incbin": "assets/4B3C8.bin"
+   "stub": "asm/bin/48990.s",
+   "incbin": "assets/48990.bin"
   },
   {
    "name": "code_8009D7A0",

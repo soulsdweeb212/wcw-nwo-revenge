@@ -3,7 +3,7 @@
 A matching decompilation of WCW / nWo  REVENGE for the Nintendo 64, started with [decompdecomp](https://github.com/n-delic/decompdecomp).
 1337 of 1345 functions build as C objects (99.4%). 35 of those are hand-written assembly routines wrapped in a top-level `asm()`
 block (see below), so 1302 are real C that compiles to exactly the original code; the other 8 functions are still plain assembly
-(all 8 have a draft in `nonmatching/`).
+(all 8 have a draft in `nonmatching/`; `func_8009C218` is still cut off by a segment boundary).
 `build.py` rebuilds the game from this tree and checks it against your original, byte for byte.
 
 ## Requirements
