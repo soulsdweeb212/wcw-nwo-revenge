@@ -10408,7 +10408,11 @@
    "seg": "code_800BBA00",
    "vram": 2148291648,
    "rom": 755936,
-   "asm": "asm/nonmatchings/code_800BBA00/func_800C5440.s"
+   "asm": "asm/nonmatchings/code_800BBA00/func_800C5440.s",
+   "c": "src/code_800BBA00/func_800C5440.c",
+   "own": {
+    ".rodata": 2148424904
+   }
   },
   {
    "name": "func_800C5A28",
@@ -12515,6 +12519,7 @@
   }
  ],
  "symbols": {
+  "func_800C594C": 2148292940,
   "func_800B82B8": 2148238008,
   "func_800C51A0": 2148290976,
   "D_800C5D90": 2148294032,
