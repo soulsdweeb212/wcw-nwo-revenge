@@ -1,7 +1,7 @@
 /* @header
  * initializeControllers  (originally func_80021230)
  * VRAM 0x80021230 | ROM 0x21E30 | size 0x19C
- * asm: asm/nonmatchings/main/func_80021230.s
+ * asm: asm/nonmatchings/main/initializeControllers.s
  */
 #include "common.h"
 

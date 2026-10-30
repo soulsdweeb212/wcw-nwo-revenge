@@ -1,7 +1,7 @@
 /* @header
  * updateBodyPartTransforms  (originally func_80009B84)
  * VRAM 0x80009B84 | ROM 0xA784 | size 0x214
- * asm: asm/nonmatchings/main/func_80009B84.s
+ * asm: asm/nonmatchings/main/updateBodyPartTransforms.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * insertTimer  (originally func_80027230)
  * VRAM 0x80027230 | ROM 0x27E30 | size 0x108
- * asm: asm/nonmatchings/main/func_80027230.s
+ * asm: asm/nonmatchings/main/insertTimer.s
  */
 #include "common.h"
 

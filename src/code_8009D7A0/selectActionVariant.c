@@ -1,7 +1,7 @@
 /* @header
  * selectActionVariant  (originally func_800AAFF4)
  * VRAM 0x800AAFF4 | ROM 0x9E494 | size 0xF4
- * asm: asm/nonmatchings/code_8009D7A0/func_800AAFF4.s
+ * asm: asm/nonmatchings/code_8009D7A0/selectActionVariant.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * convertRgba16ToGrayscale  (originally func_80004C90)
  * VRAM 0x80004C90 | ROM 0x5890 | size 0x178
- * asm: asm/nonmatchings/main/func_80004C90.s
+ * asm: asm/nonmatchings/main/convertRgba16ToGrayscale.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * updatePairedEntityStateA4864  (originally func_800A4864)
  * VRAM 0x800A4864 | ROM 0x97D04 | size 0x274
- * asm: asm/nonmatchings/code_8009D7A0/func_800A4864.s
+ * asm: asm/nonmatchings/code_8009D7A0/updatePairedEntityStateA4864.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * buildScaleMatrixFixed  (originally func_8001BED0)
  * VRAM 0x8001BED0 | ROM 0x1CAD0 | size 0x7C
- * asm: asm/nonmatchings/main/func_8001BED0.s
+ * asm: asm/nonmatchings/main/buildScaleMatrixFixed.s
  */
 #include "common.h"
 

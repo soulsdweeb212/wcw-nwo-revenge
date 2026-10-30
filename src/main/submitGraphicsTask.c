@@ -1,7 +1,7 @@
 /* @header
  * submitGraphicsTask  (originally func_800028B4)
  * VRAM 0x800028B4 | ROM 0x34B4 | size 0x2EC
- * asm: asm/nonmatchings/main/func_800028B4.s
+ * asm: asm/nonmatchings/main/submitGraphicsTask.s
  */
 #include "common.h"
 

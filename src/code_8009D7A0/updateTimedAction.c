@@ -1,7 +1,7 @@
 /* @header
  * updateTimedAction  (originally func_800A6108)
  * VRAM 0x800A6108 | ROM 0x995A8 | size 0x13C
- * asm: asm/nonmatchings/code_8009D7A0/func_800A6108.s
+ * asm: asm/nonmatchings/code_8009D7A0/updateTimedAction.s
  */
 #include "common.h"
 

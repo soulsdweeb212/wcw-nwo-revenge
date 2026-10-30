@@ -1,7 +1,7 @@
 /* @header
  * chooseDodgeAction  (originally func_800DFC8C)
  * VRAM 0x800DFC8C | ROM 0xD312C | size 0x148
- * asm: asm/nonmatchings/code_800DE9C0/func_800DFC8C.s
+ * asm: asm/nonmatchings/code_800DE9C0/chooseDodgeAction.s
  */
 #include "common.h"
 

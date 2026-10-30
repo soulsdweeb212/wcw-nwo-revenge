@@ -1,7 +1,7 @@
 /* @header
  * tryBeginPairedActionOnContact  (originally func_800E0420)
  * VRAM 0x800E0420 | ROM 0xD38C0 | size 0x170
- * asm: asm/nonmatchings/code_800DE9C0/func_800E0420.s
+ * asm: asm/nonmatchings/code_800DE9C0/tryBeginPairedActionOnContact.s
  */
 #include "common.h"
 

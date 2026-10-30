@@ -1,7 +1,7 @@
 /* @header
  * buildOrthoMatrixFloat  (originally func_8001B550)
  * VRAM 0x8001B550 | ROM 0x1C150 | size 0x130
- * asm: asm/nonmatchings/main/func_8001B550.s
+ * asm: asm/nonmatchings/main/buildOrthoMatrixFloat.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * countAudioVoicesByKey  (originally func_80013D58)
  * VRAM 0x80013D58 | ROM 0x14958 | size 0x58
- * asm: asm/nonmatchings/main/func_80013D58.s
+ * asm: asm/nonmatchings/main/countAudioVoicesByKey.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * translateEntityXZ  (originally func_800D6360)
  * VRAM 0x800D6360 | ROM 0xC9800 | size 0x90
- * asm: asm/nonmatchings/code_800BBA00/func_800D6360.s
+ * asm: asm/nonmatchings/code_800BBA00/translateEntityXZ.s
  */
 #include "common.h"
 

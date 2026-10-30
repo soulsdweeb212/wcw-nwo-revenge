@@ -1,7 +1,7 @@
 /* @header
  * findIdSubTableIndex  (originally func_8002B39C)
  * VRAM 0x8002B39C | ROM 0x2BF9C | size 0x108
- * asm: asm/nonmatchings/main/func_8002B39C.s
+ * asm: asm/nonmatchings/main/findIdSubTableIndex.s
  */
 #include "common.h"
 

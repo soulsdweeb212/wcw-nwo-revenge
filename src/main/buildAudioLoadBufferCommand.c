@@ -1,7 +1,7 @@
 /* @header
  * buildAudioLoadBufferCommand  (originally func_80019644)
  * VRAM 0x80019644 | ROM 0x1A244 | size 0x144
- * asm: asm/nonmatchings/main/func_80019644.s
+ * asm: asm/nonmatchings/main/buildAudioLoadBufferCommand.s
  */
 #include "common.h"
 

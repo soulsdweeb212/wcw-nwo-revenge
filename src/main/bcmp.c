@@ -1,7 +1,7 @@
 /* @header
  * bcmp  (originally func_80027FF0)
  * VRAM 0x80027FF0 | ROM 0x28BF0 | size 0x110
- * asm: asm/nonmatchings/main/func_80027FF0.s
+ * asm: asm/nonmatchings/main/bcmp.s
  */
 /* Hand-written in the original; kept as top-level asm so the bytes match exactly. */
 asm(

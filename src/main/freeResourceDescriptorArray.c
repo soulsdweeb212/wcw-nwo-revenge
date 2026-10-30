@@ -1,7 +1,7 @@
 /* @header
  * freeResourceDescriptorArray  (originally func_800072E8)
  * VRAM 0x800072E8 | ROM 0x7EE8 | size 0x1BC
- * asm: asm/nonmatchings/main/func_800072E8.s
+ * asm: asm/nonmatchings/main/freeResourceDescriptorArray.s
  */
 #include "common.h"
 

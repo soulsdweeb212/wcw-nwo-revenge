@@ -1,7 +1,7 @@
 /* @header
  * selectAudioVoiceSlot  (originally func_80015D4C)
  * VRAM 0x80015D4C | ROM 0x1694C | size 0x180
- * asm: asm/nonmatchings/main/func_80015D4C.s
+ * asm: asm/nonmatchings/main/selectAudioVoiceSlot.s
  */
 #include "common.h"
 

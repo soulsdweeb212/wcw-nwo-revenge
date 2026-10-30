@@ -1,7 +1,7 @@
 /* @header
  * updateActionVariantState  (originally func_800A2A70)
  * VRAM 0x800A2A70 | ROM 0x95F10 | size 0x238
- * asm: asm/nonmatchings/code_8009D7A0/func_800A2A70.s
+ * asm: asm/nonmatchings/code_8009D7A0/updateActionVariantState.s
  */
 #include "common.h"
 

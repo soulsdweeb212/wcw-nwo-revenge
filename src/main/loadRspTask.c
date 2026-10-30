@@ -1,7 +1,7 @@
 /* @header
  * loadRspTask  (originally func_80020B40)
  * VRAM 0x80020B40 | ROM 0x21740 | size 0x20C
- * asm: asm/nonmatchings/main/func_80020B40.s
+ * asm: asm/nonmatchings/main/loadRspTask.s
  */
 #include "common.h"
 

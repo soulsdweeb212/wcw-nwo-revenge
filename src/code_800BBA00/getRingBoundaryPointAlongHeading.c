@@ -1,7 +1,7 @@
 /* @header
  * getRingBoundaryPointAlongHeading  (originally func_800D746C)
  * VRAM 0x800D746C | ROM 0xCA90C | size 0x218
- * asm: asm/nonmatchings/code_800BBA00/func_800D746C.s
+ * asm: asm/nonmatchings/code_800BBA00/getRingBoundaryPointAlongHeading.s
  */
 #include "common.h"
 

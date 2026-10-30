@@ -1,7 +1,7 @@
 /* @header
  * saveAudioRingBuffer  (originally func_8001FDEC)
  * VRAM 0x8001FDEC | ROM 0x209EC | size 0x170
- * asm: asm/nonmatchings/main/func_8001FDEC.s
+ * asm: asm/nonmatchings/main/saveAudioRingBuffer.s
  */
 #include "common.h"
 

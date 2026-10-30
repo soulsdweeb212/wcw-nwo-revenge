@@ -1,7 +1,7 @@
 /* @header
  * calculateObjectVertexCentroid  (originally func_800016F4)
  * VRAM 0x800016F4 | ROM 0x22F4 | size 0x194
- * asm: asm/nonmatchings/main/func_800016F4.s
+ * asm: asm/nonmatchings/main/calculateObjectVertexCentroid.s
  */
 #include "common.h"
 

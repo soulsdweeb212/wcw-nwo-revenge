@@ -1,7 +1,7 @@
 /* @header
  * applyMovementToEntityPair  (originally func_800D6E78)
  * VRAM 0x800D6E78 | ROM 0xCA318 | size 0x2B0
- * asm: asm/nonmatchings/code_800BBA00/func_800D6E78.s
+ * asm: asm/nonmatchings/code_800BBA00/applyMovementToEntityPair.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * updateEntityHealthLevel  (originally func_800E13F8)
  * VRAM 0x800E13F8 | ROM 0xD4898 | size 0x168
- * asm: asm/nonmatchings/code_800DE9C0/func_800E13F8.s
+ * asm: asm/nonmatchings/code_800DE9C0/updateEntityHealthLevel.s
  */
 #include "common.h"
 

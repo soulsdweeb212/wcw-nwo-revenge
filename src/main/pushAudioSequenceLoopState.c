@@ -1,7 +1,7 @@
 /* @header
  * pushAudioSequenceLoopState  (originally func_800165FC)
  * VRAM 0x800165FC | ROM 0x171FC | size 0xB4
- * asm: asm/nonmatchings/main/func_800165FC.s
+ * asm: asm/nonmatchings/main/pushAudioSequenceLoopState.s
  */
 #include "common.h"
 

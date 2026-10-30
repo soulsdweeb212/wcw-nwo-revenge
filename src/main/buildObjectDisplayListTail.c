@@ -1,7 +1,7 @@
 /* @header
  * buildObjectDisplayListTail  (originally func_800060A4)
  * VRAM 0x800060A4 | ROM 0x6CA4 | size 0xD4
- * asm: asm/nonmatchings/main/func_800060A4.s
+ * asm: asm/nonmatchings/main/buildObjectDisplayListTail.s
  */
 #include "common.h"
 

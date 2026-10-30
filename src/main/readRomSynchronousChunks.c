@@ -1,7 +1,7 @@
 /* @header
  * readRomSynchronousChunks  (originally func_8000061C)
  * VRAM 0x8000061C | ROM 0x121C | size 0xE4
- * asm: asm/nonmatchings/main/func_8000061C.s
+ * asm: asm/nonmatchings/main/readRomSynchronousChunks.s
  */
 #include "common.h"
 

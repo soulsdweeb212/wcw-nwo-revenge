@@ -1,7 +1,7 @@
 /* @header
  * readPiHandleWord  (originally func_80028210)
  * VRAM 0x80028210 | ROM 0x28E10 | size 0x190
- * asm: asm/nonmatchings/main/func_80028210.s
+ * asm: asm/nonmatchings/main/readPiHandleWord.s
  */
 #include "common.h"
 

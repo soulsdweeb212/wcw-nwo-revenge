@@ -1,7 +1,7 @@
 /* @header
  * buildColorOverlayDisplayList  (originally func_80006B84)
  * VRAM 0x80006B84 | ROM 0x7784 | size 0x190
- * asm: asm/nonmatchings/main/func_80006B84.s
+ * asm: asm/nonmatchings/main/buildColorOverlayDisplayList.s
  */
 #include "common.h"
 

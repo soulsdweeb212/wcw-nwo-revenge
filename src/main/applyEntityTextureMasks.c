@@ -1,7 +1,7 @@
 /* @header
  * applyEntityTextureMasks  (originally func_8000C848)
  * VRAM 0x8000C848 | ROM 0xD448 | size 0xD4
- * asm: asm/nonmatchings/main/func_8000C848.s
+ * asm: asm/nonmatchings/main/applyEntityTextureMasks.s
  */
 #include "common.h"
 

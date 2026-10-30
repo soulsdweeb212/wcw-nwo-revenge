@@ -1,7 +1,7 @@
 /* @header
  * updateEntityReactionState  (originally func_800C94CC)
  * VRAM 0x800C94CC | ROM 0xBC96C | size 0x4A4
- * asm: asm/nonmatchings/code_800BBA00/func_800C94CC.s
+ * asm: asm/nonmatchings/code_800BBA00/updateEntityReactionState.s
  */
 #include "common.h"
 

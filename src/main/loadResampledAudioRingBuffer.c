@@ -1,7 +1,7 @@
 /* @header
  * loadResampledAudioRingBuffer  (originally func_8001FA64)
  * VRAM 0x8001FA64 | ROM 0x20664 | size 0x218
- * asm: asm/nonmatchings/main/func_8001FA64.s
+ * asm: asm/nonmatchings/main/loadResampledAudioRingBuffer.s
  */
 #include "common.h"
 

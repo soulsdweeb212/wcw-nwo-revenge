@@ -1,7 +1,7 @@
 /* @header
  * updateEntityCounterAttackState  (originally func_800CA2FC)
  * VRAM 0x800CA2FC | ROM 0xBD79C | size 0x45C
- * asm: asm/nonmatchings/code_800BBA00/func_800CA2FC.s
+ * asm: asm/nonmatchings/code_800BBA00/updateEntityCounterAttackState.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * __osContRamRead  (originally func_80022BB0)
  * VRAM 0x80022BB0 | ROM 0x237B0 | size 0x1FC
- * asm: asm/nonmatchings/main/func_80022BB0.s
+ * asm: asm/nonmatchings/main/__osContRamRead.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * releaseResourcePool  (originally func_8002AAFC)
  * VRAM 0x8002AAFC | ROM 0x2B6FC | size 0xFC
- * asm: asm/nonmatchings/main/func_8002AAFC.s
+ * asm: asm/nonmatchings/main/releaseResourcePool.s
  */
 #include "common.h"
 

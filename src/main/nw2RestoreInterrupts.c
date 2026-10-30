@@ -1,7 +1,7 @@
 /* @header
  * nw2RestoreInterrupts  (originally func_80026B30)
  * VRAM 0x80026B30 | ROM 0x27730 | size 0x1C
- * asm: asm/nonmatchings/main/func_80026B30.s
+ * asm: asm/nonmatchings/main/nw2RestoreInterrupts.s
  */
 /* Hand-written in the original; kept as top-level asm so the bytes match exactly. */
 asm(

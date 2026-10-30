@@ -1,7 +1,7 @@
 /* @header
  * updateRingCornerFlags  (originally func_80011334)
  * VRAM 0x80011334 | ROM 0x11F34 | size 0x108
- * asm: asm/nonmatchings/main/func_80011334.s
+ * asm: asm/nonmatchings/main/updateRingCornerFlags.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * readWriteControllerPakBank  (originally func_800233E4)
  * VRAM 0x800233E4 | ROM 0x23FE4 | size 0x248
- * asm: asm/nonmatchings/main/func_800233E4.s
+ * asm: asm/nonmatchings/main/readWriteControllerPakBank.s
  */
 #include "common.h"
 

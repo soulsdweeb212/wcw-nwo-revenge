@@ -1,7 +1,7 @@
 /* @header
  * main  (originally func_80000450)
  * VRAM 0x80000450 | ROM 0x1050 | size 0x68
- * asm: asm/nonmatchings/main/func_80000450.s
+ * asm: asm/nonmatchings/main/main.s
  */
 #include "common.h"
 

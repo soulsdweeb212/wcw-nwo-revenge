@@ -1,7 +1,7 @@
 /* @header
  * initializePiAndRdram  (originally func_800268A0)
  * VRAM 0x800268A0 | ROM 0x274A0 | size 0x248
- * asm: asm/nonmatchings/main/func_800268A0.s
+ * asm: asm/nonmatchings/main/initializePiAndRdram.s
  */
 #include "common.h"
 

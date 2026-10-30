@@ -1,7 +1,7 @@
 /* @header
  * countNibblePixelNeighbors  (originally func_80029868)
  * VRAM 0x80029868 | ROM 0x2A468 | size 0x1BC
- * asm: asm/nonmatchings/main/func_80029868.s
+ * asm: asm/nonmatchings/main/countNibblePixelNeighbors.s
  */
 #include "common.h"
 

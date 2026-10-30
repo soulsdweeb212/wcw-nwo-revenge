@@ -1,7 +1,7 @@
 /* @header
  * tryBeginBlockReaction  (originally func_800E2400)
  * VRAM 0x800E2400 | ROM 0xD58A0 | size 0x100
- * asm: asm/nonmatchings/code_800DE9C0/func_800E2400.s
+ * asm: asm/nonmatchings/code_800DE9C0/tryBeginBlockReaction.s
  */
 #include "common.h"
 

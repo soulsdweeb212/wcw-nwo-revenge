@@ -1,7 +1,7 @@
 /* @header
  * updateEntityGrabActionState  (originally func_800C6418)
  * VRAM 0x800C6418 | ROM 0xB98B8 | size 0x450
- * asm: asm/nonmatchings/code_800BBA00/func_800C6418.s
+ * asm: asm/nonmatchings/code_800BBA00/updateEntityGrabActionState.s
  */
 #include "common.h"
 

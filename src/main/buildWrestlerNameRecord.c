@@ -1,7 +1,7 @@
 /* @header
  * buildWrestlerNameRecord  (originally func_8002B8E4)
  * VRAM 0x8002B8E4 | ROM 0x2C4E4 | size 0x1D4
- * asm: asm/nonmatchings/main/func_8002B8E4.s
+ * asm: asm/nonmatchings/main/buildWrestlerNameRecord.s
  */
 #include "common.h"
 

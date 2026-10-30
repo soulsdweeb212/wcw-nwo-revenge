@@ -1,7 +1,7 @@
 /* @header
  * updateActionStateD9F04  (originally func_800D9F04)
  * VRAM 0x800D9F04 | ROM 0xCD3A4 | size 0x254
- * asm: asm/nonmatchings/code_800BBA00/func_800D9F04.s
+ * asm: asm/nonmatchings/code_800BBA00/updateActionStateD9F04.s
  */
 #include "common.h"
 

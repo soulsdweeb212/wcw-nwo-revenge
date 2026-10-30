@@ -1,7 +1,7 @@
 /* @header
  * findSjisCodeEntry  (originally func_80028DC0)
  * VRAM 0x80028DC0 | ROM 0x299C0 | size 0x68
- * asm: asm/nonmatchings/main/func_80028DC0.s
+ * asm: asm/nonmatchings/main/findSjisCodeEntry.s
  */
 #include "common.h"
 

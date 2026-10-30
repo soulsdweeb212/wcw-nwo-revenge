@@ -1,7 +1,7 @@
 /* @header
  * unpackAnimationParameters  (originally func_800A7D64)
  * VRAM 0x800A7D64 | ROM 0x9B204 | size 0x208
- * asm: asm/nonmatchings/code_8009D7A0/func_800A7D64.s
+ * asm: asm/nonmatchings/code_8009D7A0/unpackAnimationParameters.s
  */
 #include "common.h"
 

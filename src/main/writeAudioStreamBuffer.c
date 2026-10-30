@@ -1,7 +1,7 @@
 /* @header
  * writeAudioStreamBuffer  (originally func_80017DB0)
  * VRAM 0x80017DB0 | ROM 0x189B0 | size 0x168
- * asm: asm/nonmatchings/main/func_80017DB0.s
+ * asm: asm/nonmatchings/main/writeAudioStreamBuffer.s
  */
 #include "common.h"
 

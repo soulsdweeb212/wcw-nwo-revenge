@@ -1,7 +1,7 @@
 /* @header
  * updateFieldRecordMotion  (originally func_800E1B9C)
  * VRAM 0x800E1B9C | ROM 0xD503C | size 0x26C
- * asm: asm/nonmatchings/code_800DE9C0/func_800E1B9C.s
+ * asm: asm/nonmatchings/code_800DE9C0/updateFieldRecordMotion.s
  */
 #include "common.h"
 

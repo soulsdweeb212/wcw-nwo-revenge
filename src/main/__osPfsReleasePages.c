@@ -1,7 +1,7 @@
 /* @header
  * __osPfsReleasePages  (originally func_8002432C)
  * VRAM 0x8002432C | ROM 0x24F2C | size 0x68
- * asm: asm/nonmatchings/main/func_8002432C.s
+ * asm: asm/nonmatchings/main/__osPfsReleasePages.s
  */
 #include "common.h"
 

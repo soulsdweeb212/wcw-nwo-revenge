@@ -1,7 +1,7 @@
 /* @header
  * initializeTransformNode  (originally func_800014D8)
  * VRAM 0x800014D8 | ROM 0x20D8 | size 0x6C
- * asm: asm/nonmatchings/main/func_800014D8.s
+ * asm: asm/nonmatchings/main/initializeTransformNode.s
  */
 #include "common.h"
 

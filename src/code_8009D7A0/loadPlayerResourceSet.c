@@ -1,7 +1,7 @@
 /* @header
  * loadPlayerResourceSet  (originally func_800B7BC4)
  * VRAM 0x800B7BC4 | ROM 0xAB064 | size 0x130
- * asm: asm/nonmatchings/code_8009D7A0/func_800B7BC4.s
+ * asm: asm/nonmatchings/code_8009D7A0/loadPlayerResourceSet.s
  */
 #include "common.h"
 

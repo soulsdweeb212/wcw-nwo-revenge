@@ -1,7 +1,7 @@
 /* @header
  * updateEntityHoldReactionState  (originally func_800D1724)
  * VRAM 0x800D1724 | ROM 0xC4BC4 | size 0x438
- * asm: asm/nonmatchings/code_800BBA00/func_800D1724.s
+ * asm: asm/nonmatchings/code_800BBA00/updateEntityHoldReactionState.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * updateEntityTargetLookAngles  (originally func_800D4604)
  * VRAM 0x800D4604 | ROM 0xC7AA4 | size 0x39C
- * asm: asm/nonmatchings/code_800BBA00/func_800D4604.s
+ * asm: asm/nonmatchings/code_800BBA00/updateEntityTargetLookAngles.s
  */
 #include "common.h"
 

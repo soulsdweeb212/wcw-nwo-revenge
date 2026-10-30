@@ -1,7 +1,7 @@
 /* @header
  * initStatePools17B40  (originally func_80017B40)
  * VRAM 0x80017B40 | ROM 0x18740 | size 0x270
- * asm: asm/nonmatchings/main/func_80017B40.s
+ * asm: asm/nonmatchings/main/initStatePools17B40.s
  */
 #include "common.h"
 

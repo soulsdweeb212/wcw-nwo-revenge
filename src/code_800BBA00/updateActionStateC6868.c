@@ -1,7 +1,7 @@
 /* @header
  * updateActionStateC6868  (originally func_800C6868)
  * VRAM 0x800C6868 | ROM 0xB9D08 | size 0x2B4
- * asm: asm/nonmatchings/code_800BBA00/func_800C6868.s
+ * asm: asm/nonmatchings/code_800BBA00/updateActionStateC6868.s
  */
 #include "common.h"
 

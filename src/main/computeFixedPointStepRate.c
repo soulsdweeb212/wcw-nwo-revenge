@@ -1,7 +1,7 @@
 /* @header
  * computeFixedPointStepRate  (originally func_80018EE4)
  * VRAM 0x80018EE4 | ROM 0x19AE4 | size 0x140
- * asm: asm/nonmatchings/main/func_80018EE4.s
+ * asm: asm/nonmatchings/main/computeFixedPointStepRate.s
  */
 #include "common.h"
 

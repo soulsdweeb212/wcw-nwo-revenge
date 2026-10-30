@@ -1,7 +1,7 @@
 /* @header
  * pullAudioMixerChildren  (originally func_8001E230)
  * VRAM 0x8001E230 | ROM 0x1EE30 | size 0xDC
- * asm: asm/nonmatchings/main/func_8001E230.s
+ * asm: asm/nonmatchings/main/pullAudioMixerChildren.s
  */
 #include "common.h"
 

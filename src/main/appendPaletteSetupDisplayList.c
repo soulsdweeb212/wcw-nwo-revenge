@@ -1,7 +1,7 @@
 /* @header
  * appendPaletteSetupDisplayList  (originally func_8002A970)
  * VRAM 0x8002A970 | ROM 0x2B570 | size 0xB8
- * asm: asm/nonmatchings/main/func_8002A970.s
+ * asm: asm/nonmatchings/main/appendPaletteSetupDisplayList.s
  */
 #include "common.h"
 

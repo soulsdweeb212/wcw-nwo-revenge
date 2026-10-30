@@ -1,7 +1,7 @@
 /* @header
  * osPfsFileState  (originally func_800243A0)
  * VRAM 0x800243A0 | ROM 0x24FA0 | size 0x18C
- * asm: asm/nonmatchings/main/func_800243A0.s
+ * asm: asm/nonmatchings/main/osPfsFileState.s
  */
 #include "common.h"
 

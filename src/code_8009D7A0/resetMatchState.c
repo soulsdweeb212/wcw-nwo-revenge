@@ -1,7 +1,7 @@
 /* @header
  * resetMatchState  (originally func_800B7A30)
  * VRAM 0x800B7A30 | ROM 0xAAED0 | size 0x194
- * asm: asm/nonmatchings/code_8009D7A0/func_800B7A30.s
+ * asm: asm/nonmatchings/code_8009D7A0/resetMatchState.s
  */
 #include "common.h"
 

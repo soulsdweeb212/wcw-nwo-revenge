@@ -1,7 +1,7 @@
 /* @header
  * readWriteControllerPakInode  (originally func_8002286C)
  * VRAM 0x8002286C | ROM 0x2346C | size 0x338
- * asm: asm/nonmatchings/main/func_8002286C.s
+ * asm: asm/nonmatchings/main/readWriteControllerPakInode.s
  */
 #include "common.h"
 

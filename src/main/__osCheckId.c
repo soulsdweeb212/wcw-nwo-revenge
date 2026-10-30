@@ -1,7 +1,7 @@
 /* @header
  * __osCheckId  (originally func_800227B4)
  * VRAM 0x800227B4 | ROM 0x233B4 | size 0xB8
- * asm: asm/nonmatchings/main/func_800227B4.s
+ * asm: asm/nonmatchings/main/__osCheckId.s
  */
 #include "common.h"
 

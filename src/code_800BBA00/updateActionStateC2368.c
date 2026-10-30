@@ -1,7 +1,7 @@
 /* @header
  * updateActionStateC2368  (originally func_800C2368)
  * VRAM 0x800C2368 | ROM 0xB5808 | size 0x2CC
- * asm: asm/nonmatchings/code_800BBA00/func_800C2368.s
+ * asm: asm/nonmatchings/code_800BBA00/updateActionStateC2368.s
  */
 #include "common.h"
 

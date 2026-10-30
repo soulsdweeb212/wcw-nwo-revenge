@@ -1,7 +1,7 @@
 /* @header
  * updateActionStateDC798  (originally func_800DC798)
  * VRAM 0x800DC798 | ROM 0xCFC38 | size 0x3BC
- * asm: asm/nonmatchings/code_800BBA00/func_800DC798.s
+ * asm: asm/nonmatchings/code_800BBA00/updateActionStateDC798.s
  */
 #include "common.h"
 

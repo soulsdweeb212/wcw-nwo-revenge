@@ -1,7 +1,7 @@
 /* @header
  * initializeResourceStream  (originally func_80009784)
  * VRAM 0x80009784 | ROM 0xA384 | size 0x20C
- * asm: asm/nonmatchings/main/func_80009784.s
+ * asm: asm/nonmatchings/main/initializeResourceStream.s
  */
 #include "common.h"
 

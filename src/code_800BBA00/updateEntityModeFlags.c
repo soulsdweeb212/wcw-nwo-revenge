@@ -1,7 +1,7 @@
 /* @header
  * updateEntityModeFlags  (originally func_800D4BFC)
  * VRAM 0x800D4BFC | ROM 0xC809C | size 0xC8
- * asm: asm/nonmatchings/code_800BBA00/func_800D4BFC.s
+ * asm: asm/nonmatchings/code_800BBA00/updateEntityModeFlags.s
  */
 #include "common.h"
 

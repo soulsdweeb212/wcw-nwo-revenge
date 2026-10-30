@@ -1,7 +1,7 @@
 /* @header
  * advanceTimeoutAction  (originally func_800B2354)
  * VRAM 0x800B2354 | ROM 0xA57F4 | size 0xD8
- * asm: asm/nonmatchings/code_8009D7A0/func_800B2354.s
+ * asm: asm/nonmatchings/code_8009D7A0/advanceTimeoutAction.s
  */
 #include "common.h"
 

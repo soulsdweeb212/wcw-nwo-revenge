@@ -1,7 +1,7 @@
 /* @header
  * initializeAudioSystem  (originally func_8001348C)
  * VRAM 0x8001348C | ROM 0x1408C | size 0x364
- * asm: asm/nonmatchings/main/func_8001348C.s
+ * asm: asm/nonmatchings/main/initializeAudioSystem.s
  */
 #include "common.h"
 

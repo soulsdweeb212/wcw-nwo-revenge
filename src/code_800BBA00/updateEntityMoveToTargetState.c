@@ -1,7 +1,7 @@
 /* @header
  * updateEntityMoveToTargetState  (originally func_800C8188)
  * VRAM 0x800C8188 | ROM 0xBB628 | size 0x404
- * asm: asm/nonmatchings/code_800BBA00/func_800C8188.s
+ * asm: asm/nonmatchings/code_800BBA00/updateEntityMoveToTargetState.s
  */
 #include "common.h"
 

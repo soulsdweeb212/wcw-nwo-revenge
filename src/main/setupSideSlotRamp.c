@@ -1,7 +1,7 @@
 /* @header
  * setupSideSlotRamp  (originally func_8001009C)
  * VRAM 0x8001009C | ROM 0x10C9C | size 0x164
- * asm: asm/nonmatchings/main/func_8001009C.s
+ * asm: asm/nonmatchings/main/setupSideSlotRamp.s
  */
 #include "common.h"
 

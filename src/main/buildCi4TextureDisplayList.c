@@ -1,7 +1,7 @@
 /* @header
  * buildCi4TextureDisplayList  (originally func_80011460)
  * VRAM 0x80011460 | ROM 0x12060 | size 0x304
- * asm: asm/nonmatchings/main/func_80011460.s
+ * asm: asm/nonmatchings/main/buildCi4TextureDisplayList.s
  */
 #include "common.h"
 

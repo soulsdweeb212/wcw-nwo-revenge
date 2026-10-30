@@ -1,7 +1,7 @@
 /* @header
  * createAudioTask  (originally func_80017018)
  * VRAM 0x80017018 | ROM 0x17C18 | size 0x19C
- * asm: asm/nonmatchings/main/func_80017018.s
+ * asm: asm/nonmatchings/main/createAudioTask.s
  */
 #include "common.h"
 

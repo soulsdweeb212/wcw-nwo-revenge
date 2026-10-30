@@ -1,7 +1,7 @@
 /* @header
  * fillNibblePixelLevels  (originally func_80029E94)
  * VRAM 0x80029E94 | ROM 0x2AA94 | size 0x168
- * asm: asm/nonmatchings/main/func_80029E94.s
+ * asm: asm/nonmatchings/main/fillNibblePixelLevels.s
  */
 #include "common.h"
 

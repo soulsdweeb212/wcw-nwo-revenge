@@ -1,7 +1,7 @@
 /* @header
  * setupEntityFacingGroup  (originally func_800CD80C)
  * VRAM 0x800CD80C | ROM 0xC0CAC | size 0x184
- * asm: asm/nonmatchings/code_800BBA00/func_800CD80C.s
+ * asm: asm/nonmatchings/code_800BBA00/setupEntityFacingGroup.s
  */
 #include "common.h"
 

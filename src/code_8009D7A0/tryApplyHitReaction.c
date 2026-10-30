@@ -1,7 +1,7 @@
 /* @header
  * tryApplyHitReaction  (originally func_800AD454)
  * VRAM 0x800AD454 | ROM 0xA08F4 | size 0x120
- * asm: asm/nonmatchings/code_8009D7A0/func_800AD454.s
+ * asm: asm/nonmatchings/code_8009D7A0/tryApplyHitReaction.s
  */
 #include "common.h"
 

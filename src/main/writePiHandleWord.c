@@ -1,7 +1,7 @@
 /* @header
  * writePiHandleWord  (originally func_800283A0)
  * VRAM 0x800283A0 | ROM 0x28FA0 | size 0x144
- * asm: asm/nonmatchings/main/func_800283A0.s
+ * asm: asm/nonmatchings/main/writePiHandleWord.s
  */
 #include "common.h"
 

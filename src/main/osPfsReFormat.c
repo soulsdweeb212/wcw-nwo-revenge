@@ -1,7 +1,7 @@
 /* @header
  * osPfsReFormat  (originally func_80024F80)
  * VRAM 0x80024F80 | ROM 0x25B80 | size 0x2FC
- * asm: asm/nonmatchings/main/func_80024F80.s
+ * asm: asm/nonmatchings/main/osPfsReFormat.s
  */
 #include "common.h"
 

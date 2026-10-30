@@ -1,7 +1,7 @@
 /* @header
  * updateSpecialMoveRequest  (originally func_800D8F44)
  * VRAM 0x800D8F44 | ROM 0xCC3E4 | size 0x1A4
- * asm: asm/nonmatchings/code_800BBA00/func_800D8F44.s
+ * asm: asm/nonmatchings/code_800BBA00/updateSpecialMoveRequest.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * updateActionStateC707C  (originally func_800C707C)
  * VRAM 0x800C707C | ROM 0xBA51C | size 0x260
- * asm: asm/nonmatchings/code_800BBA00/func_800C707C.s
+ * asm: asm/nonmatchings/code_800BBA00/updateActionStateC707C.s
  */
 #include "common.h"
 

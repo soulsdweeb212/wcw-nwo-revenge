@@ -1,7 +1,7 @@
 /* @header
  * calculateControllerPakAddressCrc  (originally func_800231B0)
  * VRAM 0x800231B0 | ROM 0x23DB0 | size 0x6C
- * asm: asm/nonmatchings/main/func_800231B0.s
+ * asm: asm/nonmatchings/main/calculateControllerPakAddressCrc.s
  */
 #include "common.h"
 

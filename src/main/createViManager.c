@@ -1,7 +1,7 @@
 /* @header
  * createViManager  (originally func_800258C0)
  * VRAM 0x800258C0 | ROM 0x264C0 | size 0x1A0
- * asm: asm/nonmatchings/main/func_800258C0.s
+ * asm: asm/nonmatchings/main/createViManager.s
  */
 #include "common.h"
 

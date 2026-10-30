@@ -1,7 +1,7 @@
 /* @header
  * getXZDirectionQuadrant  (originally func_800A77F0)
  * VRAM 0x800A77F0 | ROM 0x9AC90 | size 0x38
- * asm: asm/nonmatchings/code_8009D7A0/func_800A77F0.s
+ * asm: asm/nonmatchings/code_8009D7A0/getXZDirectionQuadrant.s
  */
 #include "common.h"
 

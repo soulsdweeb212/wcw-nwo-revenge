@@ -1,7 +1,7 @@
 /* @header
  * lookupPlayerNameById  (originally func_80099480)
  * VRAM 0x80099480 | ROM 0x45BF0 | size 0xE8
- * asm: asm/nonmatchings/code_80090000/func_80099480.s
+ * asm: asm/nonmatchings/code_80090000/lookupPlayerNameById.s
  */
 #include "common.h"
 

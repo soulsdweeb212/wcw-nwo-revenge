@@ -1,7 +1,7 @@
 /* @header
  * updateEntitySetupAction  (originally func_8009DC18)
  * VRAM 0x8009DC18 | ROM 0x910B8 | size 0x148
- * asm: asm/nonmatchings/code_8009D7A0/func_8009DC18.s
+ * asm: asm/nonmatchings/code_8009D7A0/updateEntitySetupAction.s
  */
 #include "common.h"
 

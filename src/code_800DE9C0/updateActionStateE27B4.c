@@ -1,7 +1,7 @@
 /* @header
  * updateActionStateE27B4  (originally func_800E27B4)
  * VRAM 0x800E27B4 | ROM 0xD5C54 | size 0x264
- * asm: asm/nonmatchings/code_800DE9C0/func_800E27B4.s
+ * asm: asm/nonmatchings/code_800DE9C0/updateActionStateE27B4.s
  */
 #include "common.h"
 

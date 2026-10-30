@@ -1,7 +1,7 @@
 /* @header
  * updateEntityThrownState  (originally func_800BE4E0)
  * VRAM 0x800BE4E0 | ROM 0xB1980 | size 0x428
- * asm: asm/nonmatchings/code_800BBA00/func_800BE4E0.s
+ * asm: asm/nonmatchings/code_800BBA00/updateEntityThrownState.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * updateAudioVoices  (originally func_80014500)
  * VRAM 0x80014500 | ROM 0x15100 | size 0x38C
- * asm: asm/nonmatchings/main/func_80014500.s
+ * asm: asm/nonmatchings/main/updateAudioVoices.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * osPfsAllocateFile  (originally func_80023630)
  * VRAM 0x80023630 | ROM 0x24230 | size 0x30C
- * asm: asm/nonmatchings/main/func_80023630.s
+ * asm: asm/nonmatchings/main/osPfsAllocateFile.s
  */
 #include "common.h"
 

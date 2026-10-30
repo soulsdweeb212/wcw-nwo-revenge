@@ -1,7 +1,7 @@
 /* @header
  * isEntityActionAllowedC2870  (originally func_800C2870)
  * VRAM 0x800C2870 | ROM 0xB5D10 | size 0x2A8
- * asm: asm/nonmatchings/code_800BBA00/func_800C2870.s
+ * asm: asm/nonmatchings/code_800BBA00/isEntityActionAllowedC2870.s
  */
 #include "common.h"
 

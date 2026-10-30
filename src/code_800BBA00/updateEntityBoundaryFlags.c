@@ -1,7 +1,7 @@
 /* @header
  * updateEntityBoundaryFlags  (originally func_800BEB14)
  * VRAM 0x800BEB14 | ROM 0xB1FB4 | size 0x228
- * asm: asm/nonmatchings/code_800BBA00/func_800BEB14.s
+ * asm: asm/nonmatchings/code_800BBA00/updateEntityBoundaryFlags.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * loadResourceTexture4b  (originally func_80091294)
  * VRAM 0x80091294 | ROM 0x3DA04 | size 0x25C
- * asm: asm/nonmatchings/code_80090000/func_80091294.s
+ * asm: asm/nonmatchings/code_80090000/loadResourceTexture4b.s
  */
 #include "common.h"
 

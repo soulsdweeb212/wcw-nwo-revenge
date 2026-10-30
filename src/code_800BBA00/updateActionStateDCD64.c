@@ -1,7 +1,7 @@
 /* @header
  * updateActionStateDCD64  (originally func_800DCD64)
  * VRAM 0x800DCD64 | ROM 0xD0204 | size 0x258
- * asm: asm/nonmatchings/code_800BBA00/func_800DCD64.s
+ * asm: asm/nonmatchings/code_800BBA00/updateActionStateDCD64.s
  */
 #include "common.h"
 

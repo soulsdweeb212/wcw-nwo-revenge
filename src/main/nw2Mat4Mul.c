@@ -1,7 +1,7 @@
 /* @header
  * nw2Mat4Mul  (originally func_8001B310)
  * VRAM 0x8001B310 | ROM 0x1BF10 | size 0xDC
- * asm: asm/nonmatchings/main/func_8001B310.s
+ * asm: asm/nonmatchings/main/nw2Mat4Mul.s
  */
 #include "common.h"
 

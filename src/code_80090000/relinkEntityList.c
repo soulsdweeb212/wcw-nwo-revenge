@@ -1,7 +1,7 @@
 /* @header
  * relinkEntityList  (originally func_80091128)
  * VRAM 0x80091128 | ROM 0x3D898 | size 0x11C
- * asm: asm/nonmatchings/code_80090000/func_80091128.s
+ * asm: asm/nonmatchings/code_80090000/relinkEntityList.s
  */
 #include "common.h"
 

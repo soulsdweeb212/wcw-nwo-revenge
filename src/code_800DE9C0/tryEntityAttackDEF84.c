@@ -1,7 +1,7 @@
 /* @header
  * tryEntityAttackDEF84  (originally func_800DEF84)
  * VRAM 0x800DEF84 | ROM 0xD2424 | size 0x290
- * asm: asm/nonmatchings/code_800DE9C0/func_800DEF84.s
+ * asm: asm/nonmatchings/code_800DE9C0/tryEntityAttackDEF84.s
  */
 #include "common.h"
 

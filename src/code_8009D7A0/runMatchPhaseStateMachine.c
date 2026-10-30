@@ -1,7 +1,7 @@
 /* @header
  * runMatchPhaseStateMachine  (originally func_800B7CF4)
  * VRAM 0x800B7CF4 | ROM 0xAB194 | size 0x584
- * asm: asm/nonmatchings/code_8009D7A0/func_800B7CF4.s
+ * asm: asm/nonmatchings/code_8009D7A0/runMatchPhaseStateMachine.s
  */
 #include "common.h"
 

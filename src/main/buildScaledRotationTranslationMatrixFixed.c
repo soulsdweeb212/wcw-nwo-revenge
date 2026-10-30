@@ -1,7 +1,7 @@
 /* @header
  * buildScaledRotationTranslationMatrixFixed  (originally func_8001C398)
  * VRAM 0x8001C398 | ROM 0x1CF98 | size 0x1E0
- * asm: asm/nonmatchings/main/func_8001C398.s
+ * asm: asm/nonmatchings/main/buildScaledRotationTranslationMatrixFixed.s
  */
 #include "common.h"
 

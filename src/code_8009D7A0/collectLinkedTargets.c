@@ -1,7 +1,7 @@
 /* @header
  * collectLinkedTargets  (originally func_800A7418)
  * VRAM 0x800A7418 | ROM 0x9A8B8 | size 0x2E4
- * asm: asm/nonmatchings/code_8009D7A0/func_800A7418.s
+ * asm: asm/nonmatchings/code_8009D7A0/collectLinkedTargets.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * initControllerPakDescriptor  (originally func_80021AA0)
  * VRAM 0x80021AA0 | ROM 0x226A0 | size 0xD4
- * asm: asm/nonmatchings/main/func_80021AA0.s
+ * asm: asm/nonmatchings/main/initControllerPakDescriptor.s
  */
 #include "common.h"
 

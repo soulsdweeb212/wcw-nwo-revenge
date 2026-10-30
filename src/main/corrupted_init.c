@@ -1,7 +1,7 @@
 /* @header
  * corrupted_init  (originally func_80023EC0)
  * VRAM 0x80023EC0 | ROM 0x24AC0 | size 0x158
- * asm: asm/nonmatchings/main/func_80023EC0.s
+ * asm: asm/nonmatchings/main/corrupted_init.s
  */
 #include "common.h"
 

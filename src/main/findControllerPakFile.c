@@ -1,7 +1,7 @@
 /* @header
  * findControllerPakFile  (originally func_800252E0)
  * VRAM 0x800252E0 | ROM 0x25EE0 | size 0x1A0
- * asm: asm/nonmatchings/main/func_800252E0.s
+ * asm: asm/nonmatchings/main/findControllerPakFile.s
  */
 #include "common.h"
 

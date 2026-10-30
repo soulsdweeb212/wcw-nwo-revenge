@@ -1,7 +1,7 @@
 /* @header
  * startThread  (originally func_8001CD20)
  * VRAM 0x8001CD20 | ROM 0x1D920 | size 0x118
- * asm: asm/nonmatchings/main/func_8001CD20.s
+ * asm: asm/nonmatchings/main/startThread.s
  */
 #include "common.h"
 

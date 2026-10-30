@@ -1,7 +1,7 @@
 /* @header
  * approximateAtan  (originally func_80003920)
  * VRAM 0x80003920 | ROM 0x4520 | size 0x11C
- * asm: asm/nonmatchings/main/func_80003920.s
+ * asm: asm/nonmatchings/main/approximateAtan.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * loadAudioRingBuffer  (originally func_8001FC7C)
  * VRAM 0x8001FC7C | ROM 0x2087C | size 0x170
- * asm: asm/nonmatchings/main/func_8001FC7C.s
+ * asm: asm/nonmatchings/main/loadAudioRingBuffer.s
  */
 #include "common.h"
 

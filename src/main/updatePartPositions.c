@@ -1,7 +1,7 @@
 /* @header
  * updatePartPositions  (originally func_8000D324)
  * VRAM 0x8000D324 | ROM 0xDF24 | size 0x100
- * asm: asm/nonmatchings/main/func_8000D324.s
+ * asm: asm/nonmatchings/main/updatePartPositions.s
  */
 #include "common.h"
 

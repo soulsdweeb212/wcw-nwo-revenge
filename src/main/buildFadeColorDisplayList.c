@@ -1,7 +1,7 @@
 /* @header
  * buildFadeColorDisplayList  (originally func_8000F964)
  * VRAM 0x8000F964 | ROM 0x10564 | size 0x194
- * asm: asm/nonmatchings/main/func_8000F964.s
+ * asm: asm/nonmatchings/main/buildFadeColorDisplayList.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * packControllerReadCommands  (originally func_800230F4)
  * VRAM 0x800230F4 | ROM 0x23CF4 | size 0xB8
- * asm: asm/nonmatchings/main/func_800230F4.s
+ * asm: asm/nonmatchings/main/packControllerReadCommands.s
  */
 #include "common.h"
 

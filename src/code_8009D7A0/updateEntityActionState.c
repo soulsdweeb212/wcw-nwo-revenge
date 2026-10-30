@@ -1,7 +1,7 @@
 /* @header
  * updateEntityActionState  (originally func_800A164C)
  * VRAM 0x800A164C | ROM 0x94AEC | size 0x548
- * asm: asm/nonmatchings/code_8009D7A0/func_800A164C.s
+ * asm: asm/nonmatchings/code_8009D7A0/updateEntityActionState.s
  */
 #include "common.h"
 

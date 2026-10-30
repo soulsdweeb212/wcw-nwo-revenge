@@ -1,7 +1,7 @@
 /* @header
  * releaseObjectHeapBlocks  (originally func_80006D64)
  * VRAM 0x80006D64 | ROM 0x7964 | size 0xC8
- * asm: asm/nonmatchings/main/func_80006D64.s
+ * asm: asm/nonmatchings/main/releaseObjectHeapBlocks.s
  */
 #include "common.h"
 

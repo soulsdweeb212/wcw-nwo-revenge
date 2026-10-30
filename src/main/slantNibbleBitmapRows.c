@@ -1,7 +1,7 @@
 /* @header
  * slantNibbleBitmapRows  (originally func_80029FFC)
  * VRAM 0x80029FFC | ROM 0x2ABFC | size 0x1C8
- * asm: asm/nonmatchings/main/func_80029FFC.s
+ * asm: asm/nonmatchings/main/slantNibbleBitmapRows.s
  */
 #include "common.h"
 

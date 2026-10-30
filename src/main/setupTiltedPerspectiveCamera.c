@@ -1,7 +1,7 @@
 /* @header
  * setupTiltedPerspectiveCamera  (originally func_80005428)
  * VRAM 0x80005428 | ROM 0x6028 | size 0x184
- * asm: asm/nonmatchings/main/func_80005428.s
+ * asm: asm/nonmatchings/main/setupTiltedPerspectiveCamera.s
  */
 #include "common.h"
 

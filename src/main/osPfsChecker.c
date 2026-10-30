@@ -1,7 +1,7 @@
 /* @header
  * osPfsChecker  (originally func_80023A60)
  * VRAM 0x80023A60 | ROM 0x24660 | size 0x460
- * asm: asm/nonmatchings/main/func_80023A60.s
+ * asm: asm/nonmatchings/main/osPfsChecker.s
  */
 #include "common.h"
 

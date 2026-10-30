@@ -1,7 +1,7 @@
 /* @header
  * isEntityActionEligible  (originally func_800A94B4)
  * VRAM 0x800A94B4 | ROM 0x9C954 | size 0x2E8
- * asm: asm/nonmatchings/code_8009D7A0/func_800A94B4.s
+ * asm: asm/nonmatchings/code_8009D7A0/isEntityActionEligible.s
  */
 #include "common.h"
 

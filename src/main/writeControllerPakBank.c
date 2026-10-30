@@ -1,7 +1,7 @@
 /* @header
  * writeControllerPakBank  (originally func_800232A0)
  * VRAM 0x800232A0 | ROM 0x23EA0 | size 0x144
- * asm: asm/nonmatchings/main/func_800232A0.s
+ * asm: asm/nonmatchings/main/writeControllerPakBank.s
  */
 #include "common.h"
 

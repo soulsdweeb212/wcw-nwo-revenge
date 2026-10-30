@@ -1,7 +1,7 @@
 /* @header
  * nw2Sqrtf  (originally func_8001A480)
  * VRAM 0x8001A480 | ROM 0x1B080 | size 0x8
- * asm: asm/nonmatchings/main/func_8001A480.s
+ * asm: asm/nonmatchings/main/nw2Sqrtf.s
  */
 #include "common.h"
 

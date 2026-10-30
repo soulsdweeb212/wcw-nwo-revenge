@@ -1,7 +1,7 @@
 /* @header
  * updateEntityApproachState  (originally func_800D0804)
  * VRAM 0x800D0804 | ROM 0xC3CA4 | size 0x464
- * asm: asm/nonmatchings/code_800BBA00/func_800D0804.s
+ * asm: asm/nonmatchings/code_800BBA00/updateEntityApproachState.s
  */
 #include "common.h"
 

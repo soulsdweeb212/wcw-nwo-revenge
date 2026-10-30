@@ -1,7 +1,7 @@
 /* @header
  * stepRecordedFramePlayback  (originally func_800D5D1C)
  * VRAM 0x800D5D1C | ROM 0xC91BC | size 0x620
- * asm: asm/nonmatchings/code_800BBA00/func_800D5D1C.s
+ * asm: asm/nonmatchings/code_800BBA00/stepRecordedFramePlayback.s
  */
 #include "common.h"
 

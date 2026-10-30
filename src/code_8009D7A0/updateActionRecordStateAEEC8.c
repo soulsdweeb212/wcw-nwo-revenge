@@ -1,7 +1,7 @@
 /* @header
  * updateActionRecordStateAEEC8  (originally func_800AEEC8)
  * VRAM 0x800AEEC8 | ROM 0xA2368 | size 0x2F0
- * asm: asm/nonmatchings/code_8009D7A0/func_800AEEC8.s
+ * asm: asm/nonmatchings/code_8009D7A0/updateActionRecordStateAEEC8.s
  */
 #include "common.h"
 

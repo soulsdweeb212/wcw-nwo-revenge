@@ -1,7 +1,7 @@
 /* @header
  * applyEntityMovementC8D84  (originally func_800C8D84)
  * VRAM 0x800C8D84 | ROM 0xBC224 | size 0x290
- * asm: asm/nonmatchings/code_800BBA00/func_800C8D84.s
+ * asm: asm/nonmatchings/code_800BBA00/applyEntityMovementC8D84.s
  */
 #include "common.h"
 

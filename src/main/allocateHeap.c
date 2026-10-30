@@ -1,7 +1,7 @@
 /* @header
  * allocateHeap  (originally func_80000854)
  * VRAM 0x80000854 | ROM 0x1454 | size 0x104
- * asm: asm/nonmatchings/main/func_80000854.s
+ * asm: asm/nonmatchings/main/allocateHeap.s
  */
 #include "common.h"
 

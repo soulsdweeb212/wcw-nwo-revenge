@@ -1,7 +1,7 @@
 /* @header
  * deleteControllerPakFile  (originally func_80024180)
  * VRAM 0x80024180 | ROM 0x24D80 | size 0x1AC
- * asm: asm/nonmatchings/main/func_80024180.s
+ * asm: asm/nonmatchings/main/deleteControllerPakFile.s
  */
 #include "common.h"
 

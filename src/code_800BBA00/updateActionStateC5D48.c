@@ -1,7 +1,7 @@
 /* @header
  * updateActionStateC5D48  (originally func_800C5D48)
  * VRAM 0x800C5D48 | ROM 0xB91E8 | size 0x274
- * asm: asm/nonmatchings/code_800BBA00/func_800C5D48.s
+ * asm: asm/nonmatchings/code_800BBA00/updateActionStateC5D48.s
  */
 #include "common.h"
 

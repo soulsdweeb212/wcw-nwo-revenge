@@ -1,7 +1,7 @@
 /* @header
  * readEntityStunState  (originally func_800BFB20)
  * VRAM 0x800BFB20 | ROM 0xB2FC0 | size 0x170
- * asm: asm/nonmatchings/code_800BBA00/func_800BFB20.s
+ * asm: asm/nonmatchings/code_800BBA00/readEntityStunState.s
  */
 #include "common.h"
 

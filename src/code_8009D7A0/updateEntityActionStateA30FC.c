@@ -1,7 +1,7 @@
 /* @header
  * updateEntityActionStateA30FC  (originally func_800A30FC)
  * VRAM 0x800A30FC | ROM 0x9659C | size 0x268
- * asm: asm/nonmatchings/code_8009D7A0/func_800A30FC.s
+ * asm: asm/nonmatchings/code_8009D7A0/updateEntityActionStateA30FC.s
  */
 #include "common.h"
 

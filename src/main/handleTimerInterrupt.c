@@ -1,7 +1,7 @@
 /* @header
  * handleTimerInterrupt  (originally func_80027094)
  * VRAM 0x80027094 | ROM 0x27C94 | size 0x13C
- * asm: asm/nonmatchings/main/func_80027094.s
+ * asm: asm/nonmatchings/main/handleTimerInterrupt.s
  */
 #include "common.h"
 

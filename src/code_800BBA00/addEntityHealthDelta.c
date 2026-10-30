@@ -1,7 +1,7 @@
 /* @header
  * addEntityHealthDelta  (originally func_800BF62C)
  * VRAM 0x800BF62C | ROM 0xB2ACC | size 0xD4
- * asm: asm/nonmatchings/code_800BBA00/func_800BF62C.s
+ * asm: asm/nonmatchings/code_800BBA00/addEntityHealthDelta.s
  */
 #include "common.h"
 

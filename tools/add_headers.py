@@ -47,7 +47,7 @@ def header_for(name, vram, size, segment, seg_rom, seg_vram):
     original = f"func_{vram:08X}"
     title = name if name == original else f"{name}  (originally {original})"
     rom = vram - seg_vram + seg_rom
-    asm = f"asm/nonmatchings/{segment}/{original}.s"
+    asm = f"asm/nonmatchings/{segment}/{name}.s"  # (the .s files carry the current name, not the func_ one)
     text = (f"/* @header\n * {title}\n * VRAM 0x{vram:08X} | ROM 0x{rom:X} | size 0x{size:X}\n"
             f" * asm: {asm}\n */\n")
     return text, asm

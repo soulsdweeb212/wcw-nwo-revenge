@@ -1,7 +1,7 @@
 /* @header
  * buildTiledTextureDisplayList  (originally func_80097184)
  * VRAM 0x80097184 | ROM 0x438F4 | size 0x5B8
- * asm: asm/nonmatchings/code_80090000/func_80097184.s
+ * asm: asm/nonmatchings/code_80090000/buildTiledTextureDisplayList.s
  */
 #include "common.h"
 

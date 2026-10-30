@@ -1,7 +1,7 @@
 /* @header
  * initObjectNodeLists  (originally func_80020340)
  * VRAM 0x80020340 | ROM 0x20F40 | size 0x2CC
- * asm: asm/nonmatchings/main/func_80020340.s
+ * asm: asm/nonmatchings/main/initObjectNodeLists.s
  */
 #include "common.h"
 

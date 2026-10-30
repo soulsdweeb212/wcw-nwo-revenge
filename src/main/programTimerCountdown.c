@@ -1,7 +1,7 @@
 /* @header
  * programTimerCountdown  (originally func_800271D0)
  * VRAM 0x800271D0 | ROM 0x27DD0 | size 0x60
- * asm: asm/nonmatchings/main/func_800271D0.s
+ * asm: asm/nonmatchings/main/programTimerCountdown.s
  */
 #include "common.h"
 

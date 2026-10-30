@@ -1,7 +1,7 @@
 /* @header
  * selectPairedActionCD3F8  (originally func_800CD3F8)
  * VRAM 0x800CD3F8 | ROM 0xC0898 | size 0x2CC
- * asm: asm/nonmatchings/code_800BBA00/func_800CD3F8.s
+ * asm: asm/nonmatchings/code_800BBA00/selectPairedActionCD3F8.s
  */
 #include "common.h"
 

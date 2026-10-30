@@ -1,7 +1,7 @@
 /* @header
  * advanceTargetedAction  (originally func_800A64CC)
  * VRAM 0x800A64CC | ROM 0x9996C | size 0x11C
- * asm: asm/nonmatchings/code_8009D7A0/func_800A64CC.s
+ * asm: asm/nonmatchings/code_8009D7A0/advanceTargetedAction.s
  */
 #include "common.h"
 

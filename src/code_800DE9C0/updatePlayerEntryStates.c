@@ -1,7 +1,7 @@
 /* @header
  * updatePlayerEntryStates  (originally func_800E1E08)
  * VRAM 0x800E1E08 | ROM 0xD52A8 | size 0x114
- * asm: asm/nonmatchings/code_800DE9C0/func_800E1E08.s
+ * asm: asm/nonmatchings/code_800DE9C0/updatePlayerEntryStates.s
  */
 #include "common.h"
 

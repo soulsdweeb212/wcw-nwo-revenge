@@ -1,7 +1,7 @@
 /* @header
  * readControllerPakId  (originally func_800225E8)
  * VRAM 0x800225E8 | ROM 0x231E8 | size 0x1CC
- * asm: asm/nonmatchings/main/func_800225E8.s
+ * asm: asm/nonmatchings/main/readControllerPakId.s
  */
 #include "common.h"
 

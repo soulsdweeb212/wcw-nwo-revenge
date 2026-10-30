@@ -1,7 +1,7 @@
 /* @header
  * startPiDmaWithHandle  (originally func_80027970)
  * VRAM 0x80027970 | ROM 0x28570 | size 0x1CC
- * asm: asm/nonmatchings/main/func_80027970.s
+ * asm: asm/nonmatchings/main/startPiDmaWithHandle.s
  */
 #include "common.h"
 

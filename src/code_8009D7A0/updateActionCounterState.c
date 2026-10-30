@@ -1,7 +1,7 @@
 /* @header
  * updateActionCounterState  (originally func_800AF52C)
  * VRAM 0x800AF52C | ROM 0xA29CC | size 0x144
- * asm: asm/nonmatchings/code_8009D7A0/func_800AF52C.s
+ * asm: asm/nonmatchings/code_8009D7A0/updateActionCounterState.s
  */
 #include "common.h"
 

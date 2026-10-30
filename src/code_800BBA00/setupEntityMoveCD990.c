@@ -1,7 +1,7 @@
 /* @header
  * setupEntityMoveCD990  (originally func_800CD990)
  * VRAM 0x800CD990 | ROM 0xC0E30 | size 0x274
- * asm: asm/nonmatchings/code_800BBA00/func_800CD990.s
+ * asm: asm/nonmatchings/code_800BBA00/setupEntityMoveCD990.s
  */
 #include "common.h"
 

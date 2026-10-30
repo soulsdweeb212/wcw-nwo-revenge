@@ -1,7 +1,7 @@
 /* @header
  * advanceMovePhase  (originally func_800B16D0)
  * VRAM 0x800B16D0 | ROM 0xA4B70 | size 0x210
- * asm: asm/nonmatchings/code_8009D7A0/func_800B16D0.s
+ * asm: asm/nonmatchings/code_8009D7A0/advanceMovePhase.s
  */
 #include "common.h"
 

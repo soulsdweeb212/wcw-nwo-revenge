@@ -1,7 +1,7 @@
 /* @header
  * copyPartCoordinateFields  (originally func_800D49A0)
  * VRAM 0x800D49A0 | ROM 0xC7E40 | size 0x130
- * asm: asm/nonmatchings/code_800BBA00/func_800D49A0.s
+ * asm: asm/nonmatchings/code_800BBA00/copyPartCoordinateFields.s
  */
 #include "common.h"
 

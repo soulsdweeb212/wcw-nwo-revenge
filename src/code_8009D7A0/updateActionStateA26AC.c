@@ -1,7 +1,7 @@
 /* @header
  * updateActionStateA26AC  (originally func_800A26AC)
  * VRAM 0x800A26AC | ROM 0x95B4C | size 0x2D0
- * asm: asm/nonmatchings/code_8009D7A0/func_800A26AC.s
+ * asm: asm/nonmatchings/code_8009D7A0/updateActionStateA26AC.s
  */
 #include "common.h"
 

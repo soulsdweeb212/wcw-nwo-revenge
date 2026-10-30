@@ -1,7 +1,7 @@
 /* @header
  * selectNewLinkedTarget  (originally func_800A7B38)
  * VRAM 0x800A7B38 | ROM 0x9AFD8 | size 0x108
- * asm: asm/nonmatchings/code_8009D7A0/func_800A7B38.s
+ * asm: asm/nonmatchings/code_8009D7A0/selectNewLinkedTarget.s
  */
 #include "common.h"
 

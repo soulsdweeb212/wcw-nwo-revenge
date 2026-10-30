@@ -1,7 +1,7 @@
 /* @header
  * cachePiDomainTimings  (originally func_80025750)
  * VRAM 0x80025750 | ROM 0x26350 | size 0xB8
- * asm: asm/nonmatchings/main/func_80025750.s
+ * asm: asm/nonmatchings/main/cachePiDomainTimings.s
  */
 #include "common.h"
 

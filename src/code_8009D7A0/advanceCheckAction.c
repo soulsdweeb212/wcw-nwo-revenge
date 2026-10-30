@@ -1,7 +1,7 @@
 /* @header
  * advanceCheckAction  (originally func_800B1440)
  * VRAM 0x800B1440 | ROM 0xA48E0 | size 0xF0
- * asm: asm/nonmatchings/code_8009D7A0/func_800B1440.s
+ * asm: asm/nonmatchings/code_8009D7A0/advanceCheckAction.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * countControllerPakPageReferences  (originally func_80024018)
  * VRAM 0x80024018 | ROM 0x24C18 | size 0x168
- * asm: asm/nonmatchings/main/func_80024018.s
+ * asm: asm/nonmatchings/main/countControllerPakPageReferences.s
  */
 #include "common.h"
 

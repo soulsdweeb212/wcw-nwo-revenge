@@ -1,7 +1,7 @@
 /* @header
  * freeCachedResource  (originally func_8002A6BC)
  * VRAM 0x8002A6BC | ROM 0x2B2BC | size 0x164
- * asm: asm/nonmatchings/main/func_8002A6BC.s
+ * asm: asm/nonmatchings/main/freeCachedResource.s
  */
 #include "common.h"
 

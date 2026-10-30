@@ -1,7 +1,7 @@
 /* @header
  * __divdi3  (originally func_800286F0)
  * VRAM 0x800286F0 | ROM 0x292F0 | size 0xA8
- * asm: asm/nonmatchings/main/func_800286F0.s
+ * asm: asm/nonmatchings/main/__divdi3.s
  */
 /* Hand-written in the original; kept as top-level asm so the bytes match exactly. */
 asm(

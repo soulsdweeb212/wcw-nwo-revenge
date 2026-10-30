@@ -1,7 +1,7 @@
 /* @header
  * setCameraView  (originally func_800055AC)
  * VRAM 0x800055AC | ROM 0x61AC | size 0x120
- * asm: asm/nonmatchings/main/func_800055AC.s
+ * asm: asm/nonmatchings/main/setCameraView.s
  */
 #include "common.h"
 

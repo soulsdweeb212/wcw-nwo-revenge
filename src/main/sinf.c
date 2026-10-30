@@ -1,7 +1,7 @@
 /* @header
  * sinf  (originally func_8001BF50)
  * VRAM 0x8001BF50 | ROM 0x1CB50 | size 0x1A0
- * asm: asm/nonmatchings/main/func_8001BF50.s
+ * asm: asm/nonmatchings/main/sinf.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * updateEntityAttackState  (originally func_800C9014)
  * VRAM 0x800C9014 | ROM 0xBC4B4 | size 0x4B8
- * asm: asm/nonmatchings/code_800BBA00/func_800C9014.s
+ * asm: asm/nonmatchings/code_800BBA00/updateEntityAttackState.s
  */
 #include "common.h"
 

@@ -1,7 +1,7 @@
 /* @header
  * setViSpecialFeatures  (originally func_80020F20)
  * VRAM 0x80020F20 | ROM 0x21B20 | size 0x164
- * asm: asm/nonmatchings/main/func_80020F20.s
+ * asm: asm/nonmatchings/main/setViSpecialFeatures.s
  */
 #include "common.h"
 

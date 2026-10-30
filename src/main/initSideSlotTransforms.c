@@ -1,7 +1,7 @@
 /* @header
  * initSideSlotTransforms  (originally func_80010D2C)
  * VRAM 0x80010D2C | ROM 0x1192C | size 0x140
- * asm: asm/nonmatchings/main/func_80010D2C.s
+ * asm: asm/nonmatchings/main/initSideSlotTransforms.s
  */
 #include "common.h"
 

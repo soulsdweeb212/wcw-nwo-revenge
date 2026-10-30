@@ -1,7 +1,7 @@
 /* @header
  * buildVertexDisplayList  (originally func_800046F0)
  * VRAM 0x800046F0 | ROM 0x52F0 | size 0x17C
- * asm: asm/nonmatchings/main/func_800046F0.s
+ * asm: asm/nonmatchings/main/buildVertexDisplayList.s
  */
 #include "common.h"
 

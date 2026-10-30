@@ -1,7 +1,7 @@
 /* @header
  * emitFullscreenOverlay99908  (originally func_80099908)
  * VRAM 0x80099908 | ROM 0x46078 | size 0x260
- * asm: asm/nonmatchings/code_80090000/func_80099908.s
+ * asm: asm/nonmatchings/code_80090000/emitFullscreenOverlay99908.s
  */
 #include "common.h"
 

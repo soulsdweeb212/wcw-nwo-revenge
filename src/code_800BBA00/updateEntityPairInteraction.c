@@ -1,7 +1,7 @@
 /* @header
  * updateEntityPairInteraction  (originally func_800CCE50)
  * VRAM 0x800CCE50 | ROM 0xC02F0 | size 0x5A8
- * asm: asm/nonmatchings/code_800BBA00/func_800CCE50.s
+ * asm: asm/nonmatchings/code_800BBA00/updateEntityPairInteraction.s
  */
 #include "common.h"
 

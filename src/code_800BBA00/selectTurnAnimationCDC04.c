@@ -1,7 +1,7 @@
 /* @header
  * selectTurnAnimationCDC04  (originally func_800CDC04)
  * VRAM 0x800CDC04 | ROM 0xC10A4 | size 0x2E0
- * asm: asm/nonmatchings/code_800BBA00/func_800CDC04.s
+ * asm: asm/nonmatchings/code_800BBA00/selectTurnAnimationCDC04.s
  */
 #include "common.h"
 

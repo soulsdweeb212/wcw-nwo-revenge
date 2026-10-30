@@ -1,7 +1,7 @@
 /* @header
  * advanceTwoPhaseAction  (originally func_800A4D74)
  * VRAM 0x800A4D74 | ROM 0x98214 | size 0xF4
- * asm: asm/nonmatchings/code_8009D7A0/func_800A4D74.s
+ * asm: asm/nonmatchings/code_8009D7A0/advanceTwoPhaseAction.s
  */
 #include "common.h"
 

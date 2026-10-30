@@ -1,7 +1,7 @@
 /* @header
  * stepEntityXZQuadraticSpline  (originally func_800D732C)
  * VRAM 0x800D732C | ROM 0xCA7CC | size 0x140
- * asm: asm/nonmatchings/code_800BBA00/func_800D732C.s
+ * asm: asm/nonmatchings/code_800BBA00/stepEntityXZQuadraticSpline.s
  */
 #include "common.h"
 

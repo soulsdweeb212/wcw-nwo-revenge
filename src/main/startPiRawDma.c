@@ -1,7 +1,7 @@
 /* @header
  * startPiRawDma  (originally func_80027880)
  * VRAM 0x80027880 | ROM 0x28480 | size 0xD0
- * asm: asm/nonmatchings/main/func_80027880.s
+ * asm: asm/nonmatchings/main/startPiRawDma.s
  */
 #include "common.h"
 

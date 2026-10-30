@@ -1,7 +1,7 @@
 /* @header
  * cosf  (originally func_8001A830)
  * VRAM 0x8001A830 | ROM 0x1B430 | size 0x150
- * asm: asm/nonmatchings/main/func_8001A830.s
+ * asm: asm/nonmatchings/main/cosf.s
  */
 #include "common.h"
 

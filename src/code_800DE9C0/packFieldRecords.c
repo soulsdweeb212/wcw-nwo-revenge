@@ -1,7 +1,7 @@
 /* @header
  * packFieldRecords  (originally func_800E1F1C)
  * VRAM 0x800E1F1C | ROM 0xD53BC | size 0x174
- * asm: asm/nonmatchings/code_800DE9C0/func_800E1F1C.s
+ * asm: asm/nonmatchings/code_800DE9C0/packFieldRecords.s
  */
 #include "common.h"
 
