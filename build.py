@@ -41,7 +41,11 @@ def decompdecomps_python() -> str | None:
     except OSError:
         return None
     found = re.search(r"^#!\s*(\S*python[\d.]*)\s*$", text, re.M) or re.search(r"(/\S+/python[\d.]*)\b", text)
-    return found.group(1) if found and Path(found.group(1)).exists() else None
+    if found and Path(found.group(1)).exists():
+        return found.group(1)
+    # `decomp` isn't on PATH (or isn't readable): where `uv tool install` puts decompdecomp's environment
+    fallback = Path.home() / ".local/share/uv/tools/decompnet/bin/python"
+    return str(fallback) if fallback.exists() else None
 
 
 try:
@@ -52,7 +56,9 @@ try:
     from decompnet.rom.symbols import AUTO_NAME
 except ImportError:
     python = decompdecomps_python()
-    if python and Path(python).resolve() != Path(sys.executable).resolve():
+    # (compare the paths as written, not resolved: a venv's python is a symlink to the system python, so they resolve to
+    # the same file, but only the venv's path makes Python use the venv's packages)
+    if python and os.path.abspath(python) != os.path.abspath(sys.executable):
         os.execv(python, [python, __file__, *sys.argv[1:]])  # decompdecomp's own Python runs this build
     sys.exit("This build uses decompdecomp's pinned compilers: install decompdecomp first (https://github.com/n-delic/decompdecomp).")
 
