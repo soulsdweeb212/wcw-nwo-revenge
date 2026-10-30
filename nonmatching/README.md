@@ -27,22 +27,23 @@ functions, not two tiny ones.
 
 ### 2. Complete C, a few instructions off (scheduler or register differences)
 These have the whole function written and the same structure as the ROM. What differs is how GCC ordered a few instructions
-or numbered registers. Each is a search problem; the permuter has been run on all of them (hundreds of thousands of variants
-in total) without reaching 0 yet.
+or numbered registers. Each is a search problem. "Draft" is the count for the C in this folder; "search" is the best count the
+permuter reached (hundreds of thousands of variants in total) with rewritten code that is full of dummy locals and wrong
+types, so it is not kept, only the number.
 
-| function | size | differing | what differs |
-|---|---|---|---|
-| `func_8000A3DC` | 0x694 | 4 | a `sra`/`mult` pair for `arg1 % 3` sits two slots later than in the ROM. The draft needs a dummy `tq = a1 & 1; if (tq >> 1)` to reach 4; plain `%` gives 9–13. |
-| `func_800900C0` | 0x240 | 4–6 | `v1` where the ROM uses `v0` for the callback-address temporaries (the `-1` stored later is created too early). Display-list constants are kept in locals `c1..c5`, a `u8 pad[0x34]` local fixes the frame. |
-| `func_80012CD0` | 0x3C8 | 3–6 | in the `mode >= 11` branch the ROM loads `pz` after computing `y - py`; ours loads it earlier and adds a `neg.s`. |
-| `func_800C0E44` | 0x458 | 5–10 | branch delay slots: the ROM leaves `nop`s where ours fills with `move a0,a2`. |
-| `func_800291C0` | 0x3F4 | 6 | jump table. `beql` vs `beq` and `a0` vs `v0` in three places. |
-| `func_80006178` | 0x594 | 9 | the placement of one `lw` and the order of two float operations. |
-| `func_800A83DC` | 0x938 | 14–29 | jump table. One `beqzl`, and `index * 0x1A30` (built from shifts and subtracts) is scheduled in a different order in two places, which changes two registers. |
-| `func_8000C91C` | 0x3FC | 37–40 | register numbering in the prologue (`s0`/`a2`/`t0`/`t1` swapped) that then runs through the whole function. |
-| `func_80095884` | 0xE28 | 40–45 | load order in one block and float register numbers (`$f4` vs `$f6`) in another. |
-| `func_800C4C60` | 0x530 | 46–48 | jump table; decoded from the ROM this session. Structure is identical; the `fC++` / `D_800FABD8` block is scheduled earlier than in the ROM. Shares its last case with `func_800C5440`. |
-| `func_800B6DEC` | 0x40C | 31 | jump table; decoded from the ROM this session. The ROM keeps a separate copy of the same flag test in six cases, while GCC merges two of them in ours; the evaluation order of case 0 differs. |
+| function | size | draft | search | what differs |
+|---|---|---|---|---|
+| `func_8000A3DC` | 0x694 | 4 | 4 | a `sra`/`mult` pair for `arg1 % 3` sits two slots later than in the ROM. The draft needs a dummy `tq = a1 & 1; if (tq >> 1)` to reach 4; plain `%` gives 9–13. |
+| `func_800900C0` | 0x240 | 6 | 2 | `v1` where the ROM uses `v0` for the callback-address temporaries (the `-1` stored later is created too early). The search's 2 uses `sb` where the ROM has `sw`, so it is not a real match. Display-list constants are kept in locals `c1..c5`; a `u8 pad[0x34]` local fixes the frame; changing the callees' return types alone does nothing. |
+| `func_80012CD0` | 0x3C8 | 6 | 3 | in the `mode >= 11` branch the ROM loads `pz` after computing `y - py`; ours loads it earlier and adds a `neg.s`. |
+| `func_800C0E44` | 0x458 | 10 | 5 | branch delay slots: the ROM leaves `nop`s where ours fills with `move a0,a2`. |
+| `func_800291C0` | 0x3F4 | 6 | 6 | jump table. `beql` vs `beq` and `a0` vs `v0` in three places. |
+| `func_80006178` | 0x594 | 9 | 7 | the placement of one `lw` and the order of two float operations. |
+| `func_800A83DC` | 0x938 | 29 | 14 | jump table. One `beqzl`, and `index * 0x1A30` (built from shifts and subtracts) is scheduled in a different order in two places, which changes two registers. |
+| `func_8000C91C` | 0x3FC | 40 | 18 | register numbering in the prologue (`s0`/`a2`/`t0`/`t1` swapped) that then runs through the whole function. The search got there with chained assignments in the init loop (`a[k] = (b[k] = -1)`) and different integer types, neither of which helps on its own. |
+| `func_80095884` | 0xE28 | 45 | 36 | load order in one block and float register numbers (`$f4` vs `$f6`) in another. |
+| `func_800C4C60` | 0x530 | 48 | 22 | jump table; decoded from the ROM this session. Structure is identical; the `fC++` / `D_800FABD8` block is scheduled earlier than in the ROM. Shares its last case with `func_800C5440`. |
+| `func_800B6DEC` | 0x40C | 31 | 27 | jump table; decoded from the ROM this session. The ROM keeps a separate copy of the same flag test in six cases, while GCC merges two of them in ours; the evaluation order of case 0 differs. |
 
 ### 3. Draft incomplete: needs more decoding from the ROM
 | function | size | how much exists | what is missing |
