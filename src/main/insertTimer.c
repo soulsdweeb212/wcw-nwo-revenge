@@ -1,3 +1,8 @@
+/* @header
+ * insertTimer  (originally func_80027230)
+ * VRAM 0x80027230 | ROM 0x27E30 | size 0x108
+ * asm: asm/nonmatchings/main/func_80027230.s
+ */
 #include "common.h"
 
 typedef struct Nw2Timer {struct Nw2Timer *next,*prev; u64 interval,value; void *mq; u32 msg;} Nw2Timer;

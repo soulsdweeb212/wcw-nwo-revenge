@@ -1,3 +1,8 @@
+/* @header
+ * func_800080A0
+ * VRAM 0x800080A0 | ROM 0x8CA0 | size 0x40C
+ * asm: asm/nonmatchings/main/func_800080A0.s
+ */
 #include "common.h"
 
 s64 __divdi3(s64, s64);

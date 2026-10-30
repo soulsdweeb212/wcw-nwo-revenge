@@ -1,3 +1,8 @@
+/* @header
+ * writeAudioStreamBuffer  (originally func_80017DB0)
+ * VRAM 0x80017DB0 | ROM 0x189B0 | size 0x168
+ * asm: asm/nonmatchings/main/func_80017DB0.s
+ */
 #include "common.h"
 
 typedef struct { u8 pad0[8]; s32 (*refill)(void*); u8 padC[4]; s32 fillLimit; } Node;

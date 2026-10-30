@@ -1,3 +1,8 @@
+/* @header
+ * func_80029A24
+ * VRAM 0x80029A24 | ROM 0x2A624 | size 0x21C
+ * asm: asm/nonmatchings/main/func_80029A24.s
+ */
 #include "common.h"
 
 extern u8 D_80038E4C[]; extern u8 D_80038E5C[]; extern u8 D_8003BAB0[]; extern u8 D_8003BAB4[]; extern u8 D_8003BAB8[]; extern u8 D_8003BAC0[];

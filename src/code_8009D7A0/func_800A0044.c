@@ -1,3 +1,8 @@
+/* @header
+ * func_800A0044
+ * VRAM 0x800A0044 | ROM 0x934E4 | size 0x150
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A0044.s
+ */
 #include "common.h"
 
 /* func_800A0044: two-phase action state machine for the entity in D_800EB408.

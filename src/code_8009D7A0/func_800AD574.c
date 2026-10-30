@@ -1,3 +1,8 @@
+/* @header
+ * func_800AD574
+ * VRAM 0x800AD574 | ROM 0xA0A14 | size 0x15C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AD574.s
+ */
 #include "common.h"
 
 /* func_800AD574: links target entity arg1 to source entity arg0 when the

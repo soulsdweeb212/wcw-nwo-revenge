@@ -1,3 +1,8 @@
+/* @header
+ * func_800213CC
+ * VRAM 0x800213CC | ROM 0x21FCC | size 0xB4
+ * asm: asm/nonmatchings/main/func_800213CC.s
+ */
 #include "common.h"
 
 typedef struct { u8 b0,b1,b2,b3,b4,b5,b6,b7; } Cmd8;

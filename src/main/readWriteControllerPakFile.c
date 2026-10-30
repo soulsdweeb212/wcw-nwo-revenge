@@ -1,3 +1,8 @@
+/* @header
+ * readWriteControllerPakFile  (originally func_80024B40)
+ * VRAM 0x80024B40 | ROM 0x25740 | size 0x434
+ * asm: asm/nonmatchings/main/func_80024B40.s
+ */
 #include "common.h"
 
 /* libultra PFS file read/write.

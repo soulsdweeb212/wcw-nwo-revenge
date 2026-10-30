@@ -1,3 +1,8 @@
+/* @header
+ * func_800DECAC
+ * VRAM 0x800DECAC | ROM 0xD214C | size 0x23C
+ * asm: asm/nonmatchings/code_800DE9C0/func_800DECAC.s
+ */
 #include "common.h"
 
 extern u16 D_800F98D0[];

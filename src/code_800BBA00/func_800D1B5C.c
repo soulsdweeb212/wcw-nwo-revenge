@@ -1,3 +1,8 @@
+/* @header
+ * func_800D1B5C
+ * VRAM 0x800D1B5C | ROM 0xC4FFC | size 0x34C
+ * asm: asm/nonmatchings/code_800BBA00/func_800D1B5C.s
+ */
 #include "common.h"
 
 extern s32 D_800E3C90[];

@@ -1,3 +1,8 @@
+/* @header
+ * initAudioStream  (originally func_8001CF94)
+ * VRAM 0x8001CF94 | ROM 0x1DB94 | size 0x498
+ * asm: asm/nonmatchings/main/func_8001CF94.s
+ */
 #include "common.h"
 
 /* Initialize an audio-stream voice (obj) from a stream descriptor (arg1).

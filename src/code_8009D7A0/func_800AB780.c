@@ -1,3 +1,8 @@
+/* @header
+ * func_800AB780
+ * VRAM 0x800AB780 | ROM 0x9EC20 | size 0x1EC
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AB780.s
+ */
 #include "common.h"
 
 /* Per-frame attack-range decision (companion to func_800AA9A0). Forces

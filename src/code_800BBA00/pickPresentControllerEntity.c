@@ -1,3 +1,8 @@
+/* @header
+ * pickPresentControllerEntity  (originally func_800BC7D8)
+ * VRAM 0x800BC7D8 | ROM 0xAFC78 | size 0x230
+ * asm: asm/nonmatchings/code_800BBA00/func_800BC7D8.s
+ */
 #include "common.h"
 
 extern u32 D_8007E848;

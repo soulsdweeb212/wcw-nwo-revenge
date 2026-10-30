@@ -1,3 +1,8 @@
+/* @header
+ * func_80007EAC
+ * VRAM 0x80007EAC | ROM 0x8AAC | size 0xC4
+ * asm: asm/nonmatchings/main/func_80007EAC.s
+ */
 #include "common.h"
 
 f32 cosf(f32);

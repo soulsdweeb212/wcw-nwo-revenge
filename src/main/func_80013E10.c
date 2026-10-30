@@ -1,3 +1,8 @@
+/* @header
+ * func_80013E10
+ * VRAM 0x80013E10 | ROM 0x14A10 | size 0x70
+ * asm: asm/nonmatchings/main/func_80013E10.s
+ */
 #include "common.h"
 
 typedef struct{u8 type;s32 value;}Msg;

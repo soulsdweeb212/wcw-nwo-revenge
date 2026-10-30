@@ -1,3 +1,8 @@
+/* @header
+ * findIdSubTableEntryIndex  (originally func_8002B298)
+ * VRAM 0x8002B298 | ROM 0x2BE98 | size 0x104
+ * asm: asm/nonmatchings/main/func_8002B298.s
+ */
 #include "common.h"
 
 extern Nw2IdSubTable lookupSubTables[];

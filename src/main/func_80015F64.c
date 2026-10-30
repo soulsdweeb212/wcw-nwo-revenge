@@ -1,3 +1,8 @@
+/* @header
+ * func_80015F64
+ * VRAM 0x80015F64 | ROM 0x16B64 | size 0x184
+ * asm: asm/nonmatchings/main/func_80015F64.s
+ */
 #include "common.h"
 
 extern s32 *D_800604D4;

@@ -1,3 +1,8 @@
+/* @header
+ * func_800BFC90
+ * VRAM 0x800BFC90 | ROM 0xB3130 | size 0x60
+ * asm: asm/nonmatchings/code_800BBA00/func_800BFC90.s
+ */
 #include "common.h"
 
 extern u8 D_800F9D30[];

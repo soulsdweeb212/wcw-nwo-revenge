@@ -1,3 +1,8 @@
+/* @header
+ * func_80022154
+ * VRAM 0x80022154 | ROM 0x22D54 | size 0x44
+ * asm: asm/nonmatchings/main/func_80022154.s
+ */
 #include "common.h"
 
 /* Compute the 14-word checksum pair (sum and complement-sum) for the 0x20-byte

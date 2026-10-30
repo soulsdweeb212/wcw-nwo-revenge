@@ -1,3 +1,8 @@
+/* @header
+ * func_80006E2C
+ * VRAM 0x80006E2C | ROM 0x7A2C | size 0x50
+ * asm: asm/nonmatchings/main/func_80006E2C.s
+ */
 #include "common.h"
 
 s32 releaseHeapBlock(s32);

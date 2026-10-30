@@ -1,3 +1,8 @@
+/* @header
+ * getEntityPairFacingFlags  (originally func_800D3CCC)
+ * VRAM 0x800D3CCC | ROM 0xC716C | size 0x174
+ * asm: asm/nonmatchings/code_800BBA00/func_800D3CCC.s
+ */
 #include "common.h"
 
 f32 func_80003A3C(f32,f32);

@@ -1,3 +1,8 @@
+/* @header
+ * freeResourceDescriptorArray  (originally func_800072E8)
+ * VRAM 0x800072E8 | ROM 0x7EE8 | size 0x1BC
+ * asm: asm/nonmatchings/main/func_800072E8.s
+ */
 #include "common.h"
 
 /* Free an array of resource descriptors: for each 0x2C-byte entry release the

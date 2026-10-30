@@ -1,3 +1,8 @@
+/* @header
+ * func_800207BC
+ * VRAM 0x800207BC | ROM 0x213BC | size 0x2C
+ * asm: asm/nonmatchings/main/func_800207BC.s
+ */
 #include "common.h"
 
 /* identical to func_80017F18 (matched), with its names changed by decompdecomp */

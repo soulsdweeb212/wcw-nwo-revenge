@@ -1,3 +1,8 @@
+/* @header
+ * func_800B5DC4
+ * VRAM 0x800B5DC4 | ROM 0xA9264 | size 0x160
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B5DC4.s
+ */
 #include "common.h"
 
 extern f64 D_800E54E0,D_800E54E8,D_800E54F0;

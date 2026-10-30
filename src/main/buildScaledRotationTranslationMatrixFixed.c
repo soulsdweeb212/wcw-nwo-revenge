@@ -1,3 +1,8 @@
+/* @header
+ * buildScaledRotationTranslationMatrixFixed  (originally func_8001C398)
+ * VRAM 0x8001C398 | ROM 0x1CF98 | size 0x1E0
+ * asm: asm/nonmatchings/main/func_8001C398.s
+ */
 #include "common.h"
 
 /* Build a 4x4 row-major fixed-point-friendly transform: rotate by the Euler

@@ -1,3 +1,8 @@
+/* @header
+ * func_80000E0C
+ * VRAM 0x80000E0C | ROM 0x1A0C | size 0xD4
+ * asm: asm/nonmatchings/main/func_80000E0C.s
+ */
 #include "common.h"
 
 s32 func_8001C990(void *, s32 *, s32);

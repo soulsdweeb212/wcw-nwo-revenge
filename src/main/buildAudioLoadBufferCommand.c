@@ -1,3 +1,8 @@
+/* @header
+ * buildAudioLoadBufferCommand  (originally func_80019644)
+ * VRAM 0x80019644 | ROM 0x1A244 | size 0x144
+ * asm: asm/nonmatchings/main/func_80019644.s
+ */
 #include "common.h"
 
 typedef struct {u32 w0,w1;} ACmd19644;

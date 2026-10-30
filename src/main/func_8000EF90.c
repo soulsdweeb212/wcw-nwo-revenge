@@ -1,3 +1,8 @@
+/* @header
+ * func_8000EF90
+ * VRAM 0x8000EF90 | ROM 0xFB90 | size 0x384
+ * asm: asm/nonmatchings/main/func_8000EF90.s
+ */
 #include "common.h"
 
 extern s16 D_80059D82;

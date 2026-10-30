@@ -1,3 +1,8 @@
+/* @header
+ * func_800D3638
+ * VRAM 0x800D3638 | ROM 0xC6AD8 | size 0x18
+ * asm: asm/nonmatchings/code_800BBA00/func_800D3638.s
+ */
 #include "common.h"
 
 s32 func_800D3638(s32 arg0) {

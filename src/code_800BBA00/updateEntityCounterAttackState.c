@@ -1,3 +1,8 @@
+/* @header
+ * updateEntityCounterAttackState  (originally func_800CA2FC)
+ * VRAM 0x800CA2FC | ROM 0xBD79C | size 0x45C
+ * asm: asm/nonmatchings/code_800BBA00/func_800CA2FC.s
+ */
 #include "common.h"
 
 /* Paired-entity counter-attack state machine (states 0..3) for entity E

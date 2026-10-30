@@ -1,3 +1,8 @@
+/* @header
+ * func_80014F5C
+ * VRAM 0x80014F5C | ROM 0x15B5C | size 0x10C
+ * asm: asm/nonmatchings/main/func_80014F5C.s
+ */
 #include "common.h"
 
 typedef struct {u8 pad0[0x38];f32 f38,f3C,f40;u8 pad44[0x24];f32 f68,f6C;u8 pad70[0x5A];u16 fCA;u8 padCC[12];u8 fD8,fD9,fDA,fDB;} Voice14F;

@@ -1,3 +1,8 @@
+/* @header
+ * func_800BF2FC
+ * VRAM 0x800BF2FC | ROM 0xB279C | size 0x3C
+ * asm: asm/nonmatchings/code_800BBA00/func_800BF2FC.s
+ */
 #include "common.h"
 
 /* Entity s16 accessor: returns the +0x12 field when u64 flags at +0x20 has

@@ -1,3 +1,8 @@
+/* @header
+ * func_8002A2FC
+ * VRAM 0x8002A2FC | ROM 0x2AEFC | size 0x2F8
+ * asm: asm/nonmatchings/main/func_8002A2FC.s
+ */
 #include "common.h"
 
 extern Nw2ResourceEntryHashed *D_8007FC34;

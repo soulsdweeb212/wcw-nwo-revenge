@@ -1,3 +1,8 @@
+/* @header
+ * func_8001D4E4
+ * VRAM 0x8001D4E4 | ROM 0x1E0E4 | size 0xB0
+ * asm: asm/nonmatchings/main/func_8001D4E4.s
+ */
 #include "common.h"
 
 void func_8001B090(void *,void *);

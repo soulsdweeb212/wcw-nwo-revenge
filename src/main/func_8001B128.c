@@ -1,3 +1,8 @@
+/* @header
+ * func_8001B128
+ * VRAM 0x8001B128 | ROM 0x1BD28 | size 0xA8
+ * asm: asm/nonmatchings/main/func_8001B128.s
+ */
 #include "common.h"
 
 /* Converts the 2x4 fixed-point matrix at in (packed 16.16 word/halfword pairs)

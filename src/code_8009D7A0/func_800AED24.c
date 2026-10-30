@@ -1,3 +1,8 @@
+/* @header
+ * func_800AED24
+ * VRAM 0x800AED24 | ROM 0xA21C4 | size 0x1A4
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AED24.s
+ */
 #include "common.h"
 
 /* Two-phase action gate for self D_800FABD0:

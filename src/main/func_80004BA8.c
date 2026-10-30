@@ -1,3 +1,8 @@
+/* @header
+ * func_80004BA8
+ * VRAM 0x80004BA8 | ROM 0x57A8 | size 0xE8
+ * asm: asm/nonmatchings/main/func_80004BA8.s
+ */
 #include "common.h"
 
 extern void func_8000498C(void *, s16);

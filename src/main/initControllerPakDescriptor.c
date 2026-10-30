@@ -1,3 +1,8 @@
+/* @header
+ * initControllerPakDescriptor  (originally func_80021AA0)
+ * VRAM 0x80021AA0 | ROM 0x226A0 | size 0xD4
+ * asm: asm/nonmatchings/main/func_80021AA0.s
+ */
 #include "common.h"
 
 extern s32 D_8003761C;

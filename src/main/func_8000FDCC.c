@@ -1,3 +1,8 @@
+/* @header
+ * func_8000FDCC
+ * VRAM 0x8000FDCC | ROM 0x109CC | size 0x294
+ * asm: asm/nonmatchings/main/func_8000FDCC.s
+ */
 #include "common.h"
 
 extern s16 D_8005A380[][3][2],D_8005A382[][3][2];extern s8 D_80036D10[];extern f64 D_8003B258;extern u8 D_80070C94[],D_80070C98[],D_80070C9C[];void setupSideSlotRamp(s16,s16,s16,s16,f32,f32,f32);

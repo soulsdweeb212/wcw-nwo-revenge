@@ -1,3 +1,8 @@
+/* @header
+ * func_800D3650
+ * VRAM 0x800D3650 | ROM 0xC6AF0 | size 0x34
+ * asm: asm/nonmatchings/code_800BBA00/func_800D3650.s
+ */
 #include "common.h"
 
 s32 func_800D3890(void *, void *, void *);

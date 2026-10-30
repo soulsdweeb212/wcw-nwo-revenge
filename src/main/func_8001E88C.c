@@ -1,3 +1,8 @@
+/* @header
+ * func_8001E88C
+ * VRAM 0x8001E88C | ROM 0x1F48C | size 0xD4
+ * asm: asm/nonmatchings/main/func_8001E88C.s
+ */
 #include "common.h"
 
 typedef struct E88Node E88Node;

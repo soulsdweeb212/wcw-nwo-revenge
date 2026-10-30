@@ -1,3 +1,8 @@
+/* @header
+ * func_80028AB0
+ * VRAM 0x80028AB0 | ROM 0x296B0 | size 0x98
+ * asm: asm/nonmatchings/main/func_80028AB0.s
+ */
 #include "common.h"
 
 extern u8 asciiCharTable[];

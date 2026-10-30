@@ -1,3 +1,8 @@
+/* @header
+ * func_80002454
+ * VRAM 0x80002454 | ROM 0x3054 | size 0x210
+ * asm: asm/nonmatchings/main/func_80002454.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0, w1; } Gfx2454;

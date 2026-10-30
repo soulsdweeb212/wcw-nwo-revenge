@@ -1,3 +1,8 @@
+/* @header
+ * func_80014310
+ * VRAM 0x80014310 | ROM 0x14F10 | size 0x30
+ * asm: asm/nonmatchings/main/func_80014310.s
+ */
 #include "common.h"
 
 extern void func_8001446C(u8 *);

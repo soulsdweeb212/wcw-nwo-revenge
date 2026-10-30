@@ -1,3 +1,8 @@
+/* @header
+ * func_8001488C
+ * VRAM 0x8001488C | ROM 0x1548C | size 0x4EC
+ * asm: asm/nonmatchings/main/func_8001488C.s
+ */
 #include "common.h"
 
 typedef u8 *(*Nw2Fn1488C)(Nw2Voice1488C *, u8 *);

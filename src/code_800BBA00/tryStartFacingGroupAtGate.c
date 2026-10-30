@@ -1,3 +1,8 @@
+/* @header
+ * tryStartFacingGroupAtGate  (originally func_800CD6C4)
+ * VRAM 0x800CD6C4 | ROM 0xC0B64 | size 0x148
+ * asm: asm/nonmatchings/code_800BBA00/func_800CD6C4.s
+ */
 #include "common.h"
 
 extern u8 D_800F9D10[];void setupEntityFacingGroup(void*,void*,void*,s32);

@@ -1,3 +1,8 @@
+/* @header
+ * func_800161C4
+ * VRAM 0x800161C4 | ROM 0x16DC4 | size 0x128
+ * asm: asm/nonmatchings/main/func_800161C4.s
+ */
 #include "common.h"
 
 #define F(o,t,x) (*(t *)((u8 *)(o)+(x)))

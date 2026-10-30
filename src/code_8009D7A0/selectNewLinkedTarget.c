@@ -1,3 +1,8 @@
+/* @header
+ * selectNewLinkedTarget  (originally func_800A7B38)
+ * VRAM 0x800A7B38 | ROM 0x9AFD8 | size 0x108
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A7B38.s
+ */
 #include "common.h"
 
 /* Choose a fresh linked-target entity for arg0. When arg1 bit 0 is set it

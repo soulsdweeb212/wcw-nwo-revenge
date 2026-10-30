@@ -1,3 +1,8 @@
+/* @header
+ * func_80014D78
+ * VRAM 0x80014D78 | ROM 0x15978 | size 0x7C
+ * asm: asm/nonmatchings/main/func_80014D78.s
+ */
 #include "common.h"
 
 void func_80017A30(s32, s32);

@@ -1,3 +1,8 @@
+/* @header
+ * func_80021190
+ * VRAM 0x80021190 | ROM 0x21D90 | size 0x80
+ * asm: asm/nonmatchings/main/func_80021190.s
+ */
 #include "common.h"
 
 s32 func_8001C990(s32, void *, s32);

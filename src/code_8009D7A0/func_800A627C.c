@@ -1,3 +1,8 @@
+/* @header
+ * func_800A627C
+ * VRAM 0x800A627C | ROM 0x9971C | size 0x15C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A627C.s
+ */
 #include "common.h"
 
 /* func_800A627C: three-phase action state machine for the entity in

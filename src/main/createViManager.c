@@ -1,3 +1,8 @@
+/* @header
+ * createViManager  (originally func_800258C0)
+ * VRAM 0x800258C0 | ROM 0x264C0 | size 0x1A0
+ * asm: asm/nonmatchings/main/func_800258C0.s
+ */
 #include "common.h"
 
 typedef struct {s32 flag; void *f4,*f8,*fC; s32 f10,f14,f18,f1C;} Nw2DmaState;

@@ -1,3 +1,8 @@
+/* @header
+ * func_800276F0
+ * VRAM 0x800276F0 | ROM 0x282F0 | size 0x54
+ * asm: asm/nonmatchings/main/func_800276F0.s
+ */
 #include "common.h"
 
 typedef s32 M2C_UNK;

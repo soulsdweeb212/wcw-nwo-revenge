@@ -1,3 +1,8 @@
+/* @header
+ * func_8002021C
+ * VRAM 0x8002021C | ROM 0x20E1C | size 0x20
+ * asm: asm/nonmatchings/main/func_8002021C.s
+ */
 #include "common.h"
 
 typedef struct NwNode2 {

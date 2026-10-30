@@ -1,3 +1,8 @@
+/* @header
+ * func_800C6B1C
+ * VRAM 0x800C6B1C | ROM 0xB9FBC | size 0x238
+ * asm: asm/nonmatchings/code_800BBA00/func_800C6B1C.s
+ */
 #include "common.h"
 
 typedef struct {

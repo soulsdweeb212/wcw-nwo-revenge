@@ -1,3 +1,8 @@
+/* @header
+ * func_80014418
+ * VRAM 0x80014418 | ROM 0x15018 | size 0x54
+ * asm: asm/nonmatchings/main/func_80014418.s
+ */
 #include "common.h"
 
 typedef struct{u8 type;s32 value;}Msg;void func_800160E8(s32,s32,s32);void func_80015EF8(void*,void*,s32);extern s32 D_80060504,D_80060508,D_8006050C;extern u8 *D_80060510;

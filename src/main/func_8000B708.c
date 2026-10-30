@@ -1,3 +1,8 @@
+/* @header
+ * func_8000B708
+ * VRAM 0x8000B708 | ROM 0xC308 | size 0x8
+ * asm: asm/nonmatchings/main/func_8000B708.s
+ */
 #include "common.h"
 
 /* machine draft (m2c), tried by autopilot */

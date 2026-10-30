@@ -1,3 +1,8 @@
+/* @header
+ * func_800DCFBC
+ * VRAM 0x800DCFBC | ROM 0xD045C | size 0x1CC
+ * asm: asm/nonmatchings/code_800BBA00/func_800DCFBC.s
+ */
 #include "common.h"
 
 /* Sub-state machine for the active fighter (D_800FAF5C) while a move is

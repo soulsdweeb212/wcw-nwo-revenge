@@ -1,3 +1,8 @@
+/* @header
+ * updateActionRequestState  (originally func_800AF3DC)
+ * VRAM 0x800AF3DC | ROM 0xA287C | size 0x150
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AF3DC.s
+ */
 #include "common.h"
 
 extern u8 *D_800FABD0,*D_800F9B60,*D_800FAF58;

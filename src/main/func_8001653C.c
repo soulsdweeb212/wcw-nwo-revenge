@@ -1,3 +1,8 @@
+/* @header
+ * func_8001653C
+ * VRAM 0x8001653C | ROM 0x1713C | size 0x10
+ * asm: asm/nonmatchings/main/func_8001653C.s
+ */
 #include "common.h"
 
 /* machine draft (m2c), tried by autopilot */

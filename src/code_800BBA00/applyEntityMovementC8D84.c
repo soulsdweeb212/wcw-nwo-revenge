@@ -1,3 +1,8 @@
+/* @header
+ * applyEntityMovementC8D84  (originally func_800C8D84)
+ * VRAM 0x800C8D84 | ROM 0xBC224 | size 0x290
+ * asm: asm/nonmatchings/code_800BBA00/func_800C8D84.s
+ */
 #include "common.h"
 
 /* Builds and applies an entity's horizontal movement vector from a set of

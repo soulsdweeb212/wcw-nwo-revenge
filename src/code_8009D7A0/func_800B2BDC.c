@@ -1,3 +1,8 @@
+/* @header
+ * func_800B2BDC
+ * VRAM 0x800B2BDC | ROM 0xA607C | size 0x1C0
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B2BDC.s
+ */
 #include "common.h"
 
 /* Proximity/contact test for the active move (D_800FABD0) against the other

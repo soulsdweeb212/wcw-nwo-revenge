@@ -1,3 +1,8 @@
+/* @header
+ * func_800004B8
+ * VRAM 0x800004B8 | ROM 0x10B8 | size 0xC8
+ * asm: asm/nonmatchings/main/func_800004B8.s
+ */
 #include "common.h"
 
 extern s32 D_80000300;

@@ -1,3 +1,8 @@
+/* @header
+ * func_800D7690
+ * VRAM 0x800D7690 | ROM 0xCAB30 | size 0x204
+ * asm: asm/nonmatchings/code_800BBA00/func_800D7690.s
+ */
 #include "common.h"
 
 extern s16 D_800F9810[],D_800F9818[],D_800F9820[];

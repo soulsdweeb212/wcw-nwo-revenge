@@ -1,3 +1,8 @@
+/* @header
+ * func_800945E0
+ * VRAM 0x800945E0 | ROM 0x40D50 | size 0x2DC
+ * asm: asm/nonmatchings/code_80090000/func_800945E0.s
+ */
 #include "common.h"
 
 extern s32 D_800E8210,D_800E74C4,D_80038A98;

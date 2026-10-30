@@ -1,3 +1,8 @@
+/* @header
+ * func_800AD6D0
+ * VRAM 0x800AD6D0 | ROM 0xA0B70 | size 0x60
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AD6D0.s
+ */
 #include "common.h"
 
 extern s16 D_800EB420[], D_800F9B78[];

@@ -1,3 +1,8 @@
+/* @header
+ * tickPlayerScripts  (originally func_8000DD0C)
+ * VRAM 0x8000DD0C | ROM 0xE90C | size 0x134
+ * asm: asm/nonmatchings/main/func_8000DD0C.s
+ */
 #include "common.h"
 
 typedef struct {

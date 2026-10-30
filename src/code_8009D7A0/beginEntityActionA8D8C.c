@@ -1,3 +1,8 @@
+/* @header
+ * beginEntityActionA8D8C  (originally func_800A8D8C)
+ * VRAM 0x800A8D8C | ROM 0x9C22C | size 0x29C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A8D8C.s
+ */
 #include "common.h"
 
 /* Starts (or restarts) an entity's action. It maps the entity's mode

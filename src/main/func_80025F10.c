@@ -1,3 +1,8 @@
+/* @header
+ * func_80025F10
+ * VRAM 0x80025F10 | ROM 0x26B10 | size 0x1C
+ * asm: asm/nonmatchings/main/func_80025F10.s
+ */
 #include "common.h"
 
 /* machine draft (m2c), tried by autopilot */

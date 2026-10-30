@@ -1,3 +1,8 @@
+/* @header
+ * updateActionStateE1634  (originally func_800E1634)
+ * VRAM 0x800E1634 | ROM 0xD4AD4 | size 0x2E8
+ * asm: asm/nonmatchings/code_800DE9C0/func_800E1634.s
+ */
 #include "common.h"
 
 /* D_800FAF5C action-record state machine (cases 0..2): state 0 chooses a turning

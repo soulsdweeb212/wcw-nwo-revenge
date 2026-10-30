@@ -1,3 +1,8 @@
+/* @header
+ * func_800C78F0
+ * VRAM 0x800C78F0 | ROM 0xBAD90 | size 0x57C
+ * asm: asm/nonmatchings/code_800BBA00/func_800C78F0.s
+ */
 #include "common.h"
 
 typedef struct { s8 f0; u8 pad1[3]; s16 f4; u8 pad6[2]; s16 f8; s16 fA; s16 fC; s16 fE; u8 pad10[4]; s16 f14; s16 f16; s16 f18; u8 pad1A[6]; u64 flags; u8 pad28[0x1C]; s16 f44; u8 pad46[0x12]; s32 f58; u8 pad5C[0x304]; u16 f360; s8 f362; u8 pad363[0x49]; u32 f3AC; } Nw2F5C;

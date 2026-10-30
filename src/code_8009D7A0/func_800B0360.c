@@ -1,3 +1,8 @@
+/* @header
+ * func_800B0360
+ * VRAM 0x800B0360 | ROM 0xA3800 | size 0x1B8
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B0360.s
+ */
 #include "common.h"
 
 /* Two-state approach/engage sequencer for the active action (D_800FABD0),

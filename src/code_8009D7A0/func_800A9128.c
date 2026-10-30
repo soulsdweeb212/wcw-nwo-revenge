@@ -1,3 +1,8 @@
+/* @header
+ * func_800A9128
+ * VRAM 0x800A9128 | ROM 0x9C5C8 | size 0xE0
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A9128.s
+ */
 #include "common.h"
 
 /* Ring-boundary clamp for an entity position: when the entity's u64 flag

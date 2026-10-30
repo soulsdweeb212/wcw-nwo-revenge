@@ -1,3 +1,8 @@
+/* @header
+ * func_800E2768
+ * VRAM 0x800E2768 | ROM 0xD5C08 | size 0x4C
+ * asm: asm/nonmatchings/code_800DE9C0/func_800E2768.s
+ */
 #include "common.h"
 
 extern s8 D_800F99A0[];

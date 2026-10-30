@@ -1,3 +1,8 @@
+/* @header
+ * func_8000B550
+ * VRAM 0x8000B550 | ROM 0xC150 | size 0xE0
+ * asm: asm/nonmatchings/main/func_8000B550.s
+ */
 #include "common.h"
 
 /* Choose the highest category id available to character/state `charId`.

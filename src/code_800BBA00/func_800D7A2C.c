@@ -1,3 +1,8 @@
+/* @header
+ * func_800D7A2C
+ * VRAM 0x800D7A2C | ROM 0xCAECC | size 0x3C
+ * asm: asm/nonmatchings/code_800BBA00/func_800D7A2C.s
+ */
 #include "common.h"
 
 /* Map a reaction bitmask to a 0..3 category, or -1. */

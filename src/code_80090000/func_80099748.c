@@ -1,3 +1,8 @@
+/* @header
+ * func_80099748
+ * VRAM 0x80099748 | ROM 0x45EB8 | size 0x15C
+ * asm: asm/nonmatchings/code_80090000/func_80099748.s
+ */
 #include "common.h"
 
 /* func_80099748: appends a full-screen (480x240) single-colour fill to the

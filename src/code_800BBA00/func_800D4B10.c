@@ -1,3 +1,8 @@
+/* @header
+ * func_800D4B10
+ * VRAM 0x800D4B10 | ROM 0xC7FB0 | size 0xEC
+ * asm: asm/nonmatchings/code_800BBA00/func_800D4B10.s
+ */
 #include "common.h"
 
 /* Applies the entity's facing mode byte (+0x36E): mode 1 faces 0x40 with a 90

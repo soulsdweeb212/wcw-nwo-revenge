@@ -1,3 +1,8 @@
+/* @header
+ * func_8001FF5C
+ * VRAM 0x8001FF5C | ROM 0x20B5C | size 0x9C
+ * asm: asm/nonmatchings/main/func_8001FF5C.s
+ */
 #include "common.h"
 
 u32 func_8001CE80(void *);

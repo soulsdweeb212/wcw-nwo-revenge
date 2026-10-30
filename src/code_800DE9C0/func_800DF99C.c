@@ -1,3 +1,8 @@
+/* @header
+ * func_800DF99C
+ * VRAM 0x800DF99C | ROM 0xD2E3C | size 0x2F0
+ * asm: asm/nonmatchings/code_800DE9C0/func_800DF99C.s
+ */
 #include "common.h"
 
 s32 func_800A9208(void *, s32 *);

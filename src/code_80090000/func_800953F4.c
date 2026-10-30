@@ -1,3 +1,8 @@
+/* @header
+ * func_800953F4
+ * VRAM 0x800953F4 | ROM 0x41B64 | size 0x490
+ * asm: asm/nonmatchings/code_80090000/func_800953F4.s
+ */
 #include "common.h"
 
 typedef struct {

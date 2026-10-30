@@ -1,3 +1,8 @@
+/* @header
+ * translateEntityByActionQuadrant  (originally func_800A7968)
+ * VRAM 0x800A7968 | ROM 0x9AE08 | size 0x1D0
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A7968.s
+ */
 #include "common.h"
 
 /* Move an entity along the X/Z axis by a distance selected from one of two

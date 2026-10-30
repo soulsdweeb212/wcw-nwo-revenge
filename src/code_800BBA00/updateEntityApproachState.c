@@ -1,3 +1,8 @@
+/* @header
+ * updateEntityApproachState  (originally func_800D0804)
+ * VRAM 0x800D0804 | ROM 0xC3CA4 | size 0x464
+ * asm: asm/nonmatchings/code_800BBA00/func_800D0804.s
+ */
 #include "common.h"
 
 /* Entity approach state machine. The entity O (D_800FAF5C) moves toward its

@@ -1,3 +1,8 @@
+/* @header
+ * func_8001B980
+ * VRAM 0x8001B980 | ROM 0x1C580 | size 0x1C8
+ * asm: asm/nonmatchings/main/func_8001B980.s
+ */
 #include "common.h"
 
 /* Build a perspective projection matrix (like glFrustum) from the given

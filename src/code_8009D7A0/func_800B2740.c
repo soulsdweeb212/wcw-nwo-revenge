@@ -1,3 +1,8 @@
+/* @header
+ * func_800B2740
+ * VRAM 0x800B2740 | ROM 0xA5BE0 | size 0x1F4
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B2740.s
+ */
 #include "common.h"
 
 /* Advance the current move script. `self` (D_800FABD0) is the active action

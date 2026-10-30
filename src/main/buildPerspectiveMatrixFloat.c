@@ -1,3 +1,8 @@
+/* @header
+ * buildPerspectiveMatrixFloat  (originally func_8001B7D0)
+ * VRAM 0x8001B7D0 | ROM 0x1C3D0 | size 0x1B0
+ * asm: asm/nonmatchings/main/func_8001B7D0.s
+ */
 #include "common.h"
 
 /* Build a float 4x4 perspective projection matrix (OpenGL-style) for the given

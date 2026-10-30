@@ -1,3 +1,8 @@
+/* @header
+ * func_800D3EEC
+ * VRAM 0x800D3EEC | ROM 0xC738C | size 0x13C
+ * asm: asm/nonmatchings/code_800BBA00/func_800D3EEC.s
+ */
 #include "common.h"
 
 f32 cosf(f32);

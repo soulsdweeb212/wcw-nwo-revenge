@@ -1,3 +1,8 @@
+/* @header
+ * func_800998A4
+ * VRAM 0x800998A4 | ROM 0x46014 | size 0x64
+ * asm: asm/nonmatchings/code_80090000/func_800998A4.s
+ */
 #include "common.h"
 
 s32 func_80099748(void **, s32, s32, s32, s32);

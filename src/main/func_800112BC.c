@@ -1,3 +1,8 @@
+/* @header
+ * func_800112BC
+ * VRAM 0x800112BC | ROM 0x11EBC | size 0x64
+ * asm: asm/nonmatchings/main/func_800112BC.s
+ */
 #include "common.h"
 
 extern u8 D_80059DA8[];

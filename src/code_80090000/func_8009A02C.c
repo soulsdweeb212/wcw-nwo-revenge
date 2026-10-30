@@ -1,3 +1,8 @@
+/* @header
+ * func_8009A02C
+ * VRAM 0x8009A02C | ROM 0x4679C | size 0x84C
+ * asm: asm/nonmatchings/code_80090000/func_8009A02C.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0; u32 w1; } GfxA02C;

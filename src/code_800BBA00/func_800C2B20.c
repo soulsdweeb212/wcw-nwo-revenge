@@ -1,3 +1,8 @@
+/* @header
+ * func_800C2B20
+ * VRAM 0x800C2B20 | ROM 0xB5FC0 | size 0x6C
+ * asm: asm/nonmatchings/code_800BBA00/func_800C2B20.s
+ */
 #include "common.h"
 
 extern u8 D_8007EF30[];

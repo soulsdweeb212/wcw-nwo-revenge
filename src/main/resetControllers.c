@@ -1,3 +1,8 @@
+/* @header
+ * resetControllers  (originally func_800216D0)
+ * VRAM 0x800216D0 | ROM 0x222D0 | size 0x17C
+ * asm: asm/nonmatchings/main/func_800216D0.s
+ */
 #include "common.h"
 
 typedef struct {u16 type;u8 status,error;} Status216;

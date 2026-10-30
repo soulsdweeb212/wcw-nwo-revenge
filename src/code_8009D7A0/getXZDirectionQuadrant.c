@@ -1,3 +1,8 @@
+/* @header
+ * getXZDirectionQuadrant  (originally func_800A77F0)
+ * VRAM 0x800A77F0 | ROM 0x9AC90 | size 0x38
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A77F0.s
+ */
 #include "common.h"
 
 s32 func_800D36E8(f32, f32);

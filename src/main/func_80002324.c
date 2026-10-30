@@ -1,3 +1,8 @@
+/* @header
+ * func_80002324
+ * VRAM 0x80002324 | ROM 0x2F24 | size 0x130
+ * asm: asm/nonmatchings/main/func_80002324.s
+ */
 #include "common.h"
 
 typedef struct { s32 f0; u8 *f4; } Obj2324;

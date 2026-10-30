@@ -1,3 +1,8 @@
+/* @header
+ * findOrAddCacheEntryRaw  (originally func_8009903C)
+ * VRAM 0x8009903C | ROM 0x457AC | size 0x10C
+ * asm: asm/nonmatchings/code_80090000/func_8009903C.s
+ */
 #include "common.h"
 
 typedef struct {

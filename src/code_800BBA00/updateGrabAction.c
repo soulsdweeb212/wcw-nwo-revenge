@@ -1,3 +1,8 @@
+/* @header
+ * updateGrabAction  (originally func_800C61D8)
+ * VRAM 0x800C61D8 | ROM 0xB9678 | size 0x240
+ * asm: asm/nonmatchings/code_800BBA00/func_800C61D8.s
+ */
 #include "common.h"
 
 typedef struct {

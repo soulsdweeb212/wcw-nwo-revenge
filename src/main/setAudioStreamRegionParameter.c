@@ -1,3 +1,8 @@
+/* @header
+ * setAudioStreamRegionParameter  (originally func_8001F874)
+ * VRAM 0x8001F874 | ROM 0x20474 | size 0x1F0
+ * asm: asm/nonmatchings/main/func_8001F874.s
+ */
 #include "common.h"
 
 typedef struct Sub1F874 {

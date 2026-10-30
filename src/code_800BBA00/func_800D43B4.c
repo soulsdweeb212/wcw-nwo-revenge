@@ -1,3 +1,8 @@
+/* @header
+ * func_800D43B4
+ * VRAM 0x800D43B4 | ROM 0xC7854 | size 0x28
+ * asm: asm/nonmatchings/code_800BBA00/func_800D43B4.s
+ */
 #include "common.h"
 
 extern s32 gRandSeed;

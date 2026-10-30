@@ -1,3 +1,8 @@
+/* @header
+ * func_80017F18
+ * VRAM 0x80017F18 | ROM 0x18B18 | size 0x2C
+ * asm: asm/nonmatchings/main/func_80017F18.s
+ */
 #include "common.h"
 
 extern void *D_80036F54;

@@ -1,3 +1,8 @@
+/* @header
+ * func_800C01A8
+ * VRAM 0x800C01A8 | ROM 0xB3648 | size 0x13C
+ * asm: asm/nonmatchings/code_800BBA00/func_800C01A8.s
+ */
 #include "common.h"
 
 extern s16 D_800F9D12[][472],D_800F9D1A[][472],D_800F9D1C[][472];

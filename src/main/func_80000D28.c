@@ -1,3 +1,8 @@
+/* @header
+ * func_80000D28
+ * VRAM 0x80000D28 | ROM 0x1928 | size 0x58
+ * asm: asm/nonmatchings/main/func_80000D28.s
+ */
 #include "common.h"
 
 s32 func_8001C740(s32);

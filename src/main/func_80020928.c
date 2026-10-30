@@ -1,3 +1,8 @@
+/* @header
+ * func_80020928
+ * VRAM 0x80020928 | ROM 0x21528 | size 0xA8
+ * asm: asm/nonmatchings/main/func_80020928.s
+ */
 #include "common.h"
 
 typedef struct Nw2ListNode { struct Nw2ListNode *next; u8 pad[0xC]; s32 value; } Nw2ListNode;

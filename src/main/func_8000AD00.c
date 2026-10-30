@@ -1,3 +1,8 @@
+/* @header
+ * func_8000AD00
+ * VRAM 0x8000AD00 | ROM 0xB900 | size 0x548
+ * asm: asm/nonmatchings/main/func_8000AD00.s
+ */
 #include "common.h"
 
 typedef struct { f32 v; u8 pad[0x78]; } Part;

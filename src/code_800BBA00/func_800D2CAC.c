@@ -1,3 +1,8 @@
+/* @header
+ * func_800D2CAC
+ * VRAM 0x800D2CAC | ROM 0xC614C | size 0x718
+ * asm: asm/nonmatchings/code_800BBA00/func_800D2CAC.s
+ */
 #include "common.h"
 
 typedef struct { f32 x, y, z, w; } V4_2CAC;

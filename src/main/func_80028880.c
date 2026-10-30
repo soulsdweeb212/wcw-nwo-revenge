@@ -1,3 +1,8 @@
+/* @header
+ * func_80028880
+ * VRAM 0x80028880 | ROM 0x29480 | size 0x40
+ * asm: asm/nonmatchings/main/func_80028880.s
+ */
 /* Hand-written in the original; kept as top-level asm so the bytes match exactly. */
 asm(
 ".set noreorder\n"

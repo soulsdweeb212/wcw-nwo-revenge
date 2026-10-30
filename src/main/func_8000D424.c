@@ -1,3 +1,8 @@
+/* @header
+ * func_8000D424
+ * VRAM 0x8000D424 | ROM 0xE024 | size 0x1D4
+ * asm: asm/nonmatchings/main/func_8000D424.s
+ */
 #include "common.h"
 
 /* Outside-of-arena containment/zone test for a position (x,y,z): within the

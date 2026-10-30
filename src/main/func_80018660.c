@@ -1,3 +1,8 @@
+/* @header
+ * func_80018660
+ * VRAM 0x80018660 | ROM 0x19260 | size 0x5C4
+ * asm: asm/nonmatchings/main/func_80018660.s
+ */
 #include "common.h"
 
 typedef struct Nw2EnvStep Nw2EnvStep;

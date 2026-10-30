@@ -1,3 +1,8 @@
+/* @header
+ * func_800CDEE4
+ * VRAM 0x800CDEE4 | ROM 0xC1384 | size 0x5C
+ * asm: asm/nonmatchings/code_800BBA00/func_800CDEE4.s
+ */
 #include "common.h"
 
 void translateEntityXZ(void*,void*);s32 func_800D35B0(s32,s32);void func_800D3E40(void*,void*,s32,void*);

@@ -1,3 +1,8 @@
+/* @header
+ * func_80013DB0
+ * VRAM 0x80013DB0 | ROM 0x149B0 | size 0x60
+ * asm: asm/nonmatchings/main/func_80013DB0.s
+ */
 #include "common.h"
 
 typedef struct { u8 pad0[0x60]; s32 key; u8 pad64[0x5A]; s16 value; u8 padC0[0x98]; } VoiceDB0;

@@ -1,3 +1,8 @@
+/* @header
+ * func_800B3AD8
+ * VRAM 0x800B3AD8 | ROM 0xA6F78 | size 0x4C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B3AD8.s
+ */
 #include "common.h"
 
 /* Scale factor from arg0's s16 timer at +0x16: 0.65 below 0x41, 0.55 below 0x81,

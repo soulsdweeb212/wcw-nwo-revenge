@@ -1,3 +1,8 @@
+/* @header
+ * tryStartPairedEntityActions  (originally func_800E0088)
+ * VRAM 0x800E0088 | ROM 0xD3528 | size 0x1A4
+ * asm: asm/nonmatchings/code_800DE9C0/func_800E0088.s
+ */
 #include "common.h"
 
 f32 func_800D3EEC(void *,void *,s32);

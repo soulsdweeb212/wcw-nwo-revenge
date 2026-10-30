@@ -1,3 +1,8 @@
+/* @header
+ * func_800A65E8
+ * VRAM 0x800A65E8 | ROM 0x99A88 | size 0x1C8
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A65E8.s
+ */
 #include "common.h"
 
 /* Two-state follow-up/victory handler for the active fighter (D_800EB408).

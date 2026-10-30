@@ -1,3 +1,8 @@
+/* @header
+ * func_800DD188
+ * VRAM 0x800DD188 | ROM 0xD0628 | size 0x1E8
+ * asm: asm/nonmatchings/code_800BBA00/func_800DD188.s
+ */
 #include "common.h"
 
 /* Three-state paired-action driver on self D_800FAF5C:

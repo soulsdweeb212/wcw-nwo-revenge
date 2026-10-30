@@ -1,3 +1,8 @@
+/* @header
+ * tryBeginPairedActionOnContact  (originally func_800E0420)
+ * VRAM 0x800E0420 | ROM 0xD38C0 | size 0x170
+ * asm: asm/nonmatchings/code_800DE9C0/func_800E0420.s
+ */
 #include "common.h"
 
 extern u8 D_8007EF30[];

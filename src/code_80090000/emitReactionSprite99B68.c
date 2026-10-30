@@ -1,3 +1,8 @@
+/* @header
+ * emitReactionSprite99B68  (originally func_80099B68)
+ * VRAM 0x80099B68 | ROM 0x462D8 | size 0x288
+ * asm: asm/nonmatchings/code_80090000/func_80099B68.s
+ */
 #include "common.h"
 
 /* Appends the display list for one entity's reaction sprite to *arg0.

@@ -1,3 +1,8 @@
+/* @header
+ * setAudioRegionParameter  (originally func_80019C80)
+ * VRAM 0x80019C80 | ROM 0x1A880 | size 0x1F0
+ * asm: asm/nonmatchings/main/func_80019C80.s
+ */
 #include "common.h"
 
 typedef struct Sub19C80 {

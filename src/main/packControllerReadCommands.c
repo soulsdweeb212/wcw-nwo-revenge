@@ -1,3 +1,8 @@
+/* @header
+ * packControllerReadCommands  (originally func_800230F4)
+ * VRAM 0x800230F4 | ROM 0x23CF4 | size 0xB8
+ * asm: asm/nonmatchings/main/func_800230F4.s
+ */
 #include "common.h"
 
 typedef struct { u8 b0, b1, b2, b3; u16 b4; s8 b6, b7; } ReadCmd;

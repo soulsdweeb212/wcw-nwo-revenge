@@ -1,3 +1,8 @@
+/* @header
+ * func_800B8D8C
+ * VRAM 0x800B8D8C | ROM 0xAC22C | size 0x3BC
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B8D8C.s
+ */
 #include "common.h"
 
 extern s8 D_800EB46E,D_800EB46F,D_800FACE8;extern u8 D_8007E8C0[];extern s8 D_800E3978[];extern s16 D_800E3992[];extern u8 D_800F9D12[],D_800F9D20[],D_800FA061[],D_800FAF60[],D_800FAF62[],D_800FAF64[];

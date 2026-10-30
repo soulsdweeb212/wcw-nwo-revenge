@@ -1,3 +1,8 @@
+/* @header
+ * initializeResourceStream  (originally func_80009784)
+ * VRAM 0x80009784 | ROM 0xA384 | size 0x20C
+ * asm: asm/nonmatchings/main/func_80009784.s
+ */
 #include "common.h"
 
 typedef struct {s16 id,state;u8 *buffer,*source,*destination;s32 remaining;u8 pad14[0x44];u8 queue[24];u16 type;u8 priority,status;void *returnQueue;u8 *dram,*cart;s32 size;u8 tail[0x78];} StreamSlot;

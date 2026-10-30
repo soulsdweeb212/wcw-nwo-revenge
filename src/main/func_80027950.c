@@ -1,3 +1,8 @@
+/* @header
+ * func_80027950
+ * VRAM 0x80027950 | ROM 0x28550 | size 0x20
+ * asm: asm/nonmatchings/main/func_80027950.s
+ */
 #include "common.h"
 
 extern s32 D_80037600;

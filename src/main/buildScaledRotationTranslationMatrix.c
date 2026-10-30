@@ -1,3 +1,8 @@
+/* @header
+ * buildScaledRotationTranslationMatrix  (originally func_8001C1C0)
+ * VRAM 0x8001C1C0 | ROM 0x1CDC0 | size 0x1D8
+ * asm: asm/nonmatchings/main/func_8001C1C0.s
+ */
 #include "common.h"
 
 /* Build a 4x4 row-major matrix: rotate by X/Y/Z Euler angles (in degrees,

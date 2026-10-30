@@ -1,3 +1,8 @@
+/* @header
+ * func_800AFEC8
+ * VRAM 0x800AFEC8 | ROM 0xA3368 | size 0x118
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AFEC8.s
+ */
 #include "common.h"
 
 typedef struct Nw2AimAction {

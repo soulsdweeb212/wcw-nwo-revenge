@@ -1,3 +1,8 @@
+/* @header
+ * func_8002184C
+ * VRAM 0x8002184C | ROM 0x2244C | size 0xA4
+ * asm: asm/nonmatchings/main/func_8002184C.s
+ */
 #include "common.h"
 
 typedef struct { u8 b0,b1,b2,b3,b4,b5,b6,b7; } Cmd8;

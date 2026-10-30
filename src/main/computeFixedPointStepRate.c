@@ -1,3 +1,8 @@
+/* @header
+ * computeFixedPointStepRate  (originally func_80018EE4)
+ * VRAM 0x80018EE4 | ROM 0x19AE4 | size 0x140
+ * asm: asm/nonmatchings/main/func_80018EE4.s
+ */
 #include "common.h"
 
 extern f64 D_8003B4B8,D_8003B4C0,D_8003B4C8;

@@ -1,3 +1,8 @@
+/* @header
+ * updateActionRecordState2F40  (originally func_800B2F40)
+ * VRAM 0x800B2F40 | ROM 0xA63E0 | size 0x2B0
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B2F40.s
+ */
 #include "common.h"
 
 /* D_800FABD0 action-record state machine (states 0..4): decides whether the paired

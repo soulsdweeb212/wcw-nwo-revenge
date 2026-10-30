@@ -1,3 +1,8 @@
+/* @header
+ * func_800011D4
+ * VRAM 0x800011D4 | ROM 0x1DD4 | size 0x84
+ * asm: asm/nonmatchings/main/func_800011D4.s
+ */
 #include "common.h"
 
 extern void func_80090000(void);

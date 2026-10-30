@@ -1,3 +1,8 @@
+/* @header
+ * func_80018140
+ * VRAM 0x80018140 | ROM 0x18D40 | size 0x3EC
+ * asm: asm/nonmatchings/main/func_80018140.s
+ */
 #include "common.h"
 
 typedef struct { u8 pad[0x14]; void *f14; s32 pad18[2]; s32 f20,f24; } PartAux;

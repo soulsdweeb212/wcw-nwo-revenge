@@ -1,3 +1,8 @@
+/* @header
+ * func_8009F468
+ * VRAM 0x8009F468 | ROM 0x92908 | size 0x1EC
+ * asm: asm/nonmatchings/code_8009D7A0/func_8009F468.s
+ */
 #include "common.h"
 
 extern s32 D_800E3CA0[];

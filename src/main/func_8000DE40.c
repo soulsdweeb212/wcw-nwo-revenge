@@ -1,3 +1,8 @@
+/* @header
+ * func_8000DE40
+ * VRAM 0x8000DE40 | ROM 0xEA40 | size 0x28
+ * asm: asm/nonmatchings/main/func_8000DE40.s
+ */
 #include "common.h"
 
 extern s16 D_800307A0;

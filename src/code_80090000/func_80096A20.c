@@ -1,3 +1,8 @@
+/* @header
+ * func_80096A20
+ * VRAM 0x80096A20 | ROM 0x43190 | size 0x28
+ * asm: asm/nonmatchings/code_80090000/func_80096A20.s
+ */
 #include "common.h"
 
 extern u8 updateActionStateC5D48[];

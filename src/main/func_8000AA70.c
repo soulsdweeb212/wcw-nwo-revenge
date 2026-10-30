@@ -1,3 +1,8 @@
+/* @header
+ * func_8000AA70
+ * VRAM 0x8000AA70 | ROM 0xB670 | size 0x290
+ * asm: asm/nonmatchings/main/func_8000AA70.s
+ */
 #include "common.h"
 
 typedef struct { f32 x, y, z; } VecAA70;

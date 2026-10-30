@@ -1,3 +1,8 @@
+/* @header
+ * func_8001A490
+ * VRAM 0x8001A490 | ROM 0x1B090 | size 0x1CC
+ * asm: asm/nonmatchings/main/func_8001A490.s
+ */
 #include "common.h"
 
 f32 cosf(f32); f32 sinf(f32); f32 sqrtf(f32);

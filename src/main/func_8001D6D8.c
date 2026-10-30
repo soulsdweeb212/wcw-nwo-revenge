@@ -1,3 +1,8 @@
+/* @header
+ * func_8001D6D8
+ * VRAM 0x8001D6D8 | ROM 0x1E2D8 | size 0x44
+ * asm: asm/nonmatchings/main/func_8001D6D8.s
+ */
 #include "common.h"
 
 extern void func_8001F070(void *obj, void *f1, void *f2, s32 n);

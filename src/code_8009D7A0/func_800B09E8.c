@@ -1,3 +1,8 @@
+/* @header
+ * func_800B09E8
+ * VRAM 0x800B09E8 | ROM 0xA3E88 | size 0x18C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B09E8.s
+ */
 #include "common.h"
 
 /* Updates the current action (D_800FABD0) for entity D_800FAF58. When the entity

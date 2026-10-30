@@ -1,3 +1,8 @@
+/* @header
+ * func_8002BAB8
+ * VRAM 0x8002BAB8 | ROM 0x2C6B8 | size 0xE0
+ * asm: asm/nonmatchings/main/func_8002BAB8.s
+ */
 #include "common.h"
 
 extern Nw2IdSubTable lookupSubTables[];

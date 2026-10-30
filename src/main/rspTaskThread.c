@@ -1,3 +1,8 @@
+/* @header
+ * rspTaskThread  (originally func_80000EEC)
+ * VRAM 0x80000EEC | ROM 0x1AEC | size 0x148
+ * asm: asm/nonmatchings/main/func_80000EEC.s
+ */
 #include "common.h"
 
 extern u8 D_800440C0[];

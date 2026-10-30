@@ -1,3 +1,8 @@
+/* @header
+ * func_80025480
+ * VRAM 0x80025480 | ROM 0x26080 | size 0x64
+ * asm: asm/nonmatchings/main/func_80025480.s
+ */
 #include "common.h"
 
 s32 readControllerPakId(void);s32 __osCheckId(void*);s32 __osContRamWrite(s32,s32,s32,void*,s32);

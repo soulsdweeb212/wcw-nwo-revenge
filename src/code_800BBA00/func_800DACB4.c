@@ -1,3 +1,8 @@
+/* @header
+ * func_800DACB4
+ * VRAM 0x800DACB4 | ROM 0xCE154 | size 0x30
+ * asm: asm/nonmatchings/code_800BBA00/func_800DACB4.s
+ */
 #include "common.h"
 
 extern s16 D_800F9848[];

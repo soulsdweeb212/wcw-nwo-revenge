@@ -1,3 +1,8 @@
+/* @header
+ * func_8000BB40
+ * VRAM 0x8000BB40 | ROM 0xC740 | size 0x138
+ * asm: asm/nonmatchings/main/func_8000BB40.s
+ */
 #include "common.h"
 
 extern u8 ***D_80032B44[];

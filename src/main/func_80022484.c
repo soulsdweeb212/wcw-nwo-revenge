@@ -1,3 +1,8 @@
+/* @header
+ * func_80022484
+ * VRAM 0x80022484 | ROM 0x23084 | size 0x164
+ * asm: asm/nonmatchings/main/func_80022484.s
+ */
 #include "common.h"
 
 /* func_80022484: reads the 32-byte save block from each Controller Pak

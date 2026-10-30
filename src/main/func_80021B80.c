@@ -1,3 +1,8 @@
+/* @header
+ * func_80021B80
+ * VRAM 0x80021B80 | ROM 0x22780 | size 0xBC
+ * asm: asm/nonmatchings/main/func_80021B80.s
+ */
 #include "common.h"
 
 extern void *D_8003761C;

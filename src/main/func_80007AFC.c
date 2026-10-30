@@ -1,3 +1,8 @@
+/* @header
+ * func_80007AFC
+ * VRAM 0x80007AFC | ROM 0x86FC | size 0xC
+ * asm: asm/nonmatchings/main/func_80007AFC.s
+ */
 #include "common.h"
 
 /* machine draft (m2c), tried by autopilot */

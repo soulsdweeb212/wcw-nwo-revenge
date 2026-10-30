@@ -1,3 +1,8 @@
+/* @header
+ * func_800014AC
+ * VRAM 0x800014AC | ROM 0x20AC | size 0x24
+ * asm: asm/nonmatchings/main/func_800014AC.s
+ */
 #include "common.h"
 
 extern u8 D_80048288[8];

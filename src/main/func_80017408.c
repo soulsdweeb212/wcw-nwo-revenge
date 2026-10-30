@@ -1,3 +1,8 @@
+/* @header
+ * func_80017408
+ * VRAM 0x80017408 | ROM 0x18008 | size 0x100
+ * asm: asm/nonmatchings/main/func_80017408.s
+ */
 #include "common.h"
 
 typedef struct Nw2Node17408 {

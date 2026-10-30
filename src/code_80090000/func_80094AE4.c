@@ -1,3 +1,8 @@
+/* @header
+ * func_80094AE4
+ * VRAM 0x80094AE4 | ROM 0x41254 | size 0x7E8
+ * asm: asm/nonmatchings/code_80090000/func_80094AE4.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0, w1; } Gw4AE4;

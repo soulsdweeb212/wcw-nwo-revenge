@@ -1,3 +1,8 @@
+/* @header
+ * stepRecordedFramePlayback  (originally func_800D5D1C)
+ * VRAM 0x800D5D1C | ROM 0xC91BC | size 0x620
+ * asm: asm/nonmatchings/code_800BBA00/func_800D5D1C.s
+ */
 #include "common.h"
 
 /* stepRecordedFramePlayback: advance one tick of a recorded pose animation.

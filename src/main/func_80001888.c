@@ -1,3 +1,8 @@
+/* @header
+ * func_80001888
+ * VRAM 0x80001888 | ROM 0x2488 | size 0x3C
+ * asm: asm/nonmatchings/main/func_80001888.s
+ */
 #include "common.h"
 
 void calculateObjectVertexCentroid(void *);

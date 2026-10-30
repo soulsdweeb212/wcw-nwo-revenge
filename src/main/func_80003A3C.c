@@ -1,3 +1,8 @@
+/* @header
+ * func_80003A3C
+ * VRAM 0x80003A3C | ROM 0x463C | size 0x2B4
+ * asm: asm/nonmatchings/main/func_80003A3C.s
+ */
 #include "common.h"
 
 /* atan2(arg1, arg0) approximation. Handles the arg0==0 axis case (0 or pi),

@@ -1,3 +1,8 @@
+/* @header
+ * func_8001EFE4
+ * VRAM 0x8001EFE4 | ROM 0x1FBE4 | size 0x84
+ * asm: asm/nonmatchings/main/func_8001EFE4.s
+ */
 #include "common.h"
 
 /* Scales arg0 by base^exponent, where the base is the 16.16 value

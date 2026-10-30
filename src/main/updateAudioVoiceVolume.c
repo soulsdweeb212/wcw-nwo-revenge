@@ -1,3 +1,8 @@
+/* @header
+ * updateAudioVoiceVolume  (originally func_80014DF4)
+ * VRAM 0x80014DF4 | ROM 0x159F4 | size 0x168
+ * asm: asm/nonmatchings/main/func_80014DF4.s
+ */
 #include "common.h"
 
 void func_80017860(void *, u8);

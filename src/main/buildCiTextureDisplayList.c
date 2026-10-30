@@ -1,3 +1,8 @@
+/* @header
+ * buildCiTextureDisplayList  (originally func_80005704)
+ * VRAM 0x80005704 | ROM 0x6304 | size 0x5DC
+ * asm: asm/nonmatchings/main/func_80005704.s
+ */
 #include "common.h"
 
 /* buildCiTextureDisplayList: emits the RDP display list for a color-index

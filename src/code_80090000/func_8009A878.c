@@ -1,3 +1,8 @@
+/* @header
+ * func_8009A878
+ * VRAM 0x8009A878 | ROM 0x46FE8 | size 0xDF4
+ * asm: asm/nonmatchings/code_80090000/func_8009A878.s
+ */
 #include "common.h"
 
 typedef struct {u32 w0,w1;} G;

@@ -1,3 +1,8 @@
+/* @header
+ * updatePairedEntityActionState  (originally func_800BD45C)
+ * VRAM 0x800BD45C | ROM 0xB08FC | size 0x524
+ * asm: asm/nonmatchings/code_800BBA00/func_800BD45C.s
+ */
 #include "common.h"
 
 /* Paired-entity (grapple) action state machine. Drives the primary entity

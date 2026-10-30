@@ -1,3 +1,8 @@
+/* @header
+ * func_800A6D80
+ * VRAM 0x800A6D80 | ROM 0x9A220 | size 0xC4
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A6D80.s
+ */
 #include "common.h"
 
 void func_800DECAC(void *, s32, s32, s32);

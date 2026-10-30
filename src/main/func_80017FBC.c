@@ -1,3 +1,8 @@
+/* @header
+ * func_80017FBC
+ * VRAM 0x80017FBC | ROM 0x18BBC | size 0x38
+ * asm: asm/nonmatchings/main/func_80017FBC.s
+ */
 #include "common.h"
 
 typedef s32 M2C_UNK;

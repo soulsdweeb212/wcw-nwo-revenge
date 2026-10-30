@@ -1,3 +1,8 @@
+/* @header
+ * translateEntityXZ  (originally func_800D6360)
+ * VRAM 0x800D6360 | ROM 0xC9800 | size 0x90
+ * asm: asm/nonmatchings/code_800BBA00/func_800D6360.s
+ */
 #include "common.h"
 
 /* Translates entity arg0 and all of its 19 part records by the XZ delta arg1:

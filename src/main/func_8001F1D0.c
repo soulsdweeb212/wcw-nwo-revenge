@@ -1,3 +1,8 @@
+/* @header
+ * func_8001F1D0
+ * VRAM 0x8001F1D0 | ROM 0x1FDD0 | size 0x30
+ * asm: asm/nonmatchings/main/func_8001F1D0.s
+ */
 #include "common.h"
 
 /* Audio callback: on message 2, append arg2 to the object's argument array. */

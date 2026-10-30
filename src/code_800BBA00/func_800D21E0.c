@@ -1,3 +1,8 @@
+/* @header
+ * func_800D21E0
+ * VRAM 0x800D21E0 | ROM 0xC5680 | size 0x1D4
+ * asm: asm/nonmatchings/code_800BBA00/func_800D21E0.s
+ */
 #include "common.h"
 
 /* Three-state turn/move action on self D_800FAF5C:

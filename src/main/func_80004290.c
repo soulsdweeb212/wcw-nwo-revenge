@@ -1,3 +1,8 @@
+/* @header
+ * func_80004290
+ * VRAM 0x80004290 | ROM 0x4E90 | size 0x2C
+ * asm: asm/nonmatchings/main/func_80004290.s
+ */
 #include "common.h"
 
 /* identical to func_80005C28 in WWF No Mercy (matched), with its names changed by decompdecomp */

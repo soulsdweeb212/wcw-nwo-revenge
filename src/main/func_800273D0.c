@@ -1,3 +1,8 @@
+/* @header
+ * func_800273D0
+ * VRAM 0x800273D0 | ROM 0x27FD0 | size 0xF8
+ * asm: asm/nonmatchings/main/func_800273D0.s
+ */
 #include "common.h"
 
 extern char D_8003B970[];

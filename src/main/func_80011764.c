@@ -1,3 +1,8 @@
+/* @header
+ * func_80011764
+ * VRAM 0x80011764 | ROM 0x12364 | size 0x3C0
+ * asm: asm/nonmatchings/main/func_80011764.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0,w1; } Cmd117;

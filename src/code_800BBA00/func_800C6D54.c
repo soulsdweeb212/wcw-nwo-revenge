@@ -1,3 +1,8 @@
+/* @header
+ * func_800C6D54
+ * VRAM 0x800C6D54 | ROM 0xBA1F4 | size 0x328
+ * asm: asm/nonmatchings/code_800BBA00/func_800C6D54.s
+ */
 #include "common.h"
 
 typedef struct {s8 f0;u8 pad1[5];s16 f6;u8 pad8[2];s16 fA;s16 fC;u8 padE[0x12];u64 flags;u8 pad28[0x1B];u8 f43;u8 pad44[0x32D];u8 f371;} EntC6D;

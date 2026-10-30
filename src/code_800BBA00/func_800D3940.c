@@ -1,3 +1,8 @@
+/* @header
+ * func_800D3940
+ * VRAM 0x800D3940 | ROM 0xC6DE0 | size 0x84
+ * asm: asm/nonmatchings/code_800BBA00/func_800D3940.s
+ */
 #include "common.h"
 
 f32 func_80003A3C(f32, f32);

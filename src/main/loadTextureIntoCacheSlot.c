@@ -1,3 +1,8 @@
+/* @header
+ * loadTextureIntoCacheSlot  (originally func_8000BC78)
+ * VRAM 0x8000BC78 | ROM 0xC878 | size 0x158
+ * asm: asm/nonmatchings/main/func_8000BC78.s
+ */
 #include "common.h"
 
 extern s32 D_8007C438[][23];

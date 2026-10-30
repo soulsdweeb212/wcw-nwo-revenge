@@ -1,3 +1,8 @@
+/* @header
+ * func_800AB43C
+ * VRAM 0x800AB43C | ROM 0x9E8DC | size 0x124
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AB43C.s
+ */
 #include "common.h"
 
 extern void *D_800FAF58, *D_800FABD0;

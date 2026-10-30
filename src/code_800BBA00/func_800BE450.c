@@ -1,3 +1,8 @@
+/* @header
+ * func_800BE450
+ * VRAM 0x800BE450 | ROM 0xB18F0 | size 0x90
+ * asm: asm/nonmatchings/code_800BBA00/func_800BE450.s
+ */
 #include "common.h"
 
 extern u8 D_800F9D30[];

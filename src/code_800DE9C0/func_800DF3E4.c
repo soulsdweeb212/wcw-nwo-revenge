@@ -1,3 +1,8 @@
+/* @header
+ * func_800DF3E4
+ * VRAM 0x800DF3E4 | ROM 0xD2884 | size 0x1E0
+ * asm: asm/nonmatchings/code_800DE9C0/func_800DF3E4.s
+ */
 #include "common.h"
 
 /* Grab/throw attempt: when asked (flags & 0x10), either play the hurt reaction

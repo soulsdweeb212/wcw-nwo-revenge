@@ -1,3 +1,8 @@
+/* @header
+ * func_800DA2D8
+ * VRAM 0x800DA2D8 | ROM 0xCD778 | size 0x100
+ * asm: asm/nonmatchings/code_800BBA00/func_800DA2D8.s
+ */
 #include "common.h"
 
 extern void *D_800FAF5C;

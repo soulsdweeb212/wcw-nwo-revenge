@@ -1,3 +1,8 @@
+/* @header
+ * func_800940D8
+ * VRAM 0x800940D8 | ROM 0x40848 | size 0x508
+ * asm: asm/nonmatchings/code_80090000/func_800940D8.s
+ */
 #include "common.h"
 
 extern s32 D_800E8210;

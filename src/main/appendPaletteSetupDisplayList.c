@@ -1,3 +1,8 @@
+/* @header
+ * appendPaletteSetupDisplayList  (originally func_8002A970)
+ * VRAM 0x8002A970 | ROM 0x2B570 | size 0xB8
+ * asm: asm/nonmatchings/main/func_8002A970.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0, w1; } Cmd;

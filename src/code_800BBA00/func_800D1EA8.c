@@ -1,3 +1,8 @@
+/* @header
+ * func_800D1EA8
+ * VRAM 0x800D1EA8 | ROM 0xC5348 | size 0xA8
+ * asm: asm/nonmatchings/code_800BBA00/func_800D1EA8.s
+ */
 #include "common.h"
 
 /* Build a local XZ transform (4 floats) for an entity and apply it to that entity

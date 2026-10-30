@@ -1,3 +1,8 @@
+/* @header
+ * func_800005AC
+ * VRAM 0x800005AC | ROM 0x11AC | size 0x24
+ * asm: asm/nonmatchings/main/func_800005AC.s
+ */
 #include "common.h"
 
 void func_80000D80(void *, s32);

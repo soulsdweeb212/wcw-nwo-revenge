@@ -1,3 +1,8 @@
+/* @header
+ * readControllerPakId  (originally func_800225E8)
+ * VRAM 0x800225E8 | ROM 0x231E8 | size 0x1CC
+ * asm: asm/nonmatchings/main/func_800225E8.s
+ */
 #include "common.h"
 
 /* Read and validate a Controller Pak's ID block: read block 1, check the

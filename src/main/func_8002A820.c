@@ -1,3 +1,8 @@
+/* @header
+ * func_8002A820
+ * VRAM 0x8002A820 | ROM 0x2B420 | size 0x150
+ * asm: asm/nonmatchings/main/func_8002A820.s
+ */
 #include "common.h"
 
 /* func_8002A820: invalidates a resource cache entry. It hashes the key string,

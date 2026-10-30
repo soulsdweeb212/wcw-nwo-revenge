@@ -1,3 +1,8 @@
+/* @header
+ * func_8009B66C
+ * VRAM 0x8009B66C | ROM 0x47DDC | size 0x590
+ * asm: asm/nonmatchings/code_80090000/func_8009B66C.s
+ */
 #include "common.h"
 
 typedef struct {u32 w0,w1;} G9B;

@@ -1,3 +1,8 @@
+/* @header
+ * func_800D4088
+ * VRAM 0x800D4088 | ROM 0xC7528 | size 0xC0
+ * asm: asm/nonmatchings/code_800BBA00/func_800D4088.s
+ */
 #include "common.h"
 
 s32 func_8001C580(void);

@@ -1,3 +1,8 @@
+/* @header
+ * func_800D54A0
+ * VRAM 0x800D54A0 | ROM 0xC8940 | size 0x6D4
+ * asm: asm/nonmatchings/code_800BBA00/func_800D54A0.s
+ */
 #include "common.h"
 
 extern s32 D_800FABD8;

@@ -1,3 +1,8 @@
+/* @header
+ * func_80029C7C
+ * VRAM 0x80029C7C | ROM 0x2A87C | size 0x218
+ * asm: asm/nonmatchings/main/func_80029C7C.s
+ */
 #include "common.h"
 
 void func_80021F60(void *, s32);

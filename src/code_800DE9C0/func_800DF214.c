@@ -1,3 +1,8 @@
+/* @header
+ * func_800DF214
+ * VRAM 0x800DF214 | ROM 0xD26B4 | size 0x1D0
+ * asm: asm/nonmatchings/code_800DE9C0/func_800DF214.s
+ */
 #include "common.h"
 
 /* Choose an attack direction when `flags` has bit 2 set. Derives a target angle

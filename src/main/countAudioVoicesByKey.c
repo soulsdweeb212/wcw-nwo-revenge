@@ -1,3 +1,8 @@
+/* @header
+ * countAudioVoicesByKey  (originally func_80013D58)
+ * VRAM 0x80013D58 | ROM 0x14958 | size 0x58
+ * asm: asm/nonmatchings/main/func_80013D58.s
+ */
 #include "common.h"
 
 extern u32 D_800604C8; extern u8 *D_800604D0;

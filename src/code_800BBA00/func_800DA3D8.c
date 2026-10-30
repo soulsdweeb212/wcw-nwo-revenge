@@ -1,3 +1,8 @@
+/* @header
+ * func_800DA3D8
+ * VRAM 0x800DA3D8 | ROM 0xCD878 | size 0x210
+ * asm: asm/nonmatchings/code_800BBA00/func_800DA3D8.s
+ */
 #include "common.h"
 
 extern u16 D_800F9848[]; extern u16 D_800F9850[]; extern u8 D_800F9D10[]; extern u8 D_800F9D12[]; extern u8 D_800FA063[];

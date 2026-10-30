@@ -1,3 +1,8 @@
+/* @header
+ * func_8001F090
+ * VRAM 0x8001F090 | ROM 0x1FC90 | size 0x140
+ * asm: asm/nonmatchings/main/func_8001F090.s
+ */
 #include "common.h"
 
 typedef struct {u32 w0,w1;} Cmd1F090;

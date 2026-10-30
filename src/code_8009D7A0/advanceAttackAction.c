@@ -1,3 +1,8 @@
+/* @header
+ * advanceAttackAction  (originally func_8009F654)
+ * VRAM 0x8009F654 | ROM 0x92AF4 | size 0xE8
+ * asm: asm/nonmatchings/code_8009D7A0/func_8009F654.s
+ */
 #include "common.h"
 
 void func_800A7C40(void *, s8, s16);

@@ -1,3 +1,8 @@
+/* @header
+ * osPfsChecker  (originally func_80023A60)
+ * VRAM 0x80023A60 | ROM 0x24660 | size 0x460
+ * asm: asm/nonmatchings/main/func_80023A60.s
+ */
 #include "common.h"
 
 /* libultra Controller Pak (PFS) consistency checker.

@@ -1,3 +1,8 @@
+/* @header
+ * updateAudioVoiceEnvelope  (originally func_80015118)
+ * VRAM 0x80015118 | ROM 0x15D18 | size 0x350
+ * asm: asm/nonmatchings/main/func_80015118.s
+ */
 #include "common.h"
 
 /* Steps an audio voice's ADSR-style envelope.  Voice byte +0xE3 is the stage

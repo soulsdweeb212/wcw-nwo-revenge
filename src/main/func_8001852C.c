@@ -1,3 +1,8 @@
+/* @header
+ * func_8001852C
+ * VRAM 0x8001852C | ROM 0x1912C | size 0x134
+ * asm: asm/nonmatchings/main/func_8001852C.s
+ */
 #include "common.h"
 
 s32 func_800202B0(s32, s32, s32, s32, s32);

@@ -1,3 +1,8 @@
+/* @header
+ * func_800D9568
+ * VRAM 0x800D9568 | ROM 0xCCA08 | size 0x138
+ * asm: asm/nonmatchings/code_800BBA00/func_800D9568.s
+ */
 #include "common.h"
 
 extern u8 D_8007E228[], D_8007EF30[];

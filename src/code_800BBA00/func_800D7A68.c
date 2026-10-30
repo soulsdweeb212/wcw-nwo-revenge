@@ -1,3 +1,8 @@
+/* @header
+ * func_800D7A68
+ * VRAM 0x800D7A68 | ROM 0xCAF08 | size 0xA0
+ * asm: asm/nonmatchings/code_800BBA00/func_800D7A68.s
+ */
 #include "common.h"
 
 /* Decode the "action group" nibble (bits 8-11) of a packed status word into a

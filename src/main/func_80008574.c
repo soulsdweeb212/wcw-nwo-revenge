@@ -1,3 +1,8 @@
+/* @header
+ * func_80008574
+ * VRAM 0x80008574 | ROM 0x9174 | size 0x18
+ * asm: asm/nonmatchings/main/func_80008574.s
+ */
 #include "common.h"
 
 typedef struct { s16 f0; s16 f2; } S85S;

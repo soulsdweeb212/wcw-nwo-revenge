@@ -1,3 +1,8 @@
+/* @header
+ * func_800E1920
+ * VRAM 0x800E1920 | ROM 0xD4DC0 | size 0x1B8
+ * asm: asm/nonmatchings/code_800DE9C0/func_800E1920.s
+ */
 #include "common.h"
 
 /* Spawn one particle/effect instance for an entity: take a free slot from

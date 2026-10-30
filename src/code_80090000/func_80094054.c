@@ -1,3 +1,8 @@
+/* @header
+ * func_80094054
+ * VRAM 0x80094054 | ROM 0x407C4 | size 0x84
+ * asm: asm/nonmatchings/code_80090000/func_80094054.s
+ */
 #include "common.h"
 
 void releaseHeapBlock(s32);

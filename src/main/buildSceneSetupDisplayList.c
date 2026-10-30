@@ -1,3 +1,8 @@
+/* @header
+ * buildSceneSetupDisplayList  (originally func_80002664)
+ * VRAM 0x80002664 | ROM 0x3264 | size 0x250
+ * asm: asm/nonmatchings/main/func_80002664.s
+ */
 #include "common.h"
 
 /* Appends the scene render setup to the current display list

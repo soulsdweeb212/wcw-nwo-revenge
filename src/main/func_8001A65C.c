@@ -1,3 +1,8 @@
+/* @header
+ * func_8001A65C
+ * VRAM 0x8001A65C | ROM 0x1B25C | size 0x1D4
+ * asm: asm/nonmatchings/main/func_8001A65C.s
+ */
 #include "common.h"
 
 f32 cosf(f32);

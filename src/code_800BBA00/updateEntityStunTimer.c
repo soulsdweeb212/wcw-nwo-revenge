@@ -1,3 +1,8 @@
+/* @header
+ * updateEntityStunTimer  (originally func_800BF700)
+ * VRAM 0x800BF700 | ROM 0xB2BA0 | size 0x420
+ * asm: asm/nonmatchings/code_800BBA00/func_800BF700.s
+ */
 #include "common.h"
 
 /* Per-entity stun/recovery timer driver, indexed by the entity id.

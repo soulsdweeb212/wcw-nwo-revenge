@@ -1,3 +1,8 @@
+/* @header
+ * func_80001930
+ * VRAM 0x80001930 | ROM 0x2530 | size 0x2F8
+ * asm: asm/nonmatchings/main/func_80001930.s
+ */
 #include "common.h"
 
 void func_8001B3EC(void *, f32, f32, f32, f32 *, f32 *, f32 *);

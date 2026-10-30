@@ -1,3 +1,8 @@
+/* @header
+ * nw2DisableInterrupts  (originally func_80026B10)
+ * VRAM 0x80026B10 | ROM 0x27710 | size 0x20
+ * asm: asm/nonmatchings/main/func_80026B10.s
+ */
 /* Hand-written in the original; kept as top-level asm so the bytes match exactly. */
 asm(
 ".set noreorder\n"

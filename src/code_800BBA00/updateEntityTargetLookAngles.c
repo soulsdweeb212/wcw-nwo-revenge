@@ -1,3 +1,8 @@
+/* @header
+ * updateEntityTargetLookAngles  (originally func_800D4604)
+ * VRAM 0x800D4604 | ROM 0xC7AA4 | size 0x39C
+ * asm: asm/nonmatchings/code_800BBA00/func_800D4604.s
+ */
 #include "common.h"
 
 typedef struct { f32 f0,f4; s32 f8; } Heading;

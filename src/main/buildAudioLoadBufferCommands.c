@@ -1,3 +1,8 @@
+/* @header
+ * buildAudioLoadBufferCommands  (originally func_8001E0AC)
+ * VRAM 0x8001E0AC | ROM 0x1ECAC | size 0x178
+ * asm: asm/nonmatchings/main/func_8001E0AC.s
+ */
 #include "common.h"
 
 typedef struct {u32 w0,w1;} CmdE0;

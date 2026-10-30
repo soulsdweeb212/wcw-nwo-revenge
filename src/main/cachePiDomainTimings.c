@@ -1,3 +1,8 @@
+/* @header
+ * cachePiDomainTimings  (originally func_80025750)
+ * VRAM 0x80025750 | ROM 0x26350 | size 0xB8
+ * asm: asm/nonmatchings/main/func_80025750.s
+ */
 #include "common.h"
 
 s32 readControllerPakId(void);s32 __osCheckId(void*);s32 __osContRamWrite(s32,s32,s32,void*,s32);

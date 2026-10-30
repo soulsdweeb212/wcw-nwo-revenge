@@ -1,3 +1,8 @@
+/* @header
+ * func_80018C24
+ * VRAM 0x80018C24 | ROM 0x19824 | size 0xA0
+ * asm: asm/nonmatchings/main/func_80018C24.s
+ */
 #include "common.h"
 
 void func_800194B8(void *, s32);

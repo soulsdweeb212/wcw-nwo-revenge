@@ -1,3 +1,8 @@
+/* @header
+ * func_80007020
+ * VRAM 0x80007020 | ROM 0x7C20 | size 0x2C8
+ * asm: asm/nonmatchings/main/func_80007020.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0, w1; } Gfx7020;

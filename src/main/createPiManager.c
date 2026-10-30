@@ -1,3 +1,8 @@
+/* @header
+ * createPiManager  (originally func_800255B0)
+ * VRAM 0x800255B0 | ROM 0x261B0 | size 0x1A0
+ * asm: asm/nonmatchings/main/func_800255B0.s
+ */
 #include "common.h"
 
 void func_8001C890(void *,void *,s32);

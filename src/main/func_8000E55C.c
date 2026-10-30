@@ -1,3 +1,8 @@
+/* @header
+ * func_8000E55C
+ * VRAM 0x8000E55C | ROM 0xF15C | size 0xE8
+ * asm: asm/nonmatchings/main/func_8000E55C.s
+ */
 #include "common.h"
 
 void func_8000337C(void *);

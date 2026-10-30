@@ -1,3 +1,8 @@
+/* @header
+ * func_80002C74
+ * VRAM 0x80002C74 | ROM 0x3874 | size 0x50
+ * asm: asm/nonmatchings/main/func_80002C74.s
+ */
 #include "common.h"
 
 s32 func_8001C990(s32 *, s32, s32);

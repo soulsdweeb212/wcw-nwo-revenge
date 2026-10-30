@@ -1,3 +1,8 @@
+/* @header
+ * func_80016904
+ * VRAM 0x80016904 | ROM 0x17504 | size 0xD0
+ * asm: asm/nonmatchings/main/func_80016904.s
+ */
 #include "common.h"
 
 /* 0x158-byte audio voice record (only the fields used here are named). */

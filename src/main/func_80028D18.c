@@ -1,3 +1,8 @@
+/* @header
+ * func_80028D18
+ * VRAM 0x80028D18 | ROM 0x29918 | size 0xA8
+ * asm: asm/nonmatchings/main/func_80028D18.s
+ */
 #include "common.h"
 
 typedef struct { u8 text[64]; s32 key0, key1; } Entry;

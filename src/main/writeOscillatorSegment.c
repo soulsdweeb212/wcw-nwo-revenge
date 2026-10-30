@@ -1,3 +1,8 @@
+/* @header
+ * writeOscillatorSegment  (originally func_80019E70)
+ * VRAM 0x80019E70 | ROM 0x1AA70 | size 0x210
+ * asm: asm/nonmatchings/main/func_80019E70.s
+ */
 #include "common.h"
 
 /* Resample cursor: playback fraction and the DMA sample state. */

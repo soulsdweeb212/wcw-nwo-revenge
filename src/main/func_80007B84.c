@@ -1,3 +1,8 @@
+/* @header
+ * func_80007B84
+ * VRAM 0x80007B84 | ROM 0x8784 | size 0x34
+ * asm: asm/nonmatchings/main/func_80007B84.s
+ */
 #include "common.h"
 
 /* Allocate arg1 8-byte records from the second pool in arg0. */

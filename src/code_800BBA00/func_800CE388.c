@@ -1,3 +1,8 @@
+/* @header
+ * func_800CE388
+ * VRAM 0x800CE388 | ROM 0xC1828 | size 0x35C
+ * asm: asm/nonmatchings/code_800BBA00/func_800CE388.s
+ */
 #include "common.h"
 
 void func_800A72FC(void *,void *,s32); void func_800A7328(void *); void func_800A7C40(void *,s8,s16);s32 func_800D35B0(s32,s32);void func_800D3E40(void *,void *,s32,void *);void func_800D427C(void *,s32,s32);s32 func_800D5438(void *,s32);extern s32 D_800E3CA0[];

@@ -1,3 +1,8 @@
+/* @header
+ * func_800D43DC
+ * VRAM 0x800D43DC | ROM 0xC787C | size 0x228
+ * asm: asm/nonmatchings/code_800BBA00/func_800D43DC.s
+ */
 #include "common.h"
 
 typedef struct 

@@ -1,3 +1,8 @@
+/* @header
+ * func_800B06F0
+ * VRAM 0x800B06F0 | ROM 0xA3B90 | size 0x140
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B06F0.s
+ */
 #include "common.h"
 
 typedef struct {s16 f0,f2,f4,f6,f8,fA;u8 padC[0x22];u16 f2E;u8 pad30[0x2C];u32 f5C;u8 pad60[0xC];f32 pos[3];} B06Obj;

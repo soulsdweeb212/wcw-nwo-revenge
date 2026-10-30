@@ -1,3 +1,8 @@
+/* @header
+ * func_8001381C
+ * VRAM 0x8001381C | ROM 0x1441C | size 0x178
+ * asm: asm/nonmatchings/main/func_8001381C.s
+ */
 #include "common.h"
 
 /*

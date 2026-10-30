@@ -1,3 +1,8 @@
+/* @header
+ * func_800171B4
+ * VRAM 0x800171B4 | ROM 0x17DB4 | size 0x20C
+ * asm: asm/nonmatchings/main/func_800171B4.s
+ */
 #include "common.h"
 
 /* Allocate a DMA transfer block of `size` bytes for physical address `addr`.

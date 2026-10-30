@@ -1,3 +1,8 @@
+/* @header
+ * updateSubstateChanceAction  (originally func_800B0090)
+ * VRAM 0x800B0090 | ROM 0xA3530 | size 0xCC
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B0090.s
+ */
 #include "common.h"
 
 f32 func_800B3AD8(void *);

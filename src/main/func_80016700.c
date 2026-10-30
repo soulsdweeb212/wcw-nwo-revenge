@@ -1,3 +1,8 @@
+/* @header
+ * func_80016700
+ * VRAM 0x80016700 | ROM 0x17300 | size 0x14
+ * asm: asm/nonmatchings/main/func_80016700.s
+ */
 #include "common.h"
 
 u8 *func_80016700(u8 *arg0, u8 *arg1) {

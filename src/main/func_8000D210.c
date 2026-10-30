@@ -1,3 +1,8 @@
+/* @header
+ * func_8000D210
+ * VRAM 0x8000D210 | ROM 0xDE10 | size 0x28
+ * asm: asm/nonmatchings/main/func_8000D210.s
+ */
 #include "common.h"
 
 s32 func_8000C1B8(s16, s16);

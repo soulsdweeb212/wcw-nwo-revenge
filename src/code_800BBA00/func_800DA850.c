@@ -1,3 +1,8 @@
+/* @header
+ * func_800DA850
+ * VRAM 0x800DA850 | ROM 0xCDCF0 | size 0x64
+ * asm: asm/nonmatchings/code_800BBA00/func_800DA850.s
+ */
 #include "common.h"
 
 /* Advances a timer record: increments the sub-second counter (+4); when it

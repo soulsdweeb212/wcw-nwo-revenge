@@ -1,3 +1,8 @@
+/* @header
+ * func_800A93C0
+ * VRAM 0x800A93C0 | ROM 0x9C860 | size 0xC8
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A93C0.s
+ */
 #include "common.h"
 
 extern u8 D_800FADCF;

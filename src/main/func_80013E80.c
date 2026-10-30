@@ -1,3 +1,8 @@
+/* @header
+ * func_80013E80
+ * VRAM 0x80013E80 | ROM 0x14A80 | size 0x70
+ * asm: asm/nonmatchings/main/func_80013E80.s
+ */
 #include "common.h"
 
 typedef struct { u8 p0[0x44]; f32 value; u8 p48[0x18]; s32 key; u8 p64[0x48]; f32 base; u8 pB0[0xA8]; } VoiceE80;

@@ -1,3 +1,8 @@
+/* @header
+ * setIndexedS16Pair  (originally func_80010060)
+ * VRAM 0x80010060 | ROM 0x10C60 | size 0x3C
+ * asm: asm/nonmatchings/main/func_80010060.s
+ */
 #include "common.h"
 
 extern s16 D_8005A380[], D_8005A382[];

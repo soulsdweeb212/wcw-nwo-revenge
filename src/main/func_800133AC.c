@@ -1,3 +1,8 @@
+/* @header
+ * func_800133AC
+ * VRAM 0x800133AC | ROM 0x13FAC | size 0xE0
+ * asm: asm/nonmatchings/main/func_800133AC.s
+ */
 #include "common.h"
 
 /* Takes the next voice index from arg0's pool (decrementing the counter at

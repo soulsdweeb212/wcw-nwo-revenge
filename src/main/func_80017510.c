@@ -1,3 +1,8 @@
+/* @header
+ * func_80017510
+ * VRAM 0x80017510 | ROM 0x18110 | size 0x44
+ * asm: asm/nonmatchings/main/func_80017510.s
+ */
 #include "common.h"
 
 s32 initStatePools17B40(s32);

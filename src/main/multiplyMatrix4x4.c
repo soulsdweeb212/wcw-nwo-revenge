@@ -1,3 +1,8 @@
+/* @header
+ * multiplyMatrix4x4  (originally func_80001C28)
+ * VRAM 0x80001C28 | ROM 0x2828 | size 0x78
+ * asm: asm/nonmatchings/main/func_80001C28.s
+ */
 #include "common.h"
 
 extern f32 D_80048270,D_80048274,D_80048278,D_8004827C,D_80048280;

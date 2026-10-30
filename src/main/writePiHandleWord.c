@@ -1,3 +1,8 @@
+/* @header
+ * writePiHandleWord  (originally func_800283A0)
+ * VRAM 0x800283A0 | ROM 0x28FA0 | size 0x144
+ * asm: asm/nonmatchings/main/func_800283A0.s
+ */
 #include "common.h"
 
 typedef struct {u32 f0; u8 f4,latency,pulse,page,release,domain; u16 pad; u32 base;} PiHandle283A0;

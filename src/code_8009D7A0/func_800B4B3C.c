@@ -1,3 +1,8 @@
+/* @header
+ * func_800B4B3C
+ * VRAM 0x800B4B3C | ROM 0xA7FDC | size 0x124
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B4B3C.s
+ */
 #include "common.h"
 
 extern s32 D_800E3CA0[];

@@ -1,3 +1,8 @@
+/* @header
+ * func_80008B5C
+ * VRAM 0x80008B5C | ROM 0x975C | size 0x138
+ * asm: asm/nonmatchings/main/func_80008B5C.s
+ */
 #include "common.h"
 
 void func_800080A0(void *,void *,void *,void *);

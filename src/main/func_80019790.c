@@ -1,3 +1,8 @@
+/* @header
+ * func_80019790
+ * VRAM 0x80019790 | ROM 0x1A390 | size 0x1BC
+ * asm: asm/nonmatchings/main/func_80019790.s
+ */
 #include "common.h"
 
 /* Emit the scroll/position command for a UI object: if it has an override

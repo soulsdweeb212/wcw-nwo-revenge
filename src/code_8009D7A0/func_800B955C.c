@@ -1,3 +1,8 @@
+/* @header
+ * func_800B955C
+ * VRAM 0x800B955C | ROM 0xAC9FC | size 0x1D4
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B955C.s
+ */
 #include "common.h"
 
 /* Clear the flag bits `mask` from each of the 4 entity records (stride 0x3B0,

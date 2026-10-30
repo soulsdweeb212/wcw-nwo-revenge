@@ -1,3 +1,8 @@
+/* @header
+ * func_8000F4FC
+ * VRAM 0x8000F4FC | ROM 0x100FC | size 0x124
+ * asm: asm/nonmatchings/main/func_8000F4FC.s
+ */
 #include "common.h"
 
 extern s8 D_80036CAC[];

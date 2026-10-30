@@ -1,3 +1,8 @@
+/* @header
+ * func_80006E7C
+ * VRAM 0x80006E7C | ROM 0x7A7C | size 0x1A4
+ * asm: asm/nonmatchings/main/func_80006E7C.s
+ */
 #include "common.h"
 
 /* Mirror a texture horizontally in place: allocate a scratch row, reverse each

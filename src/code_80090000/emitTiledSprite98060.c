@@ -1,3 +1,8 @@
+/* @header
+ * emitTiledSprite98060  (originally func_80098060)
+ * VRAM 0x80098060 | ROM 0x447D0 | size 0x260
+ * asm: asm/nonmatchings/code_80090000/func_80098060.s
+ */
 #include "common.h"
 
 /* Emits the display list for a tiled sprite into *arg0.

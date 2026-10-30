@@ -1,3 +1,8 @@
+/* @header
+ * updateTriangleOscillator  (originally func_8001FFF8)
+ * VRAM 0x8001FFF8 | ROM 0x20BF8 | size 0x8C
+ * asm: asm/nonmatchings/main/func_8001FFF8.s
+ */
 #include "common.h"
 
 extern f64 D_8003B888,D_8003B890,D_8003B898;

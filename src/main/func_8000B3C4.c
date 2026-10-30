@@ -1,3 +1,8 @@
+/* @header
+ * func_8000B3C4
+ * VRAM 0x8000B3C4 | ROM 0xBFC4 | size 0x18
+ * asm: asm/nonmatchings/main/func_8000B3C4.s
+ */
 #include "common.h"
 
 extern s16 D_8006A2A4[];

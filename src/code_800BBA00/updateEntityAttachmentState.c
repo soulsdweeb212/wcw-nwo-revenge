@@ -1,3 +1,8 @@
+/* @header
+ * updateEntityAttachmentState  (originally func_800C129C)
+ * VRAM 0x800C129C | ROM 0xB473C | size 0x420
+ * asm: asm/nonmatchings/code_800BBA00/func_800C129C.s
+ */
 #include "common.h"
 
 /* Entity attachment (held-object) state machine (states 0..3).

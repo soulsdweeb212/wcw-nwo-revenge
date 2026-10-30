@@ -1,3 +1,8 @@
+/* @header
+ * func_800166B0
+ * VRAM 0x800166B0 | ROM 0x172B0 | size 0x28
+ * asm: asm/nonmatchings/main/func_800166B0.s
+ */
 #include "common.h"
 
 /* Decode a three-byte loop envelope into +0xF8/+0xEE/+0xEF. */

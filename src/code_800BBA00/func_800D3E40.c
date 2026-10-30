@@ -1,3 +1,8 @@
+/* @header
+ * func_800D3E40
+ * VRAM 0x800D3E40 | ROM 0xC72E0 | size 0xAC
+ * asm: asm/nonmatchings/code_800BBA00/func_800D3E40.s
+ */
 #include "common.h"
 
 f32 cosf(f32); f32 sinf(f32); extern f64 D_800E6BD0;

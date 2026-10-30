@@ -1,3 +1,8 @@
+/* @header
+ * func_80026E60
+ * VRAM 0x80026E60 | ROM 0x27A60 | size 0x134
+ * asm: asm/nonmatchings/main/func_80026E60.s
+ */
 #include "common.h"
 
 typedef struct { s32 *list; s32 *sendList; s32 count, index, limit; s32 *entries; } Nw2SendQueue;

@@ -1,3 +1,8 @@
+/* @header
+ * func_800AE1D4
+ * VRAM 0x800AE1D4 | ROM 0xA1674 | size 0x1A8
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AE1D4.s
+ */
 #include "common.h"
 
 /* Action selector for self D_800FABD0:

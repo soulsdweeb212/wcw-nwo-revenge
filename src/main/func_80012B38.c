@@ -1,3 +1,8 @@
+/* @header
+ * func_80012B38
+ * VRAM 0x80012B38 | ROM 0x13738 | size 0x198
+ * asm: asm/nonmatchings/main/func_80012B38.s
+ */
 #include "common.h"
 
 typedef struct { u32 flags; u8 pad4[32]; f32 z; } ViewPart;

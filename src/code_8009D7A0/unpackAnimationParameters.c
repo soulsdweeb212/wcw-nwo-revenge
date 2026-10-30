@@ -1,3 +1,8 @@
+/* @header
+ * unpackAnimationParameters  (originally func_800A7D64)
+ * VRAM 0x800A7D64 | ROM 0x9B204 | size 0x208
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A7D64.s
+ */
 #include "common.h"
 
 /* Unpack one packed animation/skeleton parameter record (6 u32 words) into a

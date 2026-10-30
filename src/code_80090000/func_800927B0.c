@@ -1,3 +1,8 @@
+/* @header
+ * func_800927B0
+ * VRAM 0x800927B0 | ROM 0x3EF20 | size 0x1B0
+ * asm: asm/nonmatchings/code_80090000/func_800927B0.s
+ */
 #include "common.h"
 
 /* Emit a 4-digit decimal number as Gfx: set the font tile block, then for each

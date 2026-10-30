@@ -1,3 +1,8 @@
+/* @header
+ * func_80013994
+ * VRAM 0x80013994 | ROM 0x14594 | size 0xB4
+ * asm: asm/nonmatchings/main/func_80013994.s
+ */
 #include "common.h"
 
 extern s16 D_80030D38[],D_80030DD4[];

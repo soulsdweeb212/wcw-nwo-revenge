@@ -1,3 +1,8 @@
+/* @header
+ * resolveEntityMoveHeading  (originally func_800B4690)
+ * VRAM 0x800B4690 | ROM 0xA7B30 | size 0x4AC
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B4690.s
+ */
 #include "common.h"
 
 /* Resolve an entity's move/action heading from the input word.

@@ -1,3 +1,8 @@
+/* @header
+ * func_80019024
+ * VRAM 0x80019024 | ROM 0x19C24 | size 0x48
+ * asm: asm/nonmatchings/main/func_80019024.s
+ */
 #include "common.h"
 
 /* Interpolate arg0 toward a target: arg1 is a 1/8-unit step, arg2 a signed offset

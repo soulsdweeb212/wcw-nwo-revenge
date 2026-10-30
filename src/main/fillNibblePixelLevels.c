@@ -1,3 +1,8 @@
+/* @header
+ * fillNibblePixelLevels  (originally func_80029E94)
+ * VRAM 0x80029E94 | ROM 0x2AA94 | size 0x168
+ * asm: asm/nonmatchings/main/func_80029E94.s
+ */
 #include "common.h"
 
 typedef struct {u8 pad0[4]; u8 *buf; u8 pad8[4]; s16 w,h;} Nw2Grid29E94;

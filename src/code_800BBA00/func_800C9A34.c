@@ -1,3 +1,8 @@
+/* @header
+ * func_800C9A34
+ * VRAM 0x800C9A34 | ROM 0xBCED4 | size 0x8C
+ * asm: asm/nonmatchings/code_800BBA00/func_800C9A34.s
+ */
 #include "common.h"
 
 s32 func_800A7328(void *);

@@ -1,3 +1,8 @@
+/* @header
+ * requestAttachmentAction  (originally func_800AC208)
+ * VRAM 0x800AC208 | ROM 0x9F6A8 | size 0x190
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AC208.s
+ */
 #include "common.h"
 
 extern u8 *D_800FABD0,*D_800FAF58;

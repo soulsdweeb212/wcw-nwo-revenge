@@ -1,3 +1,8 @@
+/* @header
+ * func_8002060C
+ * VRAM 0x8002060C | ROM 0x2120C | size 0x1B0
+ * asm: asm/nonmatchings/main/func_8002060C.s
+ */
 #include "common.h"
 
 /* identical to func_8002F05C in WRESTLEMANIA 2000 (matched), with its names changed by decompdecomp */

@@ -1,3 +1,8 @@
+/* @header
+ * func_80007920
+ * VRAM 0x80007920 | ROM 0x8520 | size 0x40
+ * asm: asm/nonmatchings/main/func_80007920.s
+ */
 #include "common.h"
 
 /* Fills a 16-byte primitive record: two s16 fields, two zeroed fields, one s16

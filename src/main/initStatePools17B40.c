@@ -1,3 +1,8 @@
+/* @header
+ * initStatePools17B40  (originally func_80017B40)
+ * VRAM 0x80017B40 | ROM 0x18740 | size 0x270
+ * asm: asm/nonmatchings/main/func_80017B40.s
+ */
 #include "common.h"
 
 /* Initialises the global D_80036F54 state from a config record:

@@ -1,3 +1,8 @@
+/* @header
+ * func_800B68A0
+ * VRAM 0x800B68A0 | ROM 0xA9D40 | size 0x54C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B68A0.s
+ */
 #include "common.h"
 
 typedef struct {u8 pad0[3];u8 f3,pad4;s8 f5[5],fA[5];} AttrB68;

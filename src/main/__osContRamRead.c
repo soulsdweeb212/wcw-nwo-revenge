@@ -1,3 +1,8 @@
+/* @header
+ * __osContRamRead  (originally func_80022BB0)
+ * VRAM 0x80022BB0 | ROM 0x237B0 | size 0x1FC
+ * asm: asm/nonmatchings/main/func_80022BB0.s
+ */
 #include "common.h"
 
 /* Read a 32-byte block from a Controller Pak channel: build the read packet

@@ -1,3 +1,8 @@
+/* @header
+ * func_800BD980
+ * VRAM 0x800BD980 | ROM 0xB0E20 | size 0xAD0
+ * asm: asm/nonmatchings/code_800BBA00/func_800BD980.s
+ */
 #include "common.h"
 
 typedef struct { u32 w[4]; } V4D980;

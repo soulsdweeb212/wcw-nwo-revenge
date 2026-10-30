@@ -1,3 +1,8 @@
+/* @header
+ * func_800164FC
+ * VRAM 0x800164FC | ROM 0x170FC | size 0x40
+ * asm: asm/nonmatchings/main/func_800164FC.s
+ */
 #include "common.h"
 
 /* Decode a 7-bit or 14-bit value into arg0+0xCC (7-bit: one byte; 14-bit: two). */

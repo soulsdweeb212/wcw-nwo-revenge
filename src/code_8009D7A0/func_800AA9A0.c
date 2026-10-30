@@ -1,3 +1,8 @@
+/* @header
+ * func_800AA9A0
+ * VRAM 0x800AA9A0 | ROM 0x9DE40 | size 0x200
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AA9A0.s
+ */
 #include "common.h"
 
 /* Per-frame attack decision: if the entity is not in one of three special

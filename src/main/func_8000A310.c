@@ -1,3 +1,8 @@
+/* @header
+ * func_8000A310
+ * VRAM 0x8000A310 | ROM 0xAF10 | size 0xCC
+ * asm: asm/nonmatchings/main/func_8000A310.s
+ */
 #include "common.h"
 
 extern u8 D_800706B0[];

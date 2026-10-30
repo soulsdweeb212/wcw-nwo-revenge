@@ -1,3 +1,8 @@
+/* @header
+ * func_800A7364
+ * VRAM 0x800A7364 | ROM 0x9A804 | size 0xB4
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A7364.s
+ */
 #include "common.h"
 
 /* Copies the entity's X/Z (from +0x6C/+0x74) to +0x4C/+0x54, then clamps the

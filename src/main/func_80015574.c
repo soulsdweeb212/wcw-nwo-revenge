@@ -1,3 +1,8 @@
+/* @header
+ * func_80015574
+ * VRAM 0x80015574 | ROM 0x16174 | size 0x58
+ * asm: asm/nonmatchings/main/func_80015574.s
+ */
 #include "common.h"
 
 /* Advance a two-phase blink timer: decrement the frame countdown at +0xF0; when it

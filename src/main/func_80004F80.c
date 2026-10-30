@@ -1,3 +1,8 @@
+/* @header
+ * func_80004F80
+ * VRAM 0x80004F80 | ROM 0x5B80 | size 0x40
+ * asm: asm/nonmatchings/main/func_80004F80.s
+ */
 #include "common.h"
 
 void func_80004E08(void *, s16, s16);

@@ -1,3 +1,8 @@
+/* @header
+ * calculateControllerPakDataCrc  (originally func_8002321C)
+ * VRAM 0x8002321C | ROM 0x23E1C | size 0x7C
+ * asm: asm/nonmatchings/main/func_8002321C.s
+ */
 #include "common.h"
 /* Computes the 8-bit CRC of a 32-byte Controller Pak data block. */
 s32 calculateControllerPakDataCrc(u8 *arg0){u32 crc=0,mask,i,b;for(i=32;i;i--,arg0++){mask=0x80;b=*arg0;for(;mask;mask>>=1){crc<<=1;if(b&mask){if(crc&0x100)crc^=0x84;else crc++;}else if(crc&0x100)crc^=0x85;}}for(;i<8;i++){crc<<=1;if(crc&0x100)crc^=0x85;}return crc&255;}

@@ -1,3 +1,8 @@
+/* @header
+ * func_800137F0
+ * VRAM 0x800137F0 | ROM 0x143F0 | size 0x2C
+ * asm: asm/nonmatchings/main/func_800137F0.s
+ */
 #include "common.h"
 
 extern s16 D_800604E4;

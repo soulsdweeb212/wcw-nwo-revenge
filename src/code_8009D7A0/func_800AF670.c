@@ -1,3 +1,8 @@
+/* @header
+ * func_800AF670
+ * VRAM 0x800AF670 | ROM 0xA2B10 | size 0x73C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AF670.s
+ */
 #include "common.h"
 
 typedef struct {u8 p0[2];s16 f2,f4;u16 f6,f8;s16 fA;s8 fC;u8 pD;s16 fE;u8 p10[22];s16 f26;u8 p28[6];u16 f2E;u8 p30[44];u32 f5C;} Act670;

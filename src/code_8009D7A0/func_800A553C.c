@@ -1,3 +1,8 @@
+/* @header
+ * func_800A553C
+ * VRAM 0x800A553C | ROM 0x989DC | size 0x1F0
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A553C.s
+ */
 #include "common.h"
 
 /* Three-stage item/weapon action driver on self record D_800EB408:

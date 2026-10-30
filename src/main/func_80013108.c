@@ -1,3 +1,8 @@
+/* @header
+ * func_80013108
+ * VRAM 0x80013108 | ROM 0x13D08 | size 0x14C
+ * asm: asm/nonmatchings/main/func_80013108.s
+ */
 #include "common.h"
 
 /* func_80013108: main boot path. It initialises the 0x1E0-byte heap, brings

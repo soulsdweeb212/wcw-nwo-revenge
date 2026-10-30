@@ -1,3 +1,8 @@
+/* @header
+ * startEntityAction  (originally func_800A9924)
+ * VRAM 0x800A9924 | ROM 0x9CDC4 | size 0x438
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A9924.s
+ */
 #include "common.h"
 
 /* Begin an action for the current entity. Resolves the entity (D_800FAF58),

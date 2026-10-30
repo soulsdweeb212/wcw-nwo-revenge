@@ -1,3 +1,8 @@
+/* @header
+ * func_800E2A18
+ * VRAM 0x800E2A18 | ROM 0xD5EB8 | size 0xF8
+ * asm: asm/nonmatchings/code_800DE9C0/func_800E2A18.s
+ */
 #include "common.h"
 
 extern s8 D_800F98E0[][0x30];    /* per-player state, [0] = id (-1 = empty) */

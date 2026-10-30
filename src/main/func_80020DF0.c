@@ -1,3 +1,8 @@
+/* @header
+ * func_80020DF0
+ * VRAM 0x80020DF0 | ROM 0x219F0 | size 0x38
+ * asm: asm/nonmatchings/main/func_80020DF0.s
+ */
 #include "common.h"
 
 extern s32 nw2DisableInterrupts(void);

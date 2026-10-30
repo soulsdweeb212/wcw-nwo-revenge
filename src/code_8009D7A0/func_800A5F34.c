@@ -1,3 +1,8 @@
+/* @header
+ * func_800A5F34
+ * VRAM 0x800A5F34 | ROM 0x993D4 | size 0x1D4
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A5F34.s
+ */
 #include "common.h"
 
 /* Two-stage heavy-turn action on self D_800EB408: 0) aim the heading toward

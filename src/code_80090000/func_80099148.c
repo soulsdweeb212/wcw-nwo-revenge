@@ -1,3 +1,8 @@
+/* @header
+ * func_80099148
+ * VRAM 0x80099148 | ROM 0x458B8 | size 0x10C
+ * asm: asm/nonmatchings/code_80090000/func_80099148.s
+ */
 #include "common.h"
 
 /* identical to findOrAddCacheEntryRaw (matched), with its names changed by decomp.wtf */

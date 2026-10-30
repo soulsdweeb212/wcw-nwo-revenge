@@ -1,3 +1,8 @@
+/* @header
+ * func_800B0FD4
+ * VRAM 0x800B0FD4 | ROM 0xA4474 | size 0xE4
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B0FD4.s
+ */
 #include "common.h"
 
 s16 func_800B10B8(void);

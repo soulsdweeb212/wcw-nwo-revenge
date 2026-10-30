@@ -1,3 +1,8 @@
+/* @header
+ * func_80093DAC
+ * VRAM 0x80093DAC | ROM 0x4051C | size 0x2A8
+ * asm: asm/nonmatchings/code_80090000/func_80093DAC.s
+ */
 #include "common.h"
 
 extern u8 func_800DB4FC[],func_800DBB80[],handleEntityState38To3F[],applyEntityMovementC8D84[],updateEntityAttackState[],sceneNodeCallback5AD0[],sceneNodeCallback5C50[];

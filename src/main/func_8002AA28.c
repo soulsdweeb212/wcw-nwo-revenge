@@ -1,3 +1,8 @@
+/* @header
+ * func_8002AA28
+ * VRAM 0x8002AA28 | ROM 0x2B628 | size 0xD4
+ * asm: asm/nonmatchings/main/func_8002AA28.s
+ */
 #include "common.h"
 
 extern void *D_80064AD0;

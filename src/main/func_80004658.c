@@ -1,3 +1,8 @@
+/* @header
+ * func_80004658
+ * VRAM 0x80004658 | ROM 0x5258 | size 0x98
+ * asm: asm/nonmatchings/main/func_80004658.s
+ */
 #include "common.h"
 
 /* machine draft (m2c) for gcc-2.7.2-kmc -G0 -mips3 -mgp32 -mfp32 -O2, tried by autopilot */

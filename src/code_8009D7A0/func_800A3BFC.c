@@ -1,3 +1,8 @@
+/* @header
+ * func_800A3BFC
+ * VRAM 0x800A3BFC | ROM 0x9709C | size 0x178
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A3BFC.s
+ */
 #include "common.h"
 
 typedef struct {s32 f0; s16 f4; u8 pad6[26]; u64 flags; u8 pad28[0x329]; s8 f351; u8 pad352[16]; s8 f362;} Obj3B;

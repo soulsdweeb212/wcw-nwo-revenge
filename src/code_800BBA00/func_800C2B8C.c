@@ -1,3 +1,8 @@
+/* @header
+ * func_800C2B8C
+ * VRAM 0x800C2B8C | ROM 0xB602C | size 0x150
+ * asm: asm/nonmatchings/code_800BBA00/func_800C2B8C.s
+ */
 #include "common.h"
 
 extern f32 func_800D3564(f32);

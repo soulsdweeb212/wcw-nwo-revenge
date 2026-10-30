@@ -1,3 +1,8 @@
+/* @header
+ * func_800A76FC
+ * VRAM 0x800A76FC | ROM 0x9AB9C | size 0xF4
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A76FC.s
+ */
 #include "common.h"
 
 s16 func_800D7B08(s32);

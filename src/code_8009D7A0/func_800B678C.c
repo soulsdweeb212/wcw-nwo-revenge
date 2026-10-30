@@ -1,3 +1,8 @@
+/* @header
+ * func_800B678C
+ * VRAM 0x800B678C | ROM 0xA9C2C | size 0x10C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B678C.s
+ */
 #include "common.h"
 
 /* Target-acquisition check between two entities. If p is not already locked

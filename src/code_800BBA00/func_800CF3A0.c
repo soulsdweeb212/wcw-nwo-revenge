@@ -1,3 +1,8 @@
+/* @header
+ * func_800CF3A0
+ * VRAM 0x800CF3A0 | ROM 0xC2840 | size 0x6B0
+ * asm: asm/nonmatchings/code_800BBA00/func_800CF3A0.s
+ */
 #include "common.h"
 
 typedef struct { u8 pad38[0x38]; u64 flags; } Nw2Attach38;

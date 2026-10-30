@@ -1,3 +1,8 @@
+/* @header
+ * func_800DD370
+ * VRAM 0x800DD370 | ROM 0xD0810 | size 0x344
+ * asm: asm/nonmatchings/code_800BBA00/func_800DD370.s
+ */
 #include "common.h"
 
 typedef struct {

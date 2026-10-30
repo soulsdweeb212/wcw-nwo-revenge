@@ -1,3 +1,8 @@
+/* @header
+ * func_800D3550
+ * VRAM 0x800D3550 | ROM 0xC69F0 | size 0x14
+ * asm: asm/nonmatchings/code_800BBA00/func_800D3550.s
+ */
 #include "common.h"
 
 /* machine draft (m2c), tried by autopilot */

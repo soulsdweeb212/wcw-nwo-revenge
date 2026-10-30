@@ -1,3 +1,8 @@
+/* @header
+ * func_80000A40
+ * VRAM 0x80000A40 | ROM 0x1640 | size 0xA4
+ * asm: asm/nonmatchings/main/func_80000A40.s
+ */
 #include "common.h"
 
 /* One-time initialiser for the control block at D_8003DDB8. It uses the

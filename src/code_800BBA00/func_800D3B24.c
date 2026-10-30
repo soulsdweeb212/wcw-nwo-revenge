@@ -1,3 +1,8 @@
+/* @header
+ * func_800D3B24
+ * VRAM 0x800D3B24 | ROM 0xC6FC4 | size 0xD4
+ * asm: asm/nonmatchings/code_800BBA00/func_800D3B24.s
+ */
 #include "common.h"
 
 typedef union { f32 f; s32 i; } NwFI;

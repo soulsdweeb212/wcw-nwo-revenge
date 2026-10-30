@@ -1,3 +1,8 @@
+/* @header
+ * func_800194B8
+ * VRAM 0x800194B8 | ROM 0x1A0B8 | size 0x18C
+ * asm: asm/nonmatchings/main/func_800194B8.s
+ */
 #include "common.h"
 
 /* Nw2 render-object sub-state setup (messages 4/5): installs the descriptor,

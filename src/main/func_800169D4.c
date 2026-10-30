@@ -1,3 +1,8 @@
+/* @header
+ * func_800169D4
+ * VRAM 0x800169D4 | ROM 0x175D4 | size 0x3C
+ * asm: asm/nonmatchings/main/func_800169D4.s
+ */
 #include "common.h"
 
 extern f64 D_8003B3F0; /* byte-to-value scale, 100/4096 = 0.0244140625 */

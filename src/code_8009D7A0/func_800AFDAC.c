@@ -1,3 +1,8 @@
+/* @header
+ * func_800AFDAC
+ * VRAM 0x800AFDAC | ROM 0xA324C | size 0x11C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AFDAC.s
+ */
 #include "common.h"
 
 extern u8 *D_800FABD0;

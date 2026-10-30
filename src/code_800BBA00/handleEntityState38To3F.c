@@ -1,3 +1,8 @@
+/* @header
+ * handleEntityState38To3F  (originally func_800DB874)
+ * VRAM 0x800DB874 | ROM 0xCED14 | size 0x30C
+ * asm: asm/nonmatchings/code_800BBA00/func_800DB874.s
+ */
 #include "common.h"
 
 /* Paired-entity action handler for target states 0x38..0x3F (substate = state - 0x38).

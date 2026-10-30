@@ -1,3 +1,8 @@
+/* @header
+ * func_80025810
+ * VRAM 0x80025810 | ROM 0x26410 | size 0xA4
+ * asm: asm/nonmatchings/main/func_80025810.s
+ */
 #include "common.h"
 
 extern void *g_80038820;

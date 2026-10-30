@@ -1,3 +1,8 @@
+/* @header
+ * func_8000670C
+ * VRAM 0x8000670C | ROM 0x730C | size 0x108
+ * asm: asm/nonmatchings/main/func_8000670C.s
+ */
 #include "common.h"
 
 typedef struct { s32 w0, w1, w2, w3; } IdInfo;

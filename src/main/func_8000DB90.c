@@ -1,3 +1,8 @@
+/* @header
+ * func_8000DB90
+ * VRAM 0x8000DB90 | ROM 0xE790 | size 0xC0
+ * asm: asm/nonmatchings/main/func_8000DB90.s
+ */
 #include "common.h"
 
 extern u8 D_800566E8[];

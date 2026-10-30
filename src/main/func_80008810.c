@@ -1,3 +1,8 @@
+/* @header
+ * func_80008810
+ * VRAM 0x80008810 | ROM 0x9410 | size 0x2E0
+ * asm: asm/nonmatchings/main/func_80008810.s
+ */
 #include "common.h"
 
 typedef struct { u8 b[0x18]; } MQ;

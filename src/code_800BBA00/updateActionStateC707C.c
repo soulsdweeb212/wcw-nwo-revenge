@@ -1,3 +1,8 @@
+/* @header
+ * updateActionStateC707C  (originally func_800C707C)
+ * VRAM 0x800C707C | ROM 0xBA51C | size 0x260
+ * asm: asm/nonmatchings/code_800BBA00/func_800C707C.s
+ */
 #include "common.h"
 
 /* Action state machine for D_800FAF5C (switch on +0x0C):

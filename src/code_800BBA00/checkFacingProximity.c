@@ -1,3 +1,8 @@
+/* @header
+ * checkFacingProximity  (originally func_800D24C8)
+ * VRAM 0x800D24C8 | ROM 0xC5968 | size 0x100
+ * asm: asm/nonmatchings/code_800BBA00/func_800D24C8.s
+ */
 #include "common.h"
 
 typedef struct {

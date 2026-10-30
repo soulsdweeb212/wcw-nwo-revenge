@@ -1,3 +1,8 @@
+/* @header
+ * func_800D6610
+ * VRAM 0x800D6610 | ROM 0xC9AB0 | size 0x48
+ * asm: asm/nonmatchings/code_800BBA00/func_800D6610.s
+ */
 #include "common.h"
 
 extern s32 D_800FABD8;

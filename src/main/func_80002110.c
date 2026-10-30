@@ -1,3 +1,8 @@
+/* @header
+ * func_80002110
+ * VRAM 0x80002110 | ROM 0x2D10 | size 0x214
+ * asm: asm/nonmatchings/main/func_80002110.s
+ */
 #include "common.h"
 
 typedef struct Obj2110 {

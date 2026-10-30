@@ -1,3 +1,8 @@
+/* @header
+ * func_80008CE8
+ * VRAM 0x80008CE8 | ROM 0x98E8 | size 0x784
+ * asm: asm/nonmatchings/main/func_80008CE8.s
+ */
 #include "common.h"
 
 typedef struct {

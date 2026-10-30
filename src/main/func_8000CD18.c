@@ -1,3 +1,8 @@
+/* @header
+ * func_8000CD18
+ * VRAM 0x8000CD18 | ROM 0xD918 | size 0x6C
+ * asm: asm/nonmatchings/main/func_8000CD18.s
+ */
 #include "common.h"
 
 extern s8 D_800706A4[];

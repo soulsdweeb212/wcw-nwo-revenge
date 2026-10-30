@@ -1,3 +1,8 @@
+/* @header
+ * updateRingLeapAction  (originally func_800C9B5C)
+ * VRAM 0x800C9B5C | ROM 0xBCFFC | size 0x5B8
+ * asm: asm/nonmatchings/code_800BBA00/func_800C9B5C.s
+ */
 #include "common.h"
 
 /* updateRingLeapAction: paired-entity "leap toward the ring" action, a six-state

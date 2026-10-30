@@ -1,3 +1,8 @@
+/* @header
+ * emitSpriteCommand  (originally func_800985CC)
+ * VRAM 0x800985CC | ROM 0x44D3C | size 0x238
+ * asm: asm/nonmatchings/code_80090000/func_800985CC.s
+ */
 #include "common.h"
 
 void emitTiledSprite98060(s32 *, s32, s32, s32, s32, s32, s32);

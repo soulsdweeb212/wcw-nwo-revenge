@@ -1,3 +1,8 @@
+/* @header
+ * advanceWaitAction  (originally func_800B1530)
+ * VRAM 0x800B1530 | ROM 0xA49D0 | size 0x104
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B1530.s
+ */
 #include "common.h"
 
 s16 func_800B1634(void);

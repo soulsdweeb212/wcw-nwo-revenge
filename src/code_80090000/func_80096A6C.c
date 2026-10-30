@@ -1,3 +1,8 @@
+/* @header
+ * func_80096A6C
+ * VRAM 0x80096A6C | ROM 0x431DC | size 0x320
+ * asm: asm/nonmatchings/code_80090000/func_80096A6C.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0, w1; } Gfx96;

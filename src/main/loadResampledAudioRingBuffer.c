@@ -1,3 +1,8 @@
+/* @header
+ * loadResampledAudioRingBuffer  (originally func_8001FA64)
+ * VRAM 0x8001FA64 | ROM 0x20664 | size 0x218
+ * asm: asm/nonmatchings/main/func_8001FA64.s
+ */
 #include "common.h"
 
 typedef struct {u8 pad[0x14];void *state;u8 pad18[8];f32 fraction;u32 flags;} ResampleFA;

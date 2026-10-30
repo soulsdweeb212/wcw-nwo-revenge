@@ -1,3 +1,8 @@
+/* @header
+ * func_800A7F6C
+ * VRAM 0x800A7F6C | ROM 0x9B40C | size 0x410
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A7F6C.s
+ */
 #include "common.h"
 
 extern struct {

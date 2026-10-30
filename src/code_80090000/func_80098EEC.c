@@ -1,3 +1,8 @@
+/* @header
+ * func_80098EEC
+ * VRAM 0x80098EEC | ROM 0x4565C | size 0x150
+ * asm: asm/nonmatchings/code_80090000/func_80098EEC.s
+ */
 #include "common.h"
 
 /* func_80098EEC: accumulates a resource request. It finds an entry with the

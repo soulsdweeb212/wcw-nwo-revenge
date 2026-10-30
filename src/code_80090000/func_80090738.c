@@ -1,3 +1,8 @@
+/* @header
+ * func_80090738
+ * VRAM 0x80090738 | ROM 0x3CEA8 | size 0x1D0
+ * asm: asm/nonmatchings/code_80090000/func_80090738.s
+ */
 #include "common.h"
 
 /* Per-frame update for the 48-entry rotating effect table at D_800D6D50.

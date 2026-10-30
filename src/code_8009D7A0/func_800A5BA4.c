@@ -1,3 +1,8 @@
+/* @header
+ * func_800A5BA4
+ * VRAM 0x800A5BA4 | ROM 0x99044 | size 0x1C0
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A5BA4.s
+ */
 #include "common.h"
 
 /* Two-stage run/charge action on self D_800EB408:

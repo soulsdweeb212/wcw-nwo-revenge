@@ -1,3 +1,8 @@
+/* @header
+ * func_800ADAE4
+ * VRAM 0x800ADAE4 | ROM 0xA0F84 | size 0x60
+ * asm: asm/nonmatchings/code_8009D7A0/func_800ADAE4.s
+ */
 #include "common.h"
 
 /* Quadrant from the signs of the X (+0x6C) and Z (+0x74) components: 1 or 0 when

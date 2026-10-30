@@ -1,3 +1,8 @@
+/* @header
+ * func_80013B58
+ * VRAM 0x80013B58 | ROM 0x14758 | size 0xCC
+ * asm: asm/nonmatchings/main/func_80013B58.s
+ */
 #include "common.h"
 
 /* 0x158-byte audio voice record. */

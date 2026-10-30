@@ -1,3 +1,8 @@
+/* @header
+ * func_80092B20
+ * VRAM 0x80092B20 | ROM 0x3F290 | size 0x2C0
+ * asm: asm/nonmatchings/code_80090000/func_80092B20.s
+ */
 #include "common.h"
 
 typedef struct {

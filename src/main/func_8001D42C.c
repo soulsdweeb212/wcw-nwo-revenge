@@ -1,3 +1,8 @@
+/* @header
+ * func_8001D42C
+ * VRAM 0x8001D42C | ROM 0x1E02C | size 0xB8
+ * asm: asm/nonmatchings/main/func_8001D42C.s
+ */
 #include "common.h"
 
 typedef struct Nw2Node {

@@ -1,3 +1,8 @@
+/* @header
+ * func_8001D594
+ * VRAM 0x8001D594 | ROM 0x1E194 | size 0x8C
+ * asm: asm/nonmatchings/main/func_8001D594.s
+ */
 #include "common.h"
 
 void func_8001B090(void *,void *);

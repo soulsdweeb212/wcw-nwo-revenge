@@ -1,3 +1,8 @@
+/* @header
+ * updateEntitySetupAction  (originally func_8009DC18)
+ * VRAM 0x8009DC18 | ROM 0x910B8 | size 0x148
+ * asm: asm/nonmatchings/code_8009D7A0/func_8009DC18.s
+ */
 #include "common.h"
 
 void func_800D4270(void *);

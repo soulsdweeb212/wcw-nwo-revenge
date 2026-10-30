@@ -1,3 +1,8 @@
+/* @header
+ * func_80099734
+ * VRAM 0x80099734 | ROM 0x45EA4 | size 0x14
+ * asm: asm/nonmatchings/code_80090000/func_80099734.s
+ */
 #include "common.h"
 
 extern u8 updateEntityAttackState[];

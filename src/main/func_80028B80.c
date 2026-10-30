@@ -1,3 +1,8 @@
+/* @header
+ * func_80028B80
+ * VRAM 0x80028B80 | ROM 0x29780 | size 0x38
+ * asm: asm/nonmatchings/main/func_80028B80.s
+ */
 #include "common.h"
 
 /* Appends the NUL-terminated string arg1 to the end of arg0. */

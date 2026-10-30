@@ -405,7 +405,7 @@ def check(name: str) -> bool:
 
     cfg = compiler_config(ROOT, {"compiler": compiler_for(B, fn["vram"])})
     text = (ROOT / src).read_text(encoding="utf-8")
-    m = re.match(r'\s*#include "([^"]+)"\s*\n', text)
+    m = re.match(r'\s*(?:/\* @header\n(?: \*.*\n)*? \*/\n)*#include "([^"]+)"\s*\n', text)
     header = (ROOT / "include" / m.group(1)).read_text(encoding="utf-8") if m else ""
     res = compile_source(cfg, header, text[m.end():] if m else text, trusted=True)
     if not res.ok:

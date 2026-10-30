@@ -1,3 +1,8 @@
+/* @header
+ * func_800B9194
+ * VRAM 0x800B9194 | ROM 0xAC634 | size 0x21C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B9194.s
+ */
 #include "common.h"
 
 extern s8 D_8007E8C0[];

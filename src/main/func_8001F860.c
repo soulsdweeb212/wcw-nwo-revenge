@@ -1,3 +1,8 @@
+/* @header
+ * func_8001F860
+ * VRAM 0x8001F860 | ROM 0x20460 | size 0x14
+ * asm: asm/nonmatchings/main/func_8001F860.s
+ */
 #include "common.h"
 
 /* machine draft (m2c), tried by autopilot */

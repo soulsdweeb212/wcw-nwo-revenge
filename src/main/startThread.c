@@ -1,3 +1,8 @@
+/* @header
+ * startThread  (originally func_8001CD20)
+ * VRAM 0x8001CD20 | ROM 0x1D920 | size 0x118
+ * asm: asm/nonmatchings/main/func_8001CD20.s
+ */
 #include "common.h"
 
 typedef struct ThreadCD20 { struct ThreadCD20 *next; s32 priority; struct ThreadCD20 **queue; struct ThreadCD20 *tlnext; u16 state; } ThreadCD20;

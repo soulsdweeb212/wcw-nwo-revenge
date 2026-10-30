@@ -1,3 +1,8 @@
+/* @header
+ * func_800D7B54
+ * VRAM 0x800D7B54 | ROM 0xCAFF4 | size 0x324
+ * asm: asm/nonmatchings/code_800BBA00/func_800D7B54.s
+ */
 #include "common.h"
 
 extern u16 D_800F9830[];

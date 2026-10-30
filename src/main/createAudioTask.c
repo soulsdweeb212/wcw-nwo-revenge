@@ -1,3 +1,8 @@
+/* @header
+ * createAudioTask  (originally func_80017018)
+ * VRAM 0x80017018 | ROM 0x17C18 | size 0x19C
+ * asm: asm/nonmatchings/main/func_80017018.s
+ */
 #include "common.h"
 
 typedef struct { s32 buffer; s16 count,pad6; s32 f8,fC,f10; u8 pad14[0x34]; s32 commands,bytes; u8 pad50[8]; void *queue,*message; u8 pad60[16]; u8 data[1]; } AudioTask;

@@ -1,3 +1,8 @@
+/* @header
+ * releaseAllResources1211C  (originally func_8001211C)
+ * VRAM 0x8001211C | ROM 0x12D1C | size 0x248
+ * asm: asm/nonmatchings/main/func_8001211C.s
+ */
 #include "common.h"
 
 /* Releases every cached resource descriptor array and clears its handle:

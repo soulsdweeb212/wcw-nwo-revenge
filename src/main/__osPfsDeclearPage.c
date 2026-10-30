@@ -1,3 +1,8 @@
+/* @header
+ * __osPfsDeclearPage  (originally func_8002393C)
+ * VRAM 0x8002393C | ROM 0x2453C | size 0x118
+ * asm: asm/nonmatchings/main/func_8002393C.s
+ */
 #include "common.h"
 
 typedef struct {

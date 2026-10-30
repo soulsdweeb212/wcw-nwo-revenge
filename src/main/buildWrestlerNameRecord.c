@@ -1,3 +1,8 @@
+/* @header
+ * buildWrestlerNameRecord  (originally func_8002B8E4)
+ * VRAM 0x8002B8E4 | ROM 0x2C4E4 | size 0x1D4
+ * asm: asm/nonmatchings/main/func_8002B8E4.s
+ */
 #include "common.h"
 
 /* Build a 0x2A-byte wrestler name/appearance record for (id, variant).

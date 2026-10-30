@@ -1,3 +1,8 @@
+/* @header
+ * snapEntityToRingBoundary  (originally func_800E08C8)
+ * VRAM 0x800E08C8 | ROM 0xD3D68 | size 0x114
+ * asm: asm/nonmatchings/code_800DE9C0/func_800E08C8.s
+ */
 #include "common.h"
 
 extern s32 D_800E3CA0[];   /* heading for each quadrant (0..3) */

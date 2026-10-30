@@ -1,3 +1,8 @@
+/* @header
+ * allocateHeap  (originally func_80000854)
+ * VRAM 0x80000854 | ROM 0x1454 | size 0x104
+ * asm: asm/nonmatchings/main/func_80000854.s
+ */
 #include "common.h"
 
 typedef struct HeapBlock { struct HeapBlock *next; u32 size; u64 magic; } HeapBlock;

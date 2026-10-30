@@ -1,3 +1,8 @@
+/* @header
+ * func_8001F200
+ * VRAM 0x8001F200 | ROM 0x1FE00 | size 0x1EC
+ * asm: asm/nonmatchings/main/func_8001F200.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0, w1; } Acmd17;

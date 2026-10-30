@@ -1,3 +1,8 @@
+/* @header
+ * func_800E212C
+ * VRAM 0x800E212C | ROM 0xD55CC | size 0x104
+ * asm: asm/nonmatchings/code_800DE9C0/func_800E212C.s
+ */
 #include "common.h"
 
 /* Detach an entity from its model part. When the entity (p) holds flag

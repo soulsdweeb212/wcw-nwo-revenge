@@ -1,3 +1,8 @@
+/* @header
+ * func_800E1560
+ * VRAM 0x800E1560 | ROM 0xD4A00 | size 0xD4
+ * asm: asm/nonmatchings/code_800DE9C0/func_800E1560.s
+ */
 #include "common.h"
 
 extern u16 D_800F98D8[];

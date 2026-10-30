@@ -1,3 +1,8 @@
+/* @header
+ * func_800AD218
+ * VRAM 0x800AD218 | ROM 0xA06B8 | size 0xAC
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AD218.s
+ */
 #include "common.h"
 
 s32 func_800A93C0();                                /* extern */

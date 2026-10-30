@@ -1,3 +1,8 @@
+/* @header
+ * func_8001CEE0
+ * VRAM 0x8001CEE0 | ROM 0x1DAE0 | size 0x8
+ * asm: asm/nonmatchings/main/func_8001CEE0.s
+ */
 #include "common.h"
 
 /* identical to func_8000310C (matched), with its names changed by decompdecomp */

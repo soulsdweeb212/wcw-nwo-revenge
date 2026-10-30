@@ -1,3 +1,8 @@
+/* @header
+ * func_800B5CA0
+ * VRAM 0x800B5CA0 | ROM 0xA9140 | size 0x124
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B5CA0.s
+ */
 #include "common.h"
 
 f32 func_800D3EEC(void *, void *, s32);

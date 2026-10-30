@@ -1,3 +1,8 @@
+/* @header
+ * func_8000DC50
+ * VRAM 0x8000DC50 | ROM 0xE850 | size 0xBC
+ * asm: asm/nonmatchings/main/func_8000DC50.s
+ */
 #include "common.h"
 
 typedef struct {

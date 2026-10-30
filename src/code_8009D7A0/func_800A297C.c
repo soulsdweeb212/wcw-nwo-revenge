@@ -1,3 +1,8 @@
+/* @header
+ * func_800A297C
+ * VRAM 0x800A297C | ROM 0x95E1C | size 0xF4
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A297C.s
+ */
 #include "common.h"
 
 void func_800D25D0(void *, f32);

@@ -1,3 +1,8 @@
+/* @header
+ * func_80008C94
+ * VRAM 0x80008C94 | ROM 0x9894 | size 0x54
+ * asm: asm/nonmatchings/main/func_80008C94.s
+ */
 #include "common.h"
 
 extern u8 *D_8007BD38;

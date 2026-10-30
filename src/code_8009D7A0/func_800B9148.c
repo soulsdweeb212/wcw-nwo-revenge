@@ -1,3 +1,8 @@
+/* @header
+ * func_800B9148
+ * VRAM 0x800B9148 | ROM 0xAC5E8 | size 0x4C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B9148.s
+ */
 #include "common.h"
 
 extern void func_8009678C(void);

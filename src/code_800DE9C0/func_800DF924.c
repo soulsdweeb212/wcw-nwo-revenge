@@ -1,3 +1,8 @@
+/* @header
+ * func_800DF924
+ * VRAM 0x800DF924 | ROM 0xD2DC4 | size 0x78
+ * asm: asm/nonmatchings/code_800DE9C0/func_800DF924.s
+ */
 #include "common.h"
 
 s32 checkEntityAttackHit(void *, s32);

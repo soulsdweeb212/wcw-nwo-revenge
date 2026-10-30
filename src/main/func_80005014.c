@@ -1,3 +1,8 @@
+/* @header
+ * func_80005014
+ * VRAM 0x80005014 | ROM 0x5C14 | size 0x1F0
+ * asm: asm/nonmatchings/main/func_80005014.s
+ */
 #include "common.h"
 
 typedef struct Node5014 {

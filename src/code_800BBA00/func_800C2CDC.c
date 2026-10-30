@@ -1,3 +1,8 @@
+/* @header
+ * func_800C2CDC
+ * VRAM 0x800C2CDC | ROM 0xB617C | size 0x8A0
+ * asm: asm/nonmatchings/code_800BBA00/func_800C2CDC.s
+ */
 #include "common.h"
 
 typedef struct {u32 w[4];} Nw2Vec4U;

@@ -1,3 +1,8 @@
+/* @header
+ * func_800B3F24
+ * VRAM 0x800B3F24 | ROM 0xA73C4 | size 0x340
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B3F24.s
+ */
 #include "common.h"
 
 typedef struct {s16 f0,f2,f4;u16 f6,f8,fA;u8 pC[0x22];u16 f2E;u8 p30[12];f32 f3C;u8 p40[24];f32 f58;u32 f5C;} ActB3F;

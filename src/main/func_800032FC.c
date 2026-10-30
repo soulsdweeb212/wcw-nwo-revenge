@@ -1,3 +1,8 @@
+/* @header
+ * func_800032FC
+ * VRAM 0x800032FC | ROM 0x3EFC | size 0x40
+ * asm: asm/nonmatchings/main/func_800032FC.s
+ */
 #include "common.h"
 
 s32 func_80013B58(s32, s32);

@@ -1,3 +1,8 @@
+/* @header
+ * func_800E07DC
+ * VRAM 0x800E07DC | ROM 0xD3C7C | size 0xEC
+ * asm: asm/nonmatchings/code_800DE9C0/func_800E07DC.s
+ */
 #include "common.h"
 
 extern s16 D_800F9D12[][0x1D8];

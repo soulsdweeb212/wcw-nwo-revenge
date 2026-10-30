@@ -1,3 +1,8 @@
+/* @header
+ * func_80028F3C
+ * VRAM 0x80028F3C | ROM 0x29B3C | size 0x284
+ * asm: asm/nonmatchings/main/func_80028F3C.s
+ */
 #include "common.h"
 
 s32 func_80028E28(u8 *, s32);

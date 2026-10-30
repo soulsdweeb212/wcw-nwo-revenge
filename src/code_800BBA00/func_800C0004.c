@@ -1,3 +1,8 @@
+/* @header
+ * func_800C0004
+ * VRAM 0x800C0004 | ROM 0xB34A4 | size 0x1A4
+ * asm: asm/nonmatchings/code_800BBA00/func_800C0004.s
+ */
 #include "common.h"
 
 /* Global event/round check: if both controller flags match, roll a random

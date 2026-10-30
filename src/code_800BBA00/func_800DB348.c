@@ -1,3 +1,8 @@
+/* @header
+ * func_800DB348
+ * VRAM 0x800DB348 | ROM 0xCE7E8 | size 0x1B4
+ * asm: asm/nonmatchings/code_800BBA00/func_800DB348.s
+ */
 #include "common.h"
 
 /* Per-frame paired-move outer hook: while the entity's timer/frame is inside

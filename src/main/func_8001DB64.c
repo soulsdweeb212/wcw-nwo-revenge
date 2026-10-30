@@ -1,3 +1,8 @@
+/* @header
+ * func_8001DB64
+ * VRAM 0x8001DB64 | ROM 0x1E764 | size 0x39C
+ * asm: asm/nonmatchings/main/func_8001DB64.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0, w1; } Acmd19;

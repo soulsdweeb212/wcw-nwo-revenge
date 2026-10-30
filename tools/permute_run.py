@@ -59,7 +59,7 @@ def strip_pad(l):  # alignment nops at the end of a function: the ROM's size inc
 ORIG=strip_pad(norm(dis(tmp+'/orig.bin',True)))
 
 def score(src,tag='0'):
-    m=re.match(r'\s*#include "([^"]+)"\s*\n',src)
+    m=re.match(r'\s*(?:/\* @header\n(?: \*.*\n)*? \*/\n)*#include "([^"]+)"\s*\n',src)
     body=src[m.end():] if m else src
     try: res=compile_source(cfg,header,body,trusted=True)
     except Exception: return None

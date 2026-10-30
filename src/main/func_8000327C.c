@@ -1,3 +1,8 @@
+/* @header
+ * func_8000327C
+ * VRAM 0x8000327C | ROM 0x3E7C | size 0x28
+ * asm: asm/nonmatchings/main/func_8000327C.s
+ */
 #include "common.h"
 
 s32 func_80014064(s32, s16);

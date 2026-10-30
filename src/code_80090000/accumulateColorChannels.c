@@ -1,3 +1,8 @@
+/* @header
+ * accumulateColorChannels  (originally func_800952CC)
+ * VRAM 0x800952CC | ROM 0x41A3C | size 0x128
+ * asm: asm/nonmatchings/code_80090000/func_800952CC.s
+ */
 #include "common.h"
 
 extern s16 D_800E74CC,D_800E74CE,D_800E74D0,D_800E74D2;

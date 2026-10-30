@@ -1,3 +1,8 @@
+/* @header
+ * func_80092DE0
+ * VRAM 0x80092DE0 | ROM 0x3F550 | size 0x8FC
+ * asm: asm/nonmatchings/code_80090000/func_80092DE0.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0; u32 w1; } Gfx2DE0;

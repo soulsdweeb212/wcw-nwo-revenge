@@ -1,3 +1,8 @@
+/* @header
+ * copyPartCoordinateFields  (originally func_800D49A0)
+ * VRAM 0x800D49A0 | ROM 0xC7E40 | size 0x130
+ * asm: asm/nonmatchings/code_800BBA00/func_800D49A0.s
+ */
 #include "common.h"
 
 extern f32 D_80070C94, D_80070C98, D_80070C9C, D_80070CAC, D_80070CB4;

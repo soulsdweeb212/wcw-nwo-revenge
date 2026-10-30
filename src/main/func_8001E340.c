@@ -1,3 +1,8 @@
+/* @header
+ * func_8001E340
+ * VRAM 0x8001E340 | ROM 0x1EF40 | size 0x54C
+ * asm: asm/nonmatchings/main/func_8001E340.s
+ */
 #include "common.h"
 
 typedef struct Nw2EnvRec {

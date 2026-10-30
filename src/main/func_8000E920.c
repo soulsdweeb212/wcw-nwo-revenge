@@ -1,3 +1,8 @@
+/* @header
+ * func_8000E920
+ * VRAM 0x8000E920 | ROM 0xF520 | size 0x4A4
+ * asm: asm/nonmatchings/main/func_8000E920.s
+ */
 #include "common.h"
 
 typedef struct EntE920 {

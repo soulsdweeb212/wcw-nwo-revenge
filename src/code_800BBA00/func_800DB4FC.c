@@ -1,3 +1,8 @@
+/* @header
+ * func_800DB4FC
+ * VRAM 0x800DB4FC | ROM 0xCE99C | size 0x230
+ * asm: asm/nonmatchings/code_800BBA00/func_800DB4FC.s
+ */
 #include "common.h"
 
 extern u8 D_800F9D10[];

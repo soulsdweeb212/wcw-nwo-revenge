@@ -1,3 +1,8 @@
+/* @header
+ * func_800B6114
+ * VRAM 0x800B6114 | ROM 0xA95B4 | size 0xD8
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B6114.s
+ */
 #include "common.h"
 
 extern f32 D_800E3C50[];

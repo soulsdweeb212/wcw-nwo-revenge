@@ -1,3 +1,8 @@
+/* @header
+ * buildCi4TextureDisplayList  (originally func_80011460)
+ * VRAM 0x80011460 | ROM 0x12060 | size 0x304
+ * asm: asm/nonmatchings/main/func_80011460.s
+ */
 #include "common.h"
 
 /* Builds the RDP display list for a CI4 (4-bit colour-index) texture: sets the

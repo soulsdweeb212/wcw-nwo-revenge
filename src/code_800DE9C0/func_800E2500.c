@@ -1,3 +1,8 @@
+/* @header
+ * func_800E2500
+ * VRAM 0x800E2500 | ROM 0xD59A0 | size 0x268
+ * asm: asm/nonmatchings/code_800DE9C0/func_800E2500.s
+ */
 #include "common.h"
 
 typedef struct {

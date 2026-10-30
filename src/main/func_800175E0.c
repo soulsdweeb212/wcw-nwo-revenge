@@ -1,3 +1,8 @@
+/* @header
+ * func_800175E0
+ * VRAM 0x800175E0 | ROM 0x181E0 | size 0x120
+ * asm: asm/nonmatchings/main/func_800175E0.s
+ */
 #include "common.h"
 
 typedef struct AudioNode {

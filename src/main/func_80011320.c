@@ -1,3 +1,8 @@
+/* @header
+ * func_80011320
+ * VRAM 0x80011320 | ROM 0x11F20 | size 0x14
+ * asm: asm/nonmatchings/main/func_80011320.s
+ */
 #include "common.h"
 
 /* machine draft (m2c), tried by autopilot */

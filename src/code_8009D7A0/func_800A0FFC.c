@@ -1,3 +1,8 @@
+/* @header
+ * func_800A0FFC
+ * VRAM 0x800A0FFC | ROM 0x9449C | size 0x110
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A0FFC.s
+ */
 #include "common.h"
 
 void func_800A7188(void *);

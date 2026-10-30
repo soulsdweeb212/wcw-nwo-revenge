@@ -1,3 +1,8 @@
+/* @header
+ * func_80000E00
+ * VRAM 0x80000E00 | ROM 0x1A00 | size 0xC
+ * asm: asm/nonmatchings/main/func_80000E00.s
+ */
 #include "common.h"
 
 /* machine draft (m2c), tried by autopilot */

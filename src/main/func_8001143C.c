@@ -1,3 +1,8 @@
+/* @header
+ * func_8001143C
+ * VRAM 0x8001143C | ROM 0x1203C | size 0x18
+ * asm: asm/nonmatchings/main/func_8001143C.s
+ */
 #include "common.h"
 
 extern s32 D_8005A3B0[];

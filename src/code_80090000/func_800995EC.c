@@ -1,3 +1,8 @@
+/* @header
+ * func_800995EC
+ * VRAM 0x800995EC | ROM 0x45D5C | size 0xA8
+ * asm: asm/nonmatchings/code_80090000/func_800995EC.s
+ */
 #include "common.h"
 
 extern u8 updateEntityReactionState[];

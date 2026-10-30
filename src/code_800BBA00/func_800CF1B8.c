@@ -1,3 +1,8 @@
+/* @header
+ * func_800CF1B8
+ * VRAM 0x800CF1B8 | ROM 0xC2658 | size 0x1E8
+ * asm: asm/nonmatchings/code_800BBA00/func_800CF1B8.s
+ */
 #include "common.h"
 
 /* Defensive reaction selector: if self is "hurt" (flag 0x80), start the hurt

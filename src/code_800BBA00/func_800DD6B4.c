@@ -1,3 +1,8 @@
+/* @header
+ * func_800DD6B4
+ * VRAM 0x800DD6B4 | ROM 0xD0B54 | size 0x414
+ * asm: asm/nonmatchings/code_800BBA00/func_800DD6B4.s
+ */
 #include "common.h"
 
 typedef struct {u8 p0[4];s16 f4,f6,f8,fA,fC;u8 pE[0x12];u64 flags;u16 f28;u8 p2A[0x33A];void *attachment;u8 p368[6];u8 f36E,f36F,f370,f371;u8 p372[0x30];s8 f3A2;} EDD6;

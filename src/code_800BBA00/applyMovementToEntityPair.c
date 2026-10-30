@@ -1,3 +1,8 @@
+/* @header
+ * applyMovementToEntityPair  (originally func_800D6E78)
+ * VRAM 0x800D6E78 | ROM 0xCA318 | size 0x2B0
+ * asm: asm/nonmatchings/code_800BBA00/func_800D6E78.s
+ */
 #include "common.h"
 
 /* Moves a paired entity: a directional XZ step selected by `flags` bits 0x100/0x200/

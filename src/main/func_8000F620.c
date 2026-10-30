@@ -1,3 +1,8 @@
+/* @header
+ * func_8000F620
+ * VRAM 0x8000F620 | ROM 0x10220 | size 0xD4
+ * asm: asm/nonmatchings/main/func_8000F620.s
+ */
 #include "common.h"
 
 extern u8 D_80056968[], D_80057048[];

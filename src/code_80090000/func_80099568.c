@@ -1,3 +1,8 @@
+/* @header
+ * func_80099568
+ * VRAM 0x80099568 | ROM 0x45CD8 | size 0x84
+ * asm: asm/nonmatchings/code_80090000/func_80099568.s
+ */
 #include "common.h"
 
 extern s16 D_800E74DC;

@@ -1,3 +1,8 @@
+/* @header
+ * func_800005D0
+ * VRAM 0x800005D0 | ROM 0x11D0 | size 0x34
+ * asm: asm/nonmatchings/main/func_800005D0.s
+ */
 #include "common.h"
 
 s32 func_80000EE0();

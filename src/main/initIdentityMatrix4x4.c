@@ -1,3 +1,8 @@
+/* @header
+ * initIdentityMatrix4x4  (originally func_8001B1D0)
+ * VRAM 0x8001B1D0 | ROM 0x1BDD0 | size 0x50
+ * asm: asm/nonmatchings/main/func_8001B1D0.s
+ */
 #include "common.h"
 
 /* Write a 4x4 identity matrix to arg (row-major; diagonal 1, elsewhere 0). */

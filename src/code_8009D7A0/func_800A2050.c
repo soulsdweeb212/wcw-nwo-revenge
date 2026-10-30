@@ -1,3 +1,8 @@
+/* @header
+ * func_800A2050
+ * VRAM 0x800A2050 | ROM 0x954F0 | size 0x65C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A2050.s
+ */
 #include "common.h"
 
 typedef struct {s32 f0;s16 f4,f6;s32 f8;s16 fC,fE;u8 pad10[8];s16 f18;u8 pad1A[6];u64 flags;u8 pad28[4];u32 f2C;u8 pad30[0x10];u16 f40;u8 f42,f43;} ObjA2050;

@@ -1,3 +1,8 @@
+/* @header
+ * func_800D91C0
+ * VRAM 0x800D91C0 | ROM 0xCC660 | size 0x74
+ * asm: asm/nonmatchings/code_800BBA00/func_800D91C0.s
+ */
 #include "common.h"
 
 s16 func_800D7690(void *, s32, s32);

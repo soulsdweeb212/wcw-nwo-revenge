@@ -1,3 +1,8 @@
+/* @header
+ * __fixsfdi  (originally func_800288C0)
+ * VRAM 0x800288C0 | ROM 0x294C0 | size 0xEC
+ * asm: asm/nonmatchings/main/func_800288C0.s
+ */
 /* Hand-written in the original; kept as top-level asm so the bytes match exactly. */
 asm(
 ".set noreorder\n"

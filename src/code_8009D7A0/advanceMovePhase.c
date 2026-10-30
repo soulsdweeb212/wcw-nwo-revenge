@@ -1,3 +1,8 @@
+/* @header
+ * advanceMovePhase  (originally func_800B16D0)
+ * VRAM 0x800B16D0 | ROM 0xA4B70 | size 0x210
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B16D0.s
+ */
 #include "common.h"
 
 /* Globals: D_800FABD0 is the move currently running, D_800FAF58 the attacker

@@ -1,3 +1,8 @@
+/* @header
+ * func_8001A980
+ * VRAM 0x8001A980 | ROM 0x1B580 | size 0x380
+ * asm: asm/nonmatchings/main/func_8001A980.s
+ */
 #include "common.h"
 
 f32 sqrtf(f32);

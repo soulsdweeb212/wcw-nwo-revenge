@@ -1,3 +1,8 @@
+/* @header
+ * func_8001BB50
+ * VRAM 0x8001BB50 | ROM 0x1C750 | size 0x188
+ * asm: asm/nonmatchings/main/func_8001BB50.s
+ */
 #include "common.h"
 
 /* Builds a 4x4 X/Y/Z Euler rotation matrix in the caller's buffer. The angles

@@ -1,3 +1,8 @@
+/* @header
+ * func_80092554
+ * VRAM 0x80092554 | ROM 0x3ECC4 | size 0x25C
+ * asm: asm/nonmatchings/code_80090000/func_80092554.s
+ */
 #include "common.h"
 
 /* func_80092554: emits part-colour commands into the display-list buffer

@@ -1,3 +1,8 @@
+/* @header
+ * func_8000EDC4
+ * VRAM 0x8000EDC4 | ROM 0xF9C4 | size 0x1C
+ * asm: asm/nonmatchings/main/func_8000EDC4.s
+ */
 #include "common.h"
 
 /* identical to func_80002C58 (matched), with its names changed by decompdecomp */

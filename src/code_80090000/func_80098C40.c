@@ -1,3 +1,8 @@
+/* @header
+ * func_80098C40
+ * VRAM 0x80098C40 | ROM 0x453B0 | size 0x1DC
+ * asm: asm/nonmatchings/code_80090000/func_80098C40.s
+ */
 #include "common.h"
 
 /* Emit a colour/sprite batch into the display list at *out. Starts with the

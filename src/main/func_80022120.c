@@ -1,3 +1,8 @@
+/* @header
+ * func_80022120
+ * VRAM 0x80022120 | ROM 0x22D20 | size 0x34
+ * asm: asm/nonmatchings/main/func_80022120.s
+ */
 #include "common.h"
 
 /* Sum arg1 bytes at arg0, truncated to 16 bits. */

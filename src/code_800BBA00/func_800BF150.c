@@ -1,3 +1,8 @@
+/* @header
+ * func_800BF150
+ * VRAM 0x800BF150 | ROM 0xB25F0 | size 0x8C
+ * asm: asm/nonmatchings/code_800BBA00/func_800BF150.s
+ */
 #include "common.h"
 
 s8 func_800D26A0(void *, s32, s8);

@@ -1,3 +1,8 @@
+/* @header
+ * func_80012364
+ * VRAM 0x80012364 | ROM 0x12F64 | size 0x7D4
+ * asm: asm/nonmatchings/main/func_80012364.s
+ */
 #include "common.h"
 
 typedef struct {void *source;u8 pad4[16];u32 *flags;u8 rest[0xC4];} Render123;

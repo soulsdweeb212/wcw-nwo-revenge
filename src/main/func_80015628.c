@@ -1,3 +1,8 @@
+/* @header
+ * func_80015628
+ * VRAM 0x80015628 | ROM 0x16228 | size 0xF0
+ * asm: asm/nonmatchings/main/func_80015628.s
+ */
 #include "common.h"
 
 #define F(o,t) (*(t *)((u8 *)arg0+(o)))

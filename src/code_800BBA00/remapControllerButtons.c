@@ -1,3 +1,8 @@
+/* @header
+ * remapControllerButtons  (originally func_800BC69C)
+ * VRAM 0x800BC69C | ROM 0xAFB3C | size 0x12C
+ * asm: asm/nonmatchings/code_800BBA00/func_800BC69C.s
+ */
 #include "common.h"
 
 extern u8 D_8007E8C0[];

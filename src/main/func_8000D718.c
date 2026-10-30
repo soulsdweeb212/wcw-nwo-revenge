@@ -1,3 +1,8 @@
+/* @header
+ * func_8000D718
+ * VRAM 0x8000D718 | ROM 0xE318 | size 0x58
+ * asm: asm/nonmatchings/main/func_8000D718.s
+ */
 #include "common.h"
 
 s32 func_8000520C(s32, s32);

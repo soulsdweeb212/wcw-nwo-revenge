@@ -1,3 +1,8 @@
+/* @header
+ * func_800D6658
+ * VRAM 0x800D6658 | ROM 0xC9AF8 | size 0x820
+ * asm: asm/nonmatchings/code_800BBA00/func_800D6658.s
+ */
 #include "common.h"
 
 typedef struct{s32 f0;s16 f4,f6,f8,fA,fC,fE;u8 pad10[0x10];u64 flags;u8 pad28[0x14];s16 f3C;u8 pad3E[0xE];f32 f4C,f50,f54;s32 f58;u8 pad5C[0x10];f32 f6C,f70,f74;u8 pad78[0x2DB];s8 f353;}Nw2D6658;

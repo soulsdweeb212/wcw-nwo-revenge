@@ -1,3 +1,8 @@
+/* @header
+ * func_800BF548
+ * VRAM 0x800BF548 | ROM 0xB29E8 | size 0xE4
+ * asm: asm/nonmatchings/code_800BBA00/func_800BF548.s
+ */
 #include "common.h"
 
 extern s16 D_800EB490[];

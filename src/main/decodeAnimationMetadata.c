@@ -1,3 +1,8 @@
+/* @header
+ * decodeAnimationMetadata  (originally func_800086A4)
+ * VRAM 0x800086A4 | ROM 0x92A4 | size 0x138
+ * asm: asm/nonmatchings/main/func_800086A4.s
+ */
 #include "common.h"
 
 extern u16 D_8006A2B0[][2];

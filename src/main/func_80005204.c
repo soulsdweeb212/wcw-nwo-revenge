@@ -1,3 +1,8 @@
+/* @header
+ * func_80005204
+ * VRAM 0x80005204 | ROM 0x5E04 | size 0x8
+ * asm: asm/nonmatchings/main/func_80005204.s
+ */
 #include "common.h"
 
 /* machine draft (m2c), tried by autopilot */

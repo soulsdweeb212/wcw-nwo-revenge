@@ -1,3 +1,8 @@
+/* @header
+ * func_80091718
+ * VRAM 0x80091718 | ROM 0x3DE88 | size 0x1F0
+ * asm: asm/nonmatchings/code_80090000/func_80091718.s
+ */
 #include "common.h"
 
 /* Emit a textured-rectangle display list for a 81x21 HUD tile.

@@ -1,3 +1,8 @@
+/* @header
+ * func_800A7240
+ * VRAM 0x800A7240 | ROM 0x9A6E0 | size 0xBC
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A7240.s
+ */
 #include "common.h"
 
 s32 func_800D3550(s32);

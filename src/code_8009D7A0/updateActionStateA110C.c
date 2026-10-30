@@ -1,3 +1,8 @@
+/* @header
+ * updateActionStateA110C  (originally func_800A110C)
+ * VRAM 0x800A110C | ROM 0x945AC | size 0x2D0
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A110C.s
+ */
 #include "common.h"
 
 /* D_800EB408 action state machine (cases 0..2) driving D_800EB40C: state 0 picks a

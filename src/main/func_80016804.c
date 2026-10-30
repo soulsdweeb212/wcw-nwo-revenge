@@ -1,3 +1,8 @@
+/* @header
+ * func_80016804
+ * VRAM 0x80016804 | ROM 0x17404 | size 0x50
+ * asm: asm/nonmatchings/main/func_80016804.s
+ */
 #include "common.h"
 
 s8 func_80015B84(u8);

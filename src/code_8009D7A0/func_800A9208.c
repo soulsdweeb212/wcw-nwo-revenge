@@ -1,3 +1,8 @@
+/* @header
+ * func_800A9208
+ * VRAM 0x800A9208 | ROM 0x9C6A8 | size 0x88
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A9208.s
+ */
 #include "common.h"
 
 extern s16 D_800E3270[];

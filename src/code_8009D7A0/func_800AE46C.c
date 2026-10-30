@@ -1,3 +1,8 @@
+/* @header
+ * func_800AE46C
+ * VRAM 0x800AE46C | ROM 0xA190C | size 0x248
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AE46C.s
+ */
 #include "common.h"
 
 extern u8 *D_800F9B60;

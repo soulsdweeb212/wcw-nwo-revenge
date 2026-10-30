@@ -1,3 +1,8 @@
+/* @header
+ * lookupResourceDescriptor  (originally func_800035B4)
+ * VRAM 0x800035B4 | ROM 0x41B4 | size 0xD0
+ * asm: asm/nonmatchings/main/func_800035B4.s
+ */
 #include "common.h"
 
 typedef struct {

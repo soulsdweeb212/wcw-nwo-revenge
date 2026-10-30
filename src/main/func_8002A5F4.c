@@ -1,3 +1,8 @@
+/* @header
+ * func_8002A5F4
+ * VRAM 0x8002A5F4 | ROM 0x2B1F4 | size 0x64
+ * asm: asm/nonmatchings/main/func_8002A5F4.s
+ */
 #include "common.h"
 
 s32 releaseHeapBlock(s32);

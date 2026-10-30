@@ -1,3 +1,8 @@
+/* @header
+ * func_8002B710
+ * VRAM 0x8002B710 | ROM 0x2C310 | size 0x40
+ * asm: asm/nonmatchings/main/func_8002B710.s
+ */
 #include "common.h"
 
 extern u16 lookupIdList[];

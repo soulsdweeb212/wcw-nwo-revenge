@@ -1,3 +1,8 @@
+/* @header
+ * func_800ABE20
+ * VRAM 0x800ABE20 | ROM 0x9F2C0 | size 0x1D8
+ * asm: asm/nonmatchings/code_8009D7A0/func_800ABE20.s
+ */
 #include "common.h"
 
 /* Counter/reaction decision when action state 4 begins. Sets the action mode

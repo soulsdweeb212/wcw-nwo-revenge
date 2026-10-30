@@ -1,3 +1,8 @@
+/* @header
+ * selectAudioVoiceSlot  (originally func_80015D4C)
+ * VRAM 0x80015D4C | ROM 0x1694C | size 0x180
+ * asm: asm/nonmatchings/main/func_80015D4C.s
+ */
 #include "common.h"
 
 typedef struct {s32 f0,active;u8 pad8[0x5C];s32 priority;u8 pad68[0x2C];void *owner;u8 pad98[4];s32 sample;u8 padA0[0x26];u16 kind;u8 padC8[0x90];} Voice15;

@@ -1,3 +1,8 @@
+/* @header
+ * func_800D90E8
+ * VRAM 0x800D90E8 | ROM 0xCC588 | size 0xD8
+ * asm: asm/nonmatchings/code_800BBA00/func_800D90E8.s
+ */
 #include "common.h"
 
 extern s8 D_8007EF30[];

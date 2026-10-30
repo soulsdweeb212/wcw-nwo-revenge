@@ -1,3 +1,8 @@
+/* @header
+ * func_8000E724
+ * VRAM 0x8000E724 | ROM 0xF324 | size 0x17C
+ * asm: asm/nonmatchings/main/func_8000E724.s
+ */
 #include "common.h"
 
 /*

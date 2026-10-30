@@ -1,3 +1,8 @@
+/* @header
+ * updateEntityModeFlags  (originally func_800D4BFC)
+ * VRAM 0x800D4BFC | ROM 0xC809C | size 0xC8
+ * asm: asm/nonmatchings/code_800BBA00/func_800D4BFC.s
+ */
 #include "common.h"
 
 /* Set the mode bits (0x1C0) of the entity's +0x20 flag word from its mode byte

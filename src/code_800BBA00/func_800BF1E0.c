@@ -1,3 +1,8 @@
+/* @header
+ * func_800BF1E0
+ * VRAM 0x800BF1E0 | ROM 0xB2680 | size 0x48
+ * asm: asm/nonmatchings/code_800BBA00/func_800BF1E0.s
+ */
 #include "common.h"
 
 /* Return arg0's per-part byte at +0x34C+arg1, or the constant 0x32 when flag 0x80000

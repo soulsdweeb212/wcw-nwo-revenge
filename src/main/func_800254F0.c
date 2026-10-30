@@ -1,3 +1,8 @@
+/* @header
+ * func_800254F0
+ * VRAM 0x800254F0 | ROM 0x260F0 | size 0xC0
+ * asm: asm/nonmatchings/main/func_800254F0.s
+ */
 #include "common.h"
 
 s32 __osCheckId(void *);

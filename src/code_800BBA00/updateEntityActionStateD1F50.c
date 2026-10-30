@@ -1,3 +1,8 @@
+/* @header
+ * updateEntityActionStateD1F50  (originally func_800D1F50)
+ * VRAM 0x800D1F50 | ROM 0xC53F0 | size 0x290
+ * asm: asm/nonmatchings/code_800BBA00/func_800D1F50.s
+ */
 #include "common.h"
 
 /* Action state machine for the primary entity D_800FAF5C paired with

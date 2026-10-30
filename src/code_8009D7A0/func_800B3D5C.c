@@ -1,3 +1,8 @@
+/* @header
+ * func_800B3D5C
+ * VRAM 0x800B3D5C | ROM 0xA71FC | size 0x1C8
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B3D5C.s
+ */
 #include "common.h"
 
 /* Four-state move sequencer for the active action (D_800FABD0). State 0 checks

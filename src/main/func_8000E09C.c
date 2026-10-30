@@ -1,3 +1,8 @@
+/* @header
+ * func_8000E09C
+ * VRAM 0x8000E09C | ROM 0xEC9C | size 0x30
+ * asm: asm/nonmatchings/main/func_8000E09C.s
+ */
 #include "common.h"
 
 s32 func_80013CA4(s32, s32);

@@ -1,3 +1,18 @@
+/* @header
+ * func_800D36E8
+ * VRAM 0x800D36E8 | ROM 0xC6B88 | size 0x34
+ * asm: asm/nonmatchings/code_800BBA00/func_800D36E8.s
+ */
+/* @header
+ * func_800D371C
+ * VRAM 0x800D371C | ROM 0xC6BBC | size 0x28
+ * asm: asm/nonmatchings/code_800BBA00/func_800D371C.s
+ */
+/* @header
+ * func_800D3744
+ * VRAM 0x800D3744 | ROM 0xC6BE4 | size 0x7C
+ * asm: asm/nonmatchings/code_800BBA00/func_800D3744.s
+ */
 #include "common.h"
 
 /* func_800D36E8, func_800D371C and func_800D3744 are one translation unit: compiled apart, the assembler cannot see

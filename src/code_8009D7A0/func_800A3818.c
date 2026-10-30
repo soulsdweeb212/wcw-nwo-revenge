@@ -1,3 +1,8 @@
+/* @header
+ * func_800A3818
+ * VRAM 0x800A3818 | ROM 0x96CB8 | size 0x158
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A3818.s
+ */
 #include "common.h"
 
 extern void *D_800EB40C;

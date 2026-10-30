@@ -1,3 +1,8 @@
+/* @header
+ * func_8000B728
+ * VRAM 0x8000B728 | ROM 0xC328 | size 0x15C
+ * asm: asm/nonmatchings/main/func_8000B728.s
+ */
 #include "common.h"
 
 /* func_8000B728: when the given entity has an active colour/graphics set,

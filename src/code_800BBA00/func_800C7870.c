@@ -1,3 +1,8 @@
+/* @header
+ * func_800C7870
+ * VRAM 0x800C7870 | ROM 0xBAD10 | size 0x74
+ * asm: asm/nonmatchings/code_800BBA00/func_800C7870.s
+ */
 #include "common.h"
 
 typedef union { f32 f; s32 i; } NwFI;

@@ -1,3 +1,8 @@
+/* @header
+ * func_80021F60
+ * VRAM 0x80021F60 | ROM 0x22B60 | size 0xA0
+ * asm: asm/nonmatchings/main/func_80021F60.s
+ */
 /* libultra bzero, hand-written in the original; kept as top-level asm so the bytes match exactly. */
 asm(
 ".set noreorder\n"

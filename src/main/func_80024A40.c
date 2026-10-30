@@ -1,3 +1,8 @@
+/* @header
+ * func_80024A40
+ * VRAM 0x80024A40 | ROM 0x25640 | size 0xF8
+ * asm: asm/nonmatchings/main/func_80024A40.s
+ */
 #include "common.h"
 
 extern s32 __osCheckId(void *);

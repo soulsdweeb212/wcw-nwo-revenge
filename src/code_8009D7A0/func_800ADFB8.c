@@ -1,3 +1,8 @@
+/* @header
+ * func_800ADFB8
+ * VRAM 0x800ADFB8 | ROM 0xA1458 | size 0x200
+ * asm: asm/nonmatchings/code_8009D7A0/func_800ADFB8.s
+ */
 #include "common.h"
 
 /* Combat/reaction selector, run each frame: when the actor is in action

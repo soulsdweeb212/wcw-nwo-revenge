@@ -1,3 +1,8 @@
+/* @header
+ * updateEntityStatus43Timer  (originally func_800C49B4)
+ * VRAM 0x800C49B4 | ROM 0xB7E54 | size 0x78
+ * asm: asm/nonmatchings/code_800BBA00/func_800C49B4.s
+ */
 #include "common.h"
 
 extern u8 D_8007EF30[];

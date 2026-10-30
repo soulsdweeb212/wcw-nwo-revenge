@@ -1,3 +1,8 @@
+/* @header
+ * func_800D3684
+ * VRAM 0x800D3684 | ROM 0xC6B24 | size 0x30
+ * asm: asm/nonmatchings/code_800BBA00/func_800D3684.s
+ */
 #include "common.h"
 
 /* Signed angular difference arg0 - arg1, wrapped to [-0x800, 0x800]. */

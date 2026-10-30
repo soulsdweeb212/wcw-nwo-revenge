@@ -1,3 +1,8 @@
+/* @header
+ * buildEntityPartTransforms  (originally func_8000D770)
+ * VRAM 0x8000D770 | ROM 0xE370 | size 0x420
+ * asm: asm/nonmatchings/main/func_8000D770.s
+ */
 #include "common.h"
 
 /* Build the transform matrices for up to 19 entity parts.

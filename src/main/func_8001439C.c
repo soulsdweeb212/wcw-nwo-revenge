@@ -1,3 +1,8 @@
+/* @header
+ * func_8001439C
+ * VRAM 0x8001439C | ROM 0x14F9C | size 0x7C
+ * asm: asm/nonmatchings/main/func_8001439C.s
+ */
 #include "common.h"
 
 s32 func_800202B0(s32, s32, void *, s32, s32);

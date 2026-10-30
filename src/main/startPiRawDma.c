@@ -1,3 +1,8 @@
+/* @header
+ * startPiRawDma  (originally func_80027880)
+ * VRAM 0x80027880 | ROM 0x28480 | size 0xD0
+ * asm: asm/nonmatchings/main/func_80027880.s
+ */
 #include "common.h"
 
 extern u32 D_80000308;

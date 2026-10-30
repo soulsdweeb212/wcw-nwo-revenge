@@ -1,3 +1,8 @@
+/* @header
+ * func_800A4FB8
+ * VRAM 0x800A4FB8 | ROM 0x98458 | size 0x2A4
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A4FB8.s
+ */
 #include "common.h"
 
 typedef struct{u8 pad0[4];s16 f4;u8 pad1[6];s16 fC;u8 pad2[8];u16 f16;u8 pad3[8];u64 flags;u8 pad4[0x16];s16 f3E;u8 pad5[0x2FC];f32 f33C;u8 pad6[4];f32 f344;}Nw2Action800A4FB8;

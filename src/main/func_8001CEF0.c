@@ -1,3 +1,8 @@
+/* @header
+ * func_8001CEF0
+ * VRAM 0x8001CEF0 | ROM 0x1DAF0 | size 0xA4
+ * asm: asm/nonmatchings/main/func_8001CEF0.s
+ */
 #include "common.h"
 
 /* Build a 16-entry s16 table at obj+8 from the 16-bit input at obj+0:

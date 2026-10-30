@@ -1,3 +1,8 @@
+/* @header
+ * func_800A3428
+ * VRAM 0x800A3428 | ROM 0x968C8 | size 0x1E8
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A3428.s
+ */
 #include "common.h"
 
 /* State handler for the active fighter (D_800EB408) during a hit reaction.

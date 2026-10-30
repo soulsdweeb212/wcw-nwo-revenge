@@ -1,3 +1,8 @@
+/* @header
+ * func_800B4264
+ * VRAM 0x800B4264 | ROM 0xA7704 | size 0x254
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B4264.s
+ */
 #include "common.h"
 
 extern void *D_800FABD0,*D_800F9B60,*D_800FAF58;

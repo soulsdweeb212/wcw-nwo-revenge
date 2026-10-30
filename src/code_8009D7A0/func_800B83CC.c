@@ -1,3 +1,8 @@
+/* @header
+ * func_800B83CC
+ * VRAM 0x800B83CC | ROM 0xAB86C | size 0xB8
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B83CC.s
+ */
 #include "common.h"
 
 extern s16 func_800BF2FC(void *);

@@ -1,3 +1,8 @@
+/* @header
+ * func_80020D4C
+ * VRAM 0x80020D4C | ROM 0x2194C | size 0x2C
+ * asm: asm/nonmatchings/main/func_80020D4C.s
+ */
 #include "common.h"
 
 s32 func_80027360();

@@ -1,3 +1,8 @@
+/* @header
+ * findControllerPakFile  (originally func_800252E0)
+ * VRAM 0x800252E0 | ROM 0x25EE0 | size 0x1A0
+ * asm: asm/nonmatchings/main/func_800252E0.s
+ */
 #include "common.h"
 
 typedef struct { s32 flags,queue,channel; u8 padC[0x44]; s32 directorySize; u8 pad54[8]; s32 directoryBase; } FindPfs;

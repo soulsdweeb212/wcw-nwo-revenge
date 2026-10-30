@@ -1,3 +1,8 @@
+/* @header
+ * initializeMatchResources  (originally func_80011BB4)
+ * VRAM 0x80011BB4 | ROM 0x127B4 | size 0x568
+ * asm: asm/nonmatchings/main/func_80011BB4.s
+ */
 #include "common.h"
 
 /* initializeMatchResources: loads the arena/match resource sets through

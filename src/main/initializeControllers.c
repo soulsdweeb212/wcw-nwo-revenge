@@ -1,3 +1,8 @@
+/* @header
+ * initializeControllers  (originally func_80021230)
+ * VRAM 0x80021230 | ROM 0x21E30 | size 0x19C
+ * asm: asm/nonmatchings/main/func_80021230.s
+ */
 #include "common.h"
 
 extern s32 D_80037530, D_8006A260, D_8007BD34, D_8007E180;

@@ -1,3 +1,8 @@
+/* @header
+ * sinf  (originally func_8001BF50)
+ * VRAM 0x8001BF50 | ROM 0x1CB50 | size 0x1A0
+ * asm: asm/nonmatchings/main/func_8001BF50.s
+ */
 #include "common.h"
 
 extern f64 D_8003B5F8, D_8003B600, D_8003B608, D_8003B610, D_8003B618, D_8003B620, D_8003B628, D_8003B638, D_8003B640;

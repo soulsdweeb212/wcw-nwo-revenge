@@ -1,3 +1,8 @@
+/* @header
+ * func_800A90FC
+ * VRAM 0x800A90FC | ROM 0x9C59C | size 0x2C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A90FC.s
+ */
 #include "common.h"
 
 extern s8 D_800FA063[];

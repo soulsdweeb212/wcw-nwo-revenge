@@ -1,3 +1,8 @@
+/* @header
+ * func_800CBD5C
+ * VRAM 0x800CBD5C | ROM 0xBF1FC | size 0xCC
+ * asm: asm/nonmatchings/code_800BBA00/func_800CBD5C.s
+ */
 #include "common.h"
 
 s8 func_800B71F8(void *, s32, s32);

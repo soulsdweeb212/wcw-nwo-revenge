@@ -1,3 +1,8 @@
+/* @header
+ * func_800A712C
+ * VRAM 0x800A712C | ROM 0x9A5CC | size 0x5C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A712C.s
+ */
 #include "common.h"
 
 s32 func_800D36E8(f32, f32);

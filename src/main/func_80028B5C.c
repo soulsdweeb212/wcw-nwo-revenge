@@ -1,3 +1,8 @@
+/* @header
+ * func_80028B5C
+ * VRAM 0x80028B5C | ROM 0x2975C | size 0x24
+ * asm: asm/nonmatchings/main/func_80028B5C.s
+ */
 #include "common.h"
 
 extern u8 D_80038E4C[];

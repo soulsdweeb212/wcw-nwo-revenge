@@ -1,3 +1,8 @@
+/* @header
+ * func_800178F0
+ * VRAM 0x800178F0 | ROM 0x184F0 | size 0x84
+ * asm: asm/nonmatchings/main/func_800178F0.s
+ */
 #include "common.h"
 
 extern s32 *D_80036F54;

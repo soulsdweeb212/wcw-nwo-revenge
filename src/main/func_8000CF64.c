@@ -1,3 +1,8 @@
+/* @header
+ * func_8000CF64
+ * VRAM 0x8000CF64 | ROM 0xDB64 | size 0x70
+ * asm: asm/nonmatchings/main/func_8000CF64.s
+ */
 #include "common.h"
 
 void func_800015AC(void *, s8);

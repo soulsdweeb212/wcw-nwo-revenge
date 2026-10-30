@@ -1,3 +1,8 @@
+/* @header
+ * func_8009001C
+ * VRAM 0x8009001C | ROM 0x3C78C | size 0x9C
+ * asm: asm/nonmatchings/code_80090000/func_8009001C.s
+ */
 #include "common.h"
 
 extern u8 applyMovementToEntityPair[];

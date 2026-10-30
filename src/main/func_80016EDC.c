@@ -1,3 +1,8 @@
+/* @header
+ * func_80016EDC
+ * VRAM 0x80016EDC | ROM 0x17ADC | size 0x13C
+ * asm: asm/nonmatchings/main/func_80016EDC.s
+ */
 #include "common.h"
 
 extern s32 D_80036F34, D_80036F44, D_80062558;

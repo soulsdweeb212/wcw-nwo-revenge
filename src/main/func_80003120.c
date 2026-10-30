@@ -1,3 +1,8 @@
+/* @header
+ * func_80003120
+ * VRAM 0x80003120 | ROM 0x3D20 | size 0x15C
+ * asm: asm/nonmatchings/main/func_80003120.s
+ */
 #include "common.h"
 
 extern u8 D_00CEC610;

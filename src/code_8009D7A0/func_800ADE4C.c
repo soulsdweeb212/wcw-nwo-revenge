@@ -1,3 +1,8 @@
+/* @header
+ * func_800ADE4C
+ * VRAM 0x800ADE4C | ROM 0xA12EC | size 0xF4
+ * asm: asm/nonmatchings/code_8009D7A0/func_800ADE4C.s
+ */
 #include "common.h"
 
 extern s16 *D_800FABD0;

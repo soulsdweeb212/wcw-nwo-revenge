@@ -1,3 +1,8 @@
+/* @header
+ * func_80001EA8
+ * VRAM 0x80001EA8 | ROM 0x2AA8 | size 0x268
+ * asm: asm/nonmatchings/main/func_80001EA8.s
+ */
 #include "common.h"
 
 extern void *D_80046860[];

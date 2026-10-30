@@ -1,3 +1,8 @@
+/* @header
+ * func_800C4610
+ * VRAM 0x800C4610 | ROM 0xB7AB0 | size 0x11C
+ * asm: asm/nonmatchings/code_800BBA00/func_800C4610.s
+ */
 #include "common.h"
 
 s32 func_800D35B0(s32, s32);

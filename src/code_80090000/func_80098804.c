@@ -1,3 +1,8 @@
+/* @header
+ * func_80098804
+ * VRAM 0x80098804 | ROM 0x44F74 | size 0x43C
+ * asm: asm/nonmatchings/code_80090000/func_80098804.s
+ */
 #include "common.h"
 
 typedef struct{u32 w0,w1;}G988;typedef struct{s32 f0;void*data;s32 f8;s16 w,h,x;}S988;

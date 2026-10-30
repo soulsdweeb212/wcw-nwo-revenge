@@ -1,3 +1,8 @@
+/* @header
+ * releaseResourcePool  (originally func_8002AAFC)
+ * VRAM 0x8002AAFC | ROM 0x2B6FC | size 0xFC
+ * asm: asm/nonmatchings/main/func_8002AAFC.s
+ */
 #include "common.h"
 
 extern u32 D_80064AD0, D_80064AD4, D_8007FC34, D_8007FC3C;

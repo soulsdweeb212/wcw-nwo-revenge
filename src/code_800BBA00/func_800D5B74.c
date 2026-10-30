@@ -1,3 +1,8 @@
+/* @header
+ * func_800D5B74
+ * VRAM 0x800D5B74 | ROM 0xC9014 | size 0x1A8
+ * asm: asm/nonmatchings/code_800BBA00/func_800D5B74.s
+ */
 #include "common.h"
 
 /* Arm a stage/transition: store the two indices, reset the timer branch to 3,

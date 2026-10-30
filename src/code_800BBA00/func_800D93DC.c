@@ -1,3 +1,8 @@
+/* @header
+ * func_800D93DC
+ * VRAM 0x800D93DC | ROM 0xCC87C | size 0x18C
+ * asm: asm/nonmatchings/code_800BBA00/func_800D93DC.s
+ */
 #include "common.h"
 
 /* Sets action/state bits (e->f38) for an entity based on its animation/state id

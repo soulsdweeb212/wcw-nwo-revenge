@@ -1,3 +1,8 @@
+/* @header
+ * func_80013F7C
+ * VRAM 0x80013F7C | ROM 0x14B7C | size 0x88
+ * asm: asm/nonmatchings/main/func_80013F7C.s
+ */
 #include "common.h"
 
 extern s32 D_800604F0;

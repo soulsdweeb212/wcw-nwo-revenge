@@ -1,3 +1,8 @@
+/* @header
+ * renderTaskThread  (originally func_80001034)
+ * VRAM 0x80001034 | ROM 0x1C34 | size 0x1A0
+ * asm: asm/nonmatchings/main/func_80001034.s
+ */
 #include "common.h"
 
 typedef struct

@@ -1,3 +1,8 @@
+/* @header
+ * func_800B2D9C
+ * VRAM 0x800B2D9C | ROM 0xA623C | size 0x1A4
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B2D9C.s
+ */
 #include "common.h"
 
 /* Multi-phase action gate on self D_800FABD0 driven by the actor's state

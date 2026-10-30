@@ -1,3 +1,8 @@
+/* @header
+ * func_80004580
+ * VRAM 0x80004580 | ROM 0x5180 | size 0xD8
+ * asm: asm/nonmatchings/main/func_80004580.s
+ */
 #include "common.h"
 
 typedef struct Nw2ResourceDesc {

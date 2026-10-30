@@ -1,3 +1,8 @@
+/* @header
+ * func_800C5440
+ * VRAM 0x800C5440 | ROM 0xB88E0 | size 0x5E8
+ * asm: asm/nonmatchings/code_800BBA00/func_800C5440.s
+ */
 #include "common.h"
 
 typedef struct 

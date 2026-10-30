@@ -1,3 +1,8 @@
+/* @header
+ * func_800A4F64
+ * VRAM 0x800A4F64 | ROM 0x98404 | size 0x1C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A4F64.s
+ */
 #include "common.h"
 
 /* identical to func_80002C58 (matched), with its names changed by decompdecomp */

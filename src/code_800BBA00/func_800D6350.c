@@ -1,3 +1,8 @@
+/* @header
+ * func_800D6350
+ * VRAM 0x800D6350 | ROM 0xC97F0 | size 0x10
+ * asm: asm/nonmatchings/code_800BBA00/func_800D6350.s
+ */
 #include "common.h"
 
 /* machine draft (m2c), tried by autopilot */

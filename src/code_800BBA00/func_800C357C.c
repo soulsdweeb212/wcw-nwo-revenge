@@ -1,3 +1,8 @@
+/* @header
+ * func_800C357C
+ * VRAM 0x800C357C | ROM 0xB6A1C | size 0x380
+ * asm: asm/nonmatchings/code_800BBA00/func_800C357C.s
+ */
 #include "common.h"
 
 extern u8 D_800E59D0[]; extern s16 D_800F9D12[]; extern s16 D_800F9D1A[];

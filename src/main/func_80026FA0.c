@@ -1,3 +1,8 @@
+/* @header
+ * func_80026FA0
+ * VRAM 0x80026FA0 | ROM 0x27BA0 | size 0x94
+ * asm: asm/nonmatchings/main/func_80026FA0.s
+ */
 #include "common.h"
 
 u64 insertTimer(void *);

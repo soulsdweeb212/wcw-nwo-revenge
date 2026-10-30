@@ -1,3 +1,8 @@
+/* @header
+ * func_800B1240
+ * VRAM 0x800B1240 | ROM 0xA46E0 | size 0x200
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B1240.s
+ */
 #include "common.h"
 
 extern void *D_800FABD0, *D_800FAF58, *D_800F9B60;

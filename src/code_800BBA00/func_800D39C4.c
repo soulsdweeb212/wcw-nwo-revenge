@@ -1,3 +1,8 @@
+/* @header
+ * func_800D39C4
+ * VRAM 0x800D39C4 | ROM 0xC6E64 | size 0xB0
+ * asm: asm/nonmatchings/code_800BBA00/func_800D39C4.s
+ */
 #include "common.h"
 
 typedef union { f32 f; s32 i; } NwFI;

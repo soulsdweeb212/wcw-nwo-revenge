@@ -1,3 +1,8 @@
+/* @header
+ * func_800C778C
+ * VRAM 0x800C778C | ROM 0xBAC2C | size 0xE4
+ * asm: asm/nonmatchings/code_800BBA00/func_800C778C.s
+ */
 #include "common.h"
 
 /* Selects an attachment/action id from arg0's +0x30 flag word: bit 0x1000

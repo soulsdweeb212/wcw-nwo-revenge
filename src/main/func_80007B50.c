@@ -1,3 +1,8 @@
+/* @header
+ * func_80007B50
+ * VRAM 0x80007B50 | ROM 0x8750 | size 0x34
+ * asm: asm/nonmatchings/main/func_80007B50.s
+ */
 #include "common.h"
 
 /* Allocates arg1 0x10-byte records from the descriptor's first pool (+0/+4/+6),

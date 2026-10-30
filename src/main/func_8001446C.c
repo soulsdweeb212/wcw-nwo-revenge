@@ -1,3 +1,8 @@
+/* @header
+ * func_8001446C
+ * VRAM 0x8001446C | ROM 0x1506C | size 0x94
+ * asm: asm/nonmatchings/main/func_8001446C.s
+ */
 #include "common.h"
 
 typedef struct{u8 type;s32 value;}Msg;void func_800160E8(s32,s32,s32);void func_80015EF8(void*,void*,s32);extern s32 D_80060504,D_80060508,D_8006050C;extern u8 *D_80060510;

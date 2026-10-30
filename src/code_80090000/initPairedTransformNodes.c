@@ -1,3 +1,8 @@
+/* @header
+ * initPairedTransformNodes  (originally func_800968A0)
+ * VRAM 0x800968A0 | ROM 0x43010 | size 0x148
+ * asm: asm/nonmatchings/code_80090000/func_800968A0.s
+ */
 #include "common.h"
 
 typedef struct {

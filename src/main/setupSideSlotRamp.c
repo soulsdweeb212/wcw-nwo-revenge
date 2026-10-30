@@ -1,3 +1,8 @@
+/* @header
+ * setupSideSlotRamp  (originally func_8001009C)
+ * VRAM 0x8001009C | ROM 0x10C9C | size 0x164
+ * asm: asm/nonmatchings/main/func_8001009C.s
+ */
 #include "common.h"
 
 extern u8 D_80036D28[], D_80036D2C[];

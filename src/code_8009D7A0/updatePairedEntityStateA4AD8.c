@@ -1,3 +1,8 @@
+/* @header
+ * updatePairedEntityStateA4AD8  (originally func_800A4AD8)
+ * VRAM 0x800A4AD8 | ROM 0x97F78 | size 0x29C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A4AD8.s
+ */
 #include "common.h"
 
 /* Paired-entity action state machine: steps the global entity pair

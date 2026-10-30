@@ -1,3 +1,8 @@
+/* @header
+ * func_800BF26C
+ * VRAM 0x800BF26C | ROM 0xB270C | size 0x90
+ * asm: asm/nonmatchings/code_800BBA00/func_800BF26C.s
+ */
 #include "common.h"
 
 extern u16 D_800EB4B8[];

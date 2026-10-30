@@ -1,3 +1,8 @@
+/* @header
+ * func_800D7B08
+ * VRAM 0x800D7B08 | ROM 0xCAFA8 | size 0x4C
+ * asm: asm/nonmatchings/code_800BBA00/func_800D7B08.s
+ */
 #include "common.h"
 
 s16 func_800D7690(void *, s32, s32);

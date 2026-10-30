@@ -1,3 +1,8 @@
+/* @header
+ * func_80002CC4
+ * VRAM 0x80002CC4 | ROM 0x38C4 | size 0x3D4
+ * asm: asm/nonmatchings/main/func_80002CC4.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0, w1; } Gfx2CC4;

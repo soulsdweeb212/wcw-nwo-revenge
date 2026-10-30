@@ -1,3 +1,8 @@
+/* @header
+ * __moddi3  (originally func_800287A0)
+ * VRAM 0x800287A0 | ROM 0x293A0 | size 0xB4
+ * asm: asm/nonmatchings/main/func_800287A0.s
+ */
 /* Hand-written in the original; kept as top-level asm so the bytes match exactly. */
 asm(
 ".set noreorder\n"

@@ -1,3 +1,8 @@
+/* @header
+ * __osViSwapContext  (originally func_80025C00)
+ * VRAM 0x80025C00 | ROM 0x26800 | size 0x308
+ * asm: asm/nonmatchings/main/func_80025C00.s
+ */
 #include "common.h"
 
 extern s32 D_8003764C;

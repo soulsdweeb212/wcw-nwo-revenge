@@ -1,3 +1,8 @@
+/* @header
+ * func_800C278C
+ * VRAM 0x800C278C | ROM 0xB5C2C | size 0xA4
+ * asm: asm/nonmatchings/code_800BBA00/func_800C278C.s
+ */
 #include "common.h"
 
 extern u8 D_8007EF30[];

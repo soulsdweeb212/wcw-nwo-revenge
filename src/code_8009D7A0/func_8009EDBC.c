@@ -1,3 +1,8 @@
+/* @header
+ * func_8009EDBC
+ * VRAM 0x8009EDBC | ROM 0x9225C | size 0x6AC
+ * asm: asm/nonmatchings/code_8009D7A0/func_8009EDBC.s
+ */
 #include "common.h"
 
 typedef struct {

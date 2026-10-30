@@ -1,3 +1,8 @@
+/* @header
+ * func_800201C0
+ * VRAM 0x800201C0 | ROM 0x20DC0 | size 0x2C
+ * asm: asm/nonmatchings/main/func_800201C0.s
+ */
 #include "common.h"
 
 s32 initObjectNodeLists();

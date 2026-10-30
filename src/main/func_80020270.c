@@ -1,3 +1,8 @@
+/* @header
+ * func_80020270
+ * VRAM 0x80020270 | ROM 0x20E70 | size 0x34
+ * asm: asm/nonmatchings/main/func_80020270.s
+ */
 #include "common.h"
 
 /* Initialize a four-word record: word0 = arg1 rounded up to the next 16-byte

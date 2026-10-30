@@ -1,3 +1,8 @@
+/* @header
+ * nw2Mat4Mul  (originally func_8001B310)
+ * VRAM 0x8001B310 | ROM 0x1BF10 | size 0xDC
+ * asm: asm/nonmatchings/main/func_8001B310.s
+ */
 #include "common.h"
 
 /* Multiply two 4x4 float matrices: out = a * b, computed into a temporary so

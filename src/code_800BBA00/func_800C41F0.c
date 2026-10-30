@@ -1,3 +1,8 @@
+/* @header
+ * func_800C41F0
+ * VRAM 0x800C41F0 | ROM 0xB7690 | size 0x358
+ * asm: asm/nonmatchings/code_800BBA00/func_800C41F0.s
+ */
 #include "common.h"
 
 void playEntitySound(s8,s32);

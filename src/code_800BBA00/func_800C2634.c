@@ -1,3 +1,8 @@
+/* @header
+ * func_800C2634
+ * VRAM 0x800C2634 | ROM 0xB5AD4 | size 0x158
+ * asm: asm/nonmatchings/code_800BBA00/func_800C2634.s
+ */
 #include "common.h"
 
 s16 func_800D7B08(s32);

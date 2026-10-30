@@ -1,3 +1,8 @@
+/* @header
+ * func_800CEAE0
+ * VRAM 0x800CEAE0 | ROM 0xC1F80 | size 0x130
+ * asm: asm/nonmatchings/code_800BBA00/func_800CEAE0.s
+ */
 #include "common.h"
 
 extern f64 D_800E6A10, D_800E6A18, D_800E6A20;

@@ -1,3 +1,8 @@
+/* @header
+ * func_8000B884
+ * VRAM 0x8000B884 | ROM 0xC484 | size 0x2BC
+ * asm: asm/nonmatchings/main/func_8000B884.s
+ */
 #include "common.h"
 
 extern u16 D_8007C318[][23];

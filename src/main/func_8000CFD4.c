@@ -1,3 +1,8 @@
+/* @header
+ * func_8000CFD4
+ * VRAM 0x8000CFD4 | ROM 0xDBD4 | size 0x23C
+ * asm: asm/nonmatchings/main/func_8000CFD4.s
+ */
 #include "common.h"
 
 s32 releaseHeapBlock(void *);

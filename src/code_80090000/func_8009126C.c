@@ -1,3 +1,8 @@
+/* @header
+ * func_8009126C
+ * VRAM 0x8009126C | ROM 0x3D9DC | size 0x28
+ * asm: asm/nonmatchings/code_80090000/func_8009126C.s
+ */
 #include "common.h"
 
 extern u8 D_800C5D10[];

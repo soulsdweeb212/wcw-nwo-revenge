@@ -1,3 +1,8 @@
+/* @header
+ * func_800936DC
+ * VRAM 0x800936DC | ROM 0x3FE4C | size 0x6D0
+ * asm: asm/nonmatchings/code_80090000/func_800936DC.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0, w1; } Gw936;

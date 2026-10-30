@@ -1,3 +1,8 @@
+/* @header
+ * func_8009F774
+ * VRAM 0x8009F774 | ROM 0x92C14 | size 0x98
+ * asm: asm/nonmatchings/code_8009D7A0/func_8009F774.s
+ */
 #include "common.h"
 
 s32 func_800D2B64(void *, f32, u16, s32);

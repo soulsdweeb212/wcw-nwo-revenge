@@ -1,3 +1,8 @@
+/* @header
+ * calculateObjectVertexCentroid  (originally func_800016F4)
+ * VRAM 0x800016F4 | ROM 0x22F4 | size 0x194
+ * asm: asm/nonmatchings/main/func_800016F4.s
+ */
 #include "common.h"
 
 typedef struct { u16 x,y,z; u8 pad[10]; } CenterVertex;

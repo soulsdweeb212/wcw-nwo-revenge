@@ -1,3 +1,8 @@
+/* @header
+ * updateFlaggedAnimationAction  (originally func_800A4660)
+ * VRAM 0x800A4660 | ROM 0x97B00 | size 0x164
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A4660.s
+ */
 #include "common.h"
 
 extern void *D_800EB40C;

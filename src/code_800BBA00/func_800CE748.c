@@ -1,3 +1,8 @@
+/* @header
+ * func_800CE748
+ * VRAM 0x800CE748 | ROM 0xC1BE8 | size 0x398
+ * asm: asm/nonmatchings/code_800BBA00/func_800CE748.s
+ */
 #include "common.h"
 
 s8 func_800D3B24(void *, void *, f32, void *);

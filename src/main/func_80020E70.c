@@ -1,3 +1,8 @@
+/* @header
+ * func_80020E70
+ * VRAM 0x80020E70 | ROM 0x21A70 | size 0x58
+ * asm: asm/nonmatchings/main/func_80020E70.s
+ */
 #include "common.h"
 
 s32 nw2DisableInterrupts(void);

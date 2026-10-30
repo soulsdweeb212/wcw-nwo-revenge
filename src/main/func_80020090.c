@@ -1,3 +1,8 @@
+/* @header
+ * func_80020090
+ * VRAM 0x80020090 | ROM 0x20C90 | size 0x100
+ * asm: asm/nonmatchings/main/func_80020090.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0, w1; } Cmd20090;

@@ -1,3 +1,8 @@
+/* @header
+ * func_800B93B0
+ * VRAM 0x800B93B0 | ROM 0xAC850 | size 0x1AC
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B93B0.s
+ */
 #include "common.h"
 
 /* Per-frame crowd/timer pair advance: decay the two D_800FAF84/D_800F9B58

@@ -1,3 +1,8 @@
+/* @header
+ * func_800D9814
+ * VRAM 0x800D9814 | ROM 0xCCCB4 | size 0x130
+ * asm: asm/nonmatchings/code_800BBA00/func_800D9814.s
+ */
 #include "common.h"
 
 extern f64 D_800E6FF0,D_800E6FF8;

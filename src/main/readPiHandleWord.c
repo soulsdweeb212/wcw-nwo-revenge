@@ -1,3 +1,8 @@
+/* @header
+ * readPiHandleWord  (originally func_80028210)
+ * VRAM 0x80028210 | ROM 0x28E10 | size 0x190
+ * asm: asm/nonmatchings/main/func_80028210.s
+ */
 #include "common.h"
 
 extern Nw2PiHandle *D_80037620[];

@@ -1,3 +1,8 @@
+/* @header
+ * func_8001EC60
+ * VRAM 0x8001EC60 | ROM 0x1F860 | size 0xE0
+ * asm: asm/nonmatchings/main/func_8001EC60.s
+ */
 #include "common.h"
 
 extern const f64 D_8003B768;   /* 2^N upper bound */

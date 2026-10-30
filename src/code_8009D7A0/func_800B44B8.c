@@ -1,3 +1,8 @@
+/* @header
+ * func_800B44B8
+ * VRAM 0x800B44B8 | ROM 0xA7958 | size 0x1CC
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B44B8.s
+ */
 #include "common.h"
 
 /* Action selector for self D_800FABD0:

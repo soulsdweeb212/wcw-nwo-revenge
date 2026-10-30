@@ -1,3 +1,8 @@
+/* @header
+ * countControllerPakPageReferences  (originally func_80024018)
+ * VRAM 0x80024018 | ROM 0x24C18 | size 0x168
+ * asm: asm/nonmatchings/main/func_80024018.s
+ */
 #include "common.h"
 
 typedef union {struct {u8 bank,page;} inode_t; u16 ipage;} Nw2InodeUnit;

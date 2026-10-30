@@ -1,3 +1,8 @@
+/* @header
+ * func_80028C44
+ * VRAM 0x80028C44 | ROM 0x29844 | size 0x7C
+ * asm: asm/nonmatchings/main/func_80028C44.s
+ */
 #include "common.h"
 
 u64 func_80028624(u32, u32, u32, u32);

@@ -1,3 +1,8 @@
+/* @header
+ * func_800CDF40
+ * VRAM 0x800CDF40 | ROM 0xC13E0 | size 0x1E4
+ * asm: asm/nonmatchings/code_800BBA00/func_800CDF40.s
+ */
 #include "common.h"
 
 /* Attack-eligibility tick for an entity: count down a re-arm timer, choose the

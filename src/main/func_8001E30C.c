@@ -1,3 +1,8 @@
+/* @header
+ * func_8001E30C
+ * VRAM 0x8001E30C | ROM 0x1EF0C | size 0x30
+ * asm: asm/nonmatchings/main/func_8001E30C.s
+ */
 #include "common.h"
 
 /* Audio-mixer callback: on message 2, append arg2 to the object's argument array. */

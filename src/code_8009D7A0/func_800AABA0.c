@@ -1,3 +1,8 @@
+/* @header
+ * func_800AABA0
+ * VRAM 0x800AABA0 | ROM 0x9E040 | size 0x58
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AABA0.s
+ */
 #include "common.h"
 
 s32 func_800AB1B0();

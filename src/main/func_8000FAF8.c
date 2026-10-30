@@ -1,3 +1,8 @@
+/* @header
+ * func_8000FAF8
+ * VRAM 0x8000FAF8 | ROM 0x106F8 | size 0x23C
+ * asm: asm/nonmatchings/main/func_8000FAF8.s
+ */
 #include "common.h"
 
 typedef struct { s32 f0; u8 pad4[8]; f32 fC; f32 f10; u8 pad14[0x18]; s16 f2C; s16 f2E; void *f30; } Elem;

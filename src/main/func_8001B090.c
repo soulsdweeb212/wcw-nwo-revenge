@@ -1,3 +1,8 @@
+/* @header
+ * func_8001B090
+ * VRAM 0x8001B090 | ROM 0x1BC90 | size 0x98
+ * asm: asm/nonmatchings/main/func_8001B090.s
+ */
 #include "common.h"
 
 /* Converts the 4x4 float matrix in into the 2x4 fixed-point word/halfword

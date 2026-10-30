@@ -1,3 +1,8 @@
+/* @header
+ * runEntityPairAction  (originally func_800CEC10)
+ * VRAM 0x800CEC10 | ROM 0xC20B0 | size 0x5A8
+ * asm: asm/nonmatchings/code_800BBA00/func_800CEC10.s
+ */
 #include "common.h"
 
 /* runEntityPairAction: nine-state action machine for the actor at D_800FAF5C as

@@ -1,3 +1,8 @@
+/* @header
+ * func_80013C24
+ * VRAM 0x80013C24 | ROM 0x14824 | size 0x80
+ * asm: asm/nonmatchings/main/func_80013C24.s
+ */
 #include "common.h"
 
 typedef struct { s32 f0,active; u8 p8[0xBE]; u16 kind; u8 pC8[0x90]; } VoiceC24;

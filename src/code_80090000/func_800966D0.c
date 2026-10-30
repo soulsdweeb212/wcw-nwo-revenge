@@ -1,3 +1,8 @@
+/* @header
+ * func_800966D0
+ * VRAM 0x800966D0 | ROM 0x42E40 | size 0x1CC
+ * asm: asm/nonmatchings/code_80090000/func_800966D0.s
+ */
 #include "common.h"
 
 /* Per-frame countdown/expiry sweep: mark a fixed block of tasks from the

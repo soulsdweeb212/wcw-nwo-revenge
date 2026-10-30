@@ -1,3 +1,8 @@
+/* @header
+ * func_800966B8
+ * VRAM 0x800966B8 | ROM 0x42E28 | size 0x10
+ * asm: asm/nonmatchings/code_80090000/func_800966B8.s
+ */
 #include "common.h"
 
 /* machine draft (m2c), tried by autopilot */

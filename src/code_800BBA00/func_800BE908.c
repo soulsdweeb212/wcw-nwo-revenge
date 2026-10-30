@@ -1,3 +1,8 @@
+/* @header
+ * func_800BE908
+ * VRAM 0x800BE908 | ROM 0xB1DA8 | size 0x20C
+ * asm: asm/nonmatchings/code_800BBA00/func_800BE908.s
+ */
 #include "common.h"
 
 typedef struct { s32 f0; s16 f4; s16 f6; s16 f8; s16 fA; s16 fC; s16 fE; u8 pad10[0x48]; s32 f58; } Nw2F5C;

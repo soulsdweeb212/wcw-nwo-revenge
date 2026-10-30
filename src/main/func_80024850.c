@@ -1,3 +1,8 @@
+/* @header
+ * func_80024850
+ * VRAM 0x80024850 | ROM 0x25450 | size 0x1E8
+ * asm: asm/nonmatchings/main/func_80024850.s
+ */
 #include "common.h"
 
 /* Controller Pak init: reset the channel, read and checksum the ID block,

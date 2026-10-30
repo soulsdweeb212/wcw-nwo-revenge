@@ -61,7 +61,7 @@ n = [0]
 
 
 def score(text):
-    m = re.match(r'\s*#include "([^"]+)"\s*\n', text)
+    m = re.match(r'\s*(?:/\* @header\n(?: \*.*\n)*? \*/\n)*#include "([^"]+)"\s*\n', text)
     body = text[m.end():] if m else text
     try:
         res = compile_source(cfg, header, body, trusted=True)

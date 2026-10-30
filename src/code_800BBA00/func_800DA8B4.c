@@ -1,3 +1,8 @@
+/* @header
+ * func_800DA8B4
+ * VRAM 0x800DA8B4 | ROM 0xCDD54 | size 0x10
+ * asm: asm/nonmatchings/code_800BBA00/func_800DA8B4.s
+ */
 #include "common.h"
 
 /* machine draft (m2c), tried by autopilot */

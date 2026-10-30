@@ -1,3 +1,8 @@
+/* @header
+ * func_80016148
+ * VRAM 0x80016148 | ROM 0x16D48 | size 0x20
+ * asm: asm/nonmatchings/main/func_80016148.s
+ */
 #include "common.h"
 
 /* Reset the voice's envelope/timer fields. */

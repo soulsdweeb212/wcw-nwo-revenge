@@ -1,3 +1,8 @@
+/* @header
+ * func_800B1C3C
+ * VRAM 0x800B1C3C | ROM 0xA50DC | size 0x1C8
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B1C3C.s
+ */
 #include "common.h"
 
 /* Range-based action/pose selector for the active move (D_800FABD0).

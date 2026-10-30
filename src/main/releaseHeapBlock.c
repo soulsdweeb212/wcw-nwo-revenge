@@ -1,3 +1,8 @@
+/* @header
+ * releaseHeapBlock  (originally func_80000958)
+ * VRAM 0x80000958 | ROM 0x1558 | size 0xE8
+ * asm: asm/nonmatchings/main/func_80000958.s
+ */
 #include "common.h"
 
 typedef struct Nw2MemBlock {

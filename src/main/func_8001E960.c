@@ -1,3 +1,8 @@
+/* @header
+ * func_8001E960
+ * VRAM 0x8001E960 | ROM 0x1F560 | size 0x300
+ * asm: asm/nonmatchings/main/func_8001E960.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0, w1; } Acmd18;

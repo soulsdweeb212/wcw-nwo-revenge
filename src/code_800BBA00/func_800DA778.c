@@ -1,3 +1,8 @@
+/* @header
+ * func_800DA778
+ * VRAM 0x800DA778 | ROM 0xCDC18 | size 0xD4
+ * asm: asm/nonmatchings/code_800BBA00/func_800DA778.s
+ */
 #include "common.h"
 
 extern u8 D_800FA063[];

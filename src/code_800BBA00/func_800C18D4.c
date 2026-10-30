@@ -1,3 +1,8 @@
+/* @header
+ * func_800C18D4
+ * VRAM 0x800C18D4 | ROM 0xB4D74 | size 0x150
+ * asm: asm/nonmatchings/code_800BBA00/func_800C18D4.s
+ */
 #include "common.h"
 
 typedef struct { u8 pad0[12]; s16 state; u8 padE[0x30]; s16 quadrant; u8 pad40[0x2C]; f32 vec[3]; } ObjC18;

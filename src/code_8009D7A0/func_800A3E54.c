@@ -1,3 +1,8 @@
+/* @header
+ * func_800A3E54
+ * VRAM 0x800A3E54 | ROM 0x972F4 | size 0x80
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A3E54.s
+ */
 #include "common.h"
 
 extern void *D_800EB408;

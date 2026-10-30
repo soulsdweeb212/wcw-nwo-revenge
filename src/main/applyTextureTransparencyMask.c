@@ -1,3 +1,8 @@
+/* @header
+ * applyTextureTransparencyMask  (originally func_8000C474)
+ * VRAM 0x8000C474 | ROM 0xD074 | size 0x310
+ * asm: asm/nonmatchings/main/func_8000C474.s
+ */
 #include "common.h"
 
 typedef struct {u8 width,height;u16 colors;u8 pad[4];u8 pixels[1];} MaskTexture;

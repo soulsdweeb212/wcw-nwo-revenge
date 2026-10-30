@@ -1,3 +1,8 @@
+/* @header
+ * func_80026CE0
+ * VRAM 0x80026CE0 | ROM 0x278E0 | size 0xCC
+ * asm: asm/nonmatchings/main/func_80026CE0.s
+ */
 #include "common.h"
 
 typedef struct Node26 {

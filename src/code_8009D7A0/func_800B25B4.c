@@ -1,3 +1,8 @@
+/* @header
+ * func_800B25B4
+ * VRAM 0x800B25B4 | ROM 0xA5A54 | size 0x18C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B25B4.s
+ */
 #include "common.h"
 
 /* Advances the running action (D_800FABD0) substate. Substate 0 seeds the

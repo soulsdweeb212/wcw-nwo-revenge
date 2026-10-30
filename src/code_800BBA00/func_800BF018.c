@@ -1,3 +1,8 @@
+/* @header
+ * func_800BF018
+ * VRAM 0x800BF018 | ROM 0xB24B8 | size 0x138
+ * asm: asm/nonmatchings/code_800BBA00/func_800BF018.s
+ */
 #include "common.h"
 
 extern f64 D_800E5868;

@@ -1,3 +1,8 @@
+/* @header
+ * initializeAssetSizeTable  (originally func_800034A0)
+ * VRAM 0x800034A0 | ROM 0x40A0 | size 0x114
+ * asm: asm/nonmatchings/main/func_800034A0.s
+ */
 #include "common.h"
 
 void *allocateHeap(u32);

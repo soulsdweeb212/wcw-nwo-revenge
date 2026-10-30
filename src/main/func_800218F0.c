@@ -1,3 +1,8 @@
+/* @header
+ * func_800218F0
+ * VRAM 0x800218F0 | ROM 0x224F0 | size 0xB4
+ * asm: asm/nonmatchings/main/func_800218F0.s
+ */
 #include "common.h"
 
 /* identical to func_800213CC (matched), with its names changed by decomp.wtf */

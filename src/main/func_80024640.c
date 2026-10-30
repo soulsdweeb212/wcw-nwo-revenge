@@ -1,3 +1,8 @@
+/* @header
+ * func_80024640
+ * VRAM 0x80024640 | ROM 0x25240 | size 0xF0
+ * asm: asm/nonmatchings/main/func_80024640.s
+ */
 #include "common.h"
 
 extern u8 D_800375E4;

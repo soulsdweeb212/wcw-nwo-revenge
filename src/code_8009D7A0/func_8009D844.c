@@ -1,3 +1,8 @@
+/* @header
+ * func_8009D844
+ * VRAM 0x8009D844 | ROM 0x90CE4 | size 0x80
+ * asm: asm/nonmatchings/code_8009D7A0/func_8009D844.s
+ */
 #include "common.h"
 
 typedef struct { s32 f0; s16 f4; s16 f6; s32 f8; s16 fC; s16 fE; } T_F408;

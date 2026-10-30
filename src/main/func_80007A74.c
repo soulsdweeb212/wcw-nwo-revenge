@@ -1,3 +1,8 @@
+/* @header
+ * func_80007A74
+ * VRAM 0x80007A74 | ROM 0x8674 | size 0x88
+ * asm: asm/nonmatchings/main/func_80007A74.s
+ */
 #include "common.h"
 
 s32 allocateHeap(s32);

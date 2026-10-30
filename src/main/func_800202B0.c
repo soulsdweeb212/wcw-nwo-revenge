@@ -1,3 +1,8 @@
+/* @header
+ * func_800202B0
+ * VRAM 0x800202B0 | ROM 0x20EB0 | size 0x48
+ * asm: asm/nonmatchings/main/func_800202B0.s
+ */
 #include "common.h"
 
 typedef struct { s32 f0; u32 f4; s32 f8; } NwAllocHdr;

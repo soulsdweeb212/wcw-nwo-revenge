@@ -1,3 +1,8 @@
+/* @header
+ * func_80028110
+ * VRAM 0x80028110 | ROM 0x28D10 | size 0x48
+ * asm: asm/nonmatchings/main/func_80028110.s
+ */
 #include "common.h"
 
 s32 nw2DisableInterrupts();

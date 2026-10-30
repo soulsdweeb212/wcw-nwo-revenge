@@ -1,3 +1,8 @@
+/* @header
+ * selectActionVariantLevel  (originally func_800ABD50)
+ * VRAM 0x800ABD50 | ROM 0x9F1F0 | size 0xD0
+ * asm: asm/nonmatchings/code_8009D7A0/func_800ABD50.s
+ */
 #include "common.h"
 
 void func_800AD958(s32);

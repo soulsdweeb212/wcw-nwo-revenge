@@ -1,3 +1,8 @@
+/* @header
+ * func_800D548C
+ * VRAM 0x800D548C | ROM 0xC892C | size 0x14
+ * asm: asm/nonmatchings/code_800BBA00/func_800D548C.s
+ */
 #include "common.h"
 
 /* machine draft (m2c), tried by autopilot */

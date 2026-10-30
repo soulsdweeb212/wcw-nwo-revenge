@@ -1,3 +1,8 @@
+/* @header
+ * func_800AEBF0
+ * VRAM 0x800AEBF0 | ROM 0xA2090 | size 0x134
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AEBF0.s
+ */
 #include "common.h"
 
 typedef struct { u8 pad[0x44]; s32 heading; } Nw2ActionFABD0;

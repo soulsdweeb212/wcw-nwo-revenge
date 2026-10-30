@@ -1,3 +1,8 @@
+/* @header
+ * func_800037F4
+ * VRAM 0x800037F4 | ROM 0x43F4 | size 0x124
+ * asm: asm/nonmatchings/main/func_800037F4.s
+ */
 #include "common.h"
 
 void func_800037F4(u8 *arg0, u8 *arg1)

@@ -1,3 +1,8 @@
+/* @header
+ * func_8001CAC0
+ * VRAM 0x8001CAC0 | ROM 0x1D6C0 | size 0x130
+ * asm: asm/nonmatchings/main/func_8001CAC0.s
+ */
 #include "common.h"
 
 typedef struct { s32 *list; s32 *sendList; s32 count, index, limit; s32 *entries; } Nw2SendQueue;

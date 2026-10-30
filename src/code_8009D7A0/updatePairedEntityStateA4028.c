@@ -1,3 +1,8 @@
+/* @header
+ * updatePairedEntityStateA4028  (originally func_800A4028)
+ * VRAM 0x800A4028 | ROM 0x974C8 | size 0x24C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A4028.s
+ */
 #include "common.h"
 
 /* Paired-entity action state machine for D_800EB408 with partner

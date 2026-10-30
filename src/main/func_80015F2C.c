@@ -1,3 +1,8 @@
+/* @header
+ * func_80015F2C
+ * VRAM 0x80015F2C | ROM 0x16B2C | size 0x38
+ * asm: asm/nonmatchings/main/func_80015F2C.s
+ */
 #include "common.h"
 
 /* Adds arg1 to each of the arg2 non-zero s32 entries starting at arg0. */

@@ -1,3 +1,8 @@
+/* @header
+ * func_800A5A40
+ * VRAM 0x800A5A40 | ROM 0x98EE0 | size 0x164
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A5A40.s
+ */
 #include "common.h"
 
 void beginEntityActionA8D8C(void *);

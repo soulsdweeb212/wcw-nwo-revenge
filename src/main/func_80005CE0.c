@@ -1,3 +1,8 @@
+/* @header
+ * func_80005CE0
+ * VRAM 0x80005CE0 | ROM 0x68E0 | size 0x3C4
+ * asm: asm/nonmatchings/main/func_80005CE0.s
+ */
 #include "common.h"
 
 typedef struct {u32 w0,w1;} GfxPair;

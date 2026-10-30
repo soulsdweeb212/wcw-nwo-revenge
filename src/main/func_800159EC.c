@@ -1,3 +1,8 @@
+/* @header
+ * func_800159EC
+ * VRAM 0x800159EC | ROM 0x165EC | size 0x198
+ * asm: asm/nonmatchings/main/func_800159EC.s
+ */
 #include "common.h"
 
 typedef struct Elem159EC {u32 f0;u8 pad4[4];u8 f8,f9;u8 padA[2];void *fC,*f10;} Elem159EC;

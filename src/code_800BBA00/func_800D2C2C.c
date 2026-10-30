@@ -1,3 +1,8 @@
+/* @header
+ * func_800D2C2C
+ * VRAM 0x800D2C2C | ROM 0xC60CC | size 0x3C
+ * asm: asm/nonmatchings/code_800BBA00/func_800D2C2C.s
+ */
 #include "common.h"
 
 s32 func_800D2CAC(void *, void *, void *, f32, void *, void *, void *, u16, s32, u16);

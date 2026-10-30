@@ -1,3 +1,8 @@
+/* @header
+ * func_800A5D64
+ * VRAM 0x800A5D64 | ROM 0x99204 | size 0x128
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A5D64.s
+ */
 #include "common.h"
 
 s32 beginEntityActionA8D8C(void *);

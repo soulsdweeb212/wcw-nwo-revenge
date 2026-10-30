@@ -1,3 +1,8 @@
+/* @header
+ * func_80027360
+ * VRAM 0x80027360 | ROM 0x27F60 | size 0x18
+ * asm: asm/nonmatchings/main/func_80027360.s
+ */
 #include "common.h"
 
 s32 func_80027360(void) {

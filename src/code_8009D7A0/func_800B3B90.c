@@ -1,3 +1,8 @@
+/* @header
+ * func_800B3B90
+ * VRAM 0x800B3B90 | ROM 0xA7030 | size 0x1CC
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B3B90.s
+ */
 #include "common.h"
 
 /* Choose a facing/move direction for the active move (written to the action

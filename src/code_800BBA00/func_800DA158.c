@@ -1,3 +1,8 @@
+/* @header
+ * func_800DA158
+ * VRAM 0x800DA158 | ROM 0xCD5F8 | size 0x180
+ * asm: asm/nonmatchings/code_800BBA00/func_800DA158.s
+ */
 #include "common.h"
 
 /*

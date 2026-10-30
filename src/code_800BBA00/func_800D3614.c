@@ -1,3 +1,8 @@
+/* @header
+ * func_800D3614
+ * VRAM 0x800D3614 | ROM 0xC6AB4 | size 0x24
+ * asm: asm/nonmatchings/code_800BBA00/func_800D3614.s
+ */
 #include "common.h"
 
 s16 func_800D3638(s32);

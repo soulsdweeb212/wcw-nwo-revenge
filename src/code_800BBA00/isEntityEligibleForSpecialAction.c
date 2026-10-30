@@ -1,3 +1,8 @@
+/* @header
+ * isEntityEligibleForSpecialAction  (originally func_800DA5E8)
+ * VRAM 0x800DA5E8 | ROM 0xCDA88 | size 0xF4
+ * asm: asm/nonmatchings/code_800BBA00/func_800DA5E8.s
+ */
 #include "common.h"
 
 extern u8 D_8007E228[], D_8007EF30[], D_800F9D10[];

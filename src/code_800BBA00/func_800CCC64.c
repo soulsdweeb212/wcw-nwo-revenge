@@ -1,3 +1,8 @@
+/* @header
+ * func_800CCC64
+ * VRAM 0x800CCC64 | ROM 0xC0104 | size 0x1E4
+ * asm: asm/nonmatchings/code_800BBA00/func_800CCC64.s
+ */
 #include "common.h"
 
 /* Collision push-apart: pick a cardinal direction from the larger of the two

@@ -1,3 +1,8 @@
+/* @header
+ * func_80028CC0
+ * VRAM 0x80028CC0 | ROM 0x298C0 | size 0x58
+ * asm: asm/nonmatchings/main/func_80028CC0.s
+ */
 #include "common.h"
 
 /* Write `arg1` as a run of '#' bytes (at most 35 per entry) each followed by a hex

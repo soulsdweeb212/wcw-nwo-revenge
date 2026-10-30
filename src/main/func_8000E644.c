@@ -1,3 +1,8 @@
+/* @header
+ * func_8000E644
+ * VRAM 0x8000E644 | ROM 0xF244 | size 0x68
+ * asm: asm/nonmatchings/main/func_8000E644.s
+ */
 #include "common.h"
 
 extern u8 D_80075458[];

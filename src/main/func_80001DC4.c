@@ -1,3 +1,8 @@
+/* @header
+ * func_80001DC4
+ * VRAM 0x80001DC4 | ROM 0x29C4 | size 0xE4
+ * asm: asm/nonmatchings/main/func_80001DC4.s
+ */
 #include "common.h"
 
 void func_80021C40(void *, void *, s32);

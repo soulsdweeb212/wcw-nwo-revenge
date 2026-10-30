@@ -1,3 +1,8 @@
+/* @header
+ * playEntitySound  (originally func_8000E0CC)
+ * VRAM 0x8000E0CC | ROM 0xECCC | size 0x430
+ * asm: asm/nonmatchings/main/func_8000E0CC.s
+ */
 #include "common.h"
 
 /* Play a sound effect for an entity.

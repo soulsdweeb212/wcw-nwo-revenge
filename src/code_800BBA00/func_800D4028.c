@@ -1,3 +1,8 @@
+/* @header
+ * func_800D4028
+ * VRAM 0x800D4028 | ROM 0xC74C8 | size 0x60
+ * asm: asm/nonmatchings/code_800BBA00/func_800D4028.s
+ */
 #include "common.h"
 
 extern f64 D_800E6C00, D_800E6C08, D_800E6BD0, D_800E6BB0;

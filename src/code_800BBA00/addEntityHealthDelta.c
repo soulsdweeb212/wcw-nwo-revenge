@@ -1,3 +1,8 @@
+/* @header
+ * addEntityHealthDelta  (originally func_800BF62C)
+ * VRAM 0x800BF62C | ROM 0xB2ACC | size 0xD4
+ * asm: asm/nonmatchings/code_800BBA00/func_800BF62C.s
+ */
 #include "common.h"
 
 typedef struct { u8 pad[0x14]; s16 value; u8 pad16[0xA]; u64 flags; } BF62Entity;

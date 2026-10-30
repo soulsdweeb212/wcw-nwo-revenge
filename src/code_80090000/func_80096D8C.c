@@ -1,3 +1,8 @@
+/* @header
+ * func_80096D8C
+ * VRAM 0x80096D8C | ROM 0x434FC | size 0x3F8
+ * asm: asm/nonmatchings/code_80090000/func_80096D8C.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0, w1; } GfxD8C;

@@ -1,3 +1,8 @@
+/* @header
+ * func_80020190
+ * VRAM 0x80020190 | ROM 0x20D90 | size 0x28
+ * asm: asm/nonmatchings/main/func_80020190.s
+ */
 #include "common.h"
 
 typedef struct NwNode2 {

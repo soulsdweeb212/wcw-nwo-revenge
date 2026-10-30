@@ -1,3 +1,8 @@
+/* @header
+ * func_8000B370
+ * VRAM 0x8000B370 | ROM 0xBF70 | size 0x54
+ * asm: asm/nonmatchings/main/func_8000B370.s
+ */
 #include "common.h"
 
 extern u16 D_8006A2A4[];

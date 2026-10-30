@@ -1,3 +1,8 @@
+/* @header
+ * func_800D00FC
+ * VRAM 0x800D00FC | ROM 0xC359C | size 0x4E8
+ * asm: asm/nonmatchings/code_800BBA00/func_800D00FC.s
+ */
 #include "common.h"
 
 void beginPairedEntityActions(void *source, s32 sourceAction, void *target, s32 targetAction);

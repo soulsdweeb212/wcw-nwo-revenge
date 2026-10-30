@@ -1,3 +1,8 @@
+/* @header
+ * func_80026DB0
+ * VRAM 0x80026DB0 | ROM 0x279B0 | size 0x18
+ * asm: asm/nonmatchings/main/func_80026DB0.s
+ */
 #include "common.h"
 
 /* machine draft (m2c), tried by autopilot */

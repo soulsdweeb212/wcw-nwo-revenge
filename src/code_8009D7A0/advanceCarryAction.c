@@ -1,3 +1,8 @@
+/* @header
+ * advanceCarryAction  (originally func_800A3970)
+ * VRAM 0x800A3970 | ROM 0x96E10 | size 0x104
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A3970.s
+ */
 #include "common.h"
 
 extern void *D_800EB40C;

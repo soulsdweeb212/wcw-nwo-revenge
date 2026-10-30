@@ -1,3 +1,8 @@
+/* @header
+ * func_800B0B74
+ * VRAM 0x800B0B74 | ROM 0xA4014 | size 0x11C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B0B74.s
+ */
 #include "common.h"
 
 extern u8 *D_800FABD0, *D_800FAF58, *D_800F9B60;   /* action record, actor, target */

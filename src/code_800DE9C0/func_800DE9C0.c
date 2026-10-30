@@ -1,3 +1,8 @@
+/* @header
+ * func_800DE9C0
+ * VRAM 0x800DE9C0 | ROM 0xD1E60 | size 0x2EC
+ * asm: asm/nonmatchings/code_800DE9C0/func_800DE9C0.s
+ */
 #include "common.h"
 
 extern u8 D_8007EF30[];

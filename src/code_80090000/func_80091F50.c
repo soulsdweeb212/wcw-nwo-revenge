@@ -1,3 +1,8 @@
+/* @header
+ * func_80091F50
+ * VRAM 0x80091F50 | ROM 0x3E6C0 | size 0x2E0
+ * asm: asm/nonmatchings/code_80090000/func_80091F50.s
+ */
 #include "common.h"
 
 typedef struct{u32 w0,w1;}G91F;extern s32 D_800DB69C;extern u8 *D_800DBD48;extern u8 D_800C6410[];u8 *func_800B64EC(s32,s32);void func_80091718(G91F**,s32,s32,s32,s32);

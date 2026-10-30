@@ -1,3 +1,8 @@
+/* @header
+ * func_80001260
+ * VRAM 0x80001260 | ROM 0x1E60 | size 0x24C
+ * asm: asm/nonmatchings/main/func_80001260.s
+ */
 #include "common.h"
 
 extern s16 D_8002EEC4;

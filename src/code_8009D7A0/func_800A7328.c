@@ -1,3 +1,8 @@
+/* @header
+ * func_800A7328
+ * VRAM 0x800A7328 | ROM 0x9A7C8 | size 0x3C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A7328.s
+ */
 #include "common.h"
 
 void func_800D3838(s32, s32, s16, s32);

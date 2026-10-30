@@ -1,3 +1,8 @@
+/* @header
+ * getControllerPakFreeBytes  (originally func_80024530)
+ * VRAM 0x80024530 | ROM 0x25130 | size 0x10C
+ * asm: asm/nonmatchings/main/func_80024530.s
+ */
 #include "common.h"
 
 s32 __osCheckId(void *);

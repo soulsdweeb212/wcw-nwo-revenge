@@ -1,3 +1,8 @@
+/* @header
+ * func_8000CD84
+ * VRAM 0x8000CD84 | ROM 0xD984 | size 0x1E0
+ * asm: asm/nonmatchings/main/func_8000CD84.s
+ */
 #include "common.h"
 
 /* Release all resources for one slot (`index`). Frees the 23 buffered blocks

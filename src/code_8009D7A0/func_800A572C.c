@@ -1,3 +1,8 @@
+/* @header
+ * func_800A572C
+ * VRAM 0x800A572C | ROM 0x98BCC | size 0x190
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A572C.s
+ */
 #include "common.h"
 
 typedef struct { s32 x, y, z, heading; } Nw2PosRecord;

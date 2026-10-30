@@ -1,3 +1,8 @@
+/* @header
+ * func_80003D20
+ * VRAM 0x80003D20 | ROM 0x4920 | size 0x158
+ * asm: asm/nonmatchings/main/func_80003D20.s
+ */
 #include "common.h"
 
 /* func_80003D20: controller subsystem bring-up. Points the four per-seat

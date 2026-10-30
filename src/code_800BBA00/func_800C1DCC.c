@@ -1,3 +1,8 @@
+/* @header
+ * func_800C1DCC
+ * VRAM 0x800C1DCC | ROM 0xB526C | size 0x59C
+ * asm: asm/nonmatchings/code_800BBA00/func_800C1DCC.s
+ */
 #include "common.h"
 
 #define FLAGS (*(u64 *)((u8 *)D_800FAF5C + 0x20))

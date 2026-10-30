@@ -1,3 +1,8 @@
+/* @header
+ * func_800BFCF0
+ * VRAM 0x800BFCF0 | ROM 0xB3190 | size 0x314
+ * asm: asm/nonmatchings/code_800BBA00/func_800BFCF0.s
+ */
 #include "common.h"
 
 extern s32 func_800D4148(void);

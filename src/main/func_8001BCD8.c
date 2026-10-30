@@ -1,3 +1,8 @@
+/* @header
+ * func_8001BCD8
+ * VRAM 0x8001BCD8 | ROM 0x1C8D8 | size 0x18C
+ * asm: asm/nonmatchings/main/func_8001BCD8.s
+ */
 #include "common.h"
 
 /* Builds a 4x4 rotation matrix for X/Y/Z Euler angles. The angles are scaled by

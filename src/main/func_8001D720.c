@@ -1,3 +1,8 @@
+/* @header
+ * func_8001D720
+ * VRAM 0x8001D720 | ROM 0x1E320 | size 0x444
+ * asm: asm/nonmatchings/main/func_8001D720.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0, w1; } Acmd20;

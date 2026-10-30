@@ -1,3 +1,8 @@
+/* @header
+ * func_800D4CC4
+ * VRAM 0x800D4CC4 | ROM 0xC8164 | size 0x80
+ * asm: asm/nonmatchings/code_800BBA00/func_800D4CC4.s
+ */
 #include "common.h"
 
 /* Applies the entity's mode byte (+0x36F): odd modes 7..31 clear and even modes

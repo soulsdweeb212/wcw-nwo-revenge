@@ -1,3 +1,8 @@
+/* @header
+ * updateActionObjectHandoff  (originally func_800A3610)
+ * VRAM 0x800A3610 | ROM 0x96AB0 | size 0x198
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A3610.s
+ */
 #include "common.h"
 
 /* Action-object handler for the 0x800A34xx family.

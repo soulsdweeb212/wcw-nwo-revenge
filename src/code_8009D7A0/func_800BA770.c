@@ -1,3 +1,8 @@
+/* @header
+ * func_800BA770
+ * VRAM 0x800BA770 | ROM 0xADC10 | size 0x4C0
+ * asm: asm/nonmatchings/code_8009D7A0/func_800BA770.s
+ */
 #include "common.h"
 
 extern u8 D_800F9D10[];

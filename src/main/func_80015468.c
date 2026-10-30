@@ -1,3 +1,8 @@
+/* @header
+ * func_80015468
+ * VRAM 0x80015468 | ROM 0x16068 | size 0x24
+ * asm: asm/nonmatchings/main/func_80015468.s
+ */
 #include "common.h"
 
 typedef struct {

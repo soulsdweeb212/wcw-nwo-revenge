@@ -1,3 +1,8 @@
+/* @header
+ * func_80027B40
+ * VRAM 0x80027B40 | ROM 0x28740 | size 0x3B8
+ * asm: asm/nonmatchings/main/func_80027B40.s
+ */
 #include "common.h"
 
 typedef struct Nw2PiRec { s32 f0, f4, f8, fC, f10, f14, f18, f1C, f20; } Nw2PiRec;

@@ -1,3 +1,8 @@
+/* @header
+ * func_800E2090
+ * VRAM 0x800E2090 | ROM 0xD5530 | size 0x9C
+ * asm: asm/nonmatchings/code_800DE9C0/func_800E2090.s
+ */
 #include "common.h"
 
 extern s8 D_800F99A0[];

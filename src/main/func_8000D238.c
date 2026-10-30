@@ -1,3 +1,8 @@
+/* @header
+ * func_8000D238
+ * VRAM 0x8000D238 | ROM 0xDE38 | size 0xEC
+ * asm: asm/nonmatchings/main/func_8000D238.s
+ */
 #include "common.h"
 
 typedef struct {u8 value; u8 pad[0xDB];} D238Entry;

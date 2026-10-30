@@ -1,3 +1,8 @@
+/* @header
+ * func_800AE8E8
+ * VRAM 0x800AE8E8 | ROM 0xA1D88 | size 0x308
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AE8E8.s
+ */
 #include "common.h"
 
 typedef struct { s16 f0,f2,f4; u16 f6; s16 f8; u8 pA[8]; s16 f12; u8 p14[14]; s16 f22; u8 p24[10]; u16 f2E; u8 p30[4]; f32 f34; u8 p38[36]; u32 f5C; } ActAE8;

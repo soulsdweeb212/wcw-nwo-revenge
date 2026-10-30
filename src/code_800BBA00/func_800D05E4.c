@@ -1,3 +1,8 @@
+/* @header
+ * func_800D05E4
+ * VRAM 0x800D05E4 | ROM 0xC3A84 | size 0x11C
+ * asm: asm/nonmatchings/code_800BBA00/func_800D05E4.s
+ */
 #include "common.h"
 
 typedef struct {s8 id;u8 p1[0x2B];s32 f2C;u8 p30[0x37C];s32 f3AC;} Nw2D05E4Entity;

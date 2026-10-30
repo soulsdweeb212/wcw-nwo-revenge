@@ -1,3 +1,8 @@
+/* @header
+ * func_8001B3EC
+ * VRAM 0x8001B3EC | ROM 0x1BFEC | size 0xAC
+ * asm: asm/nonmatchings/main/func_8001B3EC.s
+ */
 #include "common.h"
 
 /* Applies the 4x4 row-major matrix arg0 (with translation in the fourth column)

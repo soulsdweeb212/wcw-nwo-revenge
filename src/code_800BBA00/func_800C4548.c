@@ -1,3 +1,8 @@
+/* @header
+ * func_800C4548
+ * VRAM 0x800C4548 | ROM 0xB79E8 | size 0xC8
+ * asm: asm/nonmatchings/code_800BBA00/func_800C4548.s
+ */
 #include "common.h"
 
 /* {x,y,z,angle} direction record (same layout as Nw2DirectionResult). */

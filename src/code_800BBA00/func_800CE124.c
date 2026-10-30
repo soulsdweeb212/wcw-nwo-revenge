@@ -1,3 +1,8 @@
+/* @header
+ * func_800CE124
+ * VRAM 0x800CE124 | ROM 0xC15C4 | size 0x1A4
+ * asm: asm/nonmatchings/code_800BBA00/func_800CE124.s
+ */
 #include "common.h"
 
 /* Set up a launch/knockback displacement for self: pick an X/Z offset and

@@ -1,3 +1,8 @@
+/* @header
+ * func_800D96A0
+ * VRAM 0x800D96A0 | ROM 0xCCB40 | size 0x174
+ * asm: asm/nonmatchings/code_800BBA00/func_800D96A0.s
+ */
 #include "common.h"
 
 extern u8 D_8007E228[];

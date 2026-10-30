@@ -1,3 +1,8 @@
+/* @header
+ * func_800E0590
+ * VRAM 0x800E0590 | ROM 0xD3A30 | size 0x130
+ * asm: asm/nonmatchings/code_800DE9C0/func_800E0590.s
+ */
 #include "common.h"
 
 extern f64 D_800E76D8;

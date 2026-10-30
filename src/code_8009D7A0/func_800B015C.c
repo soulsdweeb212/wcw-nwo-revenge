@@ -1,3 +1,8 @@
+/* @header
+ * func_800B015C
+ * VRAM 0x800B015C | ROM 0xA35FC | size 0x204
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B015C.s
+ */
 #include "common.h"
 
 /* Per-frame entity decision state machine (switch on self->state at +4).

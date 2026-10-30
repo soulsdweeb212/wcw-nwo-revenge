@@ -1,3 +1,8 @@
+/* @header
+ * func_800DACE4
+ * VRAM 0x800DACE4 | ROM 0xCE184 | size 0x664
+ * asm: asm/nonmatchings/code_800BBA00/func_800DACE4.s
+ */
 #include "common.h"
 
 typedef struct {

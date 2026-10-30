@@ -1,3 +1,8 @@
+/* @header
+ * func_800ADF40
+ * VRAM 0x800ADF40 | ROM 0xA13E0 | size 0x78
+ * asm: asm/nonmatchings/code_8009D7A0/func_800ADF40.s
+ */
 #include "common.h"
 
 s32 func_800D4148(void);

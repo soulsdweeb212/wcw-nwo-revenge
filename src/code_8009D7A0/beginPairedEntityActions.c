@@ -1,3 +1,8 @@
+/* @header
+ * beginPairedEntityActions  (originally func_800A6E44)
+ * VRAM 0x800A6E44 | ROM 0x9A2E4 | size 0x1C8
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A6E44.s
+ */
 #include "common.h"
 
 /* Start a matched pair of actions: reset both entities' action/anim/timer

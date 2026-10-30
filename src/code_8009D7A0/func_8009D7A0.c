@@ -1,3 +1,8 @@
+/* @header
+ * func_8009D7A0
+ * VRAM 0x8009D7A0 | ROM 0x90C40 | size 0xA4
+ * asm: asm/nonmatchings/code_8009D7A0/func_8009D7A0.s
+ */
 #include "common.h"
 
 s32 buildColorOverlayDisplayList(void *, s32, s32, s32, s32);

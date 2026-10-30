@@ -1,3 +1,8 @@
+/* @header
+ * updateEntityGuardApproachState  (originally func_800D0C68)
+ * VRAM 0x800D0C68 | ROM 0xC4108 | size 0x3AC
+ * asm: asm/nonmatchings/code_800BBA00/func_800D0C68.s
+ */
 #include "common.h"
 
 /* Defender-side approach state machine (phases 0..5). The entity O

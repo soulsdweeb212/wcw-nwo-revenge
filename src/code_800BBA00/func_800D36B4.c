@@ -1,3 +1,8 @@
+/* @header
+ * func_800D36B4
+ * VRAM 0x800D36B4 | ROM 0xC6B54 | size 0x34
+ * asm: asm/nonmatchings/code_800BBA00/func_800D36B4.s
+ */
 #include "common.h"
 
 /* Writes the XYZ delta (arg1 - arg0) into arg2. */

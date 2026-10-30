@@ -1,3 +1,8 @@
+/* @header
+ * buildObjectChain  (originally func_8000D5F8)
+ * VRAM 0x8000D5F8 | ROM 0xE1F8 | size 0x120
+ * asm: asm/nonmatchings/main/func_8000D5F8.s
+ */
 #include "common.h"
 
 extern u8 D_80030894[];

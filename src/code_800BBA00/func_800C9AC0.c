@@ -1,3 +1,8 @@
+/* @header
+ * func_800C9AC0
+ * VRAM 0x800C9AC0 | ROM 0xBCF60 | size 0x9C
+ * asm: asm/nonmatchings/code_800BBA00/func_800C9AC0.s
+ */
 #include "common.h"
 
 void translateEntityXZ(void*,void*);s32 func_800D35B0(s32,s32);void func_800D3E40(void*,void*,s32,void*);

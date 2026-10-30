@@ -1,3 +1,8 @@
+/* @header
+ * func_800C5A28
+ * VRAM 0x800C5A28 | ROM 0xB8EC8 | size 0x320
+ * asm: asm/nonmatchings/code_800BBA00/func_800C5A28.s
+ */
 #include "common.h"
 
 typedef struct {s8 f0;u8 pad1[5];s16 f6;u8 pad8[2];u16 fA;s16 fC;u8 padE[0x12];u64 flags;u8 pad28[0x349];u8 f371;u8 pad372[0x31];u8 f3A3;} EntC5A;

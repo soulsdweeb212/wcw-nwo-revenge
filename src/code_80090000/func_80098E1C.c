@@ -1,3 +1,8 @@
+/* @header
+ * func_80098E1C
+ * VRAM 0x80098E1C | ROM 0x4558C | size 0xAC
+ * asm: asm/nonmatchings/code_80090000/func_80098E1C.s
+ */
 #include "common.h"
 
 extern void *D_800E7518;

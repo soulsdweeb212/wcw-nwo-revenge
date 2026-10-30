@@ -1,3 +1,8 @@
+/* @header
+ * func_80000AF0
+ * VRAM 0x80000AF0 | ROM 0x16F0 | size 0x238
+ * asm: asm/nonmatchings/main/func_80000AF0.s
+ */
 #include "common.h"
 
 extern u8 D_80044570[];

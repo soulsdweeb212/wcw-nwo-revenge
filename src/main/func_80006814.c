@@ -1,3 +1,8 @@
+/* @header
+ * func_80006814
+ * VRAM 0x80006814 | ROM 0x7414 | size 0x370
+ * asm: asm/nonmatchings/main/func_80006814.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0, w1; } Gfx6814;

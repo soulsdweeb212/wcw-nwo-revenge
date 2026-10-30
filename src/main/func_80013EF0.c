@@ -1,3 +1,8 @@
+/* @header
+ * func_80013EF0
+ * VRAM 0x80013EF0 | ROM 0x14AF0 | size 0x8C
+ * asm: asm/nonmatchings/main/func_80013EF0.s
+ */
 #include "common.h"
 
 typedef struct { u8 p0[0x60]; s32 key; u8 p64[0x54]; s16 value; s16 padBA; s16 scaled; u8 pBE[0xA]; u16 base; u8 pCA[0x8E]; } VoiceEF0;

@@ -1,3 +1,8 @@
+/* @header
+ * signed64ToFloatTrunc  (originally func_800289B0)
+ * VRAM 0x800289B0 | ROM 0x295B0 | size 0xF4
+ * asm: asm/nonmatchings/main/func_800289B0.s
+ */
 /* Hand-written in the original; kept as top-level asm so the bytes match exactly. */
 asm(
 ".set noreorder\n"

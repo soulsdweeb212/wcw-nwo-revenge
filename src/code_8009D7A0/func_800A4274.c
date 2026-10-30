@@ -1,3 +1,8 @@
+/* @header
+ * func_800A4274
+ * VRAM 0x800A4274 | ROM 0x97714 | size 0x1B8
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A4274.s
+ */
 #include "common.h"
 
 /* Three-state reach/hold action on self D_800EB408:

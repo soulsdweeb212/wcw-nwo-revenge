@@ -1,3 +1,8 @@
+/* @header
+ * __osContRamWrite  (originally func_80022DB0)
+ * VRAM 0x80022DB0 | ROM 0x239B0 | size 0x21C
+ * asm: asm/nonmatchings/main/func_80022DB0.s
+ */
 #include "common.h"
 
 typedef struct {

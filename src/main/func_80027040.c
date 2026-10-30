@@ -1,3 +1,8 @@
+/* @header
+ * func_80027040
+ * VRAM 0x80027040 | ROM 0x27C40 | size 0x54
+ * asm: asm/nonmatchings/main/func_80027040.s
+ */
 #include "common.h"
 
 extern void *g_80038820;

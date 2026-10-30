@@ -1,3 +1,8 @@
+/* @header
+ * tryBeginEntityGrab  (originally func_800DB72C)
+ * VRAM 0x800DB72C | ROM 0xCEBCC | size 0x148
+ * asm: asm/nonmatchings/code_800BBA00/func_800DB72C.s
+ */
 #include "common.h"
 
 s8 func_800D7B54(void *, s32, s32, s32);

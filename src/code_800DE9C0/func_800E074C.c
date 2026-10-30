@@ -1,3 +1,8 @@
+/* @header
+ * func_800E074C
+ * VRAM 0x800E074C | ROM 0xD3BEC | size 0x34
+ * asm: asm/nonmatchings/code_800DE9C0/func_800E074C.s
+ */
 #include "common.h"
 
 s32 checkEntityAttackHit(void *, s32);

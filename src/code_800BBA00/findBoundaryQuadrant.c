@@ -1,3 +1,8 @@
+/* @header
+ * findBoundaryQuadrant  (originally func_800D33C4)
+ * VRAM 0x800D33C4 | ROM 0xC6864 | size 0x180
+ * asm: asm/nonmatchings/code_800BBA00/func_800D33C4.s
+ */
 #include "common.h"
 
 typedef struct {

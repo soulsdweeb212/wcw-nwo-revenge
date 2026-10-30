@@ -1,3 +1,8 @@
+/* @header
+ * func_800C02E4
+ * VRAM 0x800C02E4 | ROM 0xB3784 | size 0x70
+ * asm: asm/nonmatchings/code_800BBA00/func_800C02E4.s
+ */
 #include "common.h"
 
 typedef union { f32 f; s32 i; } NwFI;

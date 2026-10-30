@@ -1,3 +1,8 @@
+/* @header
+ * func_8002BBCC
+ * VRAM 0x8002BBCC | ROM 0x2C7CC | size 0x70
+ * asm: asm/nonmatchings/main/func_8002BBCC.s
+ */
 #include "common.h"
 
 s32 func_8002B7E0(s32, s32);

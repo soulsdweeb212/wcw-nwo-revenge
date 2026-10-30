@@ -1,3 +1,8 @@
+/* @header
+ * updateProximityActionState  (originally func_800B2934)
+ * VRAM 0x800B2934 | ROM 0xA5DD4 | size 0x144
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B2934.s
+ */
 #include "common.h"
 
 s32 func_800D3550(s32);

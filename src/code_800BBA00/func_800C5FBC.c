@@ -1,3 +1,8 @@
+/* @header
+ * func_800C5FBC
+ * VRAM 0x800C5FBC | ROM 0xB945C | size 0x21C
+ * asm: asm/nonmatchings/code_800BBA00/func_800C5FBC.s
+ */
 #include "common.h"
 
 typedef struct { u8 pad0[0x370]; u8 duration; u8 pad371[0x15]; s16 animation; u8 pad388[0xF]; s8 part; } EntityC5FBC;

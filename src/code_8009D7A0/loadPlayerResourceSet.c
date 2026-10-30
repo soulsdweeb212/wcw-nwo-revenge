@@ -1,3 +1,8 @@
+/* @header
+ * loadPlayerResourceSet  (originally func_800B7BC4)
+ * VRAM 0x800B7BC4 | ROM 0xAB064 | size 0x130
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B7BC4.s
+ */
 #include "common.h"
 
 extern u16 *D_80038A64[];    /* per-bank base table of resource ids */

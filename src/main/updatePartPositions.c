@@ -1,3 +1,8 @@
+/* @header
+ * updatePartPositions  (originally func_8000D324)
+ * VRAM 0x8000D324 | ROM 0xDF24 | size 0x100
+ * asm: asm/nonmatchings/main/func_8000D324.s
+ */
 #include "common.h"
 
 extern u8 D_800651A0[];

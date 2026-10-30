@@ -1,3 +1,8 @@
+/* @header
+ * func_80020DA0
+ * VRAM 0x80020DA0 | ROM 0x219A0 | size 0x4C
+ * asm: asm/nonmatchings/main/func_80020DA0.s
+ */
 #include "common.h"
 
 extern s32 func_80027380(void);

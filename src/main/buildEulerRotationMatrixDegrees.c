@@ -1,3 +1,8 @@
+/* @header
+ * buildEulerRotationMatrixDegrees  (originally func_80007C90)
+ * VRAM 0x80007C90 | ROM 0x8890 | size 0x174
+ * asm: asm/nonmatchings/main/func_80007C90.s
+ */
 #include "common.h"
 
 /*

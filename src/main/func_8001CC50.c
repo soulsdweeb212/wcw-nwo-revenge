@@ -1,3 +1,8 @@
+/* @header
+ * func_8001CC50
+ * VRAM 0x8001CC50 | ROM 0x1D850 | size 0xC8
+ * asm: asm/nonmatchings/main/func_8001CC50.s
+ */
 #include "common.h"
 
 typedef struct Obj {

@@ -1,3 +1,8 @@
+/* @header
+ * func_800C2830
+ * VRAM 0x800C2830 | ROM 0xB5CD0 | size 0x40
+ * asm: asm/nonmatchings/code_800BBA00/func_800C2830.s
+ */
 #include "common.h"
 
 extern u8 D_8007EF30[];

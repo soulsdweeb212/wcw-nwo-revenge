@@ -1,3 +1,8 @@
+/* @header
+ * func_80017F5C
+ * VRAM 0x80017F5C | ROM 0x18B5C | size 0x60
+ * asm: asm/nonmatchings/main/func_80017F5C.s
+ */
 #include "common.h"
 
 s32 func_8002021C(s32, void *);

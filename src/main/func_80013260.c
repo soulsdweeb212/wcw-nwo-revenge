@@ -1,3 +1,8 @@
+/* @header
+ * func_80013260
+ * VRAM 0x80013260 | ROM 0x13E60 | size 0x14C
+ * asm: asm/nonmatchings/main/func_80013260.s
+ */
 #include "common.h"
 
 /* func_80013260: parses one animation descriptor for the entity arg0. It

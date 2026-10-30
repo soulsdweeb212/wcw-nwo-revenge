@@ -1,3 +1,8 @@
+/* @header
+ * updateLinkedActionSequence  (originally func_800A58BC)
+ * VRAM 0x800A58BC | ROM 0x98D5C | size 0x184
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A58BC.s
+ */
 #include "common.h"
 
 extern void *D_800EB40C;

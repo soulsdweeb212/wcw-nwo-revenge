@@ -1,3 +1,8 @@
+/* @header
+ * main  (originally func_80000450)
+ * VRAM 0x80000450 | ROM 0x1050 | size 0x68
+ * asm: asm/nonmatchings/main/func_80000450.s
+ */
 #include "common.h"
 
 s32 func_8001C8C0(s32 *, s32, void *, s32, s32 *, s32);

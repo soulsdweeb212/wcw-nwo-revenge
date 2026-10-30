@@ -1,3 +1,8 @@
+/* @header
+ * func_800D3564
+ * VRAM 0x800D3564 | ROM 0xC6A04 | size 0x2C
+ * asm: asm/nonmatchings/code_800BBA00/func_800D3564.s
+ */
 #include "common.h"
 
 /* identical to func_80003CF0 (matched), with its names changed by decompdecomp */

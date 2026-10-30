@@ -1,3 +1,8 @@
+/* @header
+ * func_800E022C
+ * VRAM 0x800E022C | ROM 0xD36CC | size 0x1F4
+ * asm: asm/nonmatchings/code_800DE9C0/func_800E022C.s
+ */
 #include "common.h"
 
 extern f64 D_800E76C8;

@@ -1,3 +1,8 @@
+/* @header
+ * func_800E2230
+ * VRAM 0x800E2230 | ROM 0xD56D0 | size 0x1D0
+ * asm: asm/nonmatchings/code_800DE9C0/func_800E2230.s
+ */
 #include "common.h"
 
 /* Compute a representative point for an entity from its sample ring. Using the

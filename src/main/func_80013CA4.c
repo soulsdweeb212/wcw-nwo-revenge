@@ -1,3 +1,8 @@
+/* @header
+ * func_80013CA4
+ * VRAM 0x80013CA4 | ROM 0x148A4 | size 0xB4
+ * asm: asm/nonmatchings/main/func_80013CA4.s
+ */
 #include "common.h"
 
 typedef struct { s32 flags;u8 p4[0x14];s32 state;u8 p1C[0x14];s32 value;u8 p34[0x2C];s32 key;u8 p64[0xF4]; } VoiceCA4;

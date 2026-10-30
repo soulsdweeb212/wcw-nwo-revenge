@@ -1,3 +1,8 @@
+/* @header
+ * func_80004B34
+ * VRAM 0x80004B34 | ROM 0x5734 | size 0x74
+ * asm: asm/nonmatchings/main/func_80004B34.s
+ */
 #include "common.h"
 
 void initializeTransformNode(void *,s8,f32,f32,f32);

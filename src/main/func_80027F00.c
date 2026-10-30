@@ -1,3 +1,8 @@
+/* @header
+ * func_80027F00
+ * VRAM 0x80027F00 | ROM 0x28B00 | size 0x54
+ * asm: asm/nonmatchings/main/func_80027F00.s
+ */
 #include "common.h"
 
 s32 func_8001C890(s32 *, s32 *, s32);

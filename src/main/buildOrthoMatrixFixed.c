@@ -1,3 +1,8 @@
+/* @header
+ * buildOrthoMatrixFixed  (originally func_8001B680)
+ * VRAM 0x8001B680 | ROM 0x1C280 | size 0x14C
+ * asm: asm/nonmatchings/main/func_8001B680.s
+ */
 #include "common.h"
 
 void func_8001B090(void *,void *);

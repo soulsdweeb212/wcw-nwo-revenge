@@ -1,3 +1,8 @@
+/* @header
+ * loadRspTask  (originally func_80020B40)
+ * VRAM 0x80020B40 | ROM 0x21740 | size 0x20C
+ * asm: asm/nonmatchings/main/func_80020B40.s
+ */
 #include "common.h"
 
 typedef struct {u32 type,flags;void *boot;u32 bootSize;void *ucode;u32 ucodeSize;void *data;u32 dataSize;void *stack;u32 stackSize;void *output;void *outputSize;void *input;u32 inputSize;u32 *yield;u32 yieldSize;} Task20B;

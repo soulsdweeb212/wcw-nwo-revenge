@@ -1,3 +1,8 @@
+/* @header
+ * func_8009E55C
+ * VRAM 0x8009E55C | ROM 0x919FC | size 0xC8
+ * asm: asm/nonmatchings/code_8009D7A0/func_8009E55C.s
+ */
 #include "common.h"
 
 extern void *D_800EB408;

@@ -1,3 +1,8 @@
+/* @header
+ * startEntityGrapple  (originally func_800B5340)
+ * VRAM 0x800B5340 | ROM 0xA87E0 | size 0x3F0
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B5340.s
+ */
 #include "common.h"
 
 /* Resolve a grapple/lockup between 'self' and its nearest other entity.

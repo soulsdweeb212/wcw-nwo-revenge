@@ -1,3 +1,8 @@
+/* @header
+ * func_8000FD34
+ * VRAM 0x8000FD34 | ROM 0x10934 | size 0x98
+ * asm: asm/nonmatchings/main/func_8000FD34.s
+ */
 #include "common.h"
 
 extern f64 D_8003B250;

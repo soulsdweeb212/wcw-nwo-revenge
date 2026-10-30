@@ -1,3 +1,8 @@
+/* @header
+ * func_800210E0
+ * VRAM 0x800210E0 | ROM 0x21CE0 | size 0x44
+ * asm: asm/nonmatchings/main/func_800210E0.s
+ */
 #include "common.h"
 
 s32 nw2DisableInterrupts();

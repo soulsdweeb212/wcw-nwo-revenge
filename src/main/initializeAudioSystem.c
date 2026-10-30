@@ -1,3 +1,8 @@
+/* @header
+ * initializeAudioSystem  (originally func_8001348C)
+ * VRAM 0x8001348C | ROM 0x1408C | size 0x364
+ * asm: asm/nonmatchings/main/func_8001348C.s
+ */
 #include "common.h"
 
 extern s32 D_80000300,D_8007BD64,D_800604D4,D_800604D8,D_800604E0,D_800604E8,D_800604EC,D_800604FC;

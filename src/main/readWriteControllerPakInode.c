@@ -1,3 +1,8 @@
+/* @header
+ * readWriteControllerPakInode  (originally func_8002286C)
+ * VRAM 0x8002286C | ROM 0x2346C | size 0x338
+ * asm: asm/nonmatchings/main/func_8002286C.s
+ */
 #include "common.h"
 
 typedef struct {u8 pad0[4];void *queue;s32 channel;u8 padC[0x48];s32 inode,mirror;u8 pad5C[4];s32 first;u8 banks,active;} Pak228;

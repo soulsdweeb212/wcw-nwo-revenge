@@ -1,3 +1,8 @@
+/* @header
+ * func_8000DEE4
+ * VRAM 0x8000DEE4 | ROM 0xEAE4 | size 0x94
+ * asm: asm/nonmatchings/main/func_8000DEE4.s
+ */
 #include "common.h"
 
 extern u16 D_8006A2A4[];

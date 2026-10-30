@@ -1,3 +1,8 @@
+/* @header
+ * func_80014340
+ * VRAM 0x80014340 | ROM 0x14F40 | size 0x5C
+ * asm: asm/nonmatchings/main/func_80014340.s
+ */
 #include "common.h"
 
 typedef struct{u8 type;s32 value;}Msg;

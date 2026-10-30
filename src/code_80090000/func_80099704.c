@@ -1,3 +1,8 @@
+/* @header
+ * func_80099704
+ * VRAM 0x80099704 | ROM 0x45E74 | size 0x30
+ * asm: asm/nonmatchings/code_80090000/func_80099704.s
+ */
 #include "common.h"
 
 /* identical to func_8002AD04 (matched), with its names changed by decompdecomp */

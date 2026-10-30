@@ -1,3 +1,8 @@
+/* @header
+ * func_800C9970
+ * VRAM 0x800C9970 | ROM 0xBCE10 | size 0xC4
+ * asm: asm/nonmatchings/code_800BBA00/func_800C9970.s
+ */
 #include "common.h"
 
 extern s32 D_800F9B00;

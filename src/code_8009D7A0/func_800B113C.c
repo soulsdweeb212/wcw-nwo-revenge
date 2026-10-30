@@ -1,3 +1,8 @@
+/* @header
+ * func_800B113C
+ * VRAM 0x800B113C | ROM 0xA45DC | size 0x104
+ * asm: asm/nonmatchings/code_8009D7A0/func_800B113C.s
+ */
 #include "common.h"
 
 /* Two-step action handler on the D_800FABD0 record. In state 0 it arms the

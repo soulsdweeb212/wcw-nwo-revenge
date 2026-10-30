@@ -1,3 +1,8 @@
+/* @header
+ * func_800D2B64
+ * VRAM 0x800D2B64 | ROM 0xC6004 | size 0x48
+ * asm: asm/nonmatchings/code_800BBA00/func_800D2B64.s
+ */
 #include "common.h"
 
 void translateEntityXZ(void *, void *);

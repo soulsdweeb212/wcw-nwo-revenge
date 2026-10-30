@@ -1,3 +1,8 @@
+/* @header
+ * checkEntityAttackHit  (originally func_800D9944)
+ * VRAM 0x800D9944 | ROM 0xCCDE4 | size 0x490
+ * asm: asm/nonmatchings/code_800BBA00/func_800D9944.s
+ */
 #include "common.h"
 
 /* Attack hit test for entity s1 against another entity s0 (both EntD9944).

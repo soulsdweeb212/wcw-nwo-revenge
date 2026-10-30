@@ -1,3 +1,8 @@
+/* @header
+ * func_80010E6C
+ * VRAM 0x80010E6C | ROM 0x11A6C | size 0x3F8
+ * asm: asm/nonmatchings/main/func_80010E6C.s
+ */
 #include "common.h"
 
 f32 func_80003CF0(f32);void func_8000FDCC(void);void func_8000F710(s32,u32);

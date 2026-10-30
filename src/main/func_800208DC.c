@@ -1,3 +1,8 @@
+/* @header
+ * func_800208DC
+ * VRAM 0x800208DC | ROM 0x214DC | size 0x4C
+ * asm: asm/nonmatchings/main/func_800208DC.s
+ */
 #include "common.h"
 
 extern f64 D_8003B8C0;

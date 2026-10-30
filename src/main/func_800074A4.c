@@ -1,3 +1,8 @@
+/* @header
+ * func_800074A4
+ * VRAM 0x800074A4 | ROM 0x80A4 | size 0x374
+ * asm: asm/nonmatchings/main/func_800074A4.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0, w1; } Gfx74A4;

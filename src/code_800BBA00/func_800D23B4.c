@@ -1,3 +1,8 @@
+/* @header
+ * func_800D23B4
+ * VRAM 0x800D23B4 | ROM 0xC5854 | size 0x114
+ * asm: asm/nonmatchings/code_800BBA00/func_800D23B4.s
+ */
 #include "common.h"
 
 s8 checkFacingProximity(void *,void *,s32);

@@ -1,3 +1,8 @@
+/* @header
+ * func_800A1D34
+ * VRAM 0x800A1D34 | ROM 0x951D4 | size 0x31C
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A1D34.s
+ */
 #include "common.h"
 
 extern u16 D_800E3262[];

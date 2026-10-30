@@ -1,3 +1,8 @@
+/* @header
+ * updateActionCounterState  (originally func_800AF52C)
+ * VRAM 0x800AF52C | ROM 0xA29CC | size 0x144
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AF52C.s
+ */
 #include "common.h"
 
 extern u8 *D_800FABD0,*D_800FAF58,*D_800F9B60;

@@ -1,3 +1,8 @@
+/* @header
+ * func_800D4148
+ * VRAM 0x800D4148 | ROM 0xC75E8 | size 0x50
+ * asm: asm/nonmatchings/code_800BBA00/func_800D4148.s
+ */
 #include "common.h"
 
 extern u16 D_800EB638[];

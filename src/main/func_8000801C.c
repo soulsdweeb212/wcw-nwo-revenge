@@ -1,3 +1,8 @@
+/* @header
+ * func_8000801C
+ * VRAM 0x8000801C | ROM 0x8C1C | size 0x7C
+ * asm: asm/nonmatchings/main/func_8000801C.s
+ */
 #include "common.h"
 
 /* Applies the 4x4 matrix arg0 to the point (arg1,arg2,arg3), writing only the X

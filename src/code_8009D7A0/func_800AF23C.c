@@ -1,3 +1,8 @@
+/* @header
+ * func_800AF23C
+ * VRAM 0x800AF23C | ROM 0xA26DC | size 0x1A0
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AF23C.s
+ */
 #include "common.h"
 
 typedef struct {s16 f0,f2,f4;u16 f6;s16 f8,fA,fC,fE,f10,f12; u8 pad14[14]; s16 f22; u8 pad24[10]; u16 f2E; u32 f30; f32 f34; u8 pad38[36]; u32 f5C;} ActionF23;

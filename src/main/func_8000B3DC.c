@@ -1,3 +1,8 @@
+/* @header
+ * func_8000B3DC
+ * VRAM 0x8000B3DC | ROM 0xBFDC | size 0x40
+ * asm: asm/nonmatchings/main/func_8000B3DC.s
+ */
 #include "common.h"
 
 extern u16 *D_80031998[];

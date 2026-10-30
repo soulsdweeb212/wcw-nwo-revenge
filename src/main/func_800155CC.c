@@ -1,3 +1,8 @@
+/* @header
+ * func_800155CC
+ * VRAM 0x800155CC | ROM 0x161CC | size 0x5C
+ * asm: asm/nonmatchings/main/func_800155CC.s
+ */
 #include "common.h"
 
 f32 sinf(f32);

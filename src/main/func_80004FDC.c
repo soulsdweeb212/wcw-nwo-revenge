@@ -1,3 +1,8 @@
+/* @header
+ * func_80004FDC
+ * VRAM 0x80004FDC | ROM 0x5BDC | size 0x38
+ * asm: asm/nonmatchings/main/func_80004FDC.s
+ */
 #include "common.h"
 
 /* Enable a descriptor subrecord: mark it active (f0 = 1), store the frame

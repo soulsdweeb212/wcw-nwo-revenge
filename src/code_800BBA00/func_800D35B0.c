@@ -1,3 +1,8 @@
+/* @header
+ * func_800D35B0
+ * VRAM 0x800D35B0 | ROM 0xC6A50 | size 0x24
+ * asm: asm/nonmatchings/code_800BBA00/func_800D35B0.s
+ */
 #include "common.h"
 
 /* Sum angles arg0 + arg1, wrapped to [-0x800, 0x800]. */

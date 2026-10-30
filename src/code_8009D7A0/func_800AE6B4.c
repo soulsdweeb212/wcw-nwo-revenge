@@ -1,3 +1,8 @@
+/* @header
+ * func_800AE6B4
+ * VRAM 0x800AE6B4 | ROM 0xA1B54 | size 0xA8
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AE6B4.s
+ */
 #include "common.h"
 
 /* Action state machine (2 states) driven by the shared action record D_800FABD0.

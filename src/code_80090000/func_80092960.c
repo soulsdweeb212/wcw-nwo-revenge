@@ -1,3 +1,8 @@
+/* @header
+ * func_80092960
+ * VRAM 0x80092960 | ROM 0x3F0D0 | size 0x1C0
+ * asm: asm/nonmatchings/code_80090000/func_80092960.s
+ */
 #include "common.h"
 
 /* Emit a 3-digit decimal number as Gfx: set up the font tile block, then for

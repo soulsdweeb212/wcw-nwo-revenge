@@ -1,3 +1,8 @@
+/* @header
+ * updateActionRecordStateAEEC8  (originally func_800AEEC8)
+ * VRAM 0x800AEEC8 | ROM 0xA2368 | size 0x2F0
+ * asm: asm/nonmatchings/code_8009D7A0/func_800AEEC8.s
+ */
 #include "common.h"
 
 /* Drives the D_800FABD0 action record through its states (s16 +4, 0..4): state 0

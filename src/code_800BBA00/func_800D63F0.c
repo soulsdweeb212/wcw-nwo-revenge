@@ -1,3 +1,8 @@
+/* @header
+ * func_800D63F0
+ * VRAM 0x800D63F0 | ROM 0xC9890 | size 0x1E0
+ * asm: asm/nonmatchings/code_800BBA00/func_800D63F0.s
+ */
 #include "common.h"
 
 /* Range/threshold helper for an entity's attachment. Picks the threshold

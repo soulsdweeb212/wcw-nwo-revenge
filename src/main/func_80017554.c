@@ -1,3 +1,8 @@
+/* @header
+ * func_80017554
+ * VRAM 0x80017554 | ROM 0x18154 | size 0x38
+ * asm: asm/nonmatchings/main/func_80017554.s
+ */
 #include "common.h"
 
 s32 func_800177C0();

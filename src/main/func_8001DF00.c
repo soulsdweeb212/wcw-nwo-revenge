@@ -1,3 +1,8 @@
+/* @header
+ * func_8001DF00
+ * VRAM 0x8001DF00 | ROM 0x1EB00 | size 0x1AC
+ * asm: asm/nonmatchings/main/func_8001DF00.s
+ */
 #include "common.h"
 
 /* Nw2 render-object setup for a display object's sub-state (4 or 5): installs

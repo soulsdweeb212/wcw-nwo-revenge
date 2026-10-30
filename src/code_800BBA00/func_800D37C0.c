@@ -1,3 +1,8 @@
+/* @header
+ * func_800D37C0
+ * VRAM 0x800D37C0 | ROM 0xC6C60 | size 0x78
+ * asm: asm/nonmatchings/code_800BBA00/func_800D37C0.s
+ */
 #include "common.h"
 
 f32 cosf(f32);

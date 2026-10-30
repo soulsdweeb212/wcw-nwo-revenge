@@ -1,3 +1,8 @@
+/* @header
+ * func_8000C1B8
+ * VRAM 0x8000C1B8 | ROM 0xCDB8 | size 0x2BC
+ * asm: asm/nonmatchings/main/func_8000C1B8.s
+ */
 #include "common.h"
 
 void loadTextureIntoCacheSlot(void *, s16, s16, s16, s16);

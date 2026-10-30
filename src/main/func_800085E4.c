@@ -1,3 +1,8 @@
+/* @header
+ * func_800085E4
+ * VRAM 0x800085E4 | ROM 0x91E4 | size 0x50
+ * asm: asm/nonmatchings/main/func_800085E4.s
+ */
 #include "common.h"
 
 typedef struct { s16 f0; u8 pad[250]; } S85E;

@@ -1,3 +1,8 @@
+/* @header
+ * func_80091244
+ * VRAM 0x80091244 | ROM 0x3D9B4 | size 0x28
+ * asm: asm/nonmatchings/code_80090000/func_80091244.s
+ */
 #include "common.h"
 
 extern u8 updateActionStateC5D48[];

@@ -1,3 +1,8 @@
+/* @header
+ * func_80090908
+ * VRAM 0x80090908 | ROM 0x3D078 | size 0x820
+ * asm: asm/nonmatchings/code_80090000/func_80090908.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0; u32 w1; } Gfx0908;

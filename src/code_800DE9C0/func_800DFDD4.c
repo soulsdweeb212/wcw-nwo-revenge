@@ -1,3 +1,8 @@
+/* @header
+ * func_800DFDD4
+ * VRAM 0x800DFDD4 | ROM 0xD3274 | size 0x2B4
+ * asm: asm/nonmatchings/code_800DE9C0/func_800DFDD4.s
+ */
 #include "common.h"
 
 extern u16 D_800E3CD0[];

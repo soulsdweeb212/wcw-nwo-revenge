@@ -1,3 +1,8 @@
+/* @header
+ * func_800180A0
+ * VRAM 0x800180A0 | ROM 0x18CA0 | size 0xA0
+ * asm: asm/nonmatchings/main/func_800180A0.s
+ */
 #include "common.h"
 
 typedef struct {u32 w0,w1;} Cmd180;

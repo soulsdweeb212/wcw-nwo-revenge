@@ -1,3 +1,8 @@
+/* @header
+ * relinkEntityList  (originally func_80091128)
+ * VRAM 0x80091128 | ROM 0x3D898 | size 0x11C
+ * asm: asm/nonmatchings/code_80090000/func_80091128.s
+ */
 #include "common.h"
 
 typedef struct {u16 active; union {u16 flags; struct {u8 hi,id;} b;} u; u8 pad[12];} Entry911;

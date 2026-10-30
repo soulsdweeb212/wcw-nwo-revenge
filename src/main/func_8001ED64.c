@@ -1,3 +1,8 @@
+/* @header
+ * func_8001ED64
+ * VRAM 0x8001ED64 | ROM 0x1F964 | size 0x280
+ * asm: asm/nonmatchings/main/func_8001ED64.s
+ */
 #include "common.h"
 
 typedef struct { f64 v[8]; } Nw2F64x8;

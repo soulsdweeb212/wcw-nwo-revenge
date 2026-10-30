@@ -1,3 +1,8 @@
+/* @header
+ * func_80020854
+ * VRAM 0x80020854 | ROM 0x21454 | size 0x40
+ * asm: asm/nonmatchings/main/func_80020854.s
+ */
 #include "common.h"
 
 s32 func_8002021C(s32, s32);

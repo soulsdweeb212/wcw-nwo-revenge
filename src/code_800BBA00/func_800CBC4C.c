@@ -1,3 +1,8 @@
+/* @header
+ * func_800CBC4C
+ * VRAM 0x800CBC4C | ROM 0xBF0EC | size 0x110
+ * asm: asm/nonmatchings/code_800BBA00/func_800CBC4C.s
+ */
 #include "common.h"
 
 void func_800A7C40(void *, s8, s16);

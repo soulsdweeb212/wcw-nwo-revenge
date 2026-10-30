@@ -1,3 +1,8 @@
+/* @header
+ * func_800D3838
+ * VRAM 0x800D3838 | ROM 0xC6CD8 | size 0x58
+ * asm: asm/nonmatchings/code_800BBA00/func_800D3838.s
+ */
 #include "common.h"
 
 /* Write the XZ difference (arg1 - arg0) into arg3, dividing it by arg2 when arg2 is

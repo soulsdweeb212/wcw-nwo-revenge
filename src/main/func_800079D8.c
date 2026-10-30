@@ -1,3 +1,8 @@
+/* @header
+ * func_800079D8
+ * VRAM 0x800079D8 | ROM 0x85D8 | size 0x9C
+ * asm: asm/nonmatchings/main/func_800079D8.s
+ */
 #include "common.h"
 
 void func_800079D8(u16 *arg0, s32 arg1)

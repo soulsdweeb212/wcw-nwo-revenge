@@ -1,3 +1,8 @@
+/* @header
+ * func_800D9270
+ * VRAM 0x800D9270 | ROM 0xCC710 | size 0x16C
+ * asm: asm/nonmatchings/code_800BBA00/func_800D9270.s
+ */
 #include "common.h"
 
 extern u8 D_8007E228[], D_8007EF30[];

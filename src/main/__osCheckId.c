@@ -1,3 +1,8 @@
+/* @header
+ * __osCheckId  (originally func_800227B4)
+ * VRAM 0x800227B4 | ROM 0x233B4 | size 0xB8
+ * asm: asm/nonmatchings/main/func_800227B4.s
+ */
 #include "common.h"
 
 s32 __osContRamRead(s32, s32, s32, void *);

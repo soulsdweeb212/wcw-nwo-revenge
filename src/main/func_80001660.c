@@ -1,3 +1,8 @@
+/* @header
+ * func_80001660
+ * VRAM 0x80001660 | ROM 0x2260 | size 0x34
+ * asm: asm/nonmatchings/main/func_80001660.s
+ */
 #include "common.h"
 
 void *func_80001694();

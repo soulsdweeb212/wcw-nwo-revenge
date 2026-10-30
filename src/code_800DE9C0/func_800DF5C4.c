@@ -1,3 +1,8 @@
+/* @header
+ * func_800DF5C4
+ * VRAM 0x800DF5C4 | ROM 0xD2A64 | size 0x360
+ * asm: asm/nonmatchings/code_800DE9C0/func_800DF5C4.s
+ */
 #include "common.h"
 
 extern u16 D_800E4000[];

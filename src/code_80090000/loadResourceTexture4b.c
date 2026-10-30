@@ -1,3 +1,8 @@
+/* @header
+ * loadResourceTexture4b  (originally func_80091294)
+ * VRAM 0x80091294 | ROM 0x3DA04 | size 0x25C
+ * asm: asm/nonmatchings/code_80090000/func_80091294.s
+ */
 #include "common.h"
 
 /* Emits the RDP setup for a 4-bit (CI4) texture and returns -1 on success

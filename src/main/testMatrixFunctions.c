@@ -1,3 +1,8 @@
+/* @header
+ * testMatrixFunctions  (originally func_80007BB8)
+ * VRAM 0x80007BB8 | ROM 0x87B8 | size 0xD0
+ * asm: asm/nonmatchings/main/func_80007BB8.s
+ */
 #include "common.h"
 
 void func_8001A490(void *, f32, f32, f32, f32);

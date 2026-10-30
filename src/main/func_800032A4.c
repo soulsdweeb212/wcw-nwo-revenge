@@ -1,3 +1,8 @@
+/* @header
+ * func_800032A4
+ * VRAM 0x800032A4 | ROM 0x3EA4 | size 0x58
+ * asm: asm/nonmatchings/main/func_800032A4.s
+ */
 #include "common.h"
 
 s32 func_80014140(s32,s16,s16,s16,s16,s16); extern s32 D_800482D4;
