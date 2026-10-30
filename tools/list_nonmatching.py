@@ -13,7 +13,7 @@ HAND = {  # README "Hand-written assembly" section
     "func_80026AF0", "func_80026B00", "func_80026C20", "func_80028100", "func_80026C10", "nw2DisableInterrupts",
     "nw2RestoreInterrupts", "func_8001C860", "func_80026C30", "func_80026C80", "func_800266B4", "func_800266FC",
 }
-FRAG = {"func_8009C218", "func_800DDAC8"}  # first words of a function cut off at a segment end (splat.yaml)
+FRAG = set()  # first words of a function cut off at a segment end (splat.yaml)
 LIBGCC = {"func_800284F4", "func_80028860", "func_80028880", "__divdi3", "__moddi3", "__fixsfdi", "signed64ToFloatTrunc",
           "func_80028528", "func_80028624", "bcmp"}
 root = Path(__file__).resolve().parent.parent

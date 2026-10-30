@@ -1,3 +1,8 @@
+/* @header
+ * func_800900C0
+ * VRAM 0x800900C0 | ROM 0x3C830 | size 0x240
+ * asm: asm/nonmatchings/code_80090000/func_800900C0.s
+ */
 #include "common.h"
 
 extern u8 func_800DB348[];
@@ -9,14 +14,16 @@ void initializeTransformNode(void *, s32, f32, f32, f32);
 void func_800015AC(void *, s32);
 void func_80001544(void *);
 
+typedef struct { u32 w0, w1; } Gx;
+#define CMD(p, a, b) { Gx *_g = (Gx *)(p); _g->w0 = (a); _g->w1 = (b); }
+
 void func_800900C0(s32 arg0) {
     u8 *p;
     u8 *q;
     s32 i;
-    s32 c1, c2, c3, c4, c5;
     f32 z;
     s16 m;
-    void *cb;
+    Gx *dl;
     u8 pad[0x3c];
 
     i = 0;
@@ -47,17 +54,10 @@ void func_800900C0(s32 arg0) {
     i = 0;
     q = func_800D6658 + 0x6F8;
     z = 0.0f;
-    c1 = 0xE7000000;
-    c2 = 0xFA000000;
-    c3 = 0xDE000000;
-    c4 = (s32)D_C5B90;
-    c5 = 0xDF000000;
     do {
         initializeTransformNode(q, 6, z, z, z);
-        cb = sceneNodeCallback5AD0;
-        *(void **)(q + 0xC) = cb;
-        cb = sceneNodeCallback5C50;
-        *(void **)(q + 0x10) = cb;
+        *(void **)(q + 0xC) = sceneNodeCallback5AD0;
+        *(void **)(q + 0x10) = sceneNodeCallback5C50;
         func_800015AC(q, 1);
         func_80001544(q);
         *(u8 *)(q + 0x18) = *(u8 *)(q + 0x18) | 0x80;
@@ -66,22 +66,16 @@ void func_800900C0(s32 arg0) {
             *(u8 **)(q + 8) = q + 0x178;
         }
         i++;
-        *(s32 *)(q + 0xE0) = c1;
-        *(s32 *)(q + 0xE4) = 0;
-        *(s32 *)(q + 0xE8) = c2;
-        *(s32 *)(q + 0xEC) = 0;
-        *(s32 *)(q + 0xF0) = c3;
-        *(s32 *)(q + 0xF4) = c4;
-        *(s32 *)(q + 0xF8) = c5;
-        *(s32 *)(q + 0xFC) = 0;
-        *(s32 *)(q + 0x120) = c1;
-        *(s32 *)(q + 0x124) = 0;
-        *(s32 *)(q + 0x128) = c2;
-        *(s32 *)(q + 0x12C) = 0;
-        *(s32 *)(q + 0x130) = c3;
-        *(s32 *)(q + 0x134) = c4;
-        *(s32 *)(q + 0x138) = c5;
-        *(s32 *)(q + 0x13C) = 0;
+        dl = (Gx *)(q + 0xe0);
+        CMD(dl++, 0xe7000000, 0);
+        CMD(dl++, 0xfa000000, 0);
+        CMD(dl++, 0xde000000, D_C5B90);
+        CMD(dl++, 0xdf000000, 0);
+        dl = (Gx *)(q + 0x120);
+        CMD(dl++, 0xe7000000, 0);
+        CMD(dl++, 0xfa000000, 0);
+        CMD(dl++, 0xde000000, D_C5B90);
+        CMD(dl++, 0xdf000000, 0);
         m = -1;
         *(s16 *)(q + 0x160) = m;
         m = 0;

@@ -9,6 +9,10 @@ void func_80096A6C(G773 **, void *, s32, s32, s32, s32, s32, s32, s32);
 
 #define CMD(c, a, b) { G773 *_g = gfx++; _g->w0 = (u32)(a); _g->w1 = (u32)(b); }
 
+#define SHL(v, s, w) ((u32)(((u32)(v) & ((1 << (w)) - 1)) << (s)))
+#define MV2(pkt, vtx, where, val) { G773 *_g = (G773 *)(pkt); _g->w0 = SHL(2, 24, 8) | SHL((where), 16, 8) | SHL((vtx) * 2, 0, 16); _g->w1 = (u32)(val); }
+#define MV(vtx, where, val) MV2(gfx++, vtx, where, val)
+
 void func_8009773C(G773 **gfxp, void *tex, s32 fmt, s32 phase, s32 x, s32 y, s32 w, s32 h, s32 dw, s32 dh, s32 texw,
                    s32 amp0, s32 amp1, s32 freq)
 {
@@ -21,7 +25,7 @@ void func_8009773C(G773 **gfxp, void *tex, s32 fmt, s32 phase, s32 x, s32 y, s32
     f32 yt, yb, xl, xr;
     s32 off0, off1;
     s32 n;
-    u32 lo, hi0, hi1;
+    u32 lo, lo1, hi0, hi1;
     f32 sn;
 
     sy = (f64)dh / h;
@@ -60,15 +64,21 @@ void func_8009773C(G773 **gfxp, void *tex, s32 fmt, s32 phase, s32 x, s32 y, s32
             if ((240.0f <= yt) & (240.0f <= yb)) continue;
             CMD(0, 0xE7000000, 0);
             func_80096A6C(&gfx, tex, fmt, texw, h, uls, ult, lrs, lrt);
-            CMD(0, 0x02180000, ((s32)(yt * 4.0f) & 0xFFFF) | ((s32)((xl + off0) * 4.0f) << 16));
-            CMD(0, 0x02180002, ((s32)(yt * 4.0f) & 0xFFFF) | ((s32)((xr + off0) * 4.0f) << 16));
-            CMD(0, 0x02180004, ((s32)(yb * 4.0f) & 0xFFFF) | ((s32)((xl + off1) * 4.0f) << 16));
-            CMD(0, 0x02180006, ((s32)(yb * 4.0f) & 0xFFFF) | ((s32)((xr + off1) * 4.0f) << 16));
-            CMD(0, 0x02140000, (((u32)t << 21) >> 16) | ((u32)s << 21));
-            CMD(0, 0x02140002, (((u32)t << 21) >> 16) | ((u32)s1 << 21));
-            CMD(0, 0x02140004, (((u32)t1 << 21) >> 16) | ((u32)s << 21));
-            CMD(0, 0x02140006, (((u32)t1 << 21) >> 16) | ((u32)s1 << 21));
-            CMD(0, 0x07000206, 0x604);
+            MV(0, 0x18, SHL((s32)((yt) * 4.0f), 0, 16) | SHL((s32)((xl + off0) * 4.0f), 16, 16));
+            MV(1, 0x18, SHL((s32)((yt) * 4.0f), 0, 16) | SHL((s32)((xr + off0) * 4.0f), 16, 16));
+            MV(2, 0x18, SHL((s32)((yb) * 4.0f), 0, 16) | SHL((s32)((xl + off1) * 4.0f), 16, 16));
+            MV(3, 0x18, SHL((s32)((yb) * 4.0f), 0, 16) | SHL((s32)((xr + off1) * 4.0f), 16, 16));
+            hi0 = (u32)s << 21;
+            hi1 = (u32)s1 << 21;
+            lo = (u32)t << 21 >> 16;
+            MV(0, 0x14, lo | hi0);
+            lo |= hi1;
+            MV(1, 0x14, lo);
+            lo1 = (u32)t1 << 21 >> 16;
+            MV(2, 0x14, lo1 | hi0);
+            lo1 |= hi1;
+            MV(3, 0x14, lo1);
+            { G773 *_g = gfx++; _g->w0 = 0x07000206; _g->w1 = 0x604; }
         }
     }
     *gfxp = gfx;

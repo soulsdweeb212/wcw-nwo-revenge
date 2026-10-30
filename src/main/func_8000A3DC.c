@@ -1,3 +1,8 @@
+/* @header
+ * func_8000A3DC
+ * VRAM 0x8000A3DC | ROM 0xAFDC | size 0x694
+ * asm: asm/nonmatchings/main/func_8000A3DC.s
+ */
 #include "common.h"
 
 typedef struct {
@@ -50,35 +55,27 @@ inline static f32 wrapDiff(f32 b, f32 a)
     return value;
 }
 
-#define SC (*(&D_80030848[(s16)rem]))
+#define SC D_80030848[rem]
 
 void func_8000A3DC(s32 arg0, s16 arg1)
 {
     u32 i;
     u32 j;
-    s32 rem;
+    s16 e;
+    s16 rem;
     s32 r;
-    s32 ent;
     Vec0A3 *src;
     Vec0A3 *dst;
     Part0A3 *p;
     f32 t;
-    s32 a1;
 
-    a1 = arg1;
-    rem = a1 - (a1 / 3) * 3;
-    {
-        u32 tq = (u32)a1 & 1;
-        if (tq >> 1) {
-            rem = 0;
-        }
-    }
-    func_80009990((s16)arg0);
+    e = arg0;
+    rem = arg1 % 3;
+    func_80009990(e);
     i = 1;
     dst = &D_80070B28[1];
     src = &D_80070488[1];
-    r = D_800706B0[(s16)arg0].v;
-    ent = arg0;
+    r = D_800706B0[e].v;
     do {
         r = func_8000AA70(r, src, dst);
         dst++;
@@ -86,10 +83,9 @@ void func_8000A3DC(s32 arg0, s16 arg1)
         src++;
     } while (i < 20);
     j = 1;
-    ent = (s16)ent;
     do {
         i = D_800307E8[j];
-        p = &D_80070C40[ent][i];
+        p = &D_80070C40[e][i];
         if (!D_800307FC[i]) {
             p->x += (D_80070B28[i].x - p->x) * SC;
             p->y += (D_80070B28[i].y - p->y) * SC;
@@ -107,12 +103,6 @@ void func_8000A3DC(s32 arg0, s16 arg1)
         p->a += D_80070488[i].x * SC;
         p->b += D_80070488[i].y * SC;
         p->c += D_80070488[i].z * SC;
-        {
-            u32 tq3 = (u32)rem & 1;
-            if (tq3 >> 1) {
-                j = 0;
-            }
-        }
         j++;
     } while (j < 20);
 }

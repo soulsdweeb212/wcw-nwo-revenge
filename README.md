@@ -1,9 +1,9 @@
 # WCW / nWo  REVENGE (decompilation)
 
 A matching decompilation of WCW / nWo  REVENGE for the Nintendo 64, started with [decompdecomp](https://github.com/n-delic/decompdecomp).
-1334 of 1345 functions build as C objects (99.2%). 35 of those are hand-written assembly routines wrapped in a top-level `asm()`
-block (see below), so 1299 are real C that compiles to exactly the original code; the other 11 functions are still plain assembly
-(9 have a draft in `nonmatching/`, and 2 are the first instructions of functions cut off by a segment boundary).
+1337 of 1345 functions build as C objects (99.4%). 35 of those are hand-written assembly routines wrapped in a top-level `asm()`
+block (see below), so 1302 are real C that compiles to exactly the original code; the other 8 functions are still plain assembly
+(all 8 have a draft in `nonmatching/`).
 `build.py` rebuilds the game from this tree and checks it against your original, byte for byte.
 
 ## Requirements
@@ -98,7 +98,7 @@ those take a manual edit, using the ROM's instructions at the target address to 
 change; the ROM must stay identical.
 
 ### Still assembly, with a reason
-11 functions are not matched yet; `nonmatching/README.md` explains each one. In short:
+8 functions are not matched yet; `nonmatching/README.md` explains each one. In short:
 - **Complete C, a few instructions off (11 functions):** `func_8000A3DC`, `func_800900C0`, `func_80012CD0`, `func_800C0E44`,
   `func_800291C0`, `func_80006178`, `func_800A83DC`, `func_8000C91C`, `func_80095884`, `func_800C4C60`, `func_800B6DEC`. The
   structure is right; GCC 2.7.2 orders a few instructions or numbers a few registers differently. These are search problems

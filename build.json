@@ -92,18 +92,13 @@
   },
   {
    "kind": "asm",
-   "src": "asm/bin/48990.s",
-   "obj": "build/asm/bin/48990.o"
+   "src": "asm/bin/4B3C8.s",
+   "obj": "build/asm/bin/4B3C8.o"
   },
   {
    "kind": "asm",
    "src": "asm/bin/AE0D0.s",
    "obj": "build/asm/bin/AE0D0.o"
-  },
-  {
-   "kind": "asm",
-   "src": "asm/bin/D0F70.s",
-   "obj": "build/asm/bin/D0F70.o"
   },
   {
    "kind": "asm",
@@ -186,7 +181,7 @@
    "name": "code_80090000",
    "kind": "code",
    "start": 247664,
-   "end": 297360,
+   "end": 308168,
    "vram": 2148073472,
    "bss_vram": null,
    "bss_size": 0,
@@ -194,14 +189,14 @@
    "bss": []
   },
   {
-   "name": "48990",
+   "name": "4B3C8",
    "kind": "raw",
-   "start": 297360,
+   "start": 308168,
    "objects": [
-    "build/asm/bin/48990.o"
+    "build/asm/bin/4B3C8.o"
    ],
-   "stub": "asm/bin/48990.s",
-   "incbin": "assets/48990.bin"
+   "stub": "asm/bin/4B3C8.s",
+   "incbin": "assets/4B3C8.bin"
   },
   {
    "name": "code_8009D7A0",
@@ -228,22 +223,12 @@
    "name": "code_800BBA00",
    "kind": "code",
    "start": 716448,
-   "end": 855920,
+   "end": 859744,
    "vram": 2148252160,
    "bss_vram": null,
    "bss_size": 0,
    "pieces": [],
    "bss": []
-  },
-  {
-   "name": "D0F70",
-   "kind": "raw",
-   "start": 855920,
-   "objects": [
-    "build/asm/bin/D0F70.o"
-   ],
-   "stub": "asm/bin/D0F70.s",
-   "incbin": "assets/D0F70.bin"
   },
   {
    "name": "code_800DE9C0",
@@ -1683,7 +1668,11 @@
    "seg": "main",
    "vram": 2147525596,
    "rom": 45020,
-   "asm": "asm/nonmatchings/main/func_8000A3DC.s"
+   "asm": "asm/nonmatchings/main/func_8000A3DC.s",
+   "c": "src/main/func_8000A3DC.c",
+   "own": {
+    ".rodata": 2147725672
+   }
   },
   {
    "name": "func_8000AA70",
@@ -6374,7 +6363,8 @@
    "seg": "code_80090000",
    "vram": 2148073664,
    "rom": 247856,
-   "asm": "asm/nonmatchings/code_80090000/func_800900C0.s"
+   "asm": "asm/nonmatchings/code_80090000/func_800900C0.s",
+   "c": "src/code_80090000/func_800900C0.c"
   },
   {
    "name": "func_80090300",
@@ -12185,7 +12175,11 @@
    "seg": "code_800BBA00",
    "vram": 2148391624,
    "rom": 855912,
-   "asm": "asm/nonmatchings/code_800BBA00/func_800DDAC8.s"
+   "asm": "asm/nonmatchings/code_800BBA00/func_800DDAC8.s",
+   "c": "src/code_800BBA00/func_800DDAC8.c",
+   "own": {
+    ".rodata": 2148431432
+   }
   },
   {
    "name": "func_800DE9C0",
@@ -12537,6 +12531,8 @@
   }
  ],
  "symbols": {
+  "D_800F9878": 2148505720,
+  "D_800F9870": 2148505712,
   "func_800C1138": 2148274488,
   "func_800C4D70": 2148289904,
   "func_800C5010": 2148290576,
