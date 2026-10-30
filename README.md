@@ -1,14 +1,31 @@
 # WCW / nWo  REVENGE (decompilation)
 
 A matching decompilation of WCW / nWo  REVENGE for the Nintendo 64, started with [decompdecomp](https://github.com/n-delic/decompdecomp).
-1308 of 1345 functions build as C objects (97.2%). 25 of those are hand-written routines wrapped in a top-level `asm()` block
-(see below), so 1283 are real C that compiles to exactly the original code; the other 37 functions are still plain assembly.
+1317 of 1345 functions build as C objects (97.9%). 25 of those are hand-written routines wrapped in a top-level `asm()` block
+(see below), so 1292 are real C that compiles to exactly the original code; the other 28 functions are still plain assembly.
 `build.py` rebuilds the game from this tree and checks it against your original, byte for byte.
+
+## Requirements
+
+- **decompdecomp** ([github.com/n-delic/decompdecomp](https://github.com/n-delic/decompdecomp)) must be installed. The build
+  uses its pinned period compiler (KMC GCC 2.7.2), its binutils and its Python packages (`decompnet`), which decompdecomp
+  manages itself. The system `python3` does not have these packages, so `build.py` re-runs itself under
+  decompdecomp's own Python. It finds that Python from the `decomp` command (the first line of `~/.local/bin/decomp`, or the
+  `python` it launches) and, if `decomp` isn't on `PATH`, from the `uv tool install` location
+  `~/.local/share/uv/tools/decompnet/bin/python`. If neither exists it stops with "install decompdecomp first".
+- Your own copy of the game as `baserom.z64` (SHA-1 `e1711a2511394b9357b5f1ac8ca5cc17bd674836`). It is in `.gitignore`;
+  never commit it.
+- Linux or WSL (this tree has been built under WSL2).
+- To use the permuter helper (`tools/permute_run.py`), decompdecomp's `decomp setup` must have installed decomp-permuter.
 
 ## Build
 
-1. Put your own copy of the game here as `baserom.z64` (it is in `.gitignore`; never commit it).
-2. `python3 build.py` (it uses decompdecomp's period compiler and assembler, so decompdecomp must be installed).
+1. Install decompdecomp (above) and put your copy of the game here as `baserom.z64`.
+2. `python3 build.py`. The first run extracts the assembly and data from your copy (splat); every run ends with
+   `identical: build/game.z64 matches baserom.z64 byte for byte` when the tree reproduces the original.
+
+If `build.py` can't find decompdecomp's Python, run it with that interpreter directly, for example
+`~/.local/share/uv/tools/decompnet/bin/python build.py`, and the tools under `tools/` the same way.
 
 ## Layout
 
@@ -37,6 +54,9 @@ share it.
 - `tools/permute_run.py FUNC DRAFT.c MINUTES [WORKERS]` scores a C draft against the original bytes (0 = identical apart
   from relocations) and can random-walk it with decomp-permuter's generator. A score is a guide; `build.py` saying
   *identical* is the proof. The permuter's output is often mangled C, so read it before keeping anything.
+- `tools/check_rodata.py` rebuilds the jump tables and constants the compiler generates for functions with an `own` `.rodata`
+  and looks for them in the ROM; `tools/relabel_switch.py` repairs `case` labels from the ROM's tables (see "Switch tables are
+  checked against the ROM" below). Run the checker after a full build.
 - `tools/asm_to_c.py FUNC...` wraps a function's assembly in an `asm()` block so it builds as a C object.
 - `nonmatching/` holds near-miss drafts that `build.py` does not compile (see its README for how far off each is).
 - A source file can hold several consecutive functions: give each the same `"c"` in `build.json`; the object is placed once,
@@ -49,13 +69,39 @@ share it.
   table in the game, e.g. `setAudioRegionParameter` -> `0x8003B4F0`). `build.py check` cannot verify these when the table
   sits in another overlay's address range, so check with a full build.
 
+### Switch tables are checked against the ROM
+`build.py` identical means the *code* is identical. A C function's own `.rodata` (jump tables, float/double constants) is placed
+by the `own` entry but not written into the ROM (the ROM's bytes are used), so a `case` label pointing at the wrong body, or a
+wrong constant, would still give an identical ROM. `tools/check_rodata.py` rebuilds those bytes from the compiled objects and looks
+for them in the ROM; every function with an `own` `.rodata` passes it (110 at the time of writing). Run it after a full build
+whenever you add or change a function with a `switch` or constants.
+
+If it reports a function as NOT FOUND, its code is right but its `case` labels (or a constant) are not. The ROM's table says which
+body each case value must reach; the bodies' order in the source decides their addresses. `tools/relabel_switch.py FUNC` rewrites
+the labels from the tables (`--explain FUNC` prints the C and ROM tables and the switch's groups side by side, `--lines FUNC
+OFFSET...` maps code offsets to source lines). It can't invent a label inside the middle of a body or restructure a fallthrough:
+those take a manual edit, using the ROM's instructions at the target address to find the statement it starts. Rebuild after each
+change; the ROM must stay identical.
+
 ### Still assembly, with a reason
-- `func_80018140`, `initAudioStream`: jump-table functions (the `own` placement is understood now); a draft of
-  `func_80018140` is in `nonmatching/` (register allocation still differs). `initAudioStream` is the same code with a
-  registration call in front.
-- `func_800DACE4`, `func_800DBB80`: jump-table functions, not yet attempted with `own` placement.
-- `func_8001A490`, `func_8001A65C`, `func_8001A980`, `func_8001AD00`: kept as assembly, no longer match (cause not found;
-  they begin with ordinary stack setup, so the leading-`nop` issue above does not explain them).
+All of the jump-table functions that were marked "its own data isn't laid out like the game's" now build as C (their
+`own` `.rodata` base is set in `build.json`), and so do the four audio functions that were marked "no longer matches"
+(`func_8001A490`, `func_8001A65C`, `func_8001A980`, `func_8001AD00`; the C was fine, the second two only needed their
+constant pool placed).
+- Near-misses, with what is known in `nonmatching/README.md`: `func_800900C0`, `func_80012CD0`.
+- C candidates, not yet matched (see `nonmatching/STATUS.md`): `func_800291C0`, `func_8000C91C`, `func_800B6DEC`,
+  `func_800C0E44`, `func_800C4C60`, `func_80006178`, `func_800B61EC`, `func_800C5440`, `func_8000A3DC`, `func_8009773C`,
+  `func_800B71F8`, `func_800A83DC`, `func_8009A878`, `func_80095884`.
+- `func_8009C218`, `func_800DDAC8`: 8-byte fragments cut off at a segment end.
+
+### Earlier attempts (`progress/`)
+If you have the `progress/` folder decompdecomp saved next to this tree, `progress/src/<function>.c` holds C that its judge
+accepted and `progress/best/<function>.c` the closest attempt at each function that did not match. Most of them score 0-10
+differing instructions with `tools/permute_run.py` and are the best starting point for a function that is still assembly.
+To use one here: add `#include "common.h"` as the first line (decompdecomp prepends the header itself), write the
+function's float/double constants as literals instead of `extern` symbols (so the function's own `.rodata` is built and
+placed with `own`; check the value against the ROM, because the build cannot see a wrong constant), and check with a full
+build.
 
 ### Hand-written assembly (not expected to become C)
 These were written in assembly in the original (CP0/TLB/cache/FPU access, or hand-scheduled `.set noreorder` code with
