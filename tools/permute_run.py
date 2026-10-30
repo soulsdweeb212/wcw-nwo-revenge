@@ -39,7 +39,7 @@ def norm(lines):
         op,args=m.group(1),m.group(2)
         args=re.sub(r'\s*<[^>]*>','',args)
         if op in('lui','jal','j'): args=re.sub(r'0x[0-9a-f]+|\b[0-9a-f]+$','',args)
-        if op in('beq','bne','bnez','beqz','beql','bnel','beqzl','bnezl','bc1t','bc1f','bc1tl','bc1fl'):
+        if op in('b','beq','bne','bnez','beqz','beql','bnel','beqzl','bnezl','bgez','bgtz','blez','bltz','bgezl','bgtzl','blezl','bltzl','bc1t','bc1f','bc1tl','bc1fl'):
             args=re.sub(r',?\s*(0x)?[0-9a-f]+\s*$','',args)
         if op in('lwc1','swc1','lw','sw','lb','lbu','lh','lhu','sb','sh','ldc1','sdc1','lwl','lwr','swl','swr'):
             args=re.sub(r'(-?\d+)\((?!sp)(\w+)\)',r'#(\2)',args)
@@ -52,7 +52,11 @@ def dis(path,binary=False):
     txt=subprocess.run(cmd,capture_output=True,text=True).stdout
     return [m.group(1)+':\t'+m.group(2) for l in txt.splitlines() if (m:=re.match(r'\s+([0-9a-f]+):\t[0-9a-f ]+\t(.*)',l))]
 tmp=tempfile.mkdtemp(); open(tmp+'/orig.bin','wb').write(rom)
-ORIG=norm(dis(tmp+'/orig.bin',True))
+def strip_pad(l):  # alignment nops at the end of a function: the ROM's size includes them, the linker supplies ours
+    l=list(l)
+    while l and l[-1].strip()=='nop': l.pop()
+    return l
+ORIG=strip_pad(norm(dis(tmp+'/orig.bin',True)))
 
 def score(src,tag='0'):
     m=re.match(r'\s*#include "([^"]+)"\s*\n',src)
@@ -61,7 +65,7 @@ def score(src,tag='0'):
     except Exception: return None
     if not res.ok: return None
     p=f'{tmp}/v{tag}.o'; open(p,'wb').write(res.obj)
-    ours=norm(dis(p))
+    ours=strip_pad(norm(dis(p)))
     sm=difflib.SequenceMatcher(None,ORIG,ours,autojunk=False)
     return sum(max(i2-i1,j2-j1) for t,i1,i2,j1,j2 in sm.get_opcodes() if t!='equal')
 
