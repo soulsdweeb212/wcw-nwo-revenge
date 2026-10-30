@@ -1,8 +1,9 @@
 # WCW / nWo  REVENGE (decompilation)
 
 A matching decompilation of WCW / nWo  REVENGE for the Nintendo 64, started with [decompdecomp](https://github.com/n-delic/decompdecomp).
-1317 of 1345 functions build as C objects (97.9%). 25 of those are hand-written routines wrapped in a top-level `asm()` block
-(see below), so 1292 are real C that compiles to exactly the original code; the other 28 functions are still plain assembly.
+1328 of 1345 functions build as C objects (98.7%). 35 of those are hand-written assembly routines wrapped in a top-level `asm()`
+block (see below), so 1293 are real C that compiles to exactly the original code; the other 17 functions are still plain assembly
+(15 have a draft in `nonmatching/`, and 2 are the first instructions of functions cut off by a segment boundary).
 `build.py` rebuilds the game from this tree and checks it against your original, byte for byte.
 
 ## Requirements
@@ -84,15 +85,15 @@ those take a manual edit, using the ROM's instructions at the target address to 
 change; the ROM must stay identical.
 
 ### Still assembly, with a reason
-All of the jump-table functions that were marked "its own data isn't laid out like the game's" now build as C (their
-`own` `.rodata` base is set in `build.json`), and so do the four audio functions that were marked "no longer matches"
-(`func_8001A490`, `func_8001A65C`, `func_8001A980`, `func_8001AD00`; the C was fine, the second two only needed their
-constant pool placed).
-- Near-misses, with what is known in `nonmatching/README.md`: `func_800900C0`, `func_80012CD0`.
-- C candidates, not yet matched (see `nonmatching/STATUS.md`): `func_800291C0`, `func_8000C91C`, `func_800B6DEC`,
-  `func_800C0E44`, `func_800C4C60`, `func_80006178`, `func_800B61EC`, `func_800C5440`, `func_8000A3DC`, `func_8009773C`,
-  `func_800B71F8`, `func_800A83DC`, `func_8009A878`, `func_80095884`.
-- `func_8009C218`, `func_800DDAC8`: 8-byte fragments cut off at a segment end.
+17 functions are not matched yet; `nonmatching/README.md` explains each one. In short:
+- **Complete C, a few instructions off (11 functions):** `func_8000A3DC`, `func_800900C0`, `func_80012CD0`, `func_800C0E44`,
+  `func_800291C0`, `func_80006178`, `func_800A83DC`, `func_8000C91C`, `func_80095884`, `func_800C4C60`, `func_800B6DEC`. The
+  structure is right; GCC 2.7.2 orders a few instructions or numbers a few registers differently. These are search problems
+  (4 to 45 instructions differ out of 144 to 904).
+- **Draft incomplete (4 functions):** `func_800B61EC`, `func_800B71F8`, `func_8009A878`, `func_8009773C` still need to be
+  read from the ROM.
+- **Cut off by a segment boundary (2 functions):** `func_8009C218` and `func_800DDAC8` are only the first two instructions of
+  larger functions; the rest sits in a raw data blob and was never disassembled. The segment ends have to be moved first.
 
 ### Earlier attempts (`progress/`)
 If you have the `progress/` folder decompdecomp saved next to this tree, `progress/src/<function>.c` holds C that its judge
@@ -118,8 +119,8 @@ so the ROM is still byte-identical, but they are not decompiled.
   `func_80021C40`, `func_800265AC`, `func_8002670C`, `func_80026578`, `func_80026B50`, `func_8001C5B0`, `func_8001C660`,
   `func_8001C740`, `func_8001C7E0`.
 
-Probably assembly too, not confirmed: the 64-bit helpers `func_800284F4` (a 64-bit multiply built from three 32x32
-multiplies), `func_80028528` (unsigned 64-bit divide, shift-and-subtract), `func_80028624` (divide by a 32-bit divisor),
-`func_80028860` / `func_80028880` (dispatchers that pick one of the two by checking the divisor's high word: they look like
-`__udivdi3` / `__umoddi3`), `__divdi3`, `__moddi3`, `__fixsfdi`, `signed64ToFloatTrunc`. They use a non-standard calling
-convention (`func_80028880` keeps `$ra` in `$t5`). This is from reading the assembly, not from a reference source.
+The compiler-runtime routines are hand-written assembly too and are built the same way: `bcmp` and the 64-bit helpers `func_800284F4`
+(a 64-bit multiply from three 32x32 multiplies), `func_80028528` (unsigned 64-bit divide, shift-and-subtract), `func_80028624` (divide by a
+32-bit divisor), `func_80028860` / `func_80028880` (dispatchers that pick one of the two by the divisor's high word: they look like
+`__udivdi3` / `__umoddi3`), `__divdi3`, `__moddi3`, `__fixsfdi` and `signed64ToFloatTrunc`. They use `lwl`/`lwr`, `$t9` as scratch, tail
+jumps between each other and `$ra` kept in `$t5`, which C cannot produce. (Identified from reading the assembly, not from a reference source.)
