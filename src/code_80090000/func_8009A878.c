@@ -23,8 +23,9 @@ void func_8009A878(G **arg0, State9B *arg1, s32 arg2)
     G *gfx;
     u8 *img;
     s32 x2, y2, x3, y3;
-    s32 state, t, n, m, k;
+    s32 state, t, n, m;
     s32 x0, x1, y0, y1;
+    s32 ya, yb;
     u8 *tex;
 
     state = D_800E797C;
@@ -77,11 +78,11 @@ void func_8009A878(G **arg0, State9B *arg1, s32 arg2)
         }
         break;
     case 2:
-        k = 0x300;
-        if (t < 32) {
-            k = D_800E797C + 1;
+        if (t >= 32) {
+            D_800E797C = 0x300;
+        } else {
+            D_800E797C++;
         }
-        D_800E797C = k;
     case 3:
         if (arg2 >= 0 && (tex = func_800B600C(arg2, 0)) != 0) {
             if ((arg1->tick / 12) & 1) {
@@ -124,12 +125,12 @@ void func_8009A878(G **arg0, State9B *arg1, s32 arg2)
             m = arg1->tick & 0x1F;
             x0 = -6 * m / 31 + 50;
             x1 = 12 * m / 31 + 169;
-            y0 = 55 * m / 31;
-            y1 = 53 * m / 31;
-            E(0x02180000, XY(x0, y0 + 0x93));
-            E(0x02180002, XY(x1, y1 + 0x97));
-            E(0x02180004, XY(x0, y0 + 0x95));
-            E(0x02180006, XY(x1, y1 + 0x99));
+            ya = 55 * m / 31;
+            yb = 53 * m / 31;
+            E(0x02180000, XY(x0, ya + 0x93));
+            E(0x02180002, XY(x1, yb + 0x97));
+            E(0x02180004, XY(x0, ya + 0x95));
+            E(0x02180006, XY(x1, yb + 0x99));
             E(0x02140000, ST(x2, y2));
             E(0x02140002, ST(x2 + 64, y2));
             E(0x02140004, ST(x2, y2 + 64));

@@ -7001,7 +7001,11 @@
    "seg": "code_80090000",
    "vram": 2148116600,
    "rom": 290792,
-   "asm": "asm/nonmatchings/code_80090000/func_8009A878.s"
+   "asm": "asm/nonmatchings/code_80090000/func_8009A878.s",
+   "c": "src/code_80090000/func_8009A878.c",
+   "own": {
+    ".rodata": 2148360360
+   }
   },
   {
    "name": "func_8009B66C",

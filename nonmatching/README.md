@@ -50,10 +50,11 @@ types, so it is not kept, only the number.
 |---|---|---|---|
 | `func_800B61EC` | 0x5A0 | 124 of 330 instructions | everything after the first third (float checks against `D_800E5510…D_800E5540`). |
 | `func_800B71F8` | 0x838 | 289 of 526 | jump table; roughly half of the cases. |
-| `func_8009A878` | 0xDF4 | outline complete, 98 structural differences in 893 | long straight-line code with the statements in a different order; too big for random search, needs careful reading. |
-| `func_8009773C` | 0x6E0 | a stub (9 of 420) | a variant of `func_80096D8C` that moves the tiles along a sine (`sinf` twice, then `func_80096A6C`); nothing past the setup is written. |
+| `func_8009773C` | 0x6E0 | whole function, 84 differences in 420 | a sine-warped tile quad builder (one function: the `func_8009786C` etc. labels are mid-function, and other code calls them, so they need `symbols` entries, as do `D_800D6078`/`D_800D6080`). GCC's loop pass hoists the `(t << 21) >> 16` terms out of the inner loop, which takes the registers `cols` needs. Reusing a variable stops the hoist, but then the scheduler moves that block and the frame grows by 8. |
 
 ## Findings that apply to several functions
+- Sharing one C variable between unrelated blocks makes it a global pseudo, which takes a register and changes what reload spills through. In `func_8009A878`, splitting `k` and giving the overlay block its own temporaries fixed every register and the whole frame (481 differences to 3).
+- Two stores in an if/else can be cross-jumped into one, and that gives `beqz` where a single store after a temp gives `beqzl` (`func_8009A878`).
 - Labels and fallthrough matter even when they generate no code: a `case` placed in the middle of a body, or a
   `do { … } while (0)` around a loop body, changes how GCC fills delay slots (`func_800B8278`, `func_800C8A10`).
 - `u16` accumulators, `s16` arguments and the order of operands in a comparison (`a > b` vs `b < a`) each change the schedule.
