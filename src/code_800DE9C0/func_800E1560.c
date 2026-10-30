@@ -13,12 +13,9 @@ void func_800E1560(u8 *arg0, void *arg1, s32 a2) {
     idx = (s16)(D_800F98D8[(s8)arg0[0]] - 0xF2D);
     if ((u32)idx < 18) {
         switch (idx) {
-        case 0: a2 = 0xF30; break;
-        case 1: a2 = 0xF31; break;
-        case 2: a2 = 0xF32; break;
-        case 3: case 4: case 5: case 6: case 7:
-        case 8: case 9: case 10: case 11: case 12:
-        case 13: case 14: case 15: case 16: case 17:
+        case 0: case 6: case 14: case 15: case 16: case 17: a2 = 0xF30; break;
+        case 1: case 7: a2 = 0xF31; break;
+        case 2: case 8: a2 = 0xF32; break;
         default:
             break;
         }

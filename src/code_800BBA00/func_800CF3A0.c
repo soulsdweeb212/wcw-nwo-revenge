@@ -72,6 +72,7 @@ void func_800CF3A0(void) {
         Nw2F5CState **pp;
         pp = &D_800FAF5C;
         *(volatile s16 *)((u8 *)(*pp) + 0xC) += 1;
+    case 4:
         ret = func_800D00FC(O, B, D_800FAF8E[(s8)D_800FADB8]);
         if ((s16)ret != 0) {
             if ((s16)ret == 2) { O->f360 &= ~2; O->fC -= 2; }
@@ -79,7 +80,6 @@ void func_800CF3A0(void) {
             break;
         }
     }
-    case 4:
         if (O->f2C & 0x80) {
             if (O->f3AC & 0x100000) {
                 s16 anim;

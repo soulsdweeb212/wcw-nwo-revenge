@@ -46,7 +46,6 @@ void func_800C0354(void) {
  case 5:
  func_8000DB90(D_800FADB8,1);
  if(D_8007E280&0x400) func_800BA770(D_800FADB8,(s16)D_800FAF5C->f48,1);
- case 6:
  D_800FAF5C->flags &= ~0x1C0ULL;
  if(D_800FAF5C->f2==1) {
  D_800FAF5C->f58=0x800; D_800FAF5C->f4C=0; D_800FAF5C->f54=0; D_800FAF5C->f50=1500.0f; D_800FAF5C->flags|=0x40ULL;
@@ -63,7 +62,7 @@ void func_800C0354(void) {
  func_800D37C0((void*)D_800FAF5C->f58,speed,D_800FAF5C->vec); D_800FAF5C->fC++;
  }
  D_800FAF5C->f16=0; break;
- case 7:
+ case 6:
  D_800FAF5C->f16++; if(D_800FAF5C->f16==5) func_800C2B8C(D_800FAF5C);
  translateEntityXZ(D_800FAF5C,D_800FAF5C->vec);
  if(!(*(u16*)(D_8007EF30+0x170)&0x400)) { if(func_800D25D0(D_800FAF5C,4.0f)!=-1) { func_800D427C(D_800FAF5C,func_800D4D44(D_800FAF5C,11,0),3); D_800FAF5C->fC++; break; } }
@@ -74,6 +73,6 @@ void func_800C0354(void) {
  if(!(D_800FAF5C->f50<D_800E58D8)) break;
  D_800FAF5C->f50=90.0f;
  func_800D427C(D_800FAF5C,0x10DE,0); D_800FAF5C->fC++; break;
- case 9: if(D_800FAF5C->f4<=0) { D_800FADD0 &= ~D_800E3AB4[D_800FADB8]; func_800D4AD0(D_800FAF5C); func_800A6C48(D_800FAF5C,0x2B); } break;
+ case 7: case 9: if(D_800FAF5C->f4<=0) { D_800FADD0 &= ~D_800E3AB4[D_800FADB8]; func_800D4AD0(D_800FAF5C); func_800A6C48(D_800FAF5C,0x2B); } break;
  }
 }

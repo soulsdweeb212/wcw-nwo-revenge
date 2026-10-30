@@ -76,31 +76,19 @@ void updateActionStateC6868(void)
             func_800D2B64(p, scale, 0, 0xFFFFE);
         } else {
             switch ((s16)(p->fA - 7)) {
-            case 0:
             case 15:
                 if (p->f6 > p->f371) {
                     func_800D2B64(p, 2.0f, 0, 0xE);
                 }
                 break;
-            case 24:
-            case 25:
-            case 26:
-            case 29:
-            case 30:
-            case 31:
-            case 78:
-            case 79:
+            case 0: case 24: case 25: case 26: case 29: case 30: case 31: case 78: case 79:
                 if (p->f6 > p->f371) {
                     func_800D2B64(p, 4.0f, 0, 0xFFFFE);
                 } else {
                     func_800D2B64(p, 2.0f, 0, 0xE);
                 }
                 break;
-            case 1:
-            case 23:
-            case 27:
-            case 28:
-            case 32:
+            case 1: case 23: case 27: case 28: case 32:
                 func_800D2B64(D_800FAF5C, 2.0f, 0, 0xE);
                 break;
             }

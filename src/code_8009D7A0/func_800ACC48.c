@@ -67,7 +67,7 @@ void func_800ACC48(void) {
             func_800D43B4(D_800FAF5C, D_800EB440[(s8)D_800FABE4], 3);
         }
         break;
-    case 3:
+    case 4:
         if (D_800FAF5C->f4 <= 0) {
             func_800D43B4(D_800FAF5C, D_800EB440[(s8)D_800FABE4], 3);
         }
@@ -99,7 +99,6 @@ void func_800ACC48(void) {
         } else {
             break;
         }
-    case 4:
         func_800B68A0(D_800F9B00, D_800F9B00);
         if ((func_800C472C(D_800F9B00, D_800FAF5C, 0) << 24) != 0) {
             D_800FAF5C->flags &= ~0x08000000ULL;
@@ -123,6 +122,7 @@ finish:
             break;
         }
         if (D_800F9B00->f2C & 0x400000) {
+    case 3:
             func_800D4AD0(D_800FAF58.p);
             beginEntityActionA8D8C(D_800FAF5C);
             break;
@@ -135,7 +135,6 @@ finish:
         if (D_800FAF5C->f3A3 && (func_800D8D74(D_800FAF5C, 0) << 24) == 0) {
             break;
         }
-    case 7:
         func_800A6BE0(D_800FAF5C, 0x53);
         func_800A6BE0(D_800F9B00, 0x54);
         D_800FAF5C->flags |= 0x40000000ULL;
@@ -144,10 +143,11 @@ finish:
         D_800F9B00->f362 = -1;
         D_800F9B00->f351 = D_800FADB8;
         break;
-    case 8:
+    case 7:
         D_800FAF5C->flags &= ~0x07800000ULL;
         func_800D427C(D_800FAF5C, D_800EB450[(s8)D_800FABE4], 3);
         *(volatile s16 *)&D_800FAF5C->fC += 1;
+    case 8:
         func_800AD574(D_800F9B00, ((PtrBoxACC48 *)&D_800FAF5C)->p, D_800FAF8A);
         if (D_800FAF5C->f4 <= 0) {
             r = func_800D5438(D_800F9B00, 1);

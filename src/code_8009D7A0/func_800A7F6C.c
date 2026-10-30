@@ -14,8 +14,7 @@ void func_800A7F6C(u8 *e, s16 arg1) {
         if (*(u64 *)(att + 0x38) & 1) {
             i = (s16)(*(u16 *)(e + 0x386) - 0x21);
             switch (i) {
-            case 0: case 2: case 5: case 7: case 10:
-            case 12: case 15: case 17: case 20: case 22:
+            case 0: case 2: case 5: case 7: case 10: case 12: case 15: case 17: case 20: case 22:
                 a2 = 9;
                 break;
             }
@@ -71,8 +70,8 @@ void func_800A7F6C(u8 *e, s16 arg1) {
         case 155: a2 = 6; break;
         case 157: a2 = 7; break;
         case 172: a2 = 8; break;
-        case 41: case 43: case 44: a2 = 0xA; break;
-        case 46: case 48: case 49: a2 = 0xB; break;
+        case 0: case 5: a2 = 0xA; break;
+        case 10: case 15: case 20: a2 = 0xB; break;
         case 50: case 52: a2 = 0xC; break;
         case 53: case 54: a2 = 0xD; break;
         case 55: case 56: a2 = 0xE; break;
@@ -88,16 +87,12 @@ void func_800A7F6C(u8 *e, s16 arg1) {
         case 118: case 122: a2 = 0x19; break;
         case 1: case 2: case 3: case 4: case 6: case 7: case 8: case 9:
             a2 = 0x1A; break;
-        case 11: case 12: case 13: case 14: case 16: case 17: case 18:
-        case 19: case 21: case 22: case 23: case 24: case 26: case 28:
-        case 29: case 31: case 33: case 34: case 36: case 38: case 39:
+        case 11: case 12: case 13: case 14: case 16: case 17: case 18: case 19: case 21: case 22: case 23: case 24: case 26: case 28: case 29: case 31: case 33: case 34: case 36: case 38: case 39:
             a2 = 0x1B; break;
         case 60: a2 = 0x1C; break;
         case 61: a2 = 0x1D; break;
-        case 83: case 84: case 85: case 86: case 88: case 89: case 90:
-        case 91: a2 = 0x1E; break;
-        case 93: case 94: case 95: case 96: case 98: case 99: case 100:
-        case 101: a2 = 0x1F; break;
+        case 83: case 84: case 85: case 86: case 88: case 89: case 90: case 91: a2 = 0x1E; break;
+        case 93: case 94: case 95: case 96: case 98: case 99: case 100: case 101: a2 = 0x1F; break;
         case 119: case 123: a2 = 0x20; break;
         case 145: a2 = 0x21; break;
         case 146: a2 = 0x22; break;
@@ -109,9 +104,9 @@ void func_800A7F6C(u8 *e, s16 arg1) {
         case 193: case 195: a2 = 0x2A; break;
         case 167: case 168: a2 = 0x2C; break;
         case 169: a2 = 0x2D; break;
-        case 0: case 5: case 188: case 190:
+        case 188: case 190:
             a2 = ((s8)e[0x384] != (s8)e[0]) ? 0x2F : 0x2E; break;
-        case 10: case 15: case 20: case 192: case 194:
+        case 192: case 194:
             a2 = ((s8)e[0x384] != (s8)e[0]) ? 0x31 : 0x30; break;
         case 201: case 205: case 208: case 209: a2 = 0x32; break;
         case 202: a2 = 0x33; break;

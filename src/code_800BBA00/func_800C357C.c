@@ -19,20 +19,19 @@ void func_800C357C(u8 *entity, s16 mode, s8 *outTargets) {
         else { if (*(u64*)(entity+0x20) & 0x40) skipMask = 0x3000000100ULL; else skipMask = 0x3000000000ULL;
                matchMask = 0xFFFFFFFFULL; v = 0x46; }
         break;
-    case 1: skipMask = 0x5000400000ULL; matchMask = 0xFFFFFFFFULL; v = -1; break;
-    case 2:
+    case 1: case 3: case 10: case 13: case 21: skipMask = 0x5000400000ULL; matchMask = 0xFFFFFFFFULL; v = -1; break;
+    case 5: case 8: case 9: case 12:
         if (*(s16*)(entity+6) >= (s32)entity[0x370] && *(s16*)(entity+6) < (s32)entity[0x371]) { skipMask = 0x5000400000ULL; matchMask = 0xFFFFFFFFULL; v = -1; }
         else if (*(s16*)(entity+6) == (s32)entity[0x371]) { skipMask = 0x5000000000ULL; matchMask = 0x400000ULL; v = -1; }
         else return;
         break;
-    case 3: skipMask = 0x5000000000ULL; matchMask = 0xFFFFFFFFULL; v = 0x75; break;
-    case 4: skipMask = 0x5000400180ULL; matchMask = 0xFFFFFFFFULL; v = -1; break;
-    case 5: skipMask = 0x5000000140ULL; matchMask = 0xFFFFFFFFULL; v = -1; break;
-    case 6: skipMask = 0x50004000C0ULL; matchMask = 0xFFFFFFFFULL; v = -1; break;
-    case 7: skipMask = 0x5000000000ULL; matchMask = 0x400000ULL; v = -1; break;
-    case 8: skipMask = 0x5000000000ULL; matchMask = 0x400000ULL; v = -1; break;
-    case 9: case 10: case 11: case 12: case 13: case 14: case 15: case 16:
-    case 17: case 18: case 19: case 20: case 21:
+    case 15: case 16: skipMask = 0x5000000000ULL; matchMask = 0xFFFFFFFFULL; v = 0x75; break;
+    case 17: skipMask = 0x5000400180ULL; matchMask = 0xFFFFFFFFULL; v = -1; break;
+    case 18: skipMask = 0x5000000140ULL; matchMask = 0xFFFFFFFFULL; v = -1; break;
+    case 19: skipMask = 0x50004000C0ULL; matchMask = 0xFFFFFFFFULL; v = -1; break;
+    case 2: case 4: skipMask = 0x5000000000ULL; matchMask = 0x400000ULL; v = -1; break;
+    case 6: case 7: case 11: case 14: skipMask = 0x5000000000ULL; matchMask = 0x400000ULL; v = -1; break;
+    case 20:
         skipMask = 0x400005000000000ULL; matchMask = 0x600000000000ULL; v = -1; break;
     }
     target = v; foundCount = 0;

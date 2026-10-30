@@ -70,21 +70,21 @@ s32 func_800D7B54(void *entity, u16 incomingMask, u16 attackMask, s16 mode) {
         }
         D_800F9830[ENT->id] |= bits;
         break;
-    case 2:
+    case 3:
         if (D_800F9830[ENT->id] & 0x10) {
             if (D_800F9828[ENT->id] < 3) {
                 ready = 2;
             }
         }
         break;
-    case 3:
+    case 4:
         if (D_800F9830[ENT->id] & 0x4) {
             if (D_800F9828[ENT->id] < 3) {
                 ready = 2;
             }
         }
         break;
-    case 4:
+    case 2:
         if (D_800F9830[ENT->id] & 0x8) {
             if (D_800F9828[ENT->id] < 3) {
                 ready = 2;

@@ -34,22 +34,14 @@ s32 func_800DB4FC(Nw2Ent4FC *e, Nw2Rec4FC *r) {
 
     anim = e->f386 - 0xDA;
     switch (anim) {
-    case 0: act = 5; break;
-    case 1: act = 8; break;
-    case 2: act = 9; break;
-    case 3: act = 6; break;
-    case 4: act = 7; break;
-    case 5: act = 0xC; break;
-    case 6: act = 0xA; break;
-    case 7: act = 0xB; break;
-    case 8:
-    case 9:
-    case 10:
-    case 11:
-    case 12:
-    case 13:
-    case 14:
-    case 15:
+    case 3: act = 5; break;
+    case 6: case 7: act = 8; break;
+    case 13: act = 9; break;
+    case 4: act = 6; break;
+    case 5: act = 7; break;
+    case 0: case 1: act = 0xC; break;
+    case 8: case 10: act = 0xA; break;
+    case 9: act = 0xB; break;
     case 16:
         act = 0x10;
         break;

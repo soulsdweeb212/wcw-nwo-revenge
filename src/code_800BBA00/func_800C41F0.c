@@ -29,7 +29,7 @@ s32 func_800C41F0(u8 *self,u8 *partner) {
  H(self,0x3A)=0;
  switch((s16)(S(partner,0xA)-7)) {
  case 23: if(Q(partner,0x20)&9) return 0;
- case 0:case 21:case 24:case 28:
+ case 0: case 1: case 21: case 24: case 27: case 28:
  if(!(Q(partner,0x20)&9) && (u32)(H(partner,0x386)-0x95)<2) H(self,0x3A)|=1;
  switch(S(partner,0x386)) {
  case 5:actionMask=0x80;break;case 6:actionMask=0x100;break;

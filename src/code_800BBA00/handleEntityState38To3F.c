@@ -30,16 +30,10 @@ void handleEntityState38To3F(u8 *source, u8 *target)
     source[0x43] = 0;
     subState = ReadU16(target, 0xA) - 0x38;
     switch (subState) {
-    case 0:
-    case 2:
-    case 4:
-    case 6:
+    case 0: case 4: case 6:
         ReadU16(target, 0x360) |= 0x10;
         return;
-    case 1:
-    case 3:
-    case 5:
-    case 7:
+    case 1: case 5: case 7:
         D_800FA070[(s8)target[0x353]][0] |= 0x10;
         return;
     }

@@ -19,7 +19,7 @@ s8 requestAttachmentAction(void){
  if(*(f32 *)(D_800FABD0+0x3c)>*(f32 *)(D_800FABD0+0x58)){
  switch(id){case 0xb1:func_800AD958(0x38);return 1;case 0xd5:func_800AD958(0x2f);return 1;case 0xe3:func_800AD958(0x30);return 1;}
  }else{
- switch(id){case 0xaf:func_800AD958(0x36);return 1;case 0xb0:func_800AD958(0x37);return 1;case 0xb1:func_800AD958(0x38);return 1;case 0xb2:func_800AD958(0x39);return 1;case 0xb3:func_800AD958(0x3a);return 1;case 0xb4:func_800AD958(0x3b);return 1;case 0xb5:func_800AD958(0x3c);return 1;case 0xd5:func_800AD958(0x2f);return 1;case 0xe3:func_800AD958(0x30);return 1;}
+ switch(id){case 175:func_800AD958(0x36);return 1;case 176:func_800AD958(0x37);return 1;case 177:func_800AD958(0x38);return 1;case 196:func_800AD958(0x39);return 1;case 198:func_800AD958(0x3a);return 1;case 200:func_800AD958(0x3b);return 1;case 202:func_800AD958(0x3c);return 1;case 213:func_800AD958(0x2f);return 1;case 227:func_800AD958(0x30);return 1;}
  }
  return 0;
 }

@@ -71,7 +71,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
         ang = D_800E3CB0[e->f3E];
         ang2 = D_800E3CC0[e->f3E];
         break;
-    case 11:
+    case 123:
         b[0] = 0.0f;
         b[2] = 91.923881f;
         a[0] = D_800E3C50[e->f3E * 2];
@@ -80,7 +80,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
         ang = D_800E3CB0[e->f3E];
         ang2 = D_800E3CC0[e->f3E];
         break;
-    case 12:
+    case 124:
         calc = 0;
         n = 6;
         if (o->f2C & 0x40) {
@@ -125,7 +125,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
             }
         }
         break;
-    case 13:
+    case 80:
         b[0] = 0.0f;
         b[2] = 80.0f;
         a[0] = o->f6C;
@@ -134,7 +134,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
         ang = func_800D35B0(o->f58, 0x800);
         ang2 = o->f58;
         break;
-    case 14:
+    case 125:
         ang = D_800E3C90[(s16)(e->f3E & ~0x2000)];
         c[0] = e->f6C;
         c[2] = e->f74;
@@ -166,7 +166,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
             }
         }
         break;
-    case 15:
+    case 89:
         b[0] = 0.0f;
         b[2] = 100.0f;
         a[0] = o->f4C;
@@ -175,7 +175,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
         ang = func_800D35B0(o->f58, 0x800);
         ang2 = o->f58;
         break;
-    case 16:
+    case 100:
         ang = D_800E3C90[e->f3E];
         c[0] = e->f6C;
         c[2] = e->f74;
@@ -196,7 +196,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
             break;
         }
         break;
-    case 17:
+    case 101:
         ang = D_800E3C90[e->f3E];
         c[0] = e->f6C;
         c[2] = e->f74;
@@ -217,7 +217,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
             break;
         }
         break;
-    case 18:
+    case 102:
         b[0] = 0.0f;
         b[2] = 70.710678f;
         a[0] = D_800E3C50[e->f3E * 2];
@@ -226,7 +226,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
         ang = D_800E3CB0[e->f3E];
         ang2 = D_800E3CC0[e->f3E];
         break;
-    case 19:
+    case 75:
         b[0] = 0.0f;
         b[2] = 130.0f;
         a[0] = o->f6C;
@@ -235,7 +235,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
         ang = func_800D35B0(o->f58, 0x800);
         ang2 = o->f58;
         break;
-    case 20:
+    case 76:
         b[0] = 0.0f;
         if (e->f3A3 >= 0x99 && e->f3A3 <= 0xA6) {
             b[2] = 100.0f;
@@ -252,7 +252,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
         ang = func_800D35B0(o->f58, 0x800);
         ang2 = o->f58;
         break;
-    case 21:
+    case 98:
         calc = 0;
         n = 6;
         if (e->f30 & 0x1000) {
@@ -277,7 +277,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
             break;
         }
         break;
-    case 22:
+    case 96:
         ang = D_800E3C90[e->f3E];
         c[0] = e->f6C;
         c[2] = e->f74;
@@ -298,7 +298,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
             break;
         }
         break;
-    case 23:
+    case 97:
         ang = D_800E3CA0[e->f3E];
         c[0] = e->f6C;
         c[2] = e->f74;
@@ -319,8 +319,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
             break;
         }
         break;
-    case 24:
-    case 25:
+    case 13: case 15:
         n = e->f36C;
         ang = e->f58;
         c[0] = e->f6C;
@@ -347,7 +346,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
             break;
         }
         break;
-    case 26:
+    case 128:
         if (e->fC < 2) {
             b[0] = 0.0f;
             b[2] = 80.0f;
@@ -366,7 +365,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
             ang2 = D_800E3CC0[o->f3E];
         }
         break;
-    case 27:
+    case 90:
         b[0] = 0.0f;
         b[2] = 100.0f;
         a[0] = o->f6C;
@@ -375,7 +374,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
         ang = func_800D35B0(o->f58, 0x800);
         ang2 = o->f58;
         break;
-    case 28:
+    case 115:
         b[0] = 0.0f;
         b[2] = 73.0f;
         a[0] = o->f4C;
@@ -384,7 +383,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
         n = 6;
         ang2 = ang;
         break;
-    case 29:
+    case 134:
         if (e->flags & 0x40) {
             ang = D_800E3C90[e->f3E];
             c[0] = e->f6C;
@@ -427,7 +426,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
             }
         }
         break;
-    case 30:
+    case 24:
         b[0] = 0.0f;
         b[2] = 73.539108f;
         a[0] = D_800E3C50[e->f3E * 2];
@@ -440,7 +439,7 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
             ang = D_800E3CB0[e->f3E];
         }
         break;
-    case 31:
+    case 52:
         b[0] = 0.0f;
         b[2] = 40.0f;
         a[0] = o->f4C;
@@ -449,14 +448,14 @@ void func_800D7E80(E7E80 *e, E7E80 *o)
         ang = func_800D35B0(o->f58, 0x800);
         ang2 = o->f58;
         break;
-    case 32:
+    case 93:
         c[0] = e->f6C;
         calc = 0;
         n = 6;
         c[2] = e->f74;
         ang = func_800D3940(&e->f6C, &o->f6C);
         break;
-    case 134:
+    case 94:
         b[0] = 0.0f;
         b[2] = 100.0f;
         a[0] = o->f4C;

@@ -10,19 +10,16 @@ s32 func_800DA778(s8 *arg0) {
         case 0:
         case 4:
         case 6:
-        case 56:
         case 58:
+        case 60:
             arg0[0x353] = D_800FA065[(s8)D_800FA063[arg0[0x355] * 0x3B0] * 0x3B0];
             break;
         case 1:
         case 5:
         case 7:
-        case 57:
+        case 61:
         case 59:
             arg0[0x353] = D_800FA063[arg0[0x355] * 0x3B0];
-            break;
-        case 60:
-        case 61:
             break;
         }
     }

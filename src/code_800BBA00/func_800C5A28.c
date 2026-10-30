@@ -38,10 +38,10 @@ void func_800C5A28(void) {
  if(self->flags&0x100) func_800D2B64(self,scale,0,0xFFFFE);
  else {
  switch((s16)(self->fA-7)) {
- case 0:case 15: if(self->f6>self->f371)func_800D2B64(self,2.f,0,0xE);break;
- case 24:case 25:case 26:case 29:case 30:case 31:case 78:case 79:
+ case 15: if(self->f6>self->f371)func_800D2B64(self,2.f,0,0xE);break;
+ case 0: case 24: case 25: case 26: case 29: case 30: case 31: case 78: case 79:
  if(self->f6>self->f371)func_800D2B64(self,4.f,0,0xFFFFE);else func_800D2B64(self,2.f,0,0xE);break;
- case 1:case 23:case 27:case 28:case 32:func_800D2B64(D_800FAF5C,2.f,0,0xE);break;
+ case 1: case 23: case 27: case 28: case 32:func_800D2B64(D_800FAF5C,2.f,0,0xE);break;
  }
  }
  func_800A7188(D_800FAF5C);break;

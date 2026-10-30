@@ -68,6 +68,7 @@ void updateActionStateDC798(void)
       func_800D427C(D_800FAF5C, act, 2);
       func_800D7E80(D_800FAF5C, 0);
       D_800FAF5C->fC++;
+    case 1:
       if (func_800D8D74((Nw2StateObj *) (*objSlot), 0))
       {
         if ((*((u64 *) (D_800FAF5C->att364 + 0x38))) & 0x40000ULL)
@@ -83,7 +84,7 @@ void updateActionStateDC798(void)
       break;
     }
 
-    case 1:
+    case 2:
     {
       if (D_800FAF5C->f4 > 0)
       {
@@ -96,7 +97,7 @@ void updateActionStateDC798(void)
       break;
     }
 
-    case 2:
+    case 3:
     {
       D_800FABD8 &= ~D_800E3F20[D_800FADB8];
       if (D_800FAF5C->f6 >= D_800FAF5C->f370)
@@ -107,6 +108,7 @@ void updateActionStateDC798(void)
       {
         D_800FAF5C->fC++;
       }
+    case 4:
       D_800FAF5C->flags20 |= 0x80000000000ULL;
       func_800C38FC((s8 *) D_800FAF5C, 0x1000000000ULL, 0x800000);
       if (D_800FAF5C->f6 >= D_800FAF5C->f371)
@@ -135,7 +137,7 @@ void updateActionStateDC798(void)
       break;
     }
 
-    case 3:
+    case 5:
     {
       if (D_800FAF5C->f4 > 0)
       {
@@ -148,11 +150,6 @@ void updateActionStateDC798(void)
       break;
     }
 
-    case 4:
-      break;
-
-    case 5:
-      break;
 
   }
 

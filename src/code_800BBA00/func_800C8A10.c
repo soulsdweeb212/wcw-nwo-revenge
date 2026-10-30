@@ -56,11 +56,12 @@ void func_800C8A10(void) {
                 func_800A7188(0);
             }
         }
+    case 1:
         if (func_800D8D74(D_800FAF5C, 0)) {
             D_800FAF5C->fC++;
         }
         return;
-    case 1:
+    case 2:
         if (D_800FAF5C->f4 > 0) {
             return;
         }
@@ -75,7 +76,7 @@ void func_800C8A10(void) {
         func_800D7690(D_800FAF5C, 0, 0);
         D_800FAF5C->fC++;
         return;
-    case 2:
+    case 3:
         if (!(D_800F9B00->f2C & 0x10)) {
             D_800FAF5C->f20 |= 0x0400400000000000ULL;
         }
@@ -99,7 +100,7 @@ void func_800C8A10(void) {
             func_800D2BAC(D_800FAF5C, D_800F9B00, 2.0f, 2);
         }
         return;
-    case 3:
+    case 4:
         {
             s16 anim = (D_800F9B00->f2C & 0x10) ? 0x10AA
                       : (D_800F9B00->fA == 0x72) ? ((D_800F9B00->f360 & 1) ? 0x10BC : 0x10BE)
@@ -107,12 +108,10 @@ void func_800C8A10(void) {
             func_800D427C(D_800FAF5C, anim, 0);
         }
         (*(s16 *)((u8 *)SOBJ + 0xC))++;
+    case 5:
         D_800FAF5C->f20 |= 0x1000000000ULL;
         func_800D2B64(D_800FAF5C, 2.0f, 0, 2);
         func_800A7188(D_800FAF5C);
-        return;
-    case 4:
-    case 5:
         return;
     }
 }

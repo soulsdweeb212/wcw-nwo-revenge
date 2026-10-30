@@ -84,24 +84,21 @@ void func_800C3A78(Src3A78 *src, Tgt3A78 *tgt, u32 arg2) {
     func_800E212C(tgt);
     func_800C4610(src, tgt);
     switch (src->f39B) {
-    case 0:
-    case 1:
+    case 0: case 1:
         tgt->f30 |= 0x10000000;
         break;
-    case 2:
-    case 3:
+    case 2: case 5:
         tgt->f30 |= 0x20000000;
         break;
-    case 4:
-    case 5:
+    case 3: case 4:
         tgt->f30 |= 0x40000000;
         break;
     }
     switch (tgt->fA) {
-    case 0x14:
+    case 23:
         addEntityHealthDelta(tgt, -10);
         break;
-    case 0x15:
+    case 64:
         if (!(tgt->flags & 9)) {
             if (tgt->f16 < 3 && func_800C41F0(tgt, src)) {
                 return;
@@ -112,17 +109,17 @@ void func_800C3A78(Src3A78 *src, Tgt3A78 *tgt, u32 arg2) {
             }
         }
         break;
-    case 0x16:
+    case 65:
         if (!(tgt->flags & 9) && !(tgt->f30 & 0x600) && !(tgt->flags & 0x8000000)) {
             return;
         }
         break;
-    case 0x17:
+    case 20:
         if (tgt->f37 & 1) {
             tgt->f30 |= 0x2000;
         }
         break;
-    case 0x41:
+    case 45: case 46: case 47:
         if (func_800D7B54(tgt, 0, 0, 2) && func_800C41F0(tgt, src)) {
             return;
         }

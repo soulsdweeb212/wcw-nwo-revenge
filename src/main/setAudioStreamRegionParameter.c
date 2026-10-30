@@ -49,10 +49,10 @@ s32 setAudioStreamRegionParameter(Obj1F874 *obj, s32 param, s32 *value) {
     case 1:
         obj->regions[param].f4 = val & ~7;
         break;
-    case 2:
+    case 3:
         obj->regions[param].f8 = val;
         break;
-    case 3:
+    case 2:
         obj->regions[param].fA = val;
         break;
     case 4:

@@ -28,7 +28,7 @@ s32 func_800AD7B0(Nw2AD7B0 *entity, Nw2AD7B0 *other)
     case 19:
         result = 0xE;
         break;
-    case 68:
+    case 69:
         if (entity->fC == 2)
             result = 3;
         break;
@@ -39,7 +39,7 @@ s32 func_800AD7B0(Nw2AD7B0 *entity, Nw2AD7B0 *other)
         {
             s32 fc = entity->fC;
             if (fc < 4) {
-    case 1:
+    case 86:
                 result = 8;
             } else if (fc == 4)
                 result = 0xD;
@@ -51,12 +51,7 @@ s32 func_800AD7B0(Nw2AD7B0 *entity, Nw2AD7B0 *other)
     case 46:
         result = 0x16;
         break;
-    case 40:
-    case 55:
-    case 59:
-    case 61:
-    case 69:
-    case 70:
+    case 40: case 56: case 60: case 62: case 70: case 71:
         result = 4;
         break;
     case 3:
@@ -67,40 +62,24 @@ s32 func_800AD7B0(Nw2AD7B0 *entity, Nw2AD7B0 *other)
         if (entity->fC >= 2)
             result = 6;
         break;
-    case 6:
-    case 21:
-    case 26:
-    case 27:
-    case 28:
-    case 30:
-    case 31:
-    case 32:
-    case 33:
-    case 34:
+    case 6: case 21: case 26: case 27: case 28: case 30: case 31: case 32: case 33: case 34:
         result = 6;
         break;
-    case 95:
+    case 94:
         result = 7;
         break;
-    case 0:
-    case 22:
+    case 0: case 22:
         result = 1;
         break;
-    case 66:
+    case 67:
         switch (entity->fC) {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
+        case 0: case 1: case 2: case 3:
             result = 1;
             break;
-        case 4:
-        case 7:
-        case 8:
+        case 4: case 7: case 8:
             result = 0xA;
             break;
-        case 5:
-        case 6:
+        case 5: case 6:
             result = 0xC;
             break;
         }
@@ -108,10 +87,10 @@ s32 func_800AD7B0(Nw2AD7B0 *entity, Nw2AD7B0 *other)
     case 45:
         result = 0xC;
         break;
-    case 65:
+    case 66:
         result = 0xF;
         break;
-    case 67:
+    case 68:
         result = 0x10;
         break;
     case 9:
@@ -122,21 +101,19 @@ s32 func_800AD7B0(Nw2AD7B0 *entity, Nw2AD7B0 *other)
                 result = 0x11;
         }
         break;
-    case 99:
-    case 100:
+    case 98: case 99: case 102: case 103: case 104: case 105:
         result = 0x17;
         break;
-    case 109:
-    case 110:
+    case 106: case 107: case 108: case 109: case 110:
         result = 0x11;
         break;
-    case 62:
+    case 63:
         result = 0x12;
         break;
-    case 93:
+    case 92:
         result = 0x14;
         break;
-    case 94:
+    case 93:
         result = 0x15;
         break;
     case 10:

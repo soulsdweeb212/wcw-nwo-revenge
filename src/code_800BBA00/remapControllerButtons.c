@@ -18,8 +18,8 @@ void remapControllerButtons(s16 arg0, u16 *arg1) {
  switch(D_8007E8C0[0x48+arg0*9+i]) {
  case 0: mask=0x8000; break; case 1: mask=0x4000; break;
  case 2: mask=0x20; break; case 3: mask=0x10; break;
- case 4: mask=0x2000; break; case 5: mask=8; break;
- case 6: mask=4; break; case 7: mask=2; break; case 8: mask=1; break;
+ case 8: mask=0x2000; break; case 4: mask=8; break;
+ case 5: mask=4; break; case 6: mask=2; break; case 7: mask=1; break;
  }
  combined=used|mask;
  used=combined;
