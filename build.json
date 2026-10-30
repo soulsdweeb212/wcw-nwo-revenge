@@ -5713,7 +5713,8 @@
    "seg": "main",
    "vram": 2147647472,
    "rom": 166896,
-   "asm": "asm/nonmatchings/main/bcmp.s"
+   "asm": "asm/nonmatchings/main/bcmp.s",
+   "c": "src/main/bcmp.c"
   },
   {
    "name": "func_80028100",
@@ -5782,63 +5783,72 @@
    "seg": "main",
    "vram": 2147648756,
    "rom": 168180,
-   "asm": "asm/nonmatchings/main/func_800284F4.s"
+   "asm": "asm/nonmatchings/main/func_800284F4.s",
+   "c": "src/main/func_800284F4.c"
   },
   {
    "name": "func_80028528",
    "seg": "main",
    "vram": 2147648808,
    "rom": 168232,
-   "asm": "asm/nonmatchings/main/func_80028528.s"
+   "asm": "asm/nonmatchings/main/func_80028528.s",
+   "c": "src/main/func_80028528.c"
   },
   {
    "name": "func_80028624",
    "seg": "main",
    "vram": 2147649060,
    "rom": 168484,
-   "asm": "asm/nonmatchings/main/func_80028624.s"
+   "asm": "asm/nonmatchings/main/func_80028624.s",
+   "c": "src/main/func_80028624.c"
   },
   {
    "name": "__divdi3",
    "seg": "main",
    "vram": 2147649264,
    "rom": 168688,
-   "asm": "asm/nonmatchings/main/__divdi3.s"
+   "asm": "asm/nonmatchings/main/__divdi3.s",
+   "c": "src/main/__divdi3.c"
   },
   {
    "name": "__moddi3",
    "seg": "main",
    "vram": 2147649440,
    "rom": 168864,
-   "asm": "asm/nonmatchings/main/__moddi3.s"
+   "asm": "asm/nonmatchings/main/__moddi3.s",
+   "c": "src/main/__moddi3.c"
   },
   {
    "name": "func_80028860",
    "seg": "main",
    "vram": 2147649632,
    "rom": 169056,
-   "asm": "asm/nonmatchings/main/func_80028860.s"
+   "asm": "asm/nonmatchings/main/func_80028860.s",
+   "c": "src/main/func_80028860.c"
   },
   {
    "name": "func_80028880",
    "seg": "main",
    "vram": 2147649664,
    "rom": 169088,
-   "asm": "asm/nonmatchings/main/func_80028880.s"
+   "asm": "asm/nonmatchings/main/func_80028880.s",
+   "c": "src/main/func_80028880.c"
   },
   {
    "name": "__fixsfdi",
    "seg": "main",
    "vram": 2147649728,
    "rom": 169152,
-   "asm": "asm/nonmatchings/main/__fixsfdi.s"
+   "asm": "asm/nonmatchings/main/__fixsfdi.s",
+   "c": "src/main/__fixsfdi.c"
   },
   {
    "name": "signed64ToFloatTrunc",
    "seg": "main",
    "vram": 2147649968,
    "rom": 169392,
-   "asm": "asm/nonmatchings/main/signed64ToFloatTrunc.s"
+   "asm": "asm/nonmatchings/main/signed64ToFloatTrunc.s",
+   "c": "src/main/signed64ToFloatTrunc.c"
   },
   {
    "name": "func_80028AB0",
