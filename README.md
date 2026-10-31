@@ -72,6 +72,7 @@ share it.
 - `tools/add_headers.py [--dry-run]` writes the `@header` block at the top of every file in `src/` (name, addresses, size, asm path) from
   `symbol_addrs.txt` and `splat.yaml`. Rerun it after renaming a function; it updates the blocks in place.
 - `tools/asm_to_c.py FUNC...` wraps a function's assembly in an `asm()` block so it builds as a C object.
+- `tools/ghidra.py` uses decompdecomp's Ghidra (needs a JDK). `import` analyses the ROM once into `build/ghidra/`; then `decomp FUNC` prints its C, `unmatched` writes C for every function that is still assembly, `new` lists functions missing from `build.json`, `search` finds instruction sequences (one regex per instruction, `;` between them) and `bytes` finds raw words anywhere in the ROM.
 - `nonmatching/` holds near-miss drafts that `build.py` does not compile (see its README for how far off each is).
 - A source file can hold several consecutive functions: give each the same `"c"` in `build.json`; the object is placed once,
   at the first function's address. Needed when the original was compiled as one unit (`func_800D36E8.c` holds

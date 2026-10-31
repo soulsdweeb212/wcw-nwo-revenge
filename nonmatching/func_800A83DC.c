@@ -41,7 +41,7 @@ typedef struct {
     u8 data[0x1A20];
 } Anim83DC;
 
-extern Anim83DC D_80075468[];
+extern u8 D_80075468[];
 
 void func_800D4AD0(void *);
 void func_800D4B10(void *);
@@ -57,13 +57,13 @@ void unpackAnimationParameters(void *, void *);
     (e)->flags = ((e)->flags & ~0x10810000000ULL) | 0x1000000000ULL; \
     func_800DECAC((e), 0, 0, 0);
 
-static inline void loadAnim83DC(E83DC *a, E83DC *b, s32 id)
+static inline void load83(E83DC *a, s8 sel, s16 id)
 {
-    Anim83DC *t;
-    a->f384 = a->f0;
+    u8 *tbl;
+    a->f384 = sel;
     a->f386 = id;
-    t = &D_80075468[a->f384];
-    unpackAnimationParameters(a->f38C, &t->data[id * 24]);
+    tbl = &D_80075468[0x10] + a->f384 * 0x1A30;
+    unpackAnimationParameters(a->f38C, tbl + id * 0x18);
     if (id < 0xEF) {
         if (a->f3AC & 0x8000) {
             a->flags |= 0x4000000000000000ULL;
@@ -71,8 +71,6 @@ static inline void loadAnim83DC(E83DC *a, E83DC *b, s32 id)
             a->flags &= ~0x4000000000000000ULL;
         }
     }
-    func_800D427C(a, func_800D5438(a, 0), 1);
-    func_800D427C(b, func_800D5438(a, 1), 1);
 }
 
 s32 func_800A83DC(E83DC *a, E83DC *b)
@@ -159,14 +157,20 @@ s32 func_800A83DC(E83DC *a, E83DC *b)
             SETACT(b, 0x59);
             b->flags |= 0x10000000ULL;
         } else if ((u32)(k - 0x5A) < 0x10) {
-            loadAnim83DC(a, b, (u8)k);
+            load83(a, a->f0, (u8)k);
+    func_800D427C(a, func_800D5438(a, 0), 1);
+    func_800D427C(b, func_800D5438(a, 1), 1);
+
             a->f2C |= 0x80;
             SETACT(a, 0x49);
             a->flags |= 0x10000000ULL;
             SETACT(b, 0x4A);
             b->flags |= 0x10000000ULL;
         } else {
-            loadAnim83DC(a, b, (u8)k);
+            load83(a, a->f0, (u8)k);
+    func_800D427C(a, func_800D5438(a, 0), 1);
+    func_800D427C(b, func_800D5438(a, 1), 1);
+
             SETACT(a, 0x53);
             a->flags |= 0x10000000ULL;
             SETACT(b, 0x54);
