@@ -5,7 +5,7 @@
 
 Names, addresses and sizes come from symbol_addrs.txt, each segment's ROM start and vram from splat.yaml, and which
 functions a file holds from build.json (several consecutive functions can share one "c" entry). A second run replaces
-the existing blocks in place. A file whose function is not in symbol_addrs.txt is skipped with a warning. Only the
+the existing blocks in place. A file whose function is not in symbol_addrs.txt or build.json is skipped with a warning. Only the
 header blocks are written: the rest of each file is left byte for byte as it was. --dry-run prints each header that
 would change and writes nothing."""
 import argparse, json, re, sys
@@ -24,12 +24,18 @@ def load_symbols():
         m = SYMBOL.match(line)
         if m and "type:func" in line:
             symbols[m[1]] = (int(m[2], 16), int(m[3], 16))
+    build = json.loads((ROOT / "build.json").read_text(encoding="utf-8"))
+    for fn in build["functions"]:  # (most overlay functions have no line in symbol_addrs.txt: size from their assembly)
+        if fn["name"] not in symbols and (ROOT / fn["asm"]).exists():
+            last = re.findall(r"/\*\s*[0-9A-F]+\s+([0-9A-F]{8})\s+[0-9A-F]{8}\s*\*/", (ROOT / fn["asm"]).read_text(encoding="utf-8", errors="replace"))
+            if last:
+                symbols[fn["name"]] = (fn["vram"], int(last[-1], 16) + 4 - fn["vram"])
     return symbols
 
 
 def load_segments():
-    doc = yaml.safe_load((ROOT / "splat.yaml").read_text(encoding="utf-8"))
-    return {s["name"]: (s["start"], s["vram"]) for s in doc["segments"] if isinstance(s, dict) and "name" in s and "vram" in s}
+    build = json.loads((ROOT / "build.json").read_text(encoding="utf-8"))
+    return {s["name"]: (s["start"], s["vram"]) for s in build["segments"] if s["kind"] == "code"}
 
 
 def functions_by_file():
@@ -68,7 +74,7 @@ def main():
         names = files.get(rel, [path.stem])
         unknown = [n for n in names if n not in symbols]
         if unknown or segment not in segments:
-            why = f"{', '.join(unknown)} not in symbol_addrs.txt" if unknown else f"segment {segment} not in splat.yaml"
+            why = f"{', '.join(unknown)} not in symbol_addrs.txt or build.json" if unknown else f"segment {segment} not in build.json"
             warnings.append(f"{rel}: {why}; skipped")
             counts["skipped"] += 1
             continue

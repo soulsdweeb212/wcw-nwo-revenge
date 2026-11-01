@@ -3,7 +3,7 @@
 
     python3 build.py             extract what's needed from your copy (first run), build, compare
     python3 build.py check NAME  check one function's C (src/<segment>/NAME.c) against the original
-    python3 build.py status      how many functions are C so far
+    python3 build.py status      how many functions are C so far, by area, and the smallest ones left
     python3 build.py targets     each function's assembly as an object of its own: the targets objdiff.json names
 
 A function with C (src/<segment>/<name>.c) is its own object; the assembly of the functions between them is
@@ -362,6 +362,7 @@ def build() -> bool:
     if out == base:
         print(f"identical: {B['output']} matches {B['image']} byte for byte "
               f"({c_count} of {len(B['functions'])} functions in C)")
+        report()
         return True
     at = next((i for i in range(min(len(out), len(base))) if out[i] != base[i]), min(len(out), len(base)))
     where = next((fn["name"] for fn in sorted(B["functions"], key=lambda f: f["rom"] or 0, reverse=True)
@@ -427,9 +428,52 @@ def check(name: str) -> bool:
     return True
 
 
+def area(fn: dict) -> str:
+    overlay = next((s.get("overlay") for s in B["segments"] if s.get("end") and s["start"] <= fn["rom"] < s["end"]), None)
+    return f"overlay {overlay}" if overlay else "main"
+
+
+def progress_table() -> tuple[list[str], list[dict]]:
+    """A line for each part of the game and the total (functions and code bytes in C), and the functions still assembly."""
+    rows: dict[str, list[int]] = {}
+    left = []
+    for fn in B["functions"]:
+        size = (asm_end(fn) or fn["vram"]) - fn["vram"]
+        done = c_source(fn) is not None
+        for key in (area(fn), "total"):
+            row = rows.setdefault(key, [0, 0, 0, 0])
+            row[0] += done
+            row[1] += 1
+            row[2] += size if done else 0
+            row[3] += size
+        if not done:
+            left.append({**fn, "size": size})
+    lines = [f"  {key:<10} {r[0]:>5} / {r[1]:<5} functions ({100 * r[0] / r[1]:5.1f}%)   {100 * r[2] / r[3]:5.1f}% of its code"
+             for key, r in sorted(rows.items(), key=lambda kv: (kv[0] == "total", kv[0]))]
+    return lines, left
+
+
+def report() -> None:
+    """After an identical build: progress by area, and what became C since the last identical build (kept in build/)."""
+    lines, _ = progress_table()
+    print("\n".join(lines))
+    done = sorted(fn["name"] for fn in B["functions"] if c_source(fn))
+    saved = ROOT / "build" / "progress.json"
+    if saved.exists():
+        before = set(json.loads(saved.read_text(encoding="utf-8")))
+        new, lost = [n for n in done if n not in before], sorted(before - set(done))
+        if new:
+            print(f"newly matched ({len(new)}): " + ", ".join(new[:12]) + (f" and {len(new) - 12} more" if len(new) > 12 else ""))
+        if lost:
+            print(f"no longer C ({len(lost)}): " + ", ".join(lost[:12]) + (f" and {len(lost) - 12} more" if len(lost) > 12 else ""))
+    saved.write_text(json.dumps(done), encoding="utf-8")
+
+
 def status() -> None:
-    c = [fn["name"] for fn in B["functions"] if c_source(fn)]
-    print(f"{len(c)} of {len(B['functions'])} functions are C ({100 * len(c) / max(1, len(B['functions'])):.1f}%)")
+    lines, left = progress_table()
+    print("\n".join(lines))
+    left.sort(key=lambda fn: fn["size"])
+    print("smallest left: " + ", ".join(f"{fn['name']} (0x{fn['size']:X})" for fn in left[:8]))
 
 
 if __name__ == "__main__":
