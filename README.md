@@ -1,9 +1,9 @@
 # WCW / nWo  REVENGE (decompilation)
 
 A matching decompilation of WCW / nWo  REVENGE for the Nintendo 64, started with [decompdecomp](https://github.com/n-delic/decompdecomp).
-1381 of 1696 functions build as C objects (81.4%, 67.9% of the code by size). 35 of those are hand-written assembly routines wrapped
-in a top-level `asm()` block (see below), so 1346 are real C that compiles to exactly the original code. The other 315 are still plain
-assembly: 7 have a draft in `nonmatching/`, and 308 came from mapping the game's two overlays and have no match yet.
+1400 of 1696 functions build as C objects (82.5%, 68.1% of the code by size). 35 of those are hand-written assembly routines wrapped
+in a top-level `asm()` block (see below), so 1365 are real C that compiles to exactly the original code. The other 296 are still plain
+assembly: 7 have a draft in `nonmatching/`, and 289 came from mapping the game's two overlays and have no match yet.
 `build.py` rebuilds the game from this tree and checks it against your original, byte for byte.
 <!-- Working with this project's owner: read notes/MasterIndex.md first and keep it updated (local only, gitignored). -->
 
@@ -71,7 +71,7 @@ share it.
   and looks for them in the ROM; `tools/relabel_switch.py` repairs `case` labels from the ROM's tables (see "Switch tables are
   checked against the ROM" below). Run the checker after a full build.
 - `tools/add_headers.py [--dry-run]` writes the `@header` block at the top of every file in `src/` (name, addresses, size, asm path) from
-  `symbol_addrs.txt` and `splat.yaml`. Rerun it after renaming a function; it updates the blocks in place.
+  `symbol_addrs.txt` and `build.json`. Rerun it after renaming a function; it updates the blocks in place.
 - `tools/asm_to_c.py FUNC...` wraps a function's assembly in an `asm()` block so it builds as a C object.
 - `tools/ghidra.py` uses decompdecomp's Ghidra (needs a JDK). `import` analyses the ROM once into `build/ghidra/`; then `decomp FUNC` prints its C, `unmatched` writes C for every function that is still assembly, `new` lists functions missing from `build.json`, `search` finds instruction sequences (one regex per instruction, `;` between them) and `bytes` finds raw words anywhere in the ROM.
 - `nonmatching/` holds near-miss drafts that `build.py` does not compile (see its README for how far off each is).
@@ -82,14 +82,14 @@ share it.
 - Labels in the middle of a function that other code jumps to (`alabel` in the splat output) need an entry in the
   `symbols` table of `build.json`.
 - A C function with a jump table or double constants needs its `own` `.rodata` base in `build.json` (the address of the
-  table in the game, e.g. `setAudioRegionParameter` -> `0x8003B4F0`). `build.py check` cannot verify these when the table
-  sits in another overlay's address range, so check with a full build.
+  table in the game, e.g. `setAudioRegionParameter` -> `0x8003B4F0`). `build.py check` reads the function's own overlay, so it
+  can verify these.
 
 ### Switch tables are checked against the ROM
 `build.py` identical means the *code* is identical. A C function's own `.rodata` (jump tables, float/double constants) is placed
 by the `own` entry but not written into the ROM (the ROM's bytes are used), so a `case` label pointing at the wrong body, or a
 wrong constant, would still give an identical ROM. `tools/check_rodata.py` rebuilds those bytes from the compiled objects and looks
-for them in the ROM; every function with an `own` `.rodata` passes it (110 at the time of writing). Run it after a full build
+for them in the ROM; every function with an `own` `.rodata` passes it (118 at the time of writing). Run it after a full build
 whenever you add or change a function with a `switch` or constants.
 
 If it reports a function as NOT FOUND, its code is right but its `case` labels (or a constant) are not. The ROM's table says which
@@ -100,11 +100,11 @@ those take a manual edit, using the ROM's instructions at the target address to 
 change; the ROM must stay identical.
 
 ### Still assembly, with a reason
-315 functions are not matched yet. `nonmatching/README.md` explains the 7 that have a draft; `nonmatching/STATUS.md` lists all of them.
+296 functions are not matched yet. `nonmatching/README.md` explains the 7 that have a draft; `nonmatching/STATUS.md` lists all of them.
 In short:
 - **Have a draft (7 functions):** `func_80006178`, `func_8000C91C`, `func_80012CD0`, `func_800291C0`, `func_8009773C`, `func_80095884`
   and `func_8009C218`. Their structure is known; what is left is instruction order, registers, or decoding the largest ones.
-- **No match yet (308 functions):** the rest of the code from overlay 1 past ROM 0x48990, the start of overlay 2, and the function at
+- **No match yet (289 functions):** the rest of the code from overlay 1 past ROM 0x48990, the start of overlay 2, and the function at
   ROM 0xAE0D0. They were raw data until the overlays were mapped. Automatic m2c drafts matched the easy ones; the rest need hand work.
 
 ### Earlier attempts (`progress/`)
