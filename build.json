@@ -7084,7 +7084,8 @@
    "vram": 2148137148,
    "rom": 311340,
    "asm": "asm/nonmatchings/code_80090000/func_8009F8BC.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_8009F8BC.c"
   },
   {
    "name": "func_8009F9A0",
@@ -8908,7 +8909,8 @@
    "vram": 2148246708,
    "rom": 420900,
    "asm": "asm/nonmatchings/code_80090000/func_800BA4B4.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800BA4B4.c"
   },
   {
    "name": "func_800BA59C",
