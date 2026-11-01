@@ -1,9 +1,9 @@
 # WCW / nWo  REVENGE (decompilation)
 
 A matching decompilation of WCW / nWo  REVENGE for the Nintendo 64, started with [decompdecomp](https://github.com/n-delic/decompdecomp).
-1429 of 1696 functions build as C objects (84.3%, 68.6% of the code by size). 35 of those are hand-written assembly routines wrapped
-in a top-level `asm()` block (see below), so 1394 are real C that compiles to exactly the original code. The other 267 are still plain
-assembly: 7 have a draft in `nonmatching/`, and 260 came from mapping the game's two overlays and have no match yet.
+1434 of 1696 functions build as C objects (84.6%, 68.7% of the code by size). 35 of those are hand-written assembly routines wrapped
+in a top-level `asm()` block (see below), so 1399 are real C that compiles to exactly the original code. The other 262 are still plain
+assembly: 7 have a draft in `nonmatching/`, and 255 came from mapping the game's two overlays and have no match yet.
 `build.py` rebuilds the game from this tree and checks it against your original, byte for byte.
 <!-- Working with this project's owner: read notes/MasterIndex.md first and keep it updated (local only, gitignored). -->
 
@@ -100,11 +100,11 @@ those take a manual edit, using the ROM's instructions at the target address to 
 change; the ROM must stay identical.
 
 ### Still assembly, with a reason
-267 functions are not matched yet. `nonmatching/README.md` explains the 7 that have a draft; `nonmatching/STATUS.md` lists all of them.
+262 functions are not matched yet. `nonmatching/README.md` explains the 7 that have a draft; `nonmatching/STATUS.md` lists all of them.
 In short:
 - **Have a draft (7 functions):** `func_80006178`, `func_8000C91C`, `func_80012CD0`, `func_800291C0`, `func_8009773C`, `func_80095884`
   and `func_8009C218`. Their structure is known; what is left is instruction order, registers, or decoding the largest ones.
-- **No match yet (260 functions):** the rest of the code from overlay 1 past ROM 0x48990, the start of overlay 2, and the function at
+- **No match yet (255 functions):** the rest of the code from overlay 1 past ROM 0x48990, the start of overlay 2, and the function at
   ROM 0xAE0D0. They were raw data until the overlays were mapped. Automatic m2c drafts matched the easy ones; the rest need hand work.
 
 ### Earlier attempts (`progress/`)
