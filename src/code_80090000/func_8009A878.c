@@ -7,7 +7,7 @@
 
 typedef struct {u32 w0,w1;} G;
 typedef struct {u8 pad[0xEA];u16 tick;} State9B;
-extern u8 updateEntityReactionState[];
+extern u8 D_800C94CC[];
 extern s32 D_800E797C;
 extern s32 D_800E81F8;
 u8 *func_800B600C(s32,s32);
@@ -15,8 +15,8 @@ u8 *func_800B64EC(s32,s32);
 s32 func_8001C580(void);
 extern u8 D_C95F0[];
 extern u8 D_C95B8[];
-#define TIMER (*(s32*)(updateEntityReactionState+0x20))
-#define CUR (*(s32*)(updateEntityReactionState+0x1C))
+#define TIMER (*(s32*)(D_800C94CC+0x20))
+#define CUR (*(s32*)(D_800C94CC+0x1C))
 #define E(a,b) {G *_g=gfx++;_g->w0=(a);_g->w1=(u32)(b);}
 #define XY(x,y) (((u32)((y)<<18)>>16)|((x)<<18))
 #define ST(s,t) (((u32)((t)<<21)>>16)|((s)<<21))

@@ -58,7 +58,7 @@ extern s32 D_800E79BC;
 extern s32 D_800E7BEC;
 extern s32 D_800E7CD8;
 extern s32 D_800E9F70;
-extern u8 sceneNodeCallback5C50[];
+extern u8 D_800C5C50[];
 extern u8 D_800C9C70[];
 
 void buildScaledRotationTranslationMatrix(void *, f32, f32, f32, f32, f32, f32, f32);
@@ -211,7 +211,7 @@ void func_80094AE4(Out4AE4 *arg0, Out4AE4 *arg1, s32 arg2) {
         func_800948BC(0);
     }
     func_80090384(D_800C9094, D_800E79BC / 2 + 0x80, 0);
-    dl = sceneNodeCallback5C50;
+    dl = D_800C5C50;
     if (D_800DB688 == -1) {
         dl = D_800C9C70;
     }

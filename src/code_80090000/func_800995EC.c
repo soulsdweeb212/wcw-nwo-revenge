@@ -5,7 +5,7 @@
  */
 #include "common.h"
 
-extern u8 updateEntityReactionState[];
+extern u8 D_800C94CC[];
 s32 func_80099734(s32);
 void func_800B75D4(s32 *, s32, s32);
 u8 *func_80028D18(s32, s32);
@@ -19,7 +19,7 @@ u8 *func_800995EC(u32 arg0) {
 
     r = func_80028D18(arg0, 4);
     if (r == NULL) {
-        return updateEntityReactionState + 0x200;
+        return D_800C94CC + 0x200;
     }
     if (*r != 0) {
         return r;

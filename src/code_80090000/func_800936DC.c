@@ -100,7 +100,7 @@ extern s32 D_800DBD48;
 extern Anim936 D_800C6508[];
 extern u8 D_800C5E00[];
 extern u32 D_800C5D10[];
-extern u32 sceneNodeCallback5C50[];
+extern u32 D_800C5C50[];
 
 typedef struct { u32 a, b, size, d; } Desc936;
 
@@ -237,7 +237,7 @@ void func_800936DC(s32 arg0) {
                     }
                     g = D_800DB8AC++;
                     g->w0 = 0xDE000000;
-                    g->w1 = (u32)sceneNodeCallback5C50;
+                    g->w1 = (u32)D_800C5C50;
                     g = D_800DB8AC++;
                     g->w0 = 0xDF000000;
                     g->w1 = 0;

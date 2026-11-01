@@ -4,7 +4,7 @@
     python3 tools/list_nonmatching.py [--md]
 
 Groups: "asm in C" (hand-written routines wrapped in a top-level asm() block by tools/asm_to_c.py; they build as C
-objects but are not decompiled), split fragment (cut off at a segment end), hand-written (CP0/TLB/cache/FPU access or hand-scheduled, not expected to become C), has a draft in nonmatching/ (its closest C is kept there), kept as assembly (README notes: matched once or blocked on data layout), and C candidates. `--md` prints
+objects but are not decompiled), hand-written (CP0/TLB/cache/FPU access or hand-scheduled, not expected to become C), has a draft in nonmatching/ (its closest C is kept there), kept as assembly (README notes: matched once or blocked on data layout), and C candidates. `--md` prints
 a Markdown table (used for nonmatching/STATUS.md). The groups for the first three come from the lists below."""
 import json, re, sys
 from pathlib import Path
@@ -13,7 +13,6 @@ HAND = {  # README "Hand-written assembly" section
     "func_80026AF0", "func_80026B00", "func_80026C20", "func_80028100", "func_80026C10", "nw2DisableInterrupts",
     "nw2RestoreInterrupts", "func_8001C860", "func_80026C30", "func_80026C80", "func_800266B4", "func_800266FC",
 }
-FRAG = {"func_8009C218"}  # first words of a function cut off at a segment end (splat.yaml)
 LIBGCC = {"func_800284F4", "func_80028860", "func_80028880", "__divdi3", "__moddi3", "__fixsfdi", "signed64ToFloatTrunc",
           "func_80028528", "func_80028624", "bcmp"}
 root = Path(__file__).resolve().parent.parent
@@ -36,8 +35,6 @@ for f in B["functions"]:
         grp = "asm in C"
     elif n in HAND or low:
         grp = "hand-written"
-    elif n in FRAG:
-        grp = "split fragment (segment end)"
     elif n in NEAR:
         grp = "has a draft in nonmatching/"
     elif n in KEPT:

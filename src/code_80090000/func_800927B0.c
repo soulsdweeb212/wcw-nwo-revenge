@@ -10,12 +10,12 @@
  * digit when its low bits are clear. arg1 is the packed counter value. */
 s32 loadResourceTexture4b(void *, void *, s32);
 void accumulateColorChannels(s32,s32,s32);
-extern u8 updateActionStateC5D48[];
+extern u8 D_800C5D48[];
 typedef struct { s32 f0; u32 f4; u16 f8; } Desc927;
 void func_800927B0(Nw2GfxCommand **arg0, s32 arg1, Desc927 *arg2) {
  Nw2GfxCommand *cmd; s32 digit,i;
  cmd=*arg0;
- { Nw2GfxCommand *g=cmd++; g->w0=0xDE000000; g->w1=(u32)(updateActionStateC5D48+0x48); }
+ { Nw2GfxCommand *g=cmd++; g->w0=0xDE000000; g->w1=(u32)(D_800C5D48+0x48); }
  { Nw2GfxCommand *g=cmd++; g->w0=0x01000000|((arg2->f8&255)<<12)|((arg2->f8&127)*2); g->w1=arg2->f4; }
  i=0; do { digit=arg1; if(arg1>=10) digit=arg1%10+10;
  if(digit>=0) {

@@ -40,7 +40,7 @@ extern s32 D_800E74C4;
 extern u8 D_800C5E00[];
 extern u8 D_800C5EC0[];
 extern u8 D_800C5D10[];
-extern u8 sceneNodeCallback5C50[];
+extern u8 D_800C5C50[];
 
 s32 func_800B64EC(s32, s32);
 s32 func_800B600C(s32, s32);
@@ -106,7 +106,7 @@ void func_80092DE0(S2DE0 *s, s32 arg1)
         if (tex != 0) {
             LOADTEX(tex, 0x07014050, 0x070FF400, 0xF5400400, 0x14050, 0x7C07C, (u32)D_800C5EC0);
         }
-        EMIT(0xDE000000, (u32)sceneNodeCallback5C50);
+        EMIT(0xDE000000, (u32)D_800C5C50);
         EMIT(0xDF000000, 0);
     } else if (s->fC == 0xA) {
         u32 c;
@@ -197,6 +197,6 @@ void func_80092DE0(S2DE0 *s, s32 arg1)
         }
         }
     }
-    EMIT(0xDE000000, (u32)sceneNodeCallback5C50);
+    EMIT(0xDE000000, (u32)D_800C5C50);
     EMIT(0xDF000000, 0);
 }

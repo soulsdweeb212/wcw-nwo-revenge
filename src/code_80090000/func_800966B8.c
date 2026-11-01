@@ -19,8 +19,8 @@ typedef s32 M2C_UNK32;
 #define M2C_OVERFLOW(a) (0)
 #endif
 
-extern M2C_UNK func_800DB4FC;
+extern M2C_UNK D_800DB4FC;
 
 u16 func_800966B8(void) {
-    return M2C_FIELD(M2C_FIELD(&func_800DB4FC, void **, 0x184), u16 *, 6);
+    return M2C_FIELD(M2C_FIELD(&D_800DB4FC, void **, 0x184), u16 *, 6);
 }

@@ -20,8 +20,8 @@ typedef struct
   s16 angle;
   f32 scale;
 } Nw2Effect;
-extern u8 stepRecordedFramePlayback[];
-extern u8 func_800D6658[];
+extern u8 D_800D5D1C[];
+extern u8 D_800D6658[];
 void buildScaledRotationTranslationMatrix(void *, f32, f32, f32, f32, f32, f32, f32);
 void func_8001B3EC(void *, f32, f32, f32, f32 *, f32 *, f32 *);
 void func_80090384(s32 arg0, s32 arg1, s32 arg2)
@@ -32,12 +32,12 @@ void func_80090384(s32 arg0, s32 arg1, s32 arg2)
   f32 z;
   f32 r;
   f32 zero = 0.0f;
-  f64 c3 = *((f64 *) (stepRecordedFramePlayback + 0x244));
-  f64 c2 = *((f64 *) (stepRecordedFramePlayback + 0x24C));
-  f64 c4 = *((f64 *) (stepRecordedFramePlayback + 0x254));
+  f64 c3 = *((f64 *) (D_800D5D1C + 0x244));
+  f64 c2 = *((f64 *) (D_800D5D1C + 0x24C));
+  f64 c4 = *((f64 *) (D_800D5D1C + 0x254));
   s32 col;
   s32 i = 0;
-  Nw2Effect *p = (Nw2Effect *) (func_800D6658 + 0x6F8);
+  Nw2Effect *p = (Nw2Effect *) (D_800D6658 + 0x6F8);
   s32 off = (arg0 << 6) + 0xE0;
   Nw2Effect *q;
   u8 *base;
@@ -75,7 +75,7 @@ void func_80090384(s32 arg0, s32 arg1, s32 arg2)
         if (arg2 == 0)
         {
           a = q->scale;
-          if (a < (*((f64 *) (stepRecordedFramePlayback + 0x25C))))
+          if (a < (*((f64 *) (D_800D5D1C + 0x25C))))
           {
             alpha = (s32) (((a - c2) * c4) * 2.0);
           }

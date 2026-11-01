@@ -5,7 +5,7 @@
  */
 #include "common.h"
 
-extern u8 applyMovementToEntityPair[];
+extern u8 D_800D6E78[];
 void func_800948BC(s32);
 s32 func_80090384(s32, s32, s32);
 

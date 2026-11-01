@@ -5,7 +5,7 @@
  */
 #include "common.h"
 
-extern u8 applyMovementToEntityPair[];
+extern u8 D_800D6E78[];
 void func_800948BC(s32);
 s32 func_80090384(s32, s32, s32);
 
@@ -16,7 +16,7 @@ void func_80090300(void) {
     s32 i;
     s32 j;
 
-    p = (u8 *)applyMovementToEntityPair + 0x3E;
+    p = (u8 *)D_800D6E78 + 0x3E;
     for (i = 0; i < 0x30; i++) {
         p[i * 0x178 - 0x14E] = p[i * 0x178 - 0x14E] | 0x80;
         *(s16 *)(p + i * 0x178 - 6) = -1;

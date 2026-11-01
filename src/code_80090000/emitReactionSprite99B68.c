@@ -9,7 +9,7 @@
  * The sprite frame (+0xEA) selects one of three vertical bands, each with
  * its own row offset and alpha (0xFF, fading 0..0x20). It first emits a
  * texture load (0xDE), a palette setup (0xE3) and a primitive colour
- * (0xFA) then, for the three quad entries at updateEntityReactionState
+ * (0xFA) then, for the three quad entries at D_800C94CC
  * +0x23C, emits each visible piece with func_80096D8C, honouring the
  * entry's alignment flag (centred / right / right-of-0xF0). The frame
  * counter is advanced and the output pointer written back. */
@@ -36,7 +36,7 @@ typedef struct {
 } Nw2SpriteOwner;
 
 extern u8 D_C9620[];
-extern u8 updateEntityReactionState[];
+extern u8 D_800C94CC[];
 void appendPaletteSetupDisplayList(void *);
 void func_8000DEE4(s32);
 void *func_800B600C(void *, s32);
@@ -80,7 +80,7 @@ void emitReactionSprite99B68(u32 **arg0, Nw2SpriteOwner *arg1)
     p = dl;
     i = 0;
 
-    entry = (Nw2QuadEntry *)(updateEntityReactionState + 0x23C);
+    entry = (Nw2QuadEntry *)(D_800C94CC + 0x23C);
     dl = p + 2;
     p[0] = 0xFA000000;
     p[1] = alpha & 0xFF;

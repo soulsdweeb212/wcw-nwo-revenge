@@ -41,31 +41,26 @@ segments:
   - [182832, data]
   - {type: bss, vram: 2147728080}
 - {type: bin, start: 247504, follows_vram: main}
-- name: code_80090000
+- name: overlay1
   type: code
-  start: 247664
-  vram: 2148073472
+  start: 0x3C770
+  vram: 0x80090000
+  bss_size: 0x13620
+  exclusive_ram_id: overlay
   subsegments:
-  - [247664, c, code_80090000]
-- {type: bin, start: 297360}
-- name: code_8009D7A0
+  - [0x3C770, c, code_80090000]
+  - [0x72240, bin]
+- name: overlay2
   type: code
-  start: 592960
-  vram: 2148128672
+  start: 0x834A0
+  vram: 0x80090000
+  bss_size: 0x137F0
+  exclusive_ram_id: overlay
   subsegments:
-  - [592960, c, code_8009D7A0]
-- {type: bin, start: 712912}
-- name: code_800BBA00
-  type: code
-  start: 716448
-  vram: 2148252160
-  subsegments:
-  - [716448, c, code_800BBA00]
-- name: code_800DE9C0
-  type: code
-  start: 859744
-  vram: 2148395456
-  subsegments:
-  - [859744, c, code_800DE9C0]
-- {type: bin, start: 876464}
+  - [0x834A0, c, ovl2_80090000]
+  - [0x90C40, c, code_8009D7A0]
+  - [0xAEEA0, c, code_800BBA00]
+  - [0xD1E60, c, code_800DE9C0]
+  - [0xD5FB0, bin]
+- {type: bin, start: 0xDAC50}
 - [16777216]

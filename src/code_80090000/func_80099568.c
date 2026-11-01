@@ -8,7 +8,7 @@
 extern s16 D_800E74DC;
 extern s16 D_800E7C88;
 
-extern u8 updateEntityReactionState[];
+extern u8 D_800C94CC[];
 u8 *func_80028B5C(u8 *, u8 *);
 u8 *func_80028D18(s32, s32);
 
@@ -31,14 +31,14 @@ u8 *func_80099568(u8 *arg0) {
     u8 *p;
 
     if (*arg0 == 0) {
-        return updateEntityReactionState + 0x64;
+        return D_800C94CC + 0x64;
     }
     r = func_80028D18(arg0, 3);
     if (r == NULL) {
-        return updateEntityReactionState + 0x64;
+        return D_800C94CC + 0x64;
     }
     if (*r == 0) {
-        p = func_80028B5C(r, updateEntityReactionState + 0x1F4);
+        p = func_80028B5C(r, D_800C94CC + 0x1F4);
         p = func_80028B5C(p, arg0);
         *p = 0;
     }

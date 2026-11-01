@@ -5,9 +5,9 @@
  */
 #include "common.h"
 
-extern u8 updateActionStateC5D48[];
+extern u8 D_800C5D48[];
 
-extern u8 applyMovementToEntityPair[];
+extern u8 D_800D6E78[];
 void func_800948BC(s32);
 s32 func_80090384(s32, s32, s32);
 
@@ -18,7 +18,7 @@ s32 func_800C4D70(void);
 s32 func_800C5010(void);
 s32 func_800C51A0(void);
 s32 func_800C594C(void);
-extern u8 func_800D6658[];
+extern u8 D_800D6658[];
 
 extern s16 D_800E6B78;
 extern s16 D_800E821C;

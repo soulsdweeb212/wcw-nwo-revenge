@@ -1,3 +1,8 @@
+/* @header
+ * func_800A83DC
+ * VRAM 0x800A83DC | ROM 0x9B87C | size 0x938
+ * asm: asm/nonmatchings/code_8009D7A0/func_800A83DC.s
+ */
 #include "common.h"
 
 typedef struct {
@@ -36,11 +41,6 @@ typedef struct {
     u32 f3AC;
 } E83DC;
 
-typedef struct {
-    u8 hdr[0x10];
-    u8 data[0x1A20];
-} Anim83DC;
-
 extern u8 D_80075468[];
 
 void func_800D4AD0(void *);
@@ -57,6 +57,7 @@ void unpackAnimationParameters(void *, void *);
     (e)->flags = ((e)->flags & ~0x10810000000ULL) | 0x1000000000ULL; \
     func_800DECAC((e), 0, 0, 0);
 
+/* func_800A7C40 */
 static inline void load83(E83DC *a, s8 sel, s16 id)
 {
     u8 *tbl;
@@ -86,13 +87,15 @@ s32 func_800A83DC(E83DC *a, E83DC *b)
         SETACT(a, 0x45);
         a->fC = 2;
         a->f2C = (b->f2C & 2) | 0x440;
-        do {
-            if (a->f2C & 2) {
+if (a->f2C & 2) {
+            if (b) {
                 a->f16 = 0x5A;
-                break;
+            } else {
+                a->f16 = 0x5A;
             }
+        } else {
             a->f16 = 0x3C;
-        } while (0);
+        }
         func_800D427C(a, 0xE8E, 1);
         SETACT(b, 0x46);
         b->fC = 2;
@@ -144,11 +147,11 @@ s32 func_800A83DC(E83DC *a, E83DC *b)
         if ((u8)(k - 0x99) < 14) {
             switch (k) {
             case 0x99: m = 0; break;
-            case 0x9A: m = 1; break;
-            case 0x9B: m = 2; break;
-            case 0x9C: m = 4; break;
-            case 0x9D: m = 8; break;
-            case 0x9E: m = 0x10; break;
+            case 0x9B: case 0x9C: m = 1; break;
+            case 0x9E: m = 2; break;
+            case 0xA0: m = 4; break;
+            case 0xA2: m = 8; break;
+            case 0xA4: m = 0x10; break;
             case 0xA6: m = 0x20; break;
             }
             a->f3A = m;

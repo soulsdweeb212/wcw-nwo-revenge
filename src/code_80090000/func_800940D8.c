@@ -9,7 +9,7 @@ extern s32 D_800E8210;
 extern s32 D_800E74C4;
 extern f32 D_800E7504;
 extern s32 D_800DBD40;
-extern u8 func_800DB4FC[];
+extern u8 D_800DB4FC[];
 
 typedef struct {
     void *ent;
@@ -61,7 +61,7 @@ void func_800940D8(void) {
     p = D_800DB8C0;
     func_800B82B8(&buf[0], &buf[1], &buf[2], &buf[3], &buf[4], &buf[5]);
     if (D_800E8210 >= 0) {
-        s0 = *(u16 **)(*(u8 **)(func_800DB4FC + 0x184) + D_800E8210 * 4 + 0x1C);
+        s0 = *(u16 **)(*(u8 **)(D_800DB4FC + 0x184) + D_800E8210 * 4 + 0x1C);
     }
     for (i = 0; i < D_800DBD40; i++, p++) {
         ent = p->ent;

@@ -11,7 +11,7 @@
 s32 loadResourceTexture4b(void *, void *, s32);
 void accumulateColorChannels(s32, s32, s32);
 extern u8 func_800C5D48[];
-extern u8 func_800DBB80[];
+extern u8 D_800DBB80[];
 typedef struct 
 {
   s32 f0;
@@ -62,7 +62,7 @@ void func_80092960(Nw2GfxCommand **arg0, s32 arg1, Desc929 *arg2)
         accumulateColorChannels(0x1F, 0x1F, 0x1F);
         if (i == 0)
         {
-          *((s32 *) (func_800DBB80 + 0x1D4)) = 0x421;
+          *((s32 *) (D_800DBB80 + 0x1D4)) = 0x421;
         }
       }
     }

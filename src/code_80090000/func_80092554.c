@@ -15,9 +15,9 @@
  * advanced past the emitted commands. */
 extern s32 loadResourceTexture4b(void **, void *, s32);
 extern void accumulateColorChannels(s32, s32, s32);
-extern u8 updateEntityGrabActionState[];
-extern u8 func_800D6658[];
-extern u8 func_800DBB80[];
+extern u8 D_800C6418[];
+extern u8 D_800D6658[];
+extern u8 D_800DBB80[];
 
 void func_80092554(void **arg0, s32 arg1, s16 arg2, s16 arg3) {
     void *sp10;
@@ -29,7 +29,7 @@ void func_80092554(void **arg0, s32 arg1, s16 arg2, s16 arg3) {
 
     sp10 = *arg0;
     if (arg1 >= 0x14) {
-        u8 *p = updateEntityGrabActionState + 0x160;
+        u8 *p = D_800C6418 + 0x160;
         s32 fpmask;
         s32 s7;
         s0 = arg1 - 0x14;
@@ -49,7 +49,7 @@ void func_80092554(void **arg0, s32 arg1, s16 arg2, s16 arg3) {
                 ((s32 *)q2)[1] = (s2 & 0xFF) << 16 | (s4 & 0xFF) << 8 | (s5 & 0xFF);
                 if (i == 0 && s0 == 0) {
                     accumulateColorChannels(0xFF, 0xFF, 0xFF);
-                    *(s32 *)(func_800DBB80 + 0x1D4) = s7;
+                    *(s32 *)(D_800DBB80 + 0x1D4) = s7;
                 }
             }
             s5 += 8;
@@ -60,14 +60,14 @@ void func_80092554(void **arg0, s32 arg1, s16 arg2, s16 arg3) {
             s0 -= 2;
         } while (i < 4);
     } else if (arg1 >= 0) {
-        if (loadResourceTexture4b(&sp10, updateEntityGrabActionState + 0x180, arg1) != 0) {
+        if (loadResourceTexture4b(&sp10, D_800C6418 + 0x180, arg1) != 0) {
             void *q3 = sp10;
             sp10 = (u8 *)q3 + 8;
             ((s32 *)q3)[0] = 0x07000206;
             ((s32 *)q3)[1] = 0x604;
         }
         if (arg1 == 0) {
-            *(s32 *)(func_800DBB80 + 0x1D4) = 0x422;
+            *(s32 *)(D_800DBB80 + 0x1D4) = 0x422;
         }
         if ((arg1 < 8) && !(arg1 & 1)) {
             u8 *p;
@@ -82,7 +82,7 @@ void func_80092554(void **arg0, s32 arg1, s16 arg2, s16 arg3) {
             c100 = 0x100;
             c3 = 3;
             a3 = 0;
-            p = func_800D6658 + 0x6F8;
+            p = D_800D6658 + 0x6F8;
             while (a3 < 0x30 && *(s16 *)(p + 0x160) >= 0) {
                 a3++;
                 p += 0x178;

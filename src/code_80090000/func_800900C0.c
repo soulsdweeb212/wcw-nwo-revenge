@@ -5,10 +5,10 @@
  */
 #include "common.h"
 
-extern u8 func_800DB348[];
-extern u8 func_800D6658[];
-extern u8 sceneNodeCallback5AD0[];
-extern u8 sceneNodeCallback5C50[];
+extern u8 D_800DB348[];
+extern u8 D_800D6658[];
+extern u8 D_800C5AD0[];
+extern u8 D_800C5C50[];
 extern u8 D_C5B90[];
 void initializeTransformNode(void *, s32, f32, f32, f32);
 void func_800015AC(void *, s32);
@@ -27,15 +27,15 @@ void func_800900C0(s32 arg0) {
     u8 pad[0x3c];
 
     i = 0;
-    p = func_800DB348 + 0x88;
+    p = D_800DB348 + 0x88;
     do {
         if (i < 2) {
             initializeTransformNode(p, 0, 0.0f, 0.0f, 0.0f);
         } else {
             initializeTransformNode(p, 6, 0.0f, 0.0f, 0.0f);
         }
-        *(void **)(p + 0xC) = sceneNodeCallback5AD0;
-        *(void **)(p + 0x10) = sceneNodeCallback5C50;
+        *(void **)(p + 0xC) = D_800C5AD0;
+        *(void **)(p + 0x10) = D_800C5C50;
         func_800015AC(p, 1);
         func_80001544(p);
         if (i == 1) {
@@ -52,12 +52,12 @@ void func_800900C0(s32 arg0) {
     } while (i < 3);
 
     i = 0;
-    q = func_800D6658 + 0x6F8;
+    q = D_800D6658 + 0x6F8;
     z = 0.0f;
     do {
         initializeTransformNode(q, 6, z, z, z);
-        *(void **)(q + 0xC) = sceneNodeCallback5AD0;
-        *(void **)(q + 0x10) = sceneNodeCallback5C50;
+        *(void **)(q + 0xC) = D_800C5AD0;
+        *(void **)(q + 0x10) = D_800C5C50;
         func_800015AC(q, 1);
         func_80001544(q);
         *(u8 *)(q + 0x18) = *(u8 *)(q + 0x18) | 0x80;

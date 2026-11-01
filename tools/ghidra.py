@@ -7,10 +7,10 @@
     python3 tools/ghidra.py search 'lui .*; addiu .*,0x5478'     # instruction sequence, one regex per instruction
     python3 tools/ghidra.py bytes '3C02???? 2442????'            # raw big-endian words anywhere in the ROM, ? = any nibble
 
-The overlays share addresses, so each is analysed as its own image together with `main`: a listing line is only meaningful
-with its image. `search` matches Ghidra's spelling of an instruction, which is not always splat's (`or v0,s0,zero` for
+The two overlays both load at 0x80090000 (see OVERLAY_TABLE), so each is analysed as its own image together with `main`: a
+listing line is only meaningful with its image. `search` matches Ghidra's spelling of an instruction, which is not always splat's (`or v0,s0,zero` for
 `move`, hex offsets). Ghidra's C is a reading aid: it shows the logic, not the source shape, and it will not match as is."""
-import json,os,re,shutil,subprocess,sys,tempfile
+import json,os,re,shutil,struct,subprocess,sys,tempfile
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parent.parent
@@ -22,12 +22,19 @@ ROM=(ROOT/B['image']).read_bytes()
 MAIN_ROM,MAIN_VRAM=SEG['entry']['start'],SEG['entry']['vram']
 MAIN_END=SEG['main']['end']
 BSS_END=SEG['main']['bss_vram']+SEG['main']['bss_size']
-# name, ROM range, vram base: each runs up to the next image, so the blobs after the code are analysed as well
-IMAGES=[('ovl80090000',SEG['code_80090000']['start'],SEG['code_8009D7A0']['start'],SEG['code_80090000']['vram']),
-        ('ovl8009D7A0',SEG['code_8009D7A0']['start'],SEG['D5FB0']['start'],SEG['code_8009D7A0']['vram'])]
+# The game's own overlay table, in main's data: ROM start, ROM end, then vram start, text end, data end, bss end (the last
+# three each stored twice, as the end of one section and the start of the next).
+OVERLAY_TABLE=0x37A30
+def overlays():
+    out=[]
+    for i in (0,1):
+        w=struct.unpack('>9I',ROM[OVERLAY_TABLE+i*36:OVERLAY_TABLE+(i+1)*36])
+        out.append((f'overlay{i+1}',w[0],w[1],w[2],w[4],w[8]))  # name, rom, rom end, vram, text end, bss end
+    return out
+IMAGES=overlays()
 
 def image_of(rom):
-    for name,start,end,vram in IMAGES:
+    for name,start,end,vram,_,_ in IMAGES:
         if start<=rom<end: return name,vram-start
     return 'main',MAIN_VRAM-MAIN_ROM
 
@@ -35,29 +42,24 @@ def do_import():
     shutil.rmtree(OUT,ignore_errors=True); OUT.mkdir(parents=True)
     base_img=bytearray(BSS_END-MAIN_VRAM)
     main=ROM[MAIN_ROM:MAIN_END]; base_img[:len(main)]=main
-    for i,(name,start,end,vram) in enumerate(IMAGES):
+    for i,(name,start,end,vram,text_end,bss_end) in enumerate(IMAGES):
         d=OUT/name; d.mkdir()
-        img=bytearray(vram+(end-start)-MAIN_VRAM)
+        img=bytearray(bss_end-MAIN_VRAM)
         img[:len(base_img)]=base_img
         img[vram-MAIN_VRAM:vram-MAIN_VRAM+end-start]=ROM[start:end]
         (d/'image.bin').write_bytes(img)
         rows=[]
         for f in B['functions']:
             if f['rom'] is None: continue
-            im,off=image_of(f['rom'])
-            if im in('main',name): rows.append(f"func\t{f['vram']:X}\t{f['name']}")
+            if image_of(f['rom'])[0] in('main',name): rows.append(f"func\t{f['vram']:X}\t{f['name']}")
         known={f['name'] for f in B['functions']}
-        own_end=vram+(end-start if i else SEG['code_80090000']['end']-start)
         for s,a in B['symbols'].items():
-            if s in known: continue
-            # the images overlap in vram, so a label past this overlay's own code belongs to the other one
-            if MAIN_VRAM<=a<BSS_END or vram<=a<own_end: rows.append(f"data\t{a:X}\t{s}")
+            # symbols carry no overlay, so past main a name may be the other overlay's: leave those unnamed
+            if s not in known and MAIN_VRAM<=a<BSS_END: rows.append(f"data\t{a:X}\t{s}")
         (d/'labels.tsv').write_text('\n'.join(rows)+'\n')
-        ranges=[f'{vram:X}-{vram+end-start:X}']
+        ranges=[f'{vram:X}-{text_end:X}']
         if i==0: ranges=[f'{MAIN_VRAM:X}-{MAIN_VRAM+MAIN_END-MAIN_ROM:X}']+ranges
-        for r in ranges:  # main is exported once, with the first image
-            sub=d if r==ranges[-1] else OUT/'main'
-            sub.mkdir(exist_ok=True)
+        (OUT/'main').mkdir(exist_ok=True)
         cmd=[str(GH/'support'/'analyzeHeadless'),str(d),'proj','-import',str(d/'image.bin'),'-overwrite',
              '-loader','BinaryLoader','-loader-baseAddr',f'0x{MAIN_VRAM:X}',
              '-processor','MIPS:BE:64:64-32addr','-cspec','o32',
@@ -75,7 +77,7 @@ def do_import():
     print('done:',OUT)
 
 def dirs():
-    ds=[d for d in (OUT/'main',OUT/IMAGES[0][0],OUT/IMAGES[1][0]) if (d/'functions.tsv').exists()]
+    ds=[d for d in (OUT/'main',OUT/'overlay1',OUT/'overlay2') if (d/'functions.tsv').exists()]
     if not ds: sys.exit('run `python3 tools/ghidra.py import` first')
     return ds
 def functions():
@@ -105,16 +107,18 @@ def do_unmatched():
     print(f'{n} files in {dst}')
 
 def do_new():
-    known={f['vram'] for f in B['functions']}
-    ours=lambda d,v:any(s['kind']=='code' and s['vram']<=v<s['vram']+s['end']-s['start'] for s in B['segments'] if s['kind']=='code'
-                        and ((d.name=='ovl80090000')==(s['name']=='code_80090000')))
-    n=k=0
+    known={}
+    for f in B['functions']: known.setdefault(image_of(f['rom'])[0],set()).add(f['vram'])
+    listed=lambda rom:any(x['kind']=='code' and x['start']<=rom<x['end'] for x in B['segments'])
+    start={n:(st,v) for n,st,_,v,_,_ in IMAGES}; start['main']=(MAIN_ROM,MAIN_VRAM)
+    n=k=size_new=0
     for d,a,size,name in functions():
         v=int(a,16)
-        if v in known: continue
-        if d.name!='main' and ours(d,v): k+=1; continue  # inside listed code: a piece of a known function, or a jump target
-        print(f'{d.name:12} {a} size {size:#x} {name}'); n+=1
-    print(n,'functions outside the listed code,',k,'more inside it (ignored)')
+        if v in known.get(d.name,()): continue
+        rom=v-start[d.name][1]+start[d.name][0]
+        if listed(rom): k+=1; continue  # a piece of a known function, or a jump target
+        print(f'{d.name:9} ROM {rom:#8x} {a} size {size:#x} {name}'); n+=1; size_new+=size
+    print(f'{n} functions ({size_new:#x} bytes) outside the listed code, {k} more inside it (ignored)')
 
 def do_search(pat):
     ps=[re.compile(p.strip()) for p in pat.split(';')]

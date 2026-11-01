@@ -13,16 +13,26 @@ The counts below are that number. A count of 4 does not mean "4 lines of C": GCC
 fills and registers with internal heuristics, so a one-instruction difference can need a different shape of source, and the
 only way to learn the shape is to try (by hand, or with the permuter's random rewrites).
 
+## The real ROM map
+The game's overlay table is at ROM 0x37A30 (vram 0x80036E30). There are two overlays and both load at 0x80090000, only one at a time:
+
+| overlay | ROM | text | data | bss end |
+|---|---|---|---|---|
+| 1 | 0x3C770-0x834A0 | 0x80090000-0x800C5AD0 (ROM to 0x72240) | to 0x800D6D30 | 0x800EA350 |
+| 2 | 0x834A0-0xDAC50 | 0x80090000-0x800E2B10 (ROM to 0xD5FB0) | to 0x800E77B0 | 0x800FAFA0 |
+
+`splat.yaml` declares them as segments `overlay1` and `overlay2` with one `exclusive_ram_id`, so neither sees the other's symbols. Each overlay function in `symbol_addrs.txt` carries `rom:` and `segment:`; without them splat drops the name. The source folders keep their names: `code_80090000` is overlay 1; `ovl2_80090000`, `code_8009D7A0`, `code_800BBA00` and `code_800DE9C0` are overlay 2 in ROM order. `build.json` marks each segment with `overlay`, and `build.py check` reads only the function's own overlay, so jump tables can be validated there now.
+
+Two overlays can hold different things at one address. When an old name was already taken, the new function has `_ovl1` or `_ovl2` on the end (four so far, such as `func_800A1550_ovl1`). The names of overlay 1's data used to be overlay 2 function names; they are `D_` addresses now. An address at or above 0x80090000 in C belongs to the overlay of the file using it. `tools/ghidra.py new` should stay at 0.
+
 ## Why each remaining function is not matched
 
-### 1. Cut off at a segment end
+### 1. Largest function, complete draft
 | function | size | what happens |
 |---|---|---|
 | `func_8009C218` | 0x2A40 | `func_8009C218.c` here compiles and all the code is present: 2,684 instructions against 2,700, 228 opcode differences, score 513, stack frame close to the ROM's 296. Most cases are exact or within 16; `kind 8` holds 182 of the 230 left, where the ROM batches the `gfx` updates and ours interleaves them with the stores. What got it here, in order of effect: removing junk call arguments that m2c guesses from registers, merging m2c's register-named locals into shared C variables, restoring a shared `x` offset that m2c folded to 0, computing rectangles before their commands, and plain `/ 256` and `% 32`. Merging automatically needs a liveness check, because the score cannot see a merge that breaks the logic. The `for (;;)` form of the search loop is worse than the `goto`. |
 
-Keep the segment where it is until the C exists. The function runs to vram 0x8009EC58, past the start of `code_8009D7A0` at 0x8009D7A0, so if splat disassembles it, other code's calls to those addresses become global labels inside it and collide with the real functions (`multiple definition of func_8009D8D0`). Extending it only works in a tree with an existing `asm/`; a fresh checkout fails. Scoping the symbols with `segment:` does not help. When the C is ready, make the move in the same change: end `code_80090000` at ROM 0x4B3C8, change the blob's start and name to `4B3C8`, set the size in `symbol_addrs.txt`, and add `D_C9840` to `symbols`. `tools/extend_function.py` gives the full listing to work from.
 
-The blob after it is not all data: code carries on straight after `func_8009C218` (at least 16 more `jr $ra` in the next 15 KB), so there are functions that are not in `build.json` at all, and 1345 is an undercount.
 
 ### 2. Complete C, a few instructions off (scheduler or register differences)
 These have the whole function written and the same structure as the ROM. What differs is how GCC ordered a few instructions
@@ -35,7 +45,6 @@ types, so it is not kept, only the number.
 | `func_80012CD0` | 0x3C8 | 8 | - | in the `mode >= 11` branch the ROM computes `y - py` before `z - pz`; ours does the stack argument first. The draft is now a plain `z - pz` with the right instruction count. Temporaries in any order, and `px`/`py`/`pz` as an array or struct, give the same output. Also tried: a pointer to the entry, locals for `x`/`y`/`z`, storing the differences in `px`/`py`/`pz` or an array (8-68). The search reached 7. From the RTL dumps: `x - px` and `y - py` merge straight into `a2`/`a3`, and `z` goes through a pseudo to the stack slot. `-(pz - z)` had the right order, so `z` needs one extra step that vanishes after scheduling. Not it: `-ffast-math` (8), inline wrappers (8-21), `register` temporaries (8). The sched dump shows the cause: the `y` and `z` subtractions tie at priority 3 and the tie goes by original insn order, and `y` is late because it merges into `a3` next to the call. Reusing a variable blocks that merge, but none of 27 per-argument forms gives the ROM's order (8-26). |
 | `func_800291C0` | 0x3F4 | 6 | 2 | jump table. `off` lives in `a0` in the ROM and is copied to `t0` for its use in only one of the two glyph-size branches; ours keeps it in `v0`. The two uses are written as shifts in the source: plain `i * 72` / `i * 30` expand differently (score 13-31). Variants that keep `off` alive past the copy make both branches use `a0` (13). The search's 2 is mangled and leaves out the `move t0,a0`. Also tried: unsigned `i`, `break` and `for (;;)` search loops, and one variable for `ch` and `off` (6-24). Typed pointers (`u32 *` + `i * 18`, `[18]` rows) fold back to `i * 72` (31), so the shifts are written by hand. By the CSE rule a copy that is canonical in one branch is canonical in both, so the source must be something other than a plain `t0 = off`. |
 | `func_80006178` | 0x594 | 9 | 7 | the placement of one `lw` and the order of two float operations. The odd `c = 0xF5080000` variable is needed: the dump shows it stops a constant group being hoisted, which removing it does (69). |
-| `func_800A83DC` | 0x938 | 1 | 1 | jump table. The table load is solved: it is `func_800A7C40` inlined, with its real `(s8, s16)` signature, called as `load83(a, a->f0, (u8)k)`. Only one instruction differs: `beql` for the `0x5A`/`0x3C` store. The delay-slot pass annuls only if `v0` looks live on the fall-through path, but `li v0,90` sets it first, so our `beqz` is correct for this source. `switch (x) { case 2: ...; break; case 0: ...; }` gives a real `beql` because a second `beqz v0` reads `v0`, but that branch stays (591 instructions). A ternary gives the single store but lets CSE share the `SETACT` constants (40-52), and block boundaries around it do not stop that. |
 | `func_8000C91C` | 0x3FC | 45 | 23 | The first loop's counter and the later `i` are one variable; with that the dummy `tq` block is unnecessary and only 2 opcodes differ. The rest is allocator priority: `arg2` lands in `s2` where the ROM has `t8`, which renumbers the pointers the loops hoist. |
 | `func_80095884` | 0xE28 | 45 | 36 | load order in one block and float register numbers (`$f4` vs `$f6`) in another. |
 
@@ -45,6 +54,7 @@ types, so it is not kept, only the number.
 | `func_8009773C` | 0x6E0 | 131 | 60 | The score went up but the structure is far closer: the frame, `$fp` for `cols`, the hoisting and the instruction count (420) all match, and most of the 131 is register numbers. It uses `gSPModifyVertex`-style macros. The dump shows `(t << 21) >> 16` hoists whenever lifetime x savings is large (`life 3, savings 2` still moves), so each is set twice with `lo \|= hi1`, as the ROM's `or v1,v1,a2` does, in separate variables for `t` and `t1`. Left: the scheduler puts the shifts before the stores where the ROM mixes them. |
 
 ## Findings that apply to several functions
+- A `beql` can need a branch that later disappears. In `func_800A83DC`, `if (x) { if (b) { y = 0x5A; } else { y = 0x5A; } } else { y = 0x3C; }` reads `v0` on the fall-through path during the delay-slot pass, so the slot is annulled; the identical arms are then merged away. The inner test must not use `x` itself (score 1-3). The permuter found this; `tools/reduce_match.py` left noise, but the one odd `if` was the whole answer.
 - An inlined function is worth writing as one, with its real signature. Check `src/` for a matched function with the same shape first. A helper's parameter copies add insns during register allocation that vanish later, and that one step of lifetime can flip every register choice: writing `func_800A7C40` as an inline took `func_800A83DC` from 29 to 1.
 - Local-alloc orders values by `floor_log2(refs) * refs / life`. When two register chains are swapped, count both from the `.lreg` dump: the result shows how many insns of lifetime are missing.
 - GCC's CSE keeps a copy `t = r` only if `t` outlives the block and outlives `r`; otherwise it folds the copy. A `move` the ROM shows just before a test can mean the tested variable is reused later: in `func_800B61EC`, `t = r; if (t)` followed by `t = mode & 4` took the score from 5 to 0.

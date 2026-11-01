@@ -36,7 +36,7 @@ extern s32 D_800DB688;
 extern Nw2Prt914 *D_800DB694;
 extern void *D_800DBD48;
 extern u8 func_800C61D8[];
-extern u8 updateEntityGrabActionState[];
+extern u8 D_800C6418[];
 
 /* Builds the vertex grid for a skinned part. Depending on the mode in
  * D_800DB688 it re-points the part at a canned control-point block and picks a
@@ -72,7 +72,7 @@ void func_800914F0(Nw2Obj914 *arg0, Nw2Rec914 *arg1, s32 arg2) {
         break;
     case 5:
         count = 4;
-        start = (Nw2Rec914 *)(updateEntityGrabActionState + 0x38);
+        start = (Nw2Rec914 *)(D_800C6418 + 0x38);
         arg0->f1B = 4;
         break;
     }
