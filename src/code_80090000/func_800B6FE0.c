@@ -1,0 +1,38 @@
+/* @header
+ * func_800B6FE0
+ * VRAM 0x800B6FE0 | ROM 0x63750 | size 0xA8
+ * asm: asm/nonmatchings/code_80090000/func_800B6FE0.s
+ */
+#include "common.h"
+
+u8 *func_800B600C(s32, s32);
+void func_800B6938(u32 **, s32, s32, u8 *, u8 *);
+void func_800B6548(u32 **, s32, s32, s32, u8 *, u8 *);
+void func_800B6B5C(u32 **, s32, s32, s32, u8 *, u8 *);
+
+static inline u8 *load(s32 x, u8 **b, u8 **c) {
+    u8 *q;
+    u16 n;
+    q = func_800B600C(x, 0);
+    if (q == 0) {
+        return 0;
+    }
+    n = *(u16 *)(q + 0xA);
+    *c = q + 0x10;
+    *b = *c + n * 2;
+    return q;
+}
+
+u8 *func_800B6FE0(u32 **dl, s32 a) {
+    u8 *b;
+    u8 *c;
+    u32 *g = *dl;
+    u8 *v;
+    v = load(a, &b, &c);
+    if (v == 0) {
+        return 0;
+    }
+    func_800B6548(&g, v[8] == 8, *(u16 *)(v + 4), *(u16 *)(v + 6), b, c);
+    *dl = g;
+    return v;
+}
