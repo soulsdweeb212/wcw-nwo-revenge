@@ -7501,7 +7501,8 @@
    "vram": 2148177424,
    "rom": 351616,
    "asm": "asm/nonmatchings/code_80090000/func_800A9610.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800A9610.c"
   },
   {
    "name": "func_800A973C",
@@ -7518,7 +7519,8 @@
    "vram": 2148177792,
    "rom": 351984,
    "asm": "asm/nonmatchings/code_80090000/func_800A9780.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800A9780.c"
   },
   {
    "name": "func_800A98B4",
@@ -8075,7 +8077,8 @@
    "vram": 2148211248,
    "rom": 385440,
    "asm": "asm/nonmatchings/code_80090000/func_800B1A30.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800B1A30.c"
   },
   {
    "name": "func_800B1B54",
@@ -8099,7 +8102,8 @@
    "vram": 2148212360,
    "rom": 386552,
    "asm": "asm/nonmatchings/code_80090000/func_800B1E88.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800B1E88.c"
   },
   {
    "name": "func_800B1F98",
@@ -8131,7 +8135,8 @@
    "vram": 2148215220,
    "rom": 389412,
    "asm": "asm/nonmatchings/code_80090000/func_800B29B4.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800B29B4.c"
   },
   {
    "name": "func_800B2B18",
@@ -8219,7 +8224,8 @@
    "vram": 2148223180,
    "rom": 397372,
    "asm": "asm/nonmatchings/code_80090000/func_800B48CC.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800B48CC.c"
   },
   {
    "name": "func_800B4A24",
@@ -8294,7 +8300,8 @@
    "vram": 2148225452,
    "rom": 399644,
    "asm": "asm/nonmatchings/code_80090000/func_800B51AC.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800B51AC.c"
   },
   {
    "name": "func_800B5300",
@@ -8334,7 +8341,8 @@
    "vram": 2148228384,
    "rom": 402576,
    "asm": "asm/nonmatchings/code_80090000/func_800B5D20.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800B5D20.c"
   },
   {
    "name": "func_800B5E18",
@@ -8494,7 +8502,8 @@
    "vram": 2148233512,
    "rom": 407704,
    "asm": "asm/nonmatchings/code_80090000/func_800B7128.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800B7128.c"
   },
   {
    "name": "func_800B719C",
@@ -8617,7 +8626,8 @@
    "vram": 2148237116,
    "rom": 411308,
    "asm": "asm/nonmatchings/code_80090000/func_800B7F3C.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800B7F3C.c"
   },
   {
    "name": "func_800B8050",
@@ -8901,7 +8911,8 @@
    "vram": 2148245272,
    "rom": 419464,
    "asm": "asm/nonmatchings/code_80090000/func_800B9F18.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800B9F18.c"
   },
   {
    "name": "func_800BA058",
@@ -8909,7 +8920,8 @@
    "vram": 2148245592,
    "rom": 419784,
    "asm": "asm/nonmatchings/code_80090000/func_800BA058.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800BA058.c"
   },
   {
    "name": "func_800BA1A4",
@@ -8950,7 +8962,8 @@
    "vram": 2148247872,
    "rom": 422064,
    "asm": "asm/nonmatchings/code_80090000/func_800BA940.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800BA940.c"
   },
   {
    "name": "func_800BAA64",
@@ -9072,7 +9085,8 @@
    "vram": 2148250688,
    "rom": 424880,
    "asm": "asm/nonmatchings/code_80090000/func_800BB440.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800BB440.c"
   },
   {
    "name": "func_800BB5A4",
@@ -9080,7 +9094,8 @@
    "vram": 2148251044,
    "rom": 425236,
    "asm": "asm/nonmatchings/code_80090000/func_800BB5A4.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800BB5A4.c"
   },
   {
    "name": "func_800BB6E8",
@@ -9398,7 +9413,8 @@
    "vram": 2148289360,
    "rom": 463552,
    "asm": "asm/nonmatchings/code_80090000/func_800C4B50.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800C4B50.c"
   },
   {
    "name": "func_800C4C78",
@@ -15483,6 +15499,8 @@
   "D_800F9878": 2148505720,
   "D_800F9870": 2148505712,
   "D_8007EF2C": 2148003628,
+  "D_8007E908": 2148002056,
+  "D_800DCFBC_alias": 2148388796,
   "D_800C5D90": 2148294032,
   "D_800C6568": 2148296040,
   "D_800C656C": 2148296044,
