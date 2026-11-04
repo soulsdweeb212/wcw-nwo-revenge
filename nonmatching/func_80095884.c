@@ -153,21 +153,20 @@ void func_80095884(Gfx **arg0, s32 arg1, s32 arg2, s32 arg3)
         PartRec *p = rec;
         t0c = 0;
         do {
-            u32 tq;
             tex = func_800B64EC(gTexTbl, cur);
-            x2 = (p->f4 * 480) / 320;
-            s0c = 0;
-            x3 = ((p->f4 + p->f8) * 480) / 320;
             y1 = p->f6;
             w = 1 << p->f2;
             h = 1 << p->f3;
             s1c = w;
-            y3 = y1 + p->fA;
             y0 = y1;
-            y2 = y3;
+            x2 = (p->f4 * 480) / 320;
             x0 = x2;
-            x1 = x3;
+            s0c = 0;
+            x3 = ((p->f4 + p->f8) * 480) / 320;
+            y3 = y1 + p->fA;
             t1c = h;
+            y2 = y3;
+            x1 = x3;
             switch (gState) {
             case 2: {
                 f32 a, sn;
@@ -200,27 +199,21 @@ void func_80095884(Gfx **arg0, s32 arg1, s32 arg2, s32 arg3)
                 }
                 break;
             case 4: {
-                f32 a, A, B, C, D, E, F;
+                f32 a;
                 a = off * D_344;
                 y1 = -p->fA;
                 x2 = p->f8 >> 1;
                 x3 = -p->f8 / 2;
                 fc = cosf(a);
                 s = sinf(a);
-                A = p->f4 + x2 * fc;
-                D = y1 * s;
-                B = p->f4 + x3 * fc;
-                C = p->f6 + y1 * fc;
-                E = x2 * s;
-                F = x3 * s;
-                x0 = (A - D) * 1.5f;
-                x2 = A * 1.5f;
-                x1 = (B - D) * 1.5f;
-                y0 = C + E;
-                x3 = B * 1.5f;
-                y2 = p->f6 + E;
-                y3 = p->f6 + F;
-                y1 = C + F;
+                x0 = (p->f4 + x2 * fc - y1 * s) * 1.5f;
+                x1 = (p->f4 + x3 * fc - y1 * s) * 1.5f;
+                y0 = p->f6 + y1 * fc + x2 * s;
+                y1 = p->f6 + y1 * fc + x3 * s;
+                y2 = p->f6 + x2 * s;
+                y3 = p->f6 + x3 * s;
+                x2 = (p->f4 + x2 * fc) * 1.5f;
+                x3 = (p->f4 + x3 * fc) * 1.5f;
                 break;
             }
             case 5:
@@ -238,10 +231,6 @@ void func_80095884(Gfx **arg0, s32 arg1, s32 arg2, s32 arg3)
                     G(0x02100006, (alpha & 0xFF) | 0xFFFFFF00);
                 }
                 break;
-            }
-            tq = (u32)x1 & 1;
-            if (tq >> 1) {
-                gBounceV = 0;
             }
             G(0xFA000000, (alpha & 0xFF) | 0xFFFFFF00);
             G(0xFD100000, tex + 0x10 - 0x80000000);
