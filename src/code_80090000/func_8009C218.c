@@ -1,11 +1,17 @@
+/* @header
+ * func_8009C218
+ * VRAM 0x8009C218 | ROM 0x48988 | size 0x2A40
+ * asm: asm/nonmatchings/code_80090000/func_8009C218.s
+ */
 #include "common.h"
 
-/* Near-match (score 14 of 2700 instructions; not a match). Started from m2c output, with display-list stores collapsed into G(a, b).
+/* Matches (dh.py 0; lk.py identical apart from the two jump-table address words). Started from m2c output,
+ * with display-list stores collapsed into G(a, b).
  * Score it against the full 0x2A40 bytes at ROM 0x48988; the repo's .s only lists the first 8 bytes.
- * Jump tables: 17 entries at vram 0x800D60C0 (ROM 0x82830) and 20 at 0x800D6108 (ROM 0x82878).
- * Left: case 2/3 schedules the unkEA load one slot early; case 5 places rs5 = rx + q after the mult and keeps the
- * 300/256 product in v1 (ROM v0); case 8 computes (rt4 + 0x40) into a3 and masks it late (ROM: v1, then andi a3 at once).
- * Placeholders kept only for codegen: `goto end14` in cases 11-14 and the out-of-line `found:` block in case 8. */
+ * Own .rodata: jump tables of 17 entries at vram 0x800D60C0 (ROM 0x82830) and 20 at 0x800D6108 (ROM 0x82878);
+ * doubles D_800D6158/6160/6168.
+ * Placeholders kept only for codegen: `goto end14` in cases 11-14, the out-of-line `found:` block in case 8, and two
+ * `do { } while (0)` blocks (cases 2/3 and 5) whose loop notes act as scheduling barriers. */
 
 typedef struct {
     u16 unk0;
@@ -27,7 +33,7 @@ typedef struct {
     u16 unkEA;
 } Item;
 
-extern u8 D_000C95B8[], D_000C95F0[], D_000C9620[], D_000C9840[], D_800C96D0[], D_800C9840[], D_800C9860[];
+extern u8 D_C95B8[], D_C95F0[], D_C9620[], D_C9840[], D_800C96D0[], D_800C9840[], D_800C9860[];
 extern f64 D_800D6158, D_800D6160, D_800D6168;
 extern s32 D_800DBD60;
 extern s16 D_800E74D2;
@@ -90,11 +96,9 @@ void func_8009C218(Gx **arg0, Item *arg1, s32 arg2) {
     s32 var_v0_6;
     s32 var_v0_7;
     s32 frame;
-    s32 q5;
     s32 var_v1_3;
     s32 var_v1_4;
     s32 var_v1_5;
-    u16 temp_a3;
     u16 temp_v0_19;
     u16 temp_v1_4;
     u16 temp_v1_5;
@@ -128,14 +132,14 @@ void func_8009C218(Gx **arg0, Item *arg1, s32 arg2) {
         case 19:                                    /* switch 1 */
             G(0xFA000000, (((u8 *)&arg1->unkE6)[1] | ~0xFF));
             temp_v1 = arg1->unkDC;
-            temp_a3 = temp_v1->unk8;
-            temp_a1_2 = 0x1E0 - temp_a3;
-            func_8009BBFC(&sp38, (s32) (temp_a1_2 + (temp_a1_2 >> 0x1F)) >> 1, temp_v1->unk6, temp_a3, (s32) temp_v1->unk4);
+            temp_a3_4 = temp_v1->unk8;
+            temp_a1_2 = 0x1E0 - temp_a3_4;
+            func_8009BBFC(&sp38, (s32) (temp_a1_2 + (temp_a1_2 >> 0x1F)) >> 1, temp_v1->unk6, temp_a3_4, (s32) temp_v1->unk4);
             break;
         case 4:                                     /* switch 1 */
             rp = &D_800E74D2;
             if (*rp != 0) {
-                func_8009F800(&sp38, *rp, rp - 6);
+                func_8009F800(&sp38, *rp, rp - 3);
             }
             break;
         case 16:                                    /* switch 1 */
@@ -144,7 +148,7 @@ void func_8009C218(Gx **arg0, Item *arg1, s32 arg2) {
             if (arg1->unkDC->unkA & 0x200) {
                 rs0 = arg1->unkE6;
             }
-            G(0xDE000000, &D_000C9620);
+            G(0xDE000000, &D_C9620);
             if (rs1 == 0x10) {
                 func_80099748(&sp38, 0xFF, 0xFF, 0xFF, rs0);
             } else {
@@ -159,8 +163,8 @@ void func_8009C218(Gx **arg0, Item *arg1, s32 arg2) {
             if (arg1->unkEA != 0) {
                 rs6 = func_800B600C(0x28U, 0);
                 if (rs6 != NULL) {
-                    G(0xDE000000, &D_000C95F0);
-                    G(0xDE000000, &D_000C95B8);
+                    G(0xDE000000, &D_C95F0);
+                    G(0xDE000000, &D_C95B8);
                     G(0xE3001201, 0x2000);
                     func_80091244(&sp38);
                     G(0xFC309661, 0x552EFF7F);
@@ -198,12 +202,12 @@ void func_8009C218(Gx **arg0, Item *arg1, s32 arg2) {
             }
             break;
         case 6:                                     /* switch 2 */
-            G(0xDE000000, &D_000C95F0);
+            G(0xDE000000, &D_C95F0);
             G(0xE3001201, 0x2000);
             func_80091244(&sp38);
             G(0xFB000000, 0xFFFF00FF);
             G(0xFA000000, -1);
-            G(0xDE000000, &D_000C95B8);
+            G(0xDE000000, &D_C95B8);
             temp_v0_2 = func_800B64EC(D_800E81F8, 1);
             G(0xFD500000, (temp_v0_2 - 0x80000000));
             G(0xF5500000, 0x07018060);
@@ -243,8 +247,8 @@ void func_8009C218(Gx **arg0, Item *arg1, s32 arg2) {
             }
             break;
         case 15:                                    /* switch 2 */
-            G(0xDE000000, &D_000C95F0);
-            G(0xDE000000, &D_000C95B8);
+            G(0xDE000000, &D_C95F0);
+            G(0xDE000000, &D_C95B8);
             G(0x02100000, 0xFF0040);
             G(0x02100002, 0xCF7F40);
             G(0x02100004, 0x7FCF40);
@@ -257,7 +261,7 @@ void func_8009C218(Gx **arg0, Item *arg1, s32 arg2) {
                 G(0xFA000000, -1);
                 G(0xE3001201, 0x2000);
                 G(0xE3001001, 0xC000);
-                G(0xFD100000, &D_000C9840);
+                G(0xFD100000, &D_C9840);
                 G(0xE8000000, 0);
                 G(0xF5000100, 0x07000000);
                 G(0xE6000000, 0);
@@ -338,7 +342,7 @@ void func_8009C218(Gx **arg0, Item *arg1, s32 arg2) {
             }
             rs6 = func_800B600C(arg1->unkDC->unk0, 0);
             if (rs6 != NULL) {
-                G(0xDE000000, &D_000C95F0);
+                G(0xDE000000, &D_C95F0);
                 G(0xFC309661, 0x552EFF7F);
                 G(0xFB000000, 0);
                 G(0xE3001001, 0xC000);
@@ -400,11 +404,13 @@ end14:
                 }
                 rt9 = func_800B64EC(rd, ra);
                 rt9 += 0x10;
-                if (arg1->unkEA == 0x10) {
-                    func_8000DEE4(0x40B);
-                }
+                do { /* placeholder: keeps the unkEA load after rt9 += 0x10 */
+                    if (arg1->unkEA == 0x10) {
+                        func_8000DEE4(0x40B);
+                    }
+                } while (0);
                 if ((u16) arg1->unkEA < 0x21U) {
-                    G(0xDE000000, &D_000C95F0);
+                    G(0xDE000000, &D_C95F0);
                     rs0 = (0x20 - arg1->unkEA) * 8;
                     G(0xFA000000, rs0 & 0xFF);
                     G(0xFD100000, (rt9 - 0x80000000));
@@ -430,7 +436,7 @@ end14:
                     }
                     temp_a1_5 = arg1->unkE2;
                     sp4C = (var_v0_6 >> 8) + temp_a1_5;
-                    G(0xDE000000, &D_000C95F0);
+                    G(0xDE000000, &D_C95F0);
                     G(0xE3001201, 0x2000);
                     func_80091244(&sp38);
                     G(0xFB000000, 0xFF0000FF);
@@ -438,7 +444,7 @@ end14:
                     if ((u16) arg1->unkEA >= 0x1EU) {
                         arg1->unkEA = 0xAU;
                     }
-                    G(0xDE000000, &D_000C95B8);
+                    G(0xDE000000, &D_C95B8);
                     G(0xE7000000, NULL);
                     G(0xFD500000, (func_800B64EC(rs6, arg1->unkEA - 1) - 0x80000000));
                     G(0xF5500000, (u8 *)0x07000000);
@@ -523,25 +529,20 @@ end14:
                         frame = var_a3;
                         rs0 = 0xFF;
                     }
-                    G(0xDE000000, &D_000C95F0);
+                    G(0xDE000000, &D_C95F0);
                     G(0xE3001201, 0x2000);
                     func_80091244(&sp38);
                     G(0xFA000000, (u8 *) ((rs0 & 0xFF) | 0xFFFF0000));
                     ra = arg1->unkE4;
                     var_v1_5 = ra * 0xC8;
-                    q5 = var_v1_5;
-                    if (var_v1_5 < 0) {
-                        q5 = var_v1_5 + 0xFF;
-                    }
-                    var_a3 = q5 >> 8;
+                    do { /* placeholder: keeps rs5 = rx + var_a3 ahead of the /480 multiply */
+                        var_a3 = var_v1_5 / 256;
+                    } while (0);
                     rs5 = rx + var_a3;
                     rs2 = sp4C - var_a3 * 0x140 / 480;
                     rs3 = ra * 0x64 / 256;
                     var_v1_5 = ra * 0x12C;
-                    if (var_v1_5 < 0) {
-                        var_v1_5 += 0xFF;
-                    }
-                    rs4 = (var_v1_5 >> 8) * 0x140 / 480;
+                    rs4 = var_v1_5 / 256 * 0x140 / 480;
                     G(0xFB000000, -0x7F01);
                     G(0xFD500000, (func_800B64EC(rs6, frame + 0x1D) - 0x80000000));
                     G(0xF5500000, 0x07000000);
@@ -569,7 +570,7 @@ end14:
             temp_v0_22 = func_800B64EC(D_800E81F8, 0);
             rt9 = temp_v0_22 + 0x10;
             rs6 = temp_v0_22 + 0x30;
-            G(0xDE000000, &D_000C9620);
+            G(0xDE000000, &D_C9620);
             G(0xFD100000, (rt9 - 0x80000000));
             G(0xE8000000, 0);
             G(0xF5000100, 0x07000000);
@@ -594,8 +595,8 @@ end14:
         case 8:                                     /* switch 2 */
             temp_v0_23 = func_800B64EC(D_800E81F8, 0);
             rt9 = temp_v0_23 + 0x10;
-            G(0xDE000000, &D_000C95B8);
-            G(0xDE000000, &D_000C95F0);
+            G(0xDE000000, &D_C95B8);
+            G(0xDE000000, &D_C95F0);
             G(0xFCFFFFFF, 0xFFFCF87C);
             rs6 = temp_v0_23 + 0x30;
             if (!(arg1->unkEA & 0x100)) {
@@ -626,11 +627,10 @@ end14:
                 G(0x02180006, (temp_v0_24 | 0x260));
                 temp_a2_9 = rt4 << 0x15;
                 G(0x02140000, temp_a2_9);
-                temp_a3_4 = rt4 + 0x40;
-                G(0x02140002, temp_a3_4 << 0x15);
+                G(0x02140002, (rt4 + 0x40) << 0x15);
                 G(0x02140004, temp_a2_9 | 0x400);
-                G(0x02140006, (temp_a3_4 << 0x15) | 0x400);
-                temp_a3_4 &= 0x7F;
+                G(0x02140006, ((rt4 + 0x40) << 0x15) | 0x400);
+                temp_a3_4 = (rt4 + 0x40) & 0x7F;
                 G(0x07000206, 0x604);
                 G(0xFCFFFFFF, 0xFFFCF279);
                 temp_v0_26 = func_800B64EC(D_800E81F8, 1);

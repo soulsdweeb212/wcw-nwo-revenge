@@ -27,14 +27,7 @@ Two overlays can hold different things at one address. When an old name was alre
 
 ## Why each remaining function is not matched
 
-### 1. Largest function, complete draft
-| function | size | what happens |
-|---|---|---|
-| `func_8009C218` | 0x2A40 | `func_8009C218.c` here scores 14 of 2,700 instructions (2026-11-04, was 513) with the ROM's 296-byte frame. Left: case 2/3 one insn a slot early (1); case 5 `rs5 = rx + q` after the multiply and the x0x12C product in v1 instead of v0 (6); case 8 `rt4 + 0x40` in a3 and masked late (6). Two `goto`s are layout placeholders (flagged in the file). What got it there: in case 8's else branch read `unkEA & 0x1F` before the first G() and write coordinates inline (about 115); variable identity drives registers (a temp must be assigned more than once to stay in a3); the copy-form `/256` needs the product variable reused later; case 5's frame index is its own variable. Jump tables 0x800D60C0 (17) and 0x800D6108 (20); doubles D_800D6158/6160/6168. |
-
-
-
-### 2. Complete C, a few instructions off (scheduler or register differences)
+### 1. Complete C, a few instructions off (scheduler or register differences)
 These have the whole function written and the same structure as the ROM. What differs is how GCC ordered a few instructions
 or numbered registers. Each is a search problem. "Draft" is the count for the C in this folder; "search" is the best count the
 permuter reached (hundreds of thousands of variants in total) with rewritten code that is full of dummy locals and wrong
@@ -48,7 +41,7 @@ types, so it is not kept, only the number.
 | `func_8000C91C` | 0x3FC | 45 | 23 | The first loop's counter and the later `i` are one variable; with that the dummy `tq` block is unnecessary and only 2 opcodes differ. The rest is allocator priority: `arg2` lands in `s2` where the ROM has `t8`, which renumbers the pointers the loops hoist. |
 | `func_80095884` | 0xE28 | 2 | 2 | (2026-11-04) Only `lhu t1,4(s3)` (p->fA) is placed after p->f6 where the ROM loads it right after p->f3. Case 4 writes each rotated corner as its own expression (temporaries swapped every FP register pair); the loop prelude order is `y1, w, h, s1c, y0, x2, x0, s0c, x3, y3, t1c, y2, x1`. About 6,000 prelude orders and a 5-minute permuter run stayed at 2; reading fA into a local is far worse. |
 
-### 3. Draft incomplete: needs more decoding from the ROM
+### 2. Draft incomplete: needs more decoding from the ROM
 | function | size | how much exists | what is missing |
 |---|---|---|---|
 | `func_8009773C` | 0x6E0 | 131 | 60 | The score went up but the structure is far closer: the frame, `$fp` for `cols`, the hoisting and the instruction count (420) all match, and most of the 131 is register numbers. It uses `gSPModifyVertex`-style macros. The dump shows `(t << 21) >> 16` hoists whenever lifetime x savings is large (`life 3, savings 2` still moves), so each is set twice with `lo \|= hi1`, as the ROM's `or v1,v1,a2` does, in separate variables for `t` and `t1`. Left: the scheduler puts the shifts before the stores where the ROM mixes them. |
