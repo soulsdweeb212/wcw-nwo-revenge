@@ -1,3 +1,8 @@
+/* @header
+ * func_80095884
+ * VRAM 0x80095884 | ROM 0x41FF4 | size 0xE28
+ * asm: asm/nonmatchings/code_80090000/func_80095884.s
+ */
 #include "common.h"
 
 typedef struct { u32 w0, w1; } Gfx;
@@ -163,6 +168,9 @@ void func_80095884(Gfx **arg0, s32 arg1, s32 arg2, s32 arg3)
             x0 = x2;
             s0c = 0;
             x3 = ((p->f4 + p->f8) * 480) / 320;
+            /* Redundant cast: combine folds it to a no-op move y1 = y1 that reaches
+             * sched1 and fills one slot, so the p->fA load lands after the s1c spill. */
+            y1 = (s16)y1;
             y3 = y1 + p->fA;
             t1c = h;
             y2 = y3;
