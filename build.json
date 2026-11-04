@@ -6753,7 +6753,11 @@
    "seg": "code_80090000",
    "vram": 2148103996,
    "rom": 278188,
-   "asm": "asm/nonmatchings/code_80090000/func_8009773C.s"
+   "asm": "asm/nonmatchings/code_80090000/func_8009773C.s",
+   "c": "src/code_80090000/func_8009773C.c",
+   "own": {
+    ".rodata": 2148360312
+   }
   },
   {
    "name": "func_80097E1C",
@@ -9452,7 +9456,8 @@
    "vram": 2148277028,
    "rom": 451220,
    "asm": "asm/nonmatchings/code_80090000/func_800C1B24.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800C1B24.c"
   },
   {
    "name": "func_800C1C4C",

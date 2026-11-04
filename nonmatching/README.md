@@ -41,11 +41,6 @@ types, so it is not kept, only the number.
 | `func_8000C91C` | 0x3FC | 45 | 23 | The first loop's counter and the later `i` are one variable; with that the dummy `tq` block is unnecessary and only 2 opcodes differ. The rest is allocator priority: `arg2` lands in `s2` where the ROM has `t8`, which renumbers the pointers the loops hoist. |
 | `func_80095884` | 0xE28 | 2 | 2 | (2026-11-04) Only `lhu t1,4(s3)` (p->fA) is placed after p->f6 where the ROM loads it right after p->f3. Case 4 writes each rotated corner as its own expression (temporaries swapped every FP register pair); the loop prelude order is `y1, w, h, s1c, y0, x2, x0, s0c, x3, y3, t1c, y2, x1`. About 6,000 prelude orders and a 5-minute permuter run stayed at 2; reading fA into a local is far worse. |
 
-### 2. Draft incomplete: needs more decoding from the ROM
-| function | size | how much exists | what is missing |
-|---|---|---|---|
-| `func_8009773C` | 0x6E0 | 131 | 60 | The score went up but the structure is far closer: the frame, `$fp` for `cols`, the hoisting and the instruction count (420) all match, and most of the 131 is register numbers. It uses `gSPModifyVertex`-style macros. The dump shows `(t << 21) >> 16` hoists whenever lifetime x savings is large (`life 3, savings 2` still moves), so each is set twice with `lo \|= hi1`, as the ROM's `or v1,v1,a2` does, in separate variables for `t` and `t1`. Left: the scheduler puts the shifts before the stores where the ROM mixes them. |
-
 ## Findings that apply to several functions
 - A `beql` can need a branch that later disappears. In `func_800A83DC`, `if (x) { if (b) { y = 0x5A; } else { y = 0x5A; } } else { y = 0x3C; }` reads `v0` on the fall-through path during the delay-slot pass, so the slot is annulled; the identical arms are then merged away. The inner test must not use `x` itself (score 1-3). The permuter found this; `tools/reduce_match.py` left noise, but the one odd `if` was the whole answer.
 - An inlined function is worth writing as one, with its real signature. Check `src/` for a matched function with the same shape first. A helper's parameter copies add insns during register allocation that vanish later, and that one step of lifetime can flip every register choice: writing `func_800A7C40` as an inline took `func_800A83DC` from 29 to 1.
