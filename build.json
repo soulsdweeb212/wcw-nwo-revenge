@@ -7355,7 +7355,8 @@
    "vram": 2148166436,
    "rom": 340628,
    "asm": "asm/nonmatchings/code_80090000/func_800A6B24.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800A6B24.c"
   },
   {
    "name": "func_800A7130",
@@ -8863,7 +8864,8 @@
    "vram": 2148240460,
    "rom": 414652,
    "asm": "asm/nonmatchings/code_80090000/func_800B8C4C.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800B8C4C.c"
   },
   {
    "name": "func_800B9228",
@@ -9069,7 +9071,8 @@
    "vram": 2148245924,
    "rom": 420116,
    "asm": "asm/nonmatchings/code_80090000/func_800BA1A4.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800BA1A4.c"
   },
   {
    "name": "func_800BA4B4",
@@ -9483,7 +9486,8 @@
    "vram": 2148279152,
    "rom": 453344,
    "asm": "asm/nonmatchings/code_80090000/func_800C2370.s",
-   "own": {}
+   "own": {},
+   "c": "src/code_80090000/func_800C2370.c"
   },
   {
    "name": "func_800C2704",
