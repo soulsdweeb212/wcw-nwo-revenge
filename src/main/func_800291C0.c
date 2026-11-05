@@ -1,3 +1,8 @@
+/* @header
+ * func_800291C0
+ * VRAM 0x800291C0 | ROM 0x29DC0 | size 0x3F4
+ * asm: asm/nonmatchings/main/func_800291C0.s
+ */
 #include "common.h"
 
 extern u8 asciiCharTable[];
@@ -5,8 +10,22 @@ extern u8 D_80038B40[];
 extern u8 D_80038DD0[];
 extern u8 D_80038DF0[];
 extern u8 *D_80064AD0;
-extern u8 *D_80064AD4;
+extern s32 *D_80064AD4;
 extern u8 D_80064AD8;
+
+static inline s32 charIndex(u8 c, s32 flag) {
+    u8 *tbl = asciiCharTable;
+    s32 i = 0;
+    if (flag & 0x8000)
+        tbl = D_80038B40;
+    do {
+        if (*tbl == c)
+            return i;
+        tbl++;
+        i++;
+    } while (*tbl != 0);
+    return 0;
+}
 
 #define PLOT(dst, x) { \
     s32 c = (x); \
@@ -22,41 +41,22 @@ extern u8 D_80064AD8;
 
 s32 func_800291C0(u8 *str, u8 *dst, s32 base, s32 pitch, s32 mult, u32 flags)
 {
-    u8 *tbl;
-    s32 i;
-    u8 ch;
     s32 off;
     u8 *t2;
     s32 t7, t6, t3, t1, t0;
     u8 *row;
     u32 bits;
 
-    tbl = asciiCharTable;
-    ch = *str;
-    i = 0;
-    if (flags & 0x8000) {
-        tbl = D_80038B40;
-    }
-    do {
-        if (*tbl == ch) goto found;
-        tbl++;
-        i++;
-    } while (*tbl != 0);
-    i = 0;
-found:
-    off = i * 2;
+    off = charIndex(*str, flags) * 2;
     if (off >= 0) {
-        t0 = off;
-        if (flags & 0x8000) {
-            t2 = D_80064AD4 + (i * 16 + off) * 4;
-        } else {
-            t2 = D_80064AD0 + (i * 32 - t0);
-        }
+        if (flags & 0x8000)
+            t2 = (u8 *)&D_80064AD4[off * 9];
+        else
+            t2 = D_80064AD0 + off * 15;
     } else {
         t2 = D_80038DD0;
-        if (flags & 0x8000) {
+        if (flags & 0x8000)
             t2 = D_80038DF0;
-        }
     }
     if (t2 == 0) {
         return 4;

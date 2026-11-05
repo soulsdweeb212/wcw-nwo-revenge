@@ -1,7 +1,7 @@
 # Functions that still do not match
 
-`src/` holds C that builds to the exact original bytes. This folder holds the closest C we have for every function that
-does **not** yet, plus why. `build.py` ignores it (it only compiles `src/`); move a file to `src/<segment>/<name>.c` and add
+`src/` holds C that builds to the exact original bytes. This folder holds the closest C we have for any function that
+does **not** yet, plus why (none at the moment). `build.py` ignores it (it only compiles `src/`); move a file to `src/<segment>/<name>.c` and add
 `"c"` (and, for jump tables or constants, `"own"`) to its `build.json` entry only when `build.py` says *identical* and
 `python3 tools/check_rodata.py` still reports 0 not found. `STATUS.md` is the generated list (`python3 tools/list_nonmatching.py --md`).
 
@@ -25,22 +25,26 @@ The game's overlay table is at ROM 0x37A30 (vram 0x80036E30). There are two over
 
 Two overlays can hold different things at one address. When an old name was already taken, the new function has `_ovl1` or `_ovl2` on the end (four so far, such as `func_800A1550_ovl1`). The names of overlay 1's data used to be overlay 2 function names; they are `D_` addresses now. An address at or above 0x80090000 in C belongs to the overlay of the file using it. `tools/ghidra.py new` should stay at 0.
 
-## Why each remaining function is not matched
+## The last four (matched 2026-11-05)
+Every function matches now, so this folder holds no drafts. These four were the last, each stuck for days at a few
+instructions with permuter runs that could not finish them. What each needed:
 
-### 1. Complete C, a few instructions off (scheduler or register differences)
-These have the whole function written and the same structure as the ROM. What differs is how GCC ordered a few instructions
-or numbered registers. Each is a search problem. "Draft" is the count for the C in this folder; "search" is the best count the
-permuter reached (hundreds of thousands of variants in total) with rewritten code that is full of dummy locals and wrong
-types, so it is not kept, only the number.
+| function | stuck at | what matched it |
+|---|---|---|
+| `func_80006178` | 9 | Rewritten with the real libultra `gbi.h` macros (`gDPLoadTextureTile`, `gDPLoadTextureTile_4b`, `gSPTextureRectangle` written out, defined at the top of the file because `common.h` has none) instead of raw command words. The `0.5` is a literal double, so the function owns its `.rodata` at 0x8003B120. Two non-obvious shapes: `rx <<= 2; ry <<= 2;` before the rectangle, and the clamps compare against `(u32)` values, which the ROM's `sltu` needs. |
+| `func_8000C91C` | 45 | The entry lookup is a static inline with its real signature, `getEntry(u32 id, s16 n)` returning `D_80032B44[bank][idx][n]`. `arg5`/`arg6` are copied into `s16` locals `first`/`second` before the `arg3` clamp, `arg1` is `u16`, and `D_80075440` is an `s16[][3]` table. That fixed the allocator priorities that put `arg2` in `s2`. |
+| `func_80012CD0` | 8 | The else branch gets its own block-local `u8 *m2`, assigned once (`m2 = obj + 0x1C;` after the `func_800056CC` call), and calls `func_80007E04(m2, x, y, z)` itself; the if branch keeps `m`. Set once, the pointer counts as a register birth in the first scheduling pass, which gives the ROM's order (`y - py` before `z - pz`); the two `func_80007E04` tails are still cross-jumped into one. |
+| `func_800291C0` | 6 | `charIndex(u8 c, s32 flag)` is copied word for word as a static inline from the matched sibling `func_80028E28`, and the glyph pointer is chosen the way that sibling's glyphData does it (`rec = (u8 *)&D_80064AD4[n * 9]` / `D_80064AD0 + n * 15`), with `D_80064AD4` as `s32 *`. The function owns its `.rodata` at 0x8003B9F0 (two jump tables). |
 
-| function | size | draft | search | what differs |
-|---|---|---|---|---|
-| `func_80012CD0` | 0x3C8 | 8 | - | in the `mode >= 11` branch the ROM computes `y - py` before `z - pz`; ours does the stack argument first. The draft is now a plain `z - pz` with the right instruction count. Temporaries in any order, and `px`/`py`/`pz` as an array or struct, give the same output. Also tried: a pointer to the entry, locals for `x`/`y`/`z`, storing the differences in `px`/`py`/`pz` or an array (8-68). The search reached 7. From the RTL dumps: `x - px` and `y - py` merge straight into `a2`/`a3`, and `z` goes through a pseudo to the stack slot. `-(pz - z)` had the right order, so `z` needs one extra step that vanishes after scheduling. Not it: `-ffast-math` (8), inline wrappers (8-21), `register` temporaries (8). The sched dump shows the cause: the `y` and `z` subtractions tie at priority 3 and the tie goes by original insn order, and `y` is late because it merges into `a3` next to the call. Reusing a variable blocks that merge, but none of 27 per-argument forms gives the ROM's order (8-26). |
-| `func_800291C0` | 0x3F4 | 6 | 2 | jump table. `off` lives in `a0` in the ROM and is copied to `t0` for its use in only one of the two glyph-size branches; ours keeps it in `v0`. The two uses are written as shifts in the source: plain `i * 72` / `i * 30` expand differently (score 13-31). Variants that keep `off` alive past the copy make both branches use `a0` (13). The search's 2 is mangled and leaves out the `move t0,a0`. Also tried: unsigned `i`, `break` and `for (;;)` search loops, and one variable for `ch` and `off` (6-24). Typed pointers (`u32 *` + `i * 18`, `[18]` rows) fold back to `i * 72` (31), so the shifts are written by hand. By the CSE rule a copy that is canonical in one branch is canonical in both, so the source must be something other than a plain `t0 = off`. |
-| `func_80006178` | 0x594 | 9 | 7 | the placement of one `lw` and the order of two float operations. The odd `c = 0xF5080000` variable is needed: the dump shows it stops a constant group being hoisted, which removing it does (69). |
-| `func_8000C91C` | 0x3FC | 45 | 23 | The first loop's counter and the later `i` are one variable; with that the dummy `tq` block is unnecessary and only 2 opcodes differ. The rest is allocator priority: `arg2` lands in `s2` where the ROM has `t8`, which renumbers the pointers the loops hoist. |
+The lesson repeats the findings below: for a stuck function, look for a matched sibling that touches the same globals and
+copy its helpers and types exactly, before trying to reorder the instructions in the one function.
 
 ## Findings that apply to several functions
+- A dead initialiser can separate two GCC decisions. In loop.c a user variable is movable only if its first mention is the
+  set being hoisted, so `u32 c = 0;` at function scope (dead) keeps a later `c = 0xF5080000` inside the loop; flow then deletes
+  the dead init, so the first scheduling pass still sees one set and gives it the "birthing" priority (sched.c adjust_priority,
+  ties broken by insn order). That fixed both remaining differences in an alternative `func_80006178` match (worker A,
+  2026-11-05); the installed version uses gbi.h macros instead and needs no such variable.
 - A `beql` can need a branch that later disappears. In `func_800A83DC`, `if (x) { if (b) { y = 0x5A; } else { y = 0x5A; } } else { y = 0x3C; }` reads `v0` on the fall-through path during the delay-slot pass, so the slot is annulled; the identical arms are then merged away. The inner test must not use `x` itself (score 1-3). The permuter found this; `tools/reduce_match.py` left noise, but the one odd `if` was the whole answer.
 - An inlined function is worth writing as one, with its real signature. Check `src/` for a matched function with the same shape first. A helper's parameter copies add insns during register allocation that vanish later, and that one step of lifetime can flip every register choice: writing `func_800A7C40` as an inline took `func_800A83DC` from 29 to 1.
 - Local-alloc orders values by `floor_log2(refs) * refs / life`. When two register chains are swapped, count both from the `.lreg` dump: the result shows how many insns of lifetime are missing.

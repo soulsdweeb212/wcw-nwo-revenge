@@ -1,9 +1,9 @@
 # WCW / nWo  REVENGE (decompilation)
 
 A matching decompilation of WCW / nWo  REVENGE for the Nintendo 64, started with [decompdecomp](https://github.com/n-delic/decompdecomp).
-1692 of 1696 functions build as C objects (99.8%, 99.4% of the code by size). 35 of those are hand-written assembly routines wrapped
-in a top-level `asm()` block (see below), so 1657 are real C that compiles to exactly the original code. The other 4 are still plain
-assembly, all in the main program, and each has a draft in `nonmatching/`. Overlays 1 and 2 are fully matched.
+All 1696 functions build as C objects (100% of the code by size): the main program and both overlays are fully matched. 35 of
+those are hand-written assembly routines wrapped in a top-level `asm()` block (see below), so 1661 are real C that compiles to
+exactly the original code.
 `build.py` rebuilds the game from this tree and checks it against your original, byte for byte.
 <!-- Working with this project's owner: read notes/MasterIndex.md first and keep it updated (local only, gitignored). -->
 
@@ -74,7 +74,10 @@ share it.
   `symbol_addrs.txt` and `build.json`. Rerun it after renaming a function; it updates the blocks in place.
 - `tools/asm_to_c.py FUNC...` wraps a function's assembly in an `asm()` block so it builds as a C object.
 - `tools/ghidra.py` uses decompdecomp's Ghidra (needs a JDK). `import` analyses the ROM once into `build/ghidra/`; then `decomp FUNC` prints its C, `unmatched` writes C for every function that is still assembly, `new` lists functions missing from `build.json`, `search` finds instruction sequences (one regex per instruction, `;` between them) and `bytes` finds raw words anywhere in the ROM.
-- `nonmatching/` holds near-miss drafts that `build.py` does not compile (see its README for how far off each is).
+- `tools/indent_c.py [--check] [--diff] [paths...]` re-indents C files (all of `src/` by default) with 4 spaces per level. It changes
+  only leading whitespace, so the build stays identical; its docstring lists the style rules.
+- `nonmatching/` is where near-miss drafts go (`build.py` does not compile it). It is empty now that every function matches; its
+  README keeps the matching findings collected along the way.
 - A source file can hold several consecutive functions: give each the same `"c"` in `build.json`; the object is placed once,
   at the first function's address. Needed when the original was compiled as one unit (`func_800D36E8.c` holds
   `func_800D36E8`, `func_800D371C` and `func_800D3744`: standalone, the assembler pads the first `mul.s` of
@@ -99,10 +102,9 @@ OFFSET...` maps code offsets to source lines). It can't invent a label inside th
 those take a manual edit, using the ROM's instructions at the target address to find the statement it starts. Rebuild after each
 change; the ROM must stay identical.
 
-### Still assembly, with a reason
-4 functions are not matched yet: `func_80006178`, `func_8000C91C`, `func_80012CD0` and `func_800291C0`, all in the main
-program. Each has a draft; `nonmatching/README.md` explains what blocks it and `nonmatching/STATUS.md` lists them. Their
-structure is known; what is left is instruction order, registers, or decoding the largest ones.
+### Still assembly
+No function is left as plain assembly. The last four (`func_80006178`, `func_8000C91C`, `func_80012CD0` and `func_800291C0`,
+all in the main program) were matched on 2026-11-05; `nonmatching/README.md` says what each one needed.
 
 ### Earlier attempts (`progress/`)
 If you have the `progress/` folder decompdecomp saved next to this tree, `progress/src/<function>.c` holds C that its judge

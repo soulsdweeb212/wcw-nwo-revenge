@@ -1,3 +1,8 @@
+/* @header
+ * func_80012CD0
+ * VRAM 0x80012CD0 | ROM 0x138D0 | size 0x3C8
+ * asm: asm/nonmatchings/main/func_80012CD0.s
+ */
 #include "common.h"
 
 typedef struct {
@@ -50,13 +55,17 @@ void func_80012CD0(void) {
                 m = obj + 0x1C;
                 func_80007E14(rot, D_8007E010[i].rw * scale);
                 multiplyMatrix4x4(mtx, rot, m);
+                func_80007E04(m, D_8007E010[i].x, D_8007E010[i].y, D_8007E010[i].z);
             } else {
+                /* own matrix pointer: set once, so sched1 treats it as a reg birth; the two
+                   func_80007E04 tails are cross-jumped into one */
+                u8 *m2;
                 func_80011764(i);
                 func_800056CC(&px, &py, &pz);
-                m = obj + 0x1C;
-                func_8001A490(m, 0.0f, D_8007E010[i].x - px, D_8007E010[i].y - py, D_8007E010[i].z - pz);
+                m2 = obj + 0x1C;
+                func_8001A490(m2, 0.0f, D_8007E010[i].x - px, D_8007E010[i].y - py, D_8007E010[i].z - pz);
+                func_80007E04(m2, D_8007E010[i].x, D_8007E010[i].y, D_8007E010[i].z);
             }
-            func_80007E04(m, D_8007E010[i].x, D_8007E010[i].y, D_8007E010[i].z);
             func_80001DC4(obj);
             func_8001B3EC(obj + 0x5C, zero, zero, zero, &D_8007E010[i].v30[0], &D_8007E010[i].v30[1], &D_8007E010[i].v30[2]);
             if (D_8007E010[i].e13 != -1) {
