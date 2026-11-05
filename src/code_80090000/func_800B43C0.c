@@ -99,7 +99,7 @@ s32 func_800B43C0(void) {
             }
             func_800B3BCC(i, D_8007EF30[5] & 8);
         }
-    next:
+next:
         if (s >= 0) {
             func_8000DEE4(s);
         }

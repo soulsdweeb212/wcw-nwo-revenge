@@ -37,7 +37,7 @@ void func_8000E724(s16 arg0) {
         entry = &D_80075458;
         reloadIdx = 0;
         do { tableEnd = entry + 0x13; } while (0);
-    loop:
+loop:
         {
             u8 value = *entry;
             u8 count = value & 0x7f;

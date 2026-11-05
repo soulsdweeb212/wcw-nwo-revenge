@@ -120,10 +120,10 @@ void func_80096210(void) {
         D_800E92B8.node->flags &= ~0x80;
         if (func_80091748(&D_800E91D8, &D_800E9398[D_800E9448], &D_800E92B8, &D_800E93F0[D_800E9448], D_800E944A) == 0) {
             switch (D_800E944A) {
-                case 6:
-                case 0x4E:
-                    func_8000DEE4(D_800E2B78[D_800E9448]);
-                    break;
+            case 6:
+            case 0x4E:
+                func_8000DEE4(D_800E2B78[D_800E9448]);
+                break;
             }
             D_800E944A++;
         } else {

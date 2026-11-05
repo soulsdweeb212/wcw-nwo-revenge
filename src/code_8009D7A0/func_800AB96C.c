@@ -31,13 +31,13 @@ void func_800AB96C(void) {
         if (*(u64 *)(D_800FAF58 + 0x20) & 0x80000ULL) goto two;
         if (!func_800D4198(*(s16 *)(D_800FABD0 + 0x12))) goto ada;
         if (func_800D4198(*(s16 *)(D_800FABD0 + 0x24) < 0x28 ? 0x2EE : 0x1F4)) {
-        two:
+two:
             func_800AD958(2); return;
         }
         if (func_800D4198(500)) { func_800AD958(6); return; }
         if (func_800D4198(500)) { func_800AD958(3); return; }
         func_800AD958(1); return;
-    ada:
+ada:
         func_800ADA38(D_800E35B4);
     }
 }

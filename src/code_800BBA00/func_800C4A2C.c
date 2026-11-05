@@ -52,7 +52,7 @@ void func_800C4A2C(void) {
             if ((queued << 24) == 0)
                 return;
         }
-    inc:
+inc:
         F(D_800FAF5C, s16, 0xC) = (s16)((u16)F(D_800FAF5C, s16, 0xC) + 1);
         return;
     case 2:

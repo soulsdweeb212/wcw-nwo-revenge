@@ -22,7 +22,7 @@ void func_800C357C(u8 *entity, s16 mode, s8 *outTargets) {
         if (*(s32*)(entity+0x2C) & 4) { skipMask = 0x603000000080ULL; matchMask = 0x100000ULL; v = -1; }
         else if (*(s32*)(entity+0x2C) & 0x10) { skipMask = 0x3000000180ULL; matchMask = 0xFFFFFFFFULL; v = -1; }
         else { if (*(u64*)(entity+0x20) & 0x40) skipMask = 0x3000000100ULL; else skipMask = 0x3000000000ULL;
-               matchMask = 0xFFFFFFFFULL; v = 0x46; }
+            matchMask = 0xFFFFFFFFULL; v = 0x46; }
         break;
     case 1: case 3: case 10: case 13: case 21: skipMask = 0x5000400000ULL; matchMask = 0xFFFFFFFFULL; v = -1; break;
     case 5: case 8: case 9: case 12:

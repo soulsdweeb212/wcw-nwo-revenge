@@ -22,24 +22,24 @@ extern s32 D_8006E1A8[];
  * generated. Otherwise fills `task` from the command list at D_8006E1A8[D_80036F3C]
  * (the buffer flips every task via D_80036F3C ^= 1) and posts it on the audio queue. */
 s32 createAudioTask(AudioTask *task,AudioTask *previous) {
- s32 generated;
- s32 commandEnd,physical;
- u32 sampleCount;
- if(func_80020A90()==0x80000000U) {D_80036F48=1;return 0;}
- func_80017408();
- sampleCount=func_80020A80()>>2;
- physical=func_8001CE80(task->buffer);
- if(previous) func_80020AA0(previous->buffer,previous->count*4);
- if(sampleCount>=0x109 && D_80036F48) {D_80036F48=0;task->count=D_8006252C;}
- else {D_80036F48=1;task->count=D_80062530;}
- commandEnd=writeAudioStreamBuffer(D_8006E1A8[D_80036F3C],&generated,physical,task->count);
- if(!generated) return 0;
- task->queue=(u8*)D_8006E1A8+0x200;
- task->message=task->data;
- task->f8=0;task->f10=2;
- task->commands=D_8006E1A8[D_80036F3C];
- task->bytes=((commandEnd-D_8006E1A8[D_80036F3C])>>3)*8;
- func_8001CAC0(func_80000E00(D_80062558),&task->f8,1);
- D_80036F3C^=1;
- return 1;
+    s32 generated;
+    s32 commandEnd,physical;
+    u32 sampleCount;
+    if(func_80020A90()==0x80000000U) {D_80036F48=1;return 0;}
+    func_80017408();
+    sampleCount=func_80020A80()>>2;
+    physical=func_8001CE80(task->buffer);
+    if(previous) func_80020AA0(previous->buffer,previous->count*4);
+    if(sampleCount>=0x109 && D_80036F48) {D_80036F48=0;task->count=D_8006252C;}
+    else {D_80036F48=1;task->count=D_80062530;}
+    commandEnd=writeAudioStreamBuffer(D_8006E1A8[D_80036F3C],&generated,physical,task->count);
+    if(!generated) return 0;
+    task->queue=(u8*)D_8006E1A8+0x200;
+    task->message=task->data;
+    task->f8=0;task->f10=2;
+    task->commands=D_8006E1A8[D_80036F3C];
+    task->bytes=((commandEnd-D_8006E1A8[D_80036F3C])>>3)*8;
+    func_8001CAC0(func_80000E00(D_80062558),&task->f8,1);
+    D_80036F3C^=1;
+    return 1;
 }

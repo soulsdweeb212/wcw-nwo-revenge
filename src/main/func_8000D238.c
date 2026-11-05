@@ -15,11 +15,11 @@ extern u8 D_800662D0[];
  * the entity's D_800662D0 word is zero, and copies the parts whose D_80030894
  * flag is set into D_800517E8 (others forced to 0x80). */
 void func_8000D238(s16 arg0, s8 arg1) {
- u32 i;
- for(i=1;i<23;i++) D_800651B8[arg0][i].value=arg1;
- if(*(s32 *)(D_800662D0+arg0*0x13C4)==0) D_800662E8[arg0*0x13C4]=0x80;
- for(i=1;i<20;i++) {
-  if(D_80030894[i]) D_800517E8[arg0][i].value=D_800651B8[arg0][i].value;
-  else D_800517E8[arg0][i].value=0x80;
- }
+    u32 i;
+    for(i=1;i<23;i++) D_800651B8[arg0][i].value=arg1;
+    if(*(s32 *)(D_800662D0+arg0*0x13C4)==0) D_800662E8[arg0*0x13C4]=0x80;
+    for(i=1;i<20;i++) {
+        if(D_80030894[i]) D_800517E8[arg0][i].value=D_800651B8[arg0][i].value;
+        else D_800517E8[arg0][i].value=0x80;
+    }
 }

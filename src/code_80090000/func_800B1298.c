@@ -53,7 +53,7 @@ void func_800B1298(s32 n) {
                         }
                     }
                     v = 0;
-                found:
+found:
                     e->c |= v;
                 } else {
                     e->f &= ~0x40;

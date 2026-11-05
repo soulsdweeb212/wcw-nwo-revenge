@@ -46,7 +46,7 @@ s32 func_800B0524(s32 id) {
         if (id != (H(0x158) & 0xFFF)) {
             return -1;
         }
-    zero:
+zero:
         return 0;
     }
     if (id == (H(0xCA0) & 0xFFF)) {

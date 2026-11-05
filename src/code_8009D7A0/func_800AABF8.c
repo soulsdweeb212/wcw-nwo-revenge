@@ -58,7 +58,7 @@ void func_800AABF8(void) {
                     }
                     other = D_800FADDC;
                 }
-            chkobj:
+chkobj:
                 if (*(s16 *)(other + 0x10) < 0x40) {
                     func_800AD958(0x15);
                     return;
@@ -106,7 +106,7 @@ dispatch:
             func_800ADA38(&D_800E3430);
             return;
         }
-    set13:
+set13:
         func_800AD958(0x13);
         return;
     } else {

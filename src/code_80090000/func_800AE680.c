@@ -128,7 +128,7 @@ s32 func_800AE680(void) {
                 }
             }
         }
-    done:
+done:
         e->f22 = D_800E7BF0[i] - D_800E79A0[i];
         if (snd >= 0) {
             func_8000DEE4(snd);

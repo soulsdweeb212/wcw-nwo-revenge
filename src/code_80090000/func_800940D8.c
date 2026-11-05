@@ -162,7 +162,7 @@ void func_800940D8(void) {
                 break;
             }
         }
-    store:
+store:
         buildScaledRotationTranslationMatrix((u8 *)node + 0x5C, fp, fs5, fs1, fs0, vec[0], vec[1], vec[2]);
     }
 }

@@ -38,10 +38,10 @@ void func_800BC9AC(void) {
             y = D_800EA0AC;
             if (x != y) {
                 if (x >= y) {
-                hi:
+hi:
                     D_800EA320 = y;
                 } else {
-                lo:
+lo:
                     D_800EA320 = x;
                 }
             }

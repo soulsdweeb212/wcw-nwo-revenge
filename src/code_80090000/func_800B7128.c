@@ -19,7 +19,7 @@ u8 *func_800B7128(u32 **dl, u8 *h) {
     u32 *t = *dl;
     u32 *g;
     hdr(h, &b, &c, &g, t);
-    
+
     func_800B6938(&g, h[8] == 8, *(u16 *)(h + 4), b, c);
     *dl = g;
     return h;

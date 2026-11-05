@@ -87,7 +87,7 @@ s32 func_800A83DC(E83DC *a, E83DC *b)
         SETACT(a, 0x45);
         a->fC = 2;
         a->f2C = (b->f2C & 2) | 0x440;
-if (a->f2C & 2) {
+        if (a->f2C & 2) {
             if (b) {
                 a->f16 = 0x5A;
             } else {
@@ -161,8 +161,8 @@ if (a->f2C & 2) {
             b->flags |= 0x10000000ULL;
         } else if ((u32)(k - 0x5A) < 0x10) {
             load83(a, a->f0, (u8)k);
-    func_800D427C(a, func_800D5438(a, 0), 1);
-    func_800D427C(b, func_800D5438(a, 1), 1);
+            func_800D427C(a, func_800D5438(a, 0), 1);
+            func_800D427C(b, func_800D5438(a, 1), 1);
 
             a->f2C |= 0x80;
             SETACT(a, 0x49);
@@ -171,8 +171,8 @@ if (a->f2C & 2) {
             b->flags |= 0x10000000ULL;
         } else {
             load83(a, a->f0, (u8)k);
-    func_800D427C(a, func_800D5438(a, 0), 1);
-    func_800D427C(b, func_800D5438(a, 1), 1);
+            func_800D427C(a, func_800D5438(a, 0), 1);
+            func_800D427C(b, func_800D5438(a, 1), 1);
 
             SETACT(a, 0x53);
             a->flags |= 0x10000000ULL;

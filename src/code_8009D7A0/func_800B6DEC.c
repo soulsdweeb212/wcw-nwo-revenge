@@ -97,7 +97,7 @@ s16 func_800B6DEC(Ent6DEC *o, Ent6DEC *other, s16 type) {
         if (o->flags & 0x80000ULL) {
             break;
         }
-    tail:
+tail:
         v[0] = 300 + other->f14 / 2;
         v[1] = o->f10 + o->f14 / 4;
         r = ((s16)v[0] - (s16)v[1]) / 2;

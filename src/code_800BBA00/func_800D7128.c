@@ -13,27 +13,27 @@ f32 func_800D3890(void *,void *,void *); s32 func_800D35B0(s32,s32); s32 func_80
  * write the three direction records into the caller's scratch (out+0x10 and
  * out+0x20), and derive the player's speed entries from the total length. */
 s16 func_800D7128(u8 *root,u8 *joint,void *target,u8 *out) {
- Nw2DirectionResult d; f32 dist; s32 ang; s32 idx; f32 len;
- void *pa=root+0x4C; void *pb=joint+0x4C;
- func_800D3890(pa,pb,&d);
- dist=d.y; ang=d.angle;
- func_800D3890(pa,target,&d);
- d.z=(dist+d.y)*D_800E6D80; d.x=0;
- ang=func_800D3684(ang,d.angle);
- func_800D3E40(pa,&d,func_800D35B0(d.angle,ang/2),out+0x10);
- pa=out+0x10;
- func_800D3890(pa,pb,&d);
- dist=d.y;
- ang=func_800D35B0(d.angle,0x800);
- d.x=0; d.z=d.y;
- func_800D3E40(pb,&d,d.angle,out);
- func_800D3890(pa,target,&d);
- dist+=d.y;
- idx=func_800D3550(func_800D3684(ang,d.angle))/113;
- d.x=0; d.z=d.y;
- func_800D3E40(target,&d,d.angle,out+0x20);
- len=dist*D_800E3E20[(s16)idx]*D_800E6D88;
- D_800F97F0[D_800FADB8]=0;
- D_800F9800[D_800FADB8]=D_800E6D90/len;
- return (s32)(len+D_800E6D90);
+    Nw2DirectionResult d; f32 dist; s32 ang; s32 idx; f32 len;
+    void *pa=root+0x4C; void *pb=joint+0x4C;
+    func_800D3890(pa,pb,&d);
+    dist=d.y; ang=d.angle;
+    func_800D3890(pa,target,&d);
+    d.z=(dist+d.y)*D_800E6D80; d.x=0;
+    ang=func_800D3684(ang,d.angle);
+    func_800D3E40(pa,&d,func_800D35B0(d.angle,ang/2),out+0x10);
+    pa=out+0x10;
+    func_800D3890(pa,pb,&d);
+    dist=d.y;
+    ang=func_800D35B0(d.angle,0x800);
+    d.x=0; d.z=d.y;
+    func_800D3E40(pb,&d,d.angle,out);
+    func_800D3890(pa,target,&d);
+    dist+=d.y;
+    idx=func_800D3550(func_800D3684(ang,d.angle))/113;
+    d.x=0; d.z=d.y;
+    func_800D3E40(target,&d,d.angle,out+0x20);
+    len=dist*D_800E3E20[(s16)idx]*D_800E6D88;
+    D_800F97F0[D_800FADB8]=0;
+    D_800F9800[D_800FADB8]=D_800E6D90/len;
+    return (s32)(len+D_800E6D90);
 }

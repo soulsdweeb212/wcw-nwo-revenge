@@ -20,8 +20,8 @@ static inline s8 stepTowardTarget(Obj *o,Obj *b){s32 result;if(o->ticks>=D_800EB
 #define O D_800FAF5C
 #define T D_800F9B00
 void updateEntityApproachState(void){O->flags|=0x1000000000ULL;func_800D2BAC(O,T,4.0f,0xFFFFE);switch(O->phase){case 0:setupEntityMoveCD990(O,T);func_800A7F6C(O,0x3D);O->phase++;
-case 1:if(stepTowardTarget(O,T))O->phase++;break;
-case 2:if(O->timer<=0){func_800D427C(O,0xEB6,1);func_800D7690(O,0,0);O->ticks=0x1E;O->phase++;}break;
-case 3:func_800D7690(O,D_800FAF8A,2);O->ticks--;if(O->ticks<0)O->input|=1;if(O->timer<=0){u16 inFlags=O->input;if(inFlags&1){O->input=inFlags|2;{Obj *lead=(O->f14<T->f14)?O:T;if(!(*(u64*)((char*)lead->f364+0x38)&1)){O->input=inFlags|6;if(lead==O)O->input=inFlags|0xE;}}if(O->input&4){func_800D427C(O,(O->input&8)?0xEB9:0xEB8,1);O->phase++;}else O->phase=5;}else func_800D43B4(O,O->anim,1);}break;
-case 4:func_800D7690(O,D_800FAF8A,2);if(O->timer<=0)O->phase++;break;
-case 5:{s16 a=func_800D7690(O,0,3);s16 b=func_800D7690(T,0,3);if(a>=b){func_800A837C(O);func_800A7C40(O,D_800FADB8,0x84);func_800D427C(O,func_800D5438(O,0),1);func_800A6C48(O,0x53);}else{O->input|=0x10;func_800A837C(T);func_800A7C40(T,D_800FABE4,0x84);func_800D427C(O,func_800D5438(T,1),1);}}break;}}
+    case 1:if(stepTowardTarget(O,T))O->phase++;break;
+    case 2:if(O->timer<=0){func_800D427C(O,0xEB6,1);func_800D7690(O,0,0);O->ticks=0x1E;O->phase++;}break;
+    case 3:func_800D7690(O,D_800FAF8A,2);O->ticks--;if(O->ticks<0)O->input|=1;if(O->timer<=0){u16 inFlags=O->input;if(inFlags&1){O->input=inFlags|2;{Obj *lead=(O->f14<T->f14)?O:T;if(!(*(u64*)((char*)lead->f364+0x38)&1)){O->input=inFlags|6;if(lead==O)O->input=inFlags|0xE;}}if(O->input&4){func_800D427C(O,(O->input&8)?0xEB9:0xEB8,1);O->phase++;}else O->phase=5;}else func_800D43B4(O,O->anim,1);}break;
+    case 4:func_800D7690(O,D_800FAF8A,2);if(O->timer<=0)O->phase++;break;
+    case 5:{s16 a=func_800D7690(O,0,3);s16 b=func_800D7690(T,0,3);if(a>=b){func_800A837C(O);func_800A7C40(O,D_800FADB8,0x84);func_800D427C(O,func_800D5438(O,0),1);func_800A6C48(O,0x53);}else{O->input|=0x10;func_800A837C(T);func_800A7C40(T,D_800FABE4,0x84);func_800D427C(O,func_800D5438(T,1),1);}}break;}}

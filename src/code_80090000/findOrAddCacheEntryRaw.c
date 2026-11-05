@@ -50,7 +50,7 @@ s32 findOrAddCacheEntryRaw(s32 arg0, s16 arg1, s16 arg2, s32 arg3, s32 arg4) {
         e = 0;
         goto done;
 
-    write:
+write:
         e->match = arg3;
         e->fieldC = arg1;
         e->fieldE = arg2;

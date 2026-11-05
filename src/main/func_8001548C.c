@@ -53,7 +53,7 @@ void func_8001548C(void *arg0)
                 }
             }
         }
-    next:
+next:
         ;
     } while (p->time > p->cur);
 }

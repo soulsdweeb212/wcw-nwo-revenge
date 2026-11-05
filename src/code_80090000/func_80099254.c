@@ -45,7 +45,7 @@ s32 func_80099254(s32 arg0, s16 arg1, s16 arg2, s32 arg3, s32 arg4) {
         e = 0;
         goto done;
 
-    write:
+write:
         e->f10 = arg3;
         e->fC = arg1;
         e->fE = arg2;

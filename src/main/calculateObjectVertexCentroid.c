@@ -13,17 +13,17 @@ f32 signed64ToFloatTrunc(s64);
  * result in the object's x/y/z. Sums accumulate in 64-bit, are divided by the
  * vertex count, then converted to float. No mesh or no vertices -> no write. */
 void calculateObjectVertexCentroid(CenterObject *obj) {
- CenterMesh *mesh=obj->mesh;
- s64 sumX=0,sumY=0,sumZ=0;
- CenterVertex *vertices=mesh->vertices;
- u32 i;
- if(vertices) {
-  u32 count=mesh->count;
-  for(i=0;i<count;i++) {
-   u16 vx=vertices[i].x,vy=vertices[i].y,vz=vertices[i].z;
-   sumX+=(s16)vx; sumY+=(s16)vy; sumZ+=(s16)vz;
-  }
-  if(count) {sumX/=count;sumY/=count;sumZ/=count;}
-  obj->x=signed64ToFloatTrunc(sumX);obj->y=signed64ToFloatTrunc(sumY);obj->z=signed64ToFloatTrunc(sumZ);
- }
+    CenterMesh *mesh=obj->mesh;
+    s64 sumX=0,sumY=0,sumZ=0;
+    CenterVertex *vertices=mesh->vertices;
+    u32 i;
+    if(vertices) {
+        u32 count=mesh->count;
+        for(i=0;i<count;i++) {
+            u16 vx=vertices[i].x,vy=vertices[i].y,vz=vertices[i].z;
+            sumX+=(s16)vx; sumY+=(s16)vy; sumZ+=(s16)vz;
+        }
+        if(count) {sumX/=count;sumY/=count;sumZ/=count;}
+        obj->x=signed64ToFloatTrunc(sumX);obj->y=signed64ToFloatTrunc(sumY);obj->z=signed64ToFloatTrunc(sumZ);
+    }
 }

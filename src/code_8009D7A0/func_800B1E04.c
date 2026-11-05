@@ -106,7 +106,7 @@ void func_800B1E04(void) {
                     } else {
                         flag = 0x4000;
                     }
-                apply:
+apply:
                     D_800FABD0->f2 = 0;
                     D_800FABD0->f4 = 0;
                     D_800FABD0->f6 |= flag;
@@ -126,7 +126,7 @@ void func_800B1E04(void) {
             }
             t = func_800D4148();
             if (t < 450) {
-            inc20:
+inc20:
                 D_800FABD0->f6 |= 0x20;
                 D_800FABD0->f4++;
             } else if (t < 900) {
@@ -140,7 +140,7 @@ void func_800B1E04(void) {
                 D_800FABD0->f2E = D_800F9B60->fA;
                 D_800FABD0->f5C &= ~7;
             } else {
-            incr:
+incr:
                 D_800FABD0->f4++;
             }
         } else if (D_800FAF58->fC < 2) {
@@ -152,7 +152,7 @@ void func_800B1E04(void) {
         } else {
             D_800FABD0->f4 = state + 1;
         }
-    check:
+check:
         if (D_800FAF58->fA == 0x43) {
             return;
         }

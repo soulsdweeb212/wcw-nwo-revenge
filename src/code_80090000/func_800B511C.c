@@ -26,7 +26,7 @@ void func_800B511C(s32 a) {
         W(0x24) = x;
         W(0x26) = 0xC0;
     } else {
-    zero:
+zero:
         W(0x24) = 0;
         W(0x26) = 0;
     }

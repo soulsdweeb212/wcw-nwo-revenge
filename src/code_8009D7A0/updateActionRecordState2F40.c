@@ -41,17 +41,17 @@ void updateActionRecordState2F40(void)
         if (s == 3) goto l3080;
         if (s == 4) goto l3058;
         goto reset;
-    l303C:
+l303C:
         if (s >= 0x8B) goto reset;
         if (s >= 0x89) goto l3080;
         goto reset;
-    l3058:
+l3058:
         D_800FABD0->state = 4;
         return;
-    l3068:
+l3068:
         D_800FABD0->state++;
         return;
-    l3080:
+l3080:
         D_800FABD0->f6 = D_800FABD0->fA;
         return;
     case 2:
@@ -70,7 +70,7 @@ void updateActionRecordState2F40(void)
         D_800FABD0->f6 = 4;
         D_800FABD0->fC = 0x50;
         return;
-    l3154:
+l3154:
         if (func_800D4198(500) != 0) return;
         D_800FABD0->f6 = 4;
         D_800FABD0->f8 = 0x10;

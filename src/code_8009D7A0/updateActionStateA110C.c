@@ -62,8 +62,8 @@ void updateActionStateA110C(void) {
                 addEntityHealthDelta(D_800EB408, *(s8 *)(Actor + 0x391));
                 func_800A6BE0(D_800EB40C, 0x1A);
                 { u8 *b = Target; u8 *a = Actor;
-                  ReadFlags(b) |= 0x20000000ULL;
-                  func_800A837C(a); }
+                    ReadFlags(b) |= 0x20000000ULL;
+                    func_800A837C(a); }
                 ReadS16(Actor, 12)++;
             }
         }

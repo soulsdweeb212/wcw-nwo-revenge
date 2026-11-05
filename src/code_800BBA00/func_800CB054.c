@@ -95,7 +95,7 @@ void func_800CB054(void) {
             }
         }
         A->f36 |= 1;
-    l198:
+l198:
         vec[0] = 0.0f;
         if (A->f36 & 1) {
             vec[2] = -130.0f;
@@ -180,7 +180,7 @@ void func_800CB054(void) {
             break;
         }
         func_800D427C(A, (s16)(A->f8 + 2), 0);
-    inc:
+inc:
         A->fC++;
         break;
     case 6:
@@ -213,7 +213,7 @@ void func_800CB054(void) {
         } else {
             B->f360 |= 8;
         }
-    l758:
+l758:
         if (A->f4 <= 0) {
             if (B->f360 & 0x18) {
                 A->f360 |= 0x20;

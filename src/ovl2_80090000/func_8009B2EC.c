@@ -174,183 +174,183 @@ void func_8009B2EC(s16 arg0, u16 *ids) {
         }
     }
     switch (D_800E2FB2) {
-        case 1:
-            ex = cx - 380.0f;
-            ey = 300.0f;
-            ez = cz + 380.0f;
-            break;
-        case 2:
-            ex = cx - 600.0f;
-            ey = 500.0f;
-            ez = cz + 600.0f;
-            break;
-        case 3:
-            ex = cx - 700.0f;
-            ey = 800.0f;
-            ez = cz + 700.0f;
-            break;
-        case 4:
-            ex = cx - 100.0f;
-            ey = 400.0f;
-            ez = cz + 300.0f;
-            if (!flag) {
-                ey = 130.0f;
-            }
-            break;
-        case 5:
-            cx = D_800EB3B8 = 0.0f;
-            cy = D_800EB3BC = 200.0f;
-            cz = D_800EB3C0 = 0.0f;
-            ex = D_800EB3AC = -500.0f;
-            ey = D_800EB3B0 = 500.0f;
-            ez = D_800EB3B4 = -500.0f;
-            break;
-        case 6:
-            ex = 250.0f;
-            ey = 350.0f;
-            ez = ex;
-            break;
-        case 7:
-            ex = cx + 100.0f;
-            ey = cy + 300.0f;
-            ez = cz + 200.0f;
-            break;
-        case 8:
-            ex = cx + 400.0f;
-            ey = 300.0f;
-            ez = cz;
-            if (!flag) {
-                ey = 200.0f;
-            }
-            break;
-        case 9:
-            ex = cx - 400.0f;
-            ey = 300.0f;
-            ez = cz + 100.0f;
-            if (!flag) {
-                ey = 150.0f;
-            }
-            break;
-        case 10:
-            ex = cx;
-            ey = 400.0f;
-            ez = cz + 300.0f;
-            if (!flag) {
-                ey = 130.0f;
-            }
-            break;
-        case 11:
-            ex = cx;
-            ez = cz + 100.0f;
-            if (!flag) {
-                ey = 700.0f - cy;
-            } else {
-                ey = 400.0f;
-            }
-            break;
-        case 12:
-            ex = cx + 10.0f;
-            ez = cz + 100.0f;
-            if (!flag) {
-                ey = 180.0f - cy;
-                if (ey < 60.0f) {
-                    ez = cz + 300.0f - cy;
-                } else {
-                    ey = 400.0f;
-                }
-                if (D_800EB352 > 40) {
-                    D_800E2FB2 = func_8001C580() % 5 + 7;
-                }
-            } else {
-                ey = 400.0f;
-            }
-            break;
-        case 13:
-            ex = cx + sinf(D_800EB354) * 300.0f;
-            ez = cz - cosf(D_800EB354) * 300.0f;
-            ey = 400.0f;
-            if (!flag) {
-                ey = 130.0f;
-            }
-            break;
-        case 14:
-            cz = 30.0f - D_800F9AA8[1].z;
-            cy = D_800F9AA8[1].y;
-            ey = 50.0f - cy;
-            cx = D_800F9AA8[1].x;
-            ex = cx;
-            ez = cz + 20.0f;
-            break;
-        case 15:
-            if (cy >= 230.0f) {
-                ex = cx + 200.0f;
-                ey = 120.0f;
-                ez = cz + 200.0f;
-            } else {
-                ex = cx;
-                ey = 400.0f;
-                ez = cz + 400.0f;
-            }
-            break;
-        case 16:
-            ex = cx;
-            ey = cy + 400.0f;
-            ez = cz + 200.0f;
-            break;
-        case 17:
+    case 1:
+        ex = cx - 380.0f;
+        ey = 300.0f;
+        ez = cz + 380.0f;
+        break;
+    case 2:
+        ex = cx - 600.0f;
+        ey = 500.0f;
+        ez = cz + 600.0f;
+        break;
+    case 3:
+        ex = cx - 700.0f;
+        ey = 800.0f;
+        ez = cz + 700.0f;
+        break;
+    case 4:
+        ex = cx - 100.0f;
+        ey = 400.0f;
+        ez = cz + 300.0f;
+        if (!flag) {
+            ey = 130.0f;
+        }
+        break;
+    case 5:
+        cx = D_800EB3B8 = 0.0f;
+        cy = D_800EB3BC = 200.0f;
+        cz = D_800EB3C0 = 0.0f;
+        ex = D_800EB3AC = -500.0f;
+        ey = D_800EB3B0 = 500.0f;
+        ez = D_800EB3B4 = -500.0f;
+        break;
+    case 6:
+        ex = 250.0f;
+        ey = 350.0f;
+        ez = ex;
+        break;
+    case 7:
+        ex = cx + 100.0f;
+        ey = cy + 300.0f;
+        ez = cz + 200.0f;
+        break;
+    case 8:
+        ex = cx + 400.0f;
+        ey = 300.0f;
+        ez = cz;
+        if (!flag) {
+            ey = 200.0f;
+        }
+        break;
+    case 9:
+        ex = cx - 400.0f;
+        ey = 300.0f;
+        ez = cz + 100.0f;
+        if (!flag) {
             ey = 150.0f;
+        }
+        break;
+    case 10:
+        ex = cx;
+        ey = 400.0f;
+        ez = cz + 300.0f;
+        if (!flag) {
+            ey = 130.0f;
+        }
+        break;
+    case 11:
+        ex = cx;
+        ez = cz + 100.0f;
+        if (!flag) {
+            ey = 700.0f - cy;
+        } else {
+            ey = 400.0f;
+        }
+        break;
+    case 12:
+        ex = cx + 10.0f;
+        ez = cz + 100.0f;
+        if (!flag) {
+            ey = 180.0f - cy;
+            if (ey < 60.0f) {
+                ez = cz + 300.0f - cy;
+            } else {
+                ey = 400.0f;
+            }
+            if (D_800EB352 > 40) {
+                D_800E2FB2 = func_8001C580() % 5 + 7;
+            }
+        } else {
+            ey = 400.0f;
+        }
+        break;
+    case 13:
+        ex = cx + sinf(D_800EB354) * 300.0f;
+        ez = cz - cosf(D_800EB354) * 300.0f;
+        ey = 400.0f;
+        if (!flag) {
+            ey = 130.0f;
+        }
+        break;
+    case 14:
+        cz = 30.0f - D_800F9AA8[1].z;
+        cy = D_800F9AA8[1].y;
+        ey = 50.0f - cy;
+        cx = D_800F9AA8[1].x;
+        ex = cx;
+        ez = cz + 20.0f;
+        break;
+    case 15:
+        if (cy >= 230.0f) {
+            ex = cx + 200.0f;
+            ey = 120.0f;
+            ez = cz + 200.0f;
+        } else {
+            ex = cx;
+            ey = 400.0f;
+            ez = cz + 400.0f;
+        }
+        break;
+    case 16:
+        ex = cx;
+        ey = cy + 400.0f;
+        ez = cz + 200.0f;
+        break;
+    case 17:
+        ey = 150.0f;
+        if (cz >= 0.0f) {
+            ex = 0.0f;
+            ez = 430.0f;
+        } else {
+            if (cx >= 0.0f) {
+                ex = 430.0f;
+            } else {
+                ex = -430.0f;
+            }
+            ez = 0.0f;
+        }
+        break;
+    case 18:
+        if (cy >= 230.0f) {
+            if (cx >= 0.0f) {
+                ex = 430.0f;
+            } else {
+                ex = -430.0f;
+            }
+            ey = 600.0f;
             if (cz >= 0.0f) {
-                ex = 0.0f;
                 ez = 430.0f;
             } else {
-                if (cx >= 0.0f) {
-                    ex = 430.0f;
-                } else {
-                    ex = -430.0f;
-                }
-                ez = 0.0f;
+                ez = -430.0f;
             }
-            break;
-        case 18:
-            if (cy >= 230.0f) {
-                if (cx >= 0.0f) {
-                    ex = 430.0f;
-                } else {
-                    ex = -430.0f;
-                }
-                ey = 600.0f;
-                if (cz >= 0.0f) {
-                    ez = 430.0f;
-                } else {
-                    ez = -430.0f;
-                }
+        } else {
+            if (cx >= 0.0f) {
+                ex = 480.0f;
             } else {
-                if (cx >= 0.0f) {
-                    ex = 480.0f;
-                } else {
-                    ex = -480.0f;
-                }
-                ey = 120.0f;
-                ez = cz + 150.0f;
+                ex = -480.0f;
             }
-            break;
-        default:
-            if (func_8000CF64(cx, cz) == 0) {
-                cx *= 0.9;
-                cz *= 0.9;
-            }
-            ey = D_800EB3A8 * 40.0f + 300.0f;
-            ez = cz + 350.0f + D_800EB3A8 * 80.0f;
-            ex = cx;
-            if (((D_80070C50[ids[0]][0] == 0.0f && D_800F9AA8[ids[0]].z >= 280.0) ||
-                 (D_80070C50[ids[1]][0] == 0.0f && D_800F9AA8[ids[1]].z >= 280.0)) &&
-                (D_800F9AA8[ids[0]].z <= 400.0 || D_800F9AA8[ids[1]].z <= 400.0)) {
-                ey += 200.0f;
-                ez -= 200.0f;
-                cz += 50.0f;
-                cz *= 1.3;
-            }
-            break;
+            ey = 120.0f;
+            ez = cz + 150.0f;
+        }
+        break;
+    default:
+        if (func_8000CF64(cx, cz) == 0) {
+            cx *= 0.9;
+            cz *= 0.9;
+        }
+        ey = D_800EB3A8 * 40.0f + 300.0f;
+        ez = cz + 350.0f + D_800EB3A8 * 80.0f;
+        ex = cx;
+        if (((D_80070C50[ids[0]][0] == 0.0f && D_800F9AA8[ids[0]].z >= 280.0) ||
+             (D_80070C50[ids[1]][0] == 0.0f && D_800F9AA8[ids[1]].z >= 280.0)) &&
+            (D_800F9AA8[ids[0]].z <= 400.0 || D_800F9AA8[ids[1]].z <= 400.0)) {
+            ey += 200.0f;
+            ez -= 200.0f;
+            cz += 50.0f;
+            cz *= 1.3;
+        }
+        break;
     }
     a = normAngle(func_80003A3C(D_800EB3AC - D_800EB3B8, D_800EB3B4 - D_800EB3C0));
     x = normAngle(func_80003A3C(ex - cx, ez - cz));

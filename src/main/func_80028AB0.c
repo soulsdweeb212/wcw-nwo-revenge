@@ -21,7 +21,7 @@ u8 *func_80028AB0(u8 *arg0, u8 *arg1, s32 arg2) {
                 p++; k++;
             } while (*p != 0);
             k = 0;
-        match:
+match:
             arg0[0] = sjisCodeTable[k*2];
             arg0[1] = sjisCodeTable[k*2+1];
             arg1++; arg0 += 2;

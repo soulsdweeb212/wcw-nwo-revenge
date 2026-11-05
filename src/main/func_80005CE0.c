@@ -54,12 +54,12 @@ void func_80005CE0(TexRect *obj) {
     EMIT(0xF5500000,(((u32)clampT&3)<<18)|0x07000000|(((u32)maskT&15)<<14)|(((u32)clampS&3)<<8)|(((u32)maskS&15)<<4));
     EMIT(0xE6000000,0);
     {GfxPair *g=dl++;s32 numerator;s32 count;
-     g->w0=0xF3000000;
-     if((s16)obj->w/16>0)numerator=(s16)obj->w/16+0x7FF;
-     else numerator=0x800;
-     count=((((s16)obj->w)*((s16)obj->h)+3)>>2)-1;
-     if(count>=0x800)count=0x7FF;
-     g->w1=((count&0xFFF)<<12)|0x07000000|((((s16)obj->w/16)>0)?numerator/((s16)obj->w/16):numerator)&0xFFF;}
+        g->w0=0xF3000000;
+        if((s16)obj->w/16>0)numerator=(s16)obj->w/16+0x7FF;
+        else numerator=0x800;
+        count=((((s16)obj->w)*((s16)obj->h)+3)>>2)-1;
+        if(count>=0x800)count=0x7FF;
+        g->w1=((count&0xFFF)<<12)|0x07000000|((((s16)obj->w/16)>0)?numerator/((s16)obj->w/16):numerator)&0xFFF;}
     EMIT(0xE7000000,0);
     EMIT(0xF5400000|((((((s16)obj->w>>1)+7)>>3)&0x1FF)<<9),(((u32)clampT&3)<<18)|(((u32)maskT&15)<<14)|(((u32)clampS&3)<<8)|(((u32)maskS&15)<<4));
     EMIT(0xF2000000,((((((s16)obj->w-1)*4)&0xFFF)<<12)|((((s16)obj->h-1)*4)&0xFFF)));

@@ -18,54 +18,54 @@ void func_800D3890(void *, void *, void *);
  * {id, distance, angle}.  Finally sorts the candidates by ascending distance. */
 void collectLinkedTargets(void *entity, void *position, Nw2TargetCandidate *outCandidates, u64 flags)
 {
-  Nw2TargetCandidate *out = outCandidates;
-  s16 i;
-  s16 count;
-  s16 j;
-  Nw2DirectionResult res;
-  Nw2TargetCandidate tmp;
-  i = 0;
-  do
-  {
-    out[i].id = -1;
-    i++;
-  }
-  while (i < 4);
-  count = 0;
-  for (i = 0; i < 4; i++)
-  {
-    s32 off = i * 0x3B0;
-    if ((*((s16 *) (D_800F9D12 + off))) != (-1))
+    Nw2TargetCandidate *out = outCandidates;
+    s16 i;
+    s16 count;
+    s16 j;
+    Nw2DirectionResult res;
+    Nw2TargetCandidate tmp;
+    i = 0;
+    do
     {
-      if (i != (*((s8 *) entity)))
-      {
-        if ((flags == 0) || (((*((u64 *) (D_800F9D30 + (i * 0x3B0)))) & flags) != 0))
+        out[i].id = -1;
+        i++;
+    }
+    while (i < 4);
+    count = 0;
+    for (i = 0; i < 4; i++)
+    {
+        s32 off = i * 0x3B0;
+        if ((*((s16 *) (D_800F9D12 + off))) != (-1))
         {
-          s32 off2 = i * 0x3B0;
-          if (((*((u64 *) (D_800F9D30 + off2))) & 0x80000000000ULL) == 0)
-          {
-            func_800D3890(position, D_800F9D7C + off2, &res);
-            out[count].id = i;
-            out[count].dist = res.y;
-            out[count].angle = res.angle;
-            count++;
-          }
+            if (i != (*((s8 *) entity)))
+            {
+                if ((flags == 0) || (((*((u64 *) (D_800F9D30 + (i * 0x3B0)))) & flags) != 0))
+                {
+                    s32 off2 = i * 0x3B0;
+                    if (((*((u64 *) (D_800F9D30 + off2))) & 0x80000000000ULL) == 0)
+                    {
+                        func_800D3890(position, D_800F9D7C + off2, &res);
+                        out[count].id = i;
+                        out[count].dist = res.y;
+                        out[count].angle = res.angle;
+                        count++;
+                    }
+                }
+            }
         }
-      }
     }
-  }
-  for (i = 0; i < (count - 1); i++)
-  {
-    for (j = i + 1; j < count; j++)
+    for (i = 0; i < (count - 1); i++)
     {
-      if (out[i].dist > out[j].dist)
-      {
-        tmp = out[i];
-        out[i] = out[j];
-        out[j] = tmp;
-      }
-    }
+        for (j = i + 1; j < count; j++)
+        {
+            if (out[i].dist > out[j].dist)
+            {
+                tmp = out[i];
+                out[i] = out[j];
+                out[j] = tmp;
+            }
+        }
 
-  }
+    }
 
 }

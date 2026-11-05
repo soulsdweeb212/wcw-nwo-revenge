@@ -43,7 +43,7 @@ void func_800B3D5C(void) {
         break;
     case 3:
         if (H(D_800FAF58, 0xA) != 0x55) {
-        reset:;
+            reset:;
             { void *g = D_800F9B60; u16 st; H(p, 2) = 0; H(p, 4) = 0; st = U(g, 0xA); W(p, 0x5C) &= ~7; U(p, 0x2E) = st; }
         }
         break;

@@ -178,7 +178,7 @@ void func_800A01B0(void) {
             break;
         }
         if (func_800DF99C(P, D_800EB40C, D_800FABE6, (s32 *)s0) || func_800E022C(P, D_800EB40C, D_800FABE6, (s32 *)s0)) {
-        block:
+block:
             func_800A9128(P);
             break;
         }

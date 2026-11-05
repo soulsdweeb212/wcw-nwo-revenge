@@ -42,14 +42,14 @@ void func_800B0B74(void) {
             break;
         default: {
             u8 *target;
-        reset:
+reset:
             target = D_800F9B60;
             A(2, s16) = 0;
             A(4, s16) = 0;
             A(0x2E, u16) = *(u16 *)(target + 0xA);
             A(0x5C, u32) &= ~7;
         }
-        break;
+            break;
         }
         break;
     }

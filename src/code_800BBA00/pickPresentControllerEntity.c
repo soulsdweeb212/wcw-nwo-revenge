@@ -43,25 +43,25 @@ s8 pickPresentControllerEntity(void) {
     }
     if (n1 == 0) return -1;
     if (n1 != 0) {
-      if (n1 >= 0) {
-        if (n1 < 3) {
-        t0 = (u8)buf[0];
-        if (*(u64 *)(D_800F9D30 + buf[0] * 0x3B0) & 4) {
-            s32 o;
-            cand = buf[8];
-            o = cand * 0x3B0;
-            if ((*(u64 *)(D_800F9D30 + o) & 4) == 0) {
-                t0 = (u8)cand;
+        if (n1 >= 0) {
+            if (n1 < 3) {
+                t0 = (u8)buf[0];
+                if (*(u64 *)(D_800F9D30 + buf[0] * 0x3B0) & 4) {
+                    s32 o;
+                    cand = buf[8];
+                    o = cand * 0x3B0;
+                    if ((*(u64 *)(D_800F9D30 + o) & 4) == 0) {
+                        t0 = (u8)cand;
+                    }
+                }
+                if (D_8007E280 & 0x200) {
+                    s32 s;
+                    s = (buf[0] ^ 1) * 0x3B0;
+                    *(u64 *)(D_800F9D30 + s) |= 0x4000;
+                }
+                return (s8)t0;
             }
         }
-        if (D_8007E280 & 0x200) {
-            s32 s;
-            s = (buf[0] ^ 1) * 0x3B0;
-            *(u64 *)(D_800F9D30 + s) |= 0x4000;
-        }
-        return (s8)t0;
-        }
-      }
     }
     return -1;
 }

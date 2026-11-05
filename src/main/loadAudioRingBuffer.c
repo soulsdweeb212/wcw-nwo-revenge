@@ -16,25 +16,25 @@ u32 func_8001CE80(void *);
  * (the second starting back at p->data). Always closes with a SETBUFF of the
  * full count. Returns the cursor past the written commands. */
 CmdFC *loadAudioRingBuffer(BufferFC *p, u16 *src, s32 offset, s32 count, CmdFC *cmd) {
- CmdFC *initial=cmd;
- u16 *end=p->data+p->count;
- u16 *limit;
- s32 firstSpan, secondSpan;
- if(src<p->data) src+=p->count;
- limit=src+count;
- if(end<limit) {
-  firstSpan=end-src;
-  secondSpan=limit-end;
-  cmd++;
-  SETFC(initial,offset,firstSpan);
-  LOADFC(cmd++,src);
-  SETFC(cmd++,offset+firstSpan*2,secondSpan);
-  LOADFC(cmd++,p->data);
- } else {
-  cmd++;
-  SETFC(initial,offset,count);
-  LOADFC(cmd++,src);
- }
- SETFC(cmd++,0,count);
- return cmd;
+    CmdFC *initial=cmd;
+    u16 *end=p->data+p->count;
+    u16 *limit;
+    s32 firstSpan, secondSpan;
+    if(src<p->data) src+=p->count;
+    limit=src+count;
+    if(end<limit) {
+        firstSpan=end-src;
+        secondSpan=limit-end;
+        cmd++;
+        SETFC(initial,offset,firstSpan);
+        LOADFC(cmd++,src);
+        SETFC(cmd++,offset+firstSpan*2,secondSpan);
+        LOADFC(cmd++,p->data);
+    } else {
+        cmd++;
+        SETFC(initial,offset,count);
+        LOADFC(cmd++,src);
+    }
+    SETFC(cmd++,0,count);
+    return cmd;
 }

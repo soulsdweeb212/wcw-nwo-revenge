@@ -20,10 +20,10 @@ void func_8000F408(void);
  * descriptor arrays (conditionally the first, always the other two) and runs
  * the final cleanup. */
 void func_8000EDE0(void) {
- u32 i;
- for(i=0;i<D_80059D80;i++) func_8000520C(&D_80057030[i],&D_800583F8[i]);
- if(D_80036C74[D_80059D82]) {freeResourceDescriptorArray(D_800587F0,D_800587EC,6);D_800587EC=0;}
- freeResourceDescriptorArray(D_80058900,D_800588F8,3);D_800588F8=0;
- freeResourceDescriptorArray(D_80058988,D_80058984,3);D_80058984=0;
- func_8000F408();
+    u32 i;
+    for(i=0;i<D_80059D80;i++) func_8000520C(&D_80057030[i],&D_800583F8[i]);
+    if(D_80036C74[D_80059D82]) {freeResourceDescriptorArray(D_800587F0,D_800587EC,6);D_800587EC=0;}
+    freeResourceDescriptorArray(D_80058900,D_800588F8,3);D_800588F8=0;
+    freeResourceDescriptorArray(D_80058988,D_80058984,3);D_80058984=0;
+    func_8000F408();
 }

@@ -85,12 +85,12 @@ void updatePairedEntityStateA4AD8(void) {
             P->fC++;
             break;
         }
-    start_pair:
+start_pair:
         if (E40C->f360 & 0x4)
             goto begin_anim;
         if (!(P->f360 & 0x8))
             break;
-    begin_anim:
+begin_anim:
         func_800A7C40(D_800EB408, P->f0, 0x9A);
         func_800A7F6C(D_800EB408, 0);
         func_800A837C(D_800EB408);

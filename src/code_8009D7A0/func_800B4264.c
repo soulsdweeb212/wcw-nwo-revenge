@@ -47,7 +47,7 @@ void func_800B4264(void) {
             }
             break;
         default:
-        inc:
+inc:
             H(D_800FABD0, 4)++;
             break;
         }
@@ -80,7 +80,7 @@ void func_800B4264(void) {
         case 0x3C:
             break;
         default:
-        reset:;
+            reset:;
             {
                 void *g = D_800F9B60;
                 u16 st;

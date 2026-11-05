@@ -35,17 +35,17 @@ Nw2Gfx *buildCi4TextureDisplayList(Nw2Ci4Object *obj, Nw2Gfx *out, u16 mode)
     EmitCommand(0xE7000000, 0);
     EmitCommand(0xFD500000, (u32)obj->tex + 0x80000008);
     { u32 tile = (((maskt & 15) << 14) | 0x07000000);
-      EmitCommand(0xF5500000, ((cmt & 3) << 18) | tile | ((cms & 3) << 8) | ((masks & 15) << 4)); }
+        EmitCommand(0xF5500000, ((cmt & 3) << 18) | tile | ((cms & 3) << 8) | ((masks & 15) << 4)); }
     EmitCommand(0xE6000000, 0);
     { Nw2Gfx *g = dl++;
-      u32 line = w >> 4;
-      u32 numerator = 0x800;
-      u32 count;
-      g->w0 = 0xF3000000;
-      if (line) numerator = line + 0x7FF;
-      count = (((w * h) + 3) >> 2) - 1;
-      if (count >= 0x800) count = 0x7FF;
-      g->w1 = ((count & 0xFFF) << 12) | 0x07000000 | ((line ? numerator / line : numerator) & 0xFFF); }
+        u32 line = w >> 4;
+        u32 numerator = 0x800;
+        u32 count;
+        g->w0 = 0xF3000000;
+        if (line) numerator = line + 0x7FF;
+        count = (((w * h) + 3) >> 2) - 1;
+        if (count >= 0x800) count = 0x7FF;
+        g->w1 = ((count & 0xFFF) << 12) | 0x07000000 | ((line ? numerator / line : numerator) & 0xFFF); }
     EmitCommand(0xE7000000, 0);
     EmitCommand(0xF5400000 | (((((w >> 1) + 7) >> 3) & 0x1FF) << 9),
                 ((cmt & 3) << 18) | ((maskt & 15) << 14) | ((cms & 3) << 8) | ((masks & 15) << 4));

@@ -102,7 +102,7 @@ void func_80092B20(void **out, S92B20 *s) {
             break;
         }
     case 3:
-    case3:
+case3:
         EMIT(0xDE000000, (u32)D_800C5D90);
         EMIT(0x01014028, D_800C657C[0]);
         func_80092554(&p, s->f10, s->f0->f8, s->f0->fC);

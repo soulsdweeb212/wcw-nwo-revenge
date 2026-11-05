@@ -54,7 +54,7 @@ s32 func_800D00FC(u8 *arg0, u8 *arg1, u16 arg2) {
                     return 1;
                 }
             }
-        ret0:
+ret0:
             return 0;
         }
         if (arg2 & 4) {

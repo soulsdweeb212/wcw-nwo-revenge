@@ -138,12 +138,12 @@ void func_800BC50C(s32 a) {
                 y = 0x11;
             }
         } else if (!a) {
-     x = 0xD;
-     y = 0xD;
- } else {
-     x = 0xE;
-     y = 0xE;
- }
+            x = 0xD;
+            y = 0xD;
+        } else {
+            x = 0xE;
+            y = 0xE;
+        }
     }
     func_800B807C(x, y);
 }

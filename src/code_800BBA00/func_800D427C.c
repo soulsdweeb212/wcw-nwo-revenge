@@ -6,21 +6,21 @@
 #include "common.h"
 
 typedef struct {
-  s8 f0;
-  u8 pad[7];
-  s16 f8;
-  u8 padA[0x362];
-  u8 f36C;
-  u8 pad36D[3];
-  u8 f370;
-  u8 f371;
-  u8 pad372[6];
-  u8 f378;
-  u8 pad379[2];
-  u8 f37B;
-  u8 f37C;
-  u8 pad37D[5];
-  u8 f382;
+    s8 f0;
+    u8 pad[7];
+    s16 f8;
+    u8 padA[0x362];
+    u8 f36C;
+    u8 pad36D[3];
+    u8 f370;
+    u8 f371;
+    u8 pad372[6];
+    u8 f378;
+    u8 pad379[2];
+    u8 f37B;
+    u8 f37C;
+    u8 pad37D[5];
+    u8 f382;
 } Nw2ObjD427C;
 extern s16 D_800EB680[];
 extern s32 D_800EB6B8[];

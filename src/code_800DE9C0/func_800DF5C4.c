@@ -77,7 +77,7 @@ L7F4:
             }
             E->f3E = s1v;
             if ((s8)func_800E07DC(e)) {
-            L8DC:
+L8DC:
                 func_800A6C48(e, 0xA);
                 E->fC = 1;
                 return 1;

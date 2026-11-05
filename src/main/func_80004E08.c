@@ -39,7 +39,7 @@ void func_80004E08(LoadObj *obj, s16 id1, s16 id2) {
                 goto alloc1;
             }
         } else {
-        alloc1:
+alloc1:
             if (desc1[2] < 0x808) {
                 desc1[2] = 0x808;
             }
@@ -55,7 +55,7 @@ void func_80004E08(LoadObj *obj, s16 id1, s16 id2) {
                 goto alloc2;
             }
         } else {
-        alloc2:
+alloc2:
             if (desc2[2] < 0x20) {
                 desc2[2] = 0x20;
             }

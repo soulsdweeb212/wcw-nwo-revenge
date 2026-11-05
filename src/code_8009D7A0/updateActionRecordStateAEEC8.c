@@ -60,7 +60,7 @@ void updateActionRecordStateAEEC8(void) {
             return;
         }
         goto tail;
-    tail:
+tail:
         if (p->f22 != 5) {
             p->f2 = 0;
             p->state = 0;

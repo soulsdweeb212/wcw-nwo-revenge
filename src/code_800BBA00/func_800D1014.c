@@ -98,7 +98,7 @@ void func_800D1014(void) {
         D_800EB5CC[D_800FADB8][0] = v;
         D_800FAF5C->f348 = func_800D3684(v, D_800FAF5C->f58) / D_800FAF5C->f4;
         D_800FAF5C->fC++;
-        }
+    }
     case 1: {
         s32 v;
         if (!(D_800FAF5C->f360 & 0x40)) {
@@ -126,7 +126,7 @@ void func_800D1014(void) {
         func_800A7C40(D_800FAF5C, D_800FAF5C->f384, (s16)((s8)D_800FAF5C->f3A7 + 0xEF));
         func_800D427C(D_800FAF5C, func_800D5438(D_800FAF5C, 0), 3);
         D_800FAF5C->fC++;
-        }
+    }
         break;
     case 2:
         func_800D3890(&D_800FAF5C->vec[0], &D_800F9B00->vec[0], &dir);
@@ -178,7 +178,7 @@ void func_800D1014(void) {
             func_800A837C(D_800FAF5C);
             D_800FAF5C->fC++;
         }
-        }
+    }
         break;
     case 4: {
         Nw2Action5C *p;

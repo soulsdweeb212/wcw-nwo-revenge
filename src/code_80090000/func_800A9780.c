@@ -42,7 +42,7 @@ s32 func_800A9780(void) {
                 r = 0x17;
             } else {
                 v = 0x1C;
-            set:
+set:
                 D_800E9D0A = v;
                 r = 0x16;
             }

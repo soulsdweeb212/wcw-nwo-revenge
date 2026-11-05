@@ -46,29 +46,29 @@ void func_800A6B2C(void) {
 
     switch (state) {
     case 0:
-    {
-        u16 flags = D_800FABE6;
-        s32 id = 0x184F;
+        {
+            u16 flags = D_800FABE6;
+            s32 id = 0x184F;
 
-        p->f4C = 0;
-        p->f54 = 0;
-        p->f58 = 0;
-        if (flags & 0x200) {
-            id = 0x1344;
+            p->f4C = 0;
+            p->f54 = 0;
+            p->f58 = 0;
+            if (flags & 0x200) {
+                id = 0x1344;
+            }
+            if (flags & 0x100) {
+                id = 0x1345;
+            }
+            if (flags & 0x800) {
+                id = 0x105F;
+            }
+            if (flags & 0x400) {
+                id = 0x1060;
+            }
+            func_800D427C(p, id, 0);
+            ((Nw2ActionObj *)D_800EB408)->fC++;
+            break;
         }
-        if (flags & 0x100) {
-            id = 0x1345;
-        }
-        if (flags & 0x800) {
-            id = 0x105F;
-        }
-        if (flags & 0x400) {
-            id = 0x1060;
-        }
-        func_800D427C(p, id, 0);
-        ((Nw2ActionObj *)D_800EB408)->fC++;
-        break;
-    }
     case 1:
         if (p->f4 <= 0) {
             func_800A6C48(p, 1);

@@ -23,34 +23,34 @@ s16 func_800AEBF0(void); s8 func_800D4198(s16);
  * from D_800F9B60.  Phase 2 holds animation 0xF00 while D_800FAF58 is state 3,
  * else resets. */
 void func_800AE8E8(void) {
- f32 limit; s16 state; s16 direction; s16 action; u16 counter;
- state=D_800FABD0->f4;
- switch(state) {
- case 0:
- D_800FABD0->f6=4; direction=func_800AEBF0();
- if(D_800FABD0->f5C & 2) {
- if(direction!=-1 && D_800FABFC[D_800FAF58->id][0]>D_800FAC04[D_800FAF58->id][0]) D_800FABD0->f6 |= D_800E3CF0[direction];
- } else if(direction!=-1 && func_800D4198(500)) D_800FABD0->f6 |= D_800E3CF0[direction];
- goto advance;
- case 1:
- switch(D_800FAF58->fA) {
- case 3:
- if(D_800FAF58->fC==2) {
- if((f64)D_800FABD0->f34<D_800E51D0 && func_800D4198(D_800FABD0->f12) && ((action=D_800FABD0->f22)==6 || action==10)) {
- if(func_800D4198(500)) D_800FABD0->f6=16; else D_800FABD0->f6=32;
- advance: D_800FABD0->f4++; return;
- }
- if(D_800FAF58->f28&1) limit=D_800FAC00[D_800FAF58->id][0]; else limit=D_800FABF8[D_800FAF58->id][0];
- if(D_800FABD0->f34<limit) {D_800FABD0->f6=0x4000; D_800FABD0->f4++;}
- }
- break;
- case 4: D_800FABD0->f4=state+1; break;
- default: D_800FABD0->f2=0; D_800FABD0->f4=0; D_800FABD0->f2E=D_800F9B60->fA; D_800FABD0->f5C &= ~7; break;
- }
- break;
- case 2:
- if(D_800FAF58->fA==3) D_800FABD0->f8=0xF00;
- else if(D_800FAF58->fA!=4) {D_800FABD0->f2=0; D_800FABD0->f4=0; counter=D_800F9B60->fA; D_800FABD0->f5C &= ~7; D_800FABD0->f2E=counter;}
- break;
- }
+    f32 limit; s16 state; s16 direction; s16 action; u16 counter;
+    state=D_800FABD0->f4;
+    switch(state) {
+    case 0:
+        D_800FABD0->f6=4; direction=func_800AEBF0();
+        if(D_800FABD0->f5C & 2) {
+            if(direction!=-1 && D_800FABFC[D_800FAF58->id][0]>D_800FAC04[D_800FAF58->id][0]) D_800FABD0->f6 |= D_800E3CF0[direction];
+        } else if(direction!=-1 && func_800D4198(500)) D_800FABD0->f6 |= D_800E3CF0[direction];
+        goto advance;
+    case 1:
+        switch(D_800FAF58->fA) {
+        case 3:
+            if(D_800FAF58->fC==2) {
+                if((f64)D_800FABD0->f34<D_800E51D0 && func_800D4198(D_800FABD0->f12) && ((action=D_800FABD0->f22)==6 || action==10)) {
+                    if(func_800D4198(500)) D_800FABD0->f6=16; else D_800FABD0->f6=32;
+                    advance: D_800FABD0->f4++; return;
+                }
+                if(D_800FAF58->f28&1) limit=D_800FAC00[D_800FAF58->id][0]; else limit=D_800FABF8[D_800FAF58->id][0];
+                if(D_800FABD0->f34<limit) {D_800FABD0->f6=0x4000; D_800FABD0->f4++;}
+            }
+            break;
+        case 4: D_800FABD0->f4=state+1; break;
+        default: D_800FABD0->f2=0; D_800FABD0->f4=0; D_800FABD0->f2E=D_800F9B60->fA; D_800FABD0->f5C &= ~7; break;
+        }
+        break;
+    case 2:
+        if(D_800FAF58->fA==3) D_800FABD0->f8=0xF00;
+        else if(D_800FAF58->fA!=4) {D_800FABD0->f2=0; D_800FABD0->f4=0; counter=D_800F9B60->fA; D_800FABD0->f5C &= ~7; D_800FABD0->f2E=counter;}
+        break;
+    }
 }

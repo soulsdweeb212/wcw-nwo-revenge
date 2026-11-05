@@ -18,26 +18,26 @@ void updateAudioVoiceEnvelope(void *voice) {
 #define W(o) (*(s32 *)((u8 *)voice+(o)))
 #define Q(o) (*(u64 *)((u8 *)voice+(o)))
 #define F(o) (*(f32 *)((u8 *)voice+(o)))
- s32 step;
- if (Q(0x10)>=Q(0x70) && B(0xE3)<4) {B(0xE3)=4; B(0xE5)=1; B(0xED)=B(0xE4);}
- if (--B(0xE5)==0) {
- B(0xE5)=B(0xDF);
- switch(B(0xE3)) {
- case 1:
- step=(((Q(0x10)-Q(0x58))>>8)*W(0x84))>>10;
- if(step<B(0xE6)) B(0xE4)=B(0xE0)+(s32)(F(0x78)*step);
- else {B(0xE3)++; B(0xE4)=B(0xE1);} break;
- case 2:
- step=((((Q(0x10)-Q(0x58))>>8)-B(0xE6))*W(0x84))>>10;
- if(step<B(0xE7)) B(0xE4)=B(0xE1)+(s32)(F(0x7C)*step);
- else {B(0xE3)++; B(0xE4)=B(0xE2);} break;
- case 3: break;
- case 4:
- step=(((Q(0x10)-Q(0x70))>>8)*W(0x84))>>10;
- if(step<B(0xE8)) B(0xE4)=B(0xED)-(s32)(F(0x80)*step*B(0xED));
- else {B(0xE3)++; B(0xE4)=0;} break;
- }
- }
+    s32 step;
+    if (Q(0x10)>=Q(0x70) && B(0xE3)<4) {B(0xE3)=4; B(0xE5)=1; B(0xED)=B(0xE4);}
+    if (--B(0xE5)==0) {
+        B(0xE5)=B(0xDF);
+        switch(B(0xE3)) {
+        case 1:
+            step=(((Q(0x10)-Q(0x58))>>8)*W(0x84))>>10;
+            if(step<B(0xE6)) B(0xE4)=B(0xE0)+(s32)(F(0x78)*step);
+            else {B(0xE3)++; B(0xE4)=B(0xE1);} break;
+        case 2:
+            step=((((Q(0x10)-Q(0x58))>>8)-B(0xE6))*W(0x84))>>10;
+            if(step<B(0xE7)) B(0xE4)=B(0xE1)+(s32)(F(0x7C)*step);
+            else {B(0xE3)++; B(0xE4)=B(0xE2);} break;
+        case 3: break;
+        case 4:
+            step=(((Q(0x10)-Q(0x70))>>8)*W(0x84))>>10;
+            if(step<B(0xE8)) B(0xE4)=B(0xED)-(s32)(F(0x80)*step*B(0xED));
+            else {B(0xE3)++; B(0xE4)=0;} break;
+        }
+    }
 #undef B
 #undef W
 #undef Q

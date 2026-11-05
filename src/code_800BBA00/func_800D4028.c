@@ -19,10 +19,10 @@ typedef struct { NwFI e[4]; } NwV4;
 
 /* Evaluate the three quadratic spline basis weights at t. */
 void func_800D4028(f32 t, f32 *out) {
- f32 a,b,c;
- f64 u = D_800E6C00 - (f64)t;
- a = u*u*D_800E6C08;
- b = u*(f64)t+D_800E6C08;
- c = (f64)(t*t)*D_800E6C08;
- *out++ = a; *out++ = b; *out = c;
+    f32 a,b,c;
+    f64 u = D_800E6C00 - (f64)t;
+    a = u*u*D_800E6C08;
+    b = u*(f64)t+D_800E6C08;
+    c = (f64)(t*t)*D_800E6C08;
+    *out++ = a; *out++ = b; *out = c;
 }

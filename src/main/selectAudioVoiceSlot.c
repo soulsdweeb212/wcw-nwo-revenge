@@ -14,20 +14,20 @@ extern Voice15 *D_800604D0;
  * free (kind==0) voice owned by someone else; else the owner's own voice already
  * playing that sample; finally wraps to index % voiceCount. */
 s32 selectAudioVoiceSlot(Owner15 *owner,s32 index) {
- u32 i;
- Voice15 *p;
- s32 best,bestPriority;
- p=D_800604D0;
- for(i=0;i<D_800604C8;i++,p++) if(!p->active) return i;
- p=D_800604D0;
- bestPriority=0x7FFFFFFF;best=-1;
- for(i=0;i<D_800604C8;i++,p++) {
-  if(p->kind && p->priority<=bestPriority) {bestPriority=p->priority;best=i;}
- }
- if(best!=-1)return best;
- p=D_800604D0;
- for(i=0;i<D_800604C8;i++) if(!p->kind && p->owner!=owner) return i;
- p=D_800604D0;
- for(i=0;i<D_800604C8;i++,p++) if(p->owner==owner && owner->samples[index]==p->sample)return i;
- return index%(s32)D_800604C8;
+    u32 i;
+    Voice15 *p;
+    s32 best,bestPriority;
+    p=D_800604D0;
+    for(i=0;i<D_800604C8;i++,p++) if(!p->active) return i;
+    p=D_800604D0;
+    bestPriority=0x7FFFFFFF;best=-1;
+    for(i=0;i<D_800604C8;i++,p++) {
+        if(p->kind && p->priority<=bestPriority) {bestPriority=p->priority;best=i;}
+    }
+    if(best!=-1)return best;
+    p=D_800604D0;
+    for(i=0;i<D_800604C8;i++) if(!p->kind && p->owner!=owner) return i;
+    p=D_800604D0;
+    for(i=0;i<D_800604C8;i++,p++) if(p->owner==owner && owner->samples[index]==p->sample)return i;
+    return index%(s32)D_800604C8;
 }

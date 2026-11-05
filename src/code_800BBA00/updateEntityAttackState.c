@@ -35,25 +35,25 @@ s32 func_800D2B64(void*,f32,u16,s32);
 void applyMovementToEntityPair(void*,void*,u16);void func_800B68A0(void*,void*,void*);
 #define ENT D_800FAF5C
 void updateEntityAttackState(void){
- switch(ENT->state){
- case 0:{s32 animId;D_800EB550[D_800FADB8]=D_800FABE4;
- if(func_800B71F8(ENT,D_800F9B00,0xB)){ENT->state++;animId=0x10C0;}else{ENT->state=6;ENT->actionFlags|=8;animId=0x10D0;}
- func_800D427C(ENT,animId,3);break;}
- case 1:func_800D2BEC(ENT,D_800F9B00,0,4.0f,0,0xFFFFE);
- if(ENT->animTimer<=0){func_800D427C(ENT,0x10C2,1);ENT->actionFlags&=~0x14;ENT->state++;}break;
- case 2:
- ENT->flags|=0x200000000000ULL;
- if((ENT->actionFlags&1)||(D_800FAF8A&0x10)||func_800A93C0()){
- ENT->actionFlags|=1;func_800D427C(ENT,0x10C4,1);ENT->state++;
- }else if(ENT->actionFlags&0x10){s32 animId;if(ENT->flags&0x8000000)animId=0x10CE;else animId=0x10CA;func_800D427C(ENT,animId,1);ENT->state=4;
- }else if(ENT->actionFlags&4){func_800D427C(ENT,0x10C6,1);ENT->state=5;
- }else if(ENT->actionFlags&2){func_800D427C(ENT,func_800D5438(D_800F9B00,1),1);
- }else applyMovementToEntityPair(ENT,D_800F9D10+D_800EB550[D_800FADB8]*0x3B0,D_800FABE6);
- break;
- case 3:func_800D2BEC(ENT,D_800F9B00,0,4.0f,0,0xFFFFE);if(ENT->animTimer<=0){func_800D4AD0(ENT);func_800A6C48(ENT,0x2B);{ObjC9014 *ent=ENT;ent->f362=-1;ent->flags&=~0x40000000ULL;}}break;
- case 4:func_800D2B64(ENT,2.0f,0,2);if(ENT->animTimer<=0){func_800D4AD0(ENT);func_800A6C48(ENT,0x2B);{ObjC9014 *ent=ENT;ent->f362=-1;ent->flags&=~0x40000000ULL;}}break;
- case 5:func_800D2BEC(ENT,D_800F9D10+D_800EB550[D_800FADB8]*0x3B0,0,4.0f,0,0xFFFFE);if(ENT->animTimer<=0){func_800B68A0(D_800F9B64,D_800F9B64,ENT);func_800D4AD0(ENT);beginEntityActionA8D8C(ENT);{ObjC9014 *ent=ENT;ent->f362=-1;ent->flags&=~0x40000000ULL;}}break;
- case 6:func_800D2BEC(ENT,D_800F9B00,0,4.0f,0,0xFFFFE);if(ENT->animTimer<=0){func_800A7D1C(ENT,0x25);func_800B68A0(ENT,D_800F9B00,ENT);func_800D4AD0(ENT);beginEntityActionA8D8C(ENT);{ObjC9014 *ent=ENT;ent->f362=-1;ent->flags&=~0x40000000ULL;}}break;
- }
+    switch(ENT->state){
+    case 0:{s32 animId;D_800EB550[D_800FADB8]=D_800FABE4;
+        if(func_800B71F8(ENT,D_800F9B00,0xB)){ENT->state++;animId=0x10C0;}else{ENT->state=6;ENT->actionFlags|=8;animId=0x10D0;}
+        func_800D427C(ENT,animId,3);break;}
+    case 1:func_800D2BEC(ENT,D_800F9B00,0,4.0f,0,0xFFFFE);
+        if(ENT->animTimer<=0){func_800D427C(ENT,0x10C2,1);ENT->actionFlags&=~0x14;ENT->state++;}break;
+    case 2:
+        ENT->flags|=0x200000000000ULL;
+        if((ENT->actionFlags&1)||(D_800FAF8A&0x10)||func_800A93C0()){
+            ENT->actionFlags|=1;func_800D427C(ENT,0x10C4,1);ENT->state++;
+        }else if(ENT->actionFlags&0x10){s32 animId;if(ENT->flags&0x8000000)animId=0x10CE;else animId=0x10CA;func_800D427C(ENT,animId,1);ENT->state=4;
+        }else if(ENT->actionFlags&4){func_800D427C(ENT,0x10C6,1);ENT->state=5;
+        }else if(ENT->actionFlags&2){func_800D427C(ENT,func_800D5438(D_800F9B00,1),1);
+        }else applyMovementToEntityPair(ENT,D_800F9D10+D_800EB550[D_800FADB8]*0x3B0,D_800FABE6);
+        break;
+    case 3:func_800D2BEC(ENT,D_800F9B00,0,4.0f,0,0xFFFFE);if(ENT->animTimer<=0){func_800D4AD0(ENT);func_800A6C48(ENT,0x2B);{ObjC9014 *ent=ENT;ent->f362=-1;ent->flags&=~0x40000000ULL;}}break;
+    case 4:func_800D2B64(ENT,2.0f,0,2);if(ENT->animTimer<=0){func_800D4AD0(ENT);func_800A6C48(ENT,0x2B);{ObjC9014 *ent=ENT;ent->f362=-1;ent->flags&=~0x40000000ULL;}}break;
+    case 5:func_800D2BEC(ENT,D_800F9D10+D_800EB550[D_800FADB8]*0x3B0,0,4.0f,0,0xFFFFE);if(ENT->animTimer<=0){func_800B68A0(D_800F9B64,D_800F9B64,ENT);func_800D4AD0(ENT);beginEntityActionA8D8C(ENT);{ObjC9014 *ent=ENT;ent->f362=-1;ent->flags&=~0x40000000ULL;}}break;
+    case 6:func_800D2BEC(ENT,D_800F9B00,0,4.0f,0,0xFFFFE);if(ENT->animTimer<=0){func_800A7D1C(ENT,0x25);func_800B68A0(ENT,D_800F9B00,ENT);func_800D4AD0(ENT);beginEntityActionA8D8C(ENT);{ObjC9014 *ent=ENT;ent->f362=-1;ent->flags&=~0x40000000ULL;}}break;
+    }
 }
 #undef ENT

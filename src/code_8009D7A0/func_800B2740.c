@@ -32,14 +32,14 @@ void func_800B2740(void) {
                 stance = *(u16 *)(D_800F9B60 + 0xC);
                 if ((u32)(stance - 3) < 2) goto check;
                 if ((s16)stance != 7) goto advance;
-            check:
+check:
                 if ((f64)*(f32 *)(self + 0x48 + *(s16 *)(D_800F9B60 + 0x3E) * 4) < D_800E52A0) { *(s16 *)(self + 8) = 0xF00; *(s16 *)(self + 4) = *(u16 *)(self + 4) + 1; }
                 goto done;
-            advance: { u8 *cur = D_800FABD0; *(s16 *)(cur + 8) = 0xF00; *(s16 *)(cur + 4) = *(u16 *)(cur + 4) + 1; }
+                advance: { u8 *cur = D_800FABD0; *(s16 *)(cur + 8) = 0xF00; *(s16 *)(cur + 4) = *(u16 *)(cur + 4) + 1; }
             }
-        done: break;
+            done: break;
         default: { u8 *cur = D_800FABD0; u8 *target = D_800F9B60; *(s16 *)(cur + 2) = 0; *(s16 *)(cur + 4) = 0; *(u16 *)(cur + 0x2E) = *(u16 *)(target + 0xA); *(u32 *)(cur + 0x5C) &= ~7; }
-        break;
+            break;
         }
     case 2:
         switch (*(s16 *)(D_800FAF58 + 0xA)) {

@@ -15,21 +15,21 @@ s32 __osContRamRead(s32,s32,u16,void*);
  * `extension`. On success stores the entry index in *fileNo; returns 0 on a hit,
  * 5 if the pak is absent or the file was not found, otherwise an I/O error code. */
 s32 findControllerPakFile(FindPfs *pfs,u16 company,u32 game,u8 *name,u8 *extension,s32 *fileNo) {
- FindDirectory dirEntry;
- s32 index,k,mismatch,result;
- if(!(pfs->flags&1)) return 5;
- result=__osCheckId(pfs);
- if(result) return result;
- for(index=0;index<pfs->directorySize;index++) {
-  result=__osContRamRead(pfs->queue,pfs->channel,pfs->directoryBase+index,&dirEntry);
-  if(result) return result;
-  if(dirEntry.company==company && dirEntry.game==game) {
-   mismatch=0;
-   if(name) { for(k=0;k<16;k++) {if(dirEntry.name[k]!=name[k]) {mismatch=1;break;}} }
-   if((extension!=NULL)&(mismatch==0)) {for(k=0;k<4;k++) {if(dirEntry.extension[k]!=extension[k]) {mismatch=1;break;}}}
-   if(!mismatch) {*fileNo=index;return result;}
-  }
- }
- *fileNo=-1;
- return 5;
+    FindDirectory dirEntry;
+    s32 index,k,mismatch,result;
+    if(!(pfs->flags&1)) return 5;
+    result=__osCheckId(pfs);
+    if(result) return result;
+    for(index=0;index<pfs->directorySize;index++) {
+        result=__osContRamRead(pfs->queue,pfs->channel,pfs->directoryBase+index,&dirEntry);
+        if(result) return result;
+        if(dirEntry.company==company && dirEntry.game==game) {
+            mismatch=0;
+            if(name) { for(k=0;k<16;k++) {if(dirEntry.name[k]!=name[k]) {mismatch=1;break;}} }
+            if((extension!=NULL)&(mismatch==0)) {for(k=0;k<4;k++) {if(dirEntry.extension[k]!=extension[k]) {mismatch=1;break;}}}
+            if(!mismatch) {*fileNo=index;return result;}
+        }
+    }
+    *fileNo=-1;
+    return 5;
 }

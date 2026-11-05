@@ -216,7 +216,7 @@ void func_800C72DC(void) {
         }
         func_800A6C48(D_800FAF5C, 0x62);
         break;
-    l7754:
+l7754:
         if (D_800FAF5C->f4 > 0) {
             break;
         }

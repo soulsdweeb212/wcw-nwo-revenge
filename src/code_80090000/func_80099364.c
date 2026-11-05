@@ -30,7 +30,7 @@ s32 func_80099364(s32 arg0, s16 arg1, s16 arg2, s32 arg3, s32 arg4) {
         for (i = 0, e = D_800E7CE0; i < 0x40; i++, e++) if (e->key == key) goto write;
         for (i = 0, e = D_800E7CE0; i < 0x40; i++, e++) if (e->key == 0) { e->key = key; goto write; }
         e = 0; goto done;
-    write:
+write:
         e->match = arg3; e->fieldC = arg1; e->fieldE = arg2; goto done;
     }
     for (j = 0, e = D_800E7CE0; j < 0x40; j++, e++) if (e->key == key && e->match == arg3) { e->fieldC = arg1; e->fieldE = arg2; goto done; }

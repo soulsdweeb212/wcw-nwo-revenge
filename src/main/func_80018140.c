@@ -22,29 +22,29 @@ void func_8001CEF0(void *);
  * converted through the descriptor's f18 scale and the f64 D_8003B448.
  * func_800202B0(0,0,pool,1,size) is the pool allocator used for every block. */
 void func_80018140(PartList **outList, PartDescriptor *descriptor, s32 pool) {
- PartList *list; s32 *table; u16 tableIndex; u16 i; u16 j; PartEntry *entry;
- list=(PartList*)func_800202B0(0,0,pool,1,0x2C); *outList=list;
- switch(descriptor->f1C) {case 1: table=D_80036F60;break; case 2:table=D_80036FC8;break;case 5:table=D_80037050;break;case 3:table=D_80037078;break;case 4:table=D_800370A0;break;case 6:table=descriptor->f20;break;default:table=D_800370C8;break;}
- list->f24=table[0]; list->f1C=table[1];
- list->f20=(PartEntry*)func_800202B0(0,0,pool,list->f24,0x28);
- list->f14=(u16*)func_800202B0(0,0,pool,list->f1C,2); list->f18=list->f14;
- tableIndex=2;
- for(j=0;j<list->f1C;j++) list->f14[j]=0;
- for(i=0;i<list->f24;i++) {
- entry=&list->f20[i];
- entry->f0=table[tableIndex++]; entry->f4=table[tableIndex++]; entry->fA=table[tableIndex++]; entry->f8=table[tableIndex++]; entry->fC=table[tableIndex++];
- if(table[tableIndex]) {
- entry->f10=((f32)table[tableIndex++]/1000.0f)*2.0/descriptor->f18;
- entry->f1C=((f32)table[tableIndex++]/173123.404906676)* (entry->f4-entry->f0);
- entry->f14=1.0f; entry->f18=0.0f;
- entry->f24=(PartAux*)func_800202B0(0,0,pool,1,0x34);
- entry->f24->f14=(void*)func_800202B0(0,0,pool,1,0x20);
- entry->f24->f20=0;entry->f24->f24=1;
- } else { entry->f24=0;tableIndex+=2; }
- if(table[tableIndex]) {
- entry->f20=(PartSubAux*)func_800202B0(0,0,pool,1,0x30);
- entry->f20->f28=(void*)func_800202B0(0,0,pool,1,8);
- entry->f20->f0=table[tableIndex++];func_8001CEF0(entry->f20);
- }else {entry->f20=0;tableIndex++;}
- }
+    PartList *list; s32 *table; u16 tableIndex; u16 i; u16 j; PartEntry *entry;
+    list=(PartList*)func_800202B0(0,0,pool,1,0x2C); *outList=list;
+    switch(descriptor->f1C) {case 1: table=D_80036F60;break; case 2:table=D_80036FC8;break;case 5:table=D_80037050;break;case 3:table=D_80037078;break;case 4:table=D_800370A0;break;case 6:table=descriptor->f20;break;default:table=D_800370C8;break;}
+    list->f24=table[0]; list->f1C=table[1];
+    list->f20=(PartEntry*)func_800202B0(0,0,pool,list->f24,0x28);
+    list->f14=(u16*)func_800202B0(0,0,pool,list->f1C,2); list->f18=list->f14;
+    tableIndex=2;
+    for(j=0;j<list->f1C;j++) list->f14[j]=0;
+    for(i=0;i<list->f24;i++) {
+        entry=&list->f20[i];
+        entry->f0=table[tableIndex++]; entry->f4=table[tableIndex++]; entry->fA=table[tableIndex++]; entry->f8=table[tableIndex++]; entry->fC=table[tableIndex++];
+        if(table[tableIndex]) {
+            entry->f10=((f32)table[tableIndex++]/1000.0f)*2.0/descriptor->f18;
+            entry->f1C=((f32)table[tableIndex++]/173123.404906676)* (entry->f4-entry->f0);
+            entry->f14=1.0f; entry->f18=0.0f;
+            entry->f24=(PartAux*)func_800202B0(0,0,pool,1,0x34);
+            entry->f24->f14=(void*)func_800202B0(0,0,pool,1,0x20);
+            entry->f24->f20=0;entry->f24->f24=1;
+        } else { entry->f24=0;tableIndex+=2; }
+        if(table[tableIndex]) {
+            entry->f20=(PartSubAux*)func_800202B0(0,0,pool,1,0x30);
+            entry->f20->f28=(void*)func_800202B0(0,0,pool,1,8);
+            entry->f20->f0=table[tableIndex++];func_8001CEF0(entry->f20);
+        }else {entry->f20=0;tableIndex++;}
+    }
 }

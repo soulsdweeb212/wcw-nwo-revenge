@@ -102,7 +102,7 @@ s32 func_800A171C(void) {
         }
         if (any) goto draw;
         if (f) {
-        draw:
+draw:
             m->f5C = m->el->f68;
             p = m->el;
             for (k = 0; k < m->items->n; k++, p++) {

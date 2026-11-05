@@ -10,9 +10,9 @@ extern u32 D_800604C8; extern VoiceEF0 *D_800604D0;
 /* Sets the volume (clamped 1..256) of every voice whose key matches arg0,
  * scaling the voice's base level by the new value. Returns the number updated. */
 s32 func_80013EF0(s32 arg0,s32 arg1) {
- if(!arg0)return 0;
- if(arg1<=0)arg1=1;else if(arg1>=257)arg1=256;
- {u32 i=0;VoiceEF0 *p=D_800604D0;s32 n=0;
- while(i<D_800604C8) {if(p->key==arg0){n++;p->value=arg1;p->scaled=(p->base*arg1)>>7;}i++;p++;}
- return n;}
+    if(!arg0)return 0;
+    if(arg1<=0)arg1=1;else if(arg1>=257)arg1=256;
+    {u32 i=0;VoiceEF0 *p=D_800604D0;s32 n=0;
+        while(i<D_800604C8) {if(p->key==arg0){n++;p->value=arg1;p->scaled=(p->base*arg1)>>7;}i++;p++;}
+        return n;}
 }

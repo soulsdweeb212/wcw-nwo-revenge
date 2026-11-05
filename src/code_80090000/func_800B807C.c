@@ -50,7 +50,7 @@ s32 func_800B807C(s32 a, s32 b) {
     }
     q = D_800D2530[D_800DC8E0].r;
     if (q->n < 4) {
-    single:
+single:
         return func_800B7F3C(b);
     }
     for (i = 0; i < 6; i++, q++) {

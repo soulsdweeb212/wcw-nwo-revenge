@@ -20,26 +20,26 @@ extern u16 *D_8007C438[][23];
 
 u16 func_8000B550(s16 charId, s32 maskIndex)
 {
-  u16 bestId = 0;
-  u16 bestKey = 0;
-  u32 row, k;
-  u16 candidate;
-  u32 id;
-  for (row = 0; row < 23; row++) {
-    if (D_8007C438[charId][row] && (D_8007C318[charId][row] >= 17U)) {
-      for (k = 0; k < 16; k++) {
-        candidate = D_8007C438[charId][row][16 + k];
-        id = candidate & 0xFFFF;
-        if (!(id & ~D_80030860[maskIndex & 0xFFFF])) {
-          if (id >= 2U) {
-            if (bestId < id) {
-              bestId = candidate;
-              bestKey = D_8007C438[charId][row][k];
+    u16 bestId = 0;
+    u16 bestKey = 0;
+    u32 row, k;
+    u16 candidate;
+    u32 id;
+    for (row = 0; row < 23; row++) {
+        if (D_8007C438[charId][row] && (D_8007C318[charId][row] >= 17U)) {
+            for (k = 0; k < 16; k++) {
+                candidate = D_8007C438[charId][row][16 + k];
+                id = candidate & 0xFFFF;
+                if (!(id & ~D_80030860[maskIndex & 0xFFFF])) {
+                    if (id >= 2U) {
+                        if (bestId < id) {
+                            bestId = candidate;
+                            bestKey = D_8007C438[charId][row][k];
+                        }
+                    }
+                }
             }
-          }
         }
-      }
     }
-  }
-  return bestKey;
+    return bestKey;
 }

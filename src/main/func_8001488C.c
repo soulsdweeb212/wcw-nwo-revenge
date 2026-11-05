@@ -31,7 +31,7 @@ void func_8001488C(Nw2Voice1488C *v, s32 idx)
 
     p = v->unk4;
     if (p != NULL) {
-    loop:
+loop:
         c = *p;
         if (c >= 0x80) {
             p = D_80036E80[c & 0x7F](v, p + 1);

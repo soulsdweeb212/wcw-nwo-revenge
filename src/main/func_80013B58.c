@@ -16,27 +16,27 @@ extern AudioRec *D_800604D0;
  * = 1, state = 0, clear flag 0) or is set to value (arg1, or 1 when arg1 is zero) and state
  * arg1. */
 void func_80013B58(s32 arg0, s32 arg1) {
- AudioRec *p;
- s32 value;
- u32 i;
- value=arg1;
- if (arg1 == 0) value = 1;
- p = D_800604D0;
- for (i=0;i<D_800604C8;i++,p++) {
-  if (p->kind != 0) {
-   if (arg0 & 1) goto process;
-  } else if (arg0 & 2) {
+    AudioRec *p;
+    s32 value;
+    u32 i;
+    value=arg1;
+    if (arg1 == 0) value = 1;
+    p = D_800604D0;
+    for (i=0;i<D_800604C8;i++,p++) {
+        if (p->kind != 0) {
+            if (arg0 & 1) goto process;
+        } else if (arg0 & 2) {
 process:
-   if (p->active != 0 && p->state == -1) {
-    if (p->flags & 1) {
-     p->value = 1;
-     p->state = 0;
-     p->flags &= ~1;
-    } else {
-     p->value = value;
-     p->state = arg1;
+            if (p->active != 0 && p->state == -1) {
+                if (p->flags & 1) {
+                    p->value = 1;
+                    p->state = 0;
+                    p->flags &= ~1;
+                } else {
+                    p->value = value;
+                    p->state = arg1;
+                }
+            }
+        }
     }
-   }
-  }
- }
 }

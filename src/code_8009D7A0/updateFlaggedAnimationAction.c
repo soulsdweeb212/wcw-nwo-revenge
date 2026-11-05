@@ -17,35 +17,35 @@ void func_800D4AD0(void *);
  * timer then plays the exit animation; state 2 tears the action down and
  * restarts the entity action. */
 void updateFlaggedAnimationAction(void) {
- s16 anim;
- u16 flags;
- func_800D2BEC(D_800EB408,D_800EB40C,0,4.0f,0,0xFFFFE);
- flags=*(u16*)((u8*)D_800EB40C+0x3A);
- switch(((Nw2F408*)D_800EB408)->fC) {
- case 0:
- if(flags&0x2200)anim=0x101A;
- if(flags&0x400)anim=0x1007;
- if(flags&0x4800)anim=0x101E;
- if(flags&0x1000)anim=0x100F;
- func_800A7328(D_800EB408);
- func_800D427C(D_800EB408,anim,2);
- ((Nw2F408*)D_800EB408)->fC++;
- break;
- case 1:
- if(((Nw2F408*)D_800EB408)->f4<=0) {
- if(flags&0x2200)anim=0x101C;
- if(flags&0x400)anim=0x1016;
- if(flags&0x4800)anim=0x1020;
- if(flags&0x1000)anim=0x1018;
- func_800D427C(D_800EB408,anim,0);
- ((Nw2F408*)D_800EB408)->fC++;
- }
- break;
- case 2:
- if(((Nw2F408*)D_800EB408)->f4<=0) {
- func_800D4AD0(D_800EB408);
- beginEntityActionA8D8C(D_800EB408);
- }
- break;
- }
+    s16 anim;
+    u16 flags;
+    func_800D2BEC(D_800EB408,D_800EB40C,0,4.0f,0,0xFFFFE);
+    flags=*(u16*)((u8*)D_800EB40C+0x3A);
+    switch(((Nw2F408*)D_800EB408)->fC) {
+    case 0:
+        if(flags&0x2200)anim=0x101A;
+        if(flags&0x400)anim=0x1007;
+        if(flags&0x4800)anim=0x101E;
+        if(flags&0x1000)anim=0x100F;
+        func_800A7328(D_800EB408);
+        func_800D427C(D_800EB408,anim,2);
+        ((Nw2F408*)D_800EB408)->fC++;
+        break;
+    case 1:
+        if(((Nw2F408*)D_800EB408)->f4<=0) {
+            if(flags&0x2200)anim=0x101C;
+            if(flags&0x400)anim=0x1016;
+            if(flags&0x4800)anim=0x1020;
+            if(flags&0x1000)anim=0x1018;
+            func_800D427C(D_800EB408,anim,0);
+            ((Nw2F408*)D_800EB408)->fC++;
+        }
+        break;
+    case 2:
+        if(((Nw2F408*)D_800EB408)->f4<=0) {
+            func_800D4AD0(D_800EB408);
+            beginEntityActionA8D8C(D_800EB408);
+        }
+        break;
+    }
 }
