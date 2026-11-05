@@ -1,9 +1,9 @@
 # WCW / nWo  REVENGE (decompilation)
 
 A matching decompilation of WCW / nWo  REVENGE for the Nintendo 64, started with [decompdecomp](https://github.com/n-delic/decompdecomp).
-1687 of 1696 functions build as C objects (99.5%, 95.9% of the code by size). 35 of those are hand-written assembly routines wrapped
-in a top-level `asm()` block (see below), so 1652 are real C that compiles to exactly the original code. The other 9 are still plain
-assembly: 4 have a draft in `nonmatching/`, and 5 are in overlay 2 and have no match yet. Overlay 1 is fully matched.
+1692 of 1696 functions build as C objects (99.8%, 99.4% of the code by size). 35 of those are hand-written assembly routines wrapped
+in a top-level `asm()` block (see below), so 1657 are real C that compiles to exactly the original code. The other 4 are still plain
+assembly, all in the main program, and each has a draft in `nonmatching/`. Overlays 1 and 2 are fully matched.
 `build.py` rebuilds the game from this tree and checks it against your original, byte for byte.
 <!-- Working with this project's owner: read notes/MasterIndex.md first and keep it updated (local only, gitignored). -->
 
@@ -100,11 +100,9 @@ those take a manual edit, using the ROM's instructions at the target address to 
 change; the ROM must stay identical.
 
 ### Still assembly, with a reason
-9 functions are not matched yet. `nonmatching/README.md` explains the 4 that have a draft; `nonmatching/STATUS.md` lists all of them.
-In short:
-- **Have a draft (4 functions):** `func_80006178`, `func_8000C91C`, `func_80012CD0` and `func_800291C0`, all in the
-  main program. Their structure is known; what is left is instruction order, registers, or decoding the largest ones.
-- **No match yet (5 functions):** the five largest in overlay 2: func_800922C0, func_8009B2EC, func_80094A9C, func_8009C774 and func_800BAC30 (ROM 0xAE0D0). They were raw data until the overlays were mapped. Automatic m2c drafts matched the easy ones; the rest need hand work.
+4 functions are not matched yet: `func_80006178`, `func_8000C91C`, `func_80012CD0` and `func_800291C0`, all in the main
+program. Each has a draft; `nonmatching/README.md` explains what blocks it and `nonmatching/STATUS.md` lists them. Their
+structure is known; what is left is instruction order, registers, or decoding the largest ones.
 
 ### Earlier attempts (`progress/`)
 If you have the `progress/` folder decompdecomp saved next to this tree, `progress/src/<function>.c` holds C that its judge
