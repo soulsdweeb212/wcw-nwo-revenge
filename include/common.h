@@ -66,11 +66,11 @@ extern s8 D_800484F8[];
 extern s8 D_800484FC[];
 
 /* command-buffer state (__osContGetInitData/21480/21540):
- * D_8006A260 is an array of 8-byte entries; D_80070A98 is the entry count.
- * D_8006A260+0x38 = D_8006A298, D_8006A260+0x3C = D_8006A29C (flag).
- * D_8007BD30 is a byte status written 0xFE. */
-extern u8 D_80070A98;
-extern u8 D_8007BD30;
+ * __osContPifRam is an array of 8-byte entries; __osMaxControllers is the entry count.
+ * __osContPifRam+0x38 = D_8006A298, __osContPifRam+0x3C = D_8006A29C (flag).
+ * __osContLastCmd is a byte status written 0xFE. */
+extern u8 __osMaxControllers;
+extern u8 __osContLastCmd;
 extern s32 D_8006A298;
 extern s32 D_8006A29C;
 
@@ -335,8 +335,8 @@ s32 __osContDataCrc(u8 *);
  * Messages 4/9 reset/set parent state and forward with third argument zero.
  * Message 1 sets child; 7 sets +0x18; 8 sets +0x1C to one. */
 
-/* Audio command queue: 8-byte message records, read index D_80060504,
- * write index D_80060508, capacity D_8006050C, buffer pointer D_80060510.
+/* Audio command queue: 8-byte message records, read index fifo_start,
+ * write index fifo_current, capacity fifo_limit, buffer pointer fifo_addr.
  * Declare these locally where needed for legacy source compatibility.
  * s32 __MusIntFifoAddCommand(void *message); copies eight bytes, returns success.
  * void __MusIntMemMove(void *source, void *destination, s32 bytes);
@@ -378,7 +378,7 @@ void createSpeedParam(void);
  * void func_800D4028(f32, f32 *);
  */
 
-/* Matched 13994: D_800604D8 is s32 *thresholds, D_800604D0 a
+/* Matched 13994: D_800604D8 is s32 *thresholds, mus_channels a
  * pointer to records of stride 0x158 (not an inline array in this routine).
  * __MusIntStartEffect(void *, s32, s32, s32, s32) takes FIVE arguments;
  * the fifth is the selected table threshold, passed at stack+0x10.
@@ -396,8 +396,8 @@ void createSpeedParam(void);
  */
 
 /* Confirmed by matched 800178F0/80017860/80017980 (same family as 800177D0/80017A30/80017AC0):
- * D_80036F54 is s32 *; __n_allocParam returns a fresh command packet (s32 *); the packet
- * layout is p[0]=0, p[1]=D_80036F54[7]+child[0x88], s16 command at byte +8, s32/f32 payload
+ * n_syn is s32 *; __n_allocParam returns a fresh command packet (s32 *); the packet
+ * layout is p[0]=0, p[1]=n_syn[7]+child[0x88], s16 command at byte +8, s32/f32 payload
  * at +0xC, p[3] extra at +0xC too (payload word), p[4] at +0x10. Send with
  * n_alEnvmixerParam(child, 3, p). Commands: 7 (float payload, 178F0), 0xC (arg&0xFF, 17860),
  * 0xB (s16 payload + _n_timeToSamples(arg2, p[1]) -> p[4], 17980).
@@ -424,7 +424,7 @@ typedef struct {
     u16 kind;
     u8 padC8[144];
 } Nw2AudioVoiceRecord;
-/* D_800604D0: Nw2AudioVoiceRecord *; D_800604C8: u32 voice count.
+/* mus_channels: Nw2AudioVoiceRecord *; max_channels: u32 voice count.
  * Keep extern declarations local for compatibility with legacy sources. */
 
 /* Matched CBD5C: s8 func_800B71F8(void *, s32, s32);
@@ -523,13 +523,13 @@ typedef struct {
 } Nw2Sub4BA8;
 
 /* Matched Ftempo (audio voice pitch/level update):
- * lo = (*arg1++ * 0x6000) / 120 / D_800604DC; then
+ * lo = (*arg1++ * 0x6000) / 120 / mus_vsyncs_per_second; then
  * t2 = (lo * s16[arg0+0xB8]) >> 7; if (u16[arg0+0xC6] != 0) s16[arg0+0xBC] = lo;
- * else walk D_800604D0 (D_800604C8 records, stride 0x158) and for records whose
+ * else walk mus_channels (max_channels records, stride 0x158) and for records whose
  * s32 +0x94 equals arg0's +0x94: s16 +0xC8 = lo, s16 +0xBC = t2. return arg1.
- * D_800604C8 is u32 (hoisted out of the loop ONLY when the walker is a real
+ * max_channels is u32 (hoisted out of the loop ONLY when the walker is a real
  * 0x158-byte struct pointer; with a raw u8 * it reloads every iteration).
- * D_800604DC is s32. The 8-byte stack frame is from the inline signed-division
+ * mus_vsyncs_per_second is s32. The 8-byte stack frame is from the inline signed-division
  * sequence, not from a local. */
 typedef struct {
     u8 pad0[0x94];
@@ -651,7 +651,7 @@ s32 func_800BED3C(u8 *, s32, u32);
  * osRecvMesg(void *,void *,s32) -> s32, __osPfsGetOneChannelData(s32,void *).
  * Local controller status: u16 type at +0, u8 status at +2, u8 error at +3;
  * tests status bits1/2/4 and big-endian u16 at +2 masked with 0x1FF.
- * D_800375E4 is command byte (set 0xFA); D_8007DFD0 is I/O buffer.
+ * __osPfsInodeCacheBank is command byte (set 0xFA); __osPfsPifRam is I/O buffer.
  * Keep signatures and globals local for legacy caller compatibility. */
 
 /* Matched 15628 audio stream stepper: u64 target time +0x10,
@@ -772,8 +772,8 @@ typedef struct {
 
 /* osStartThread (8001CD20): OS thread header +0 next, +4 s32 priority,
  * +8 queue pointer, +C thread-list next, +10 u16 state.
- * State1 stopped,2 runnable,8 waiting. D_80037248 runnable queue,
- * D_80037250 current thread. 266B4 enqueue(queue**,thread*),
+ * State1 stopped,2 runnable,8 waiting. __osRunQueue runnable queue,
+ * __osRunningThread current thread. 266B4 enqueue(queue**,thread*),
  * 266FC dequeue(queue**)->thread*, 2670C dispatch(),265AC yield(queue**).
  * Keep declarations local for legacy source compatibility. */
 
@@ -903,7 +903,7 @@ typedef struct { s32 offset; u8 bytes[24]; } Nw2AnimationMetadata;
  * __osSetTimerIntr programs the timer from a 64-bit delay. Keep declarations
  * local for legacy drafts: u32 osGetCount(void);
  * void __osSetTimerIntr(u64); void __osSetCompare(u32);
- * D_8007BD60 is u32 last count; g_80038820 is Nw2TimerQueueEntry *.
+ * __osTimerCounter is u32 last count; __osTimerList is Nw2TimerQueueEntry *.
  */
 
 /* Verified by matched B06F0: action/entity common prefix accesses.
@@ -915,7 +915,7 @@ typedef struct { s32 offset; u8 bytes[24]; } Nw2AnimationMetadata;
  */
 
 /* PI handle prefix used by osEPiRawWriteIo: timings are bytes +5..+8,
- * domain byte +9 selects cached handle D_80037620[domain], base address +C. */
+ * domain byte +9 selects cached handle __osCurrentHandle[domain], base address +C. */
 typedef struct {
     u32 f0;
     u8 f4, latency, pulse, page, release, domain;
@@ -1303,7 +1303,7 @@ typedef struct {
 typedef struct { s32 reserved0; u32 vertices; u16 count; } Nw2VertexDescriptor927;
 
 /* Synthesizer command builder family (alAudioFrame/80020800/80020894/80020928,
- * segment main). D_80037510 points to a state record:
+ * segment main). alGlobals points to a state record:
  *  +0x00 head of pending list (nodes: +0 next, +8 fn(node)->s32, +0x10 s32 time)
  *  +0x14 deferred free-list consumed by _collectPVoices
  *  +0x1C current time (s32), +0x20 play position in samples (s32)
@@ -1421,7 +1421,7 @@ typedef struct {
     s16 *f20;
     s32 f24;
 } Nw2AudioRegion;
-/* Region field5: rate = ((f32)value/1000.0f)*2.0 / D_80036F54[16].
+/* Region field5: rate = ((f32)value/1000.0f)*2.0 / n_syn[16].
  * Field6: fractional offset = ((f32)value/D_8003B510)*(u32)(end-start).
  * Field7 writes through f20 and calls 1CEF0 if nonnull. */
 
@@ -1488,7 +1488,7 @@ typedef struct {
  * countdown s32+18 (-1 disabled), stream flags s32+48/+4C;
  * u64 prior clock+58 -> u16 elapsed+CA = (clock-prior)>>8.
  * Active s32+4, state s32+8, flags+0 bit1 skips voice.
- * D_800604CC has 0x1C-byte per-voice handles, D_800604D0 voice pool.
+ * mus_voices has 0x1C-byte per-voice handles, mus_channels voice pool.
  * Keep signature local for legacy callers. */
 
 /* Matched AE8E8: s16 func_800AEBF0(void); returns direction index or -1.
@@ -1557,14 +1557,14 @@ typedef struct {
 /* Audio voice prefix used by matched MusHandleAsk/80013DB0:
  * 0x158-byte records, s32 key at +0x60 and s16 value at +0xBE.
  * 13DB0 returns number of matching nonzero-key voices whose +BE it sets.
- * Use typed record pointer when storing fields so KMC hoists D_800604C8.
+ * Use typed record pointer when storing fields so KMC hoists max_channels.
  */
 typedef struct { u8 reserved0[0x60]; s32 key; u8 reserved64[0x5A]; s16 valueBE; u8 reservedC0[0x98]; } Nw2AudioVoiceKeyRecord;
 
 /* Matched audio-voice setters 13E80/13EF0 also use typed 0x158-byte records:
  * +44 f32 = supplied float + f32(+AC) for matching s32 key(+60).
  * +B8 s16 = supplied integer clamped1..256; +BC s16 = (u16(+C8)*integer)>>7.
- * Direct global loop bound D_800604C8 with typed pointer preserves the target
+ * Direct global loop bound max_channels with typed pointer preserves the target
  * hoisted count's extra v0-to-a3/t0 move; a cached count local removes it.
  */
 
@@ -1658,9 +1658,9 @@ typedef struct { u8 reserved0[0x60]; s32 key; u8 reserved64[0x5A]; s16 valueBE; 
  */
 
 /* Matched osCreateViManager(s32 priority), formerly 258C0:
- * D_80037630 manager is 0x1C bytes: s32 active, thread*, queue*, eventQueue*,
- * three callback/access pointers. D_8003764C is a separate counter, NOT a field.
- * Thread D_80063898, aligned stack D_80063A50[0x1000], queue D_80064A50.
+ * __osViDevMgr manager is 0x1C bytes: s32 active, thread*, queue*, eventQueue*,
+ * three callback/access pointers. __additional_scanline is a separate counter, NOT a field.
+ * Thread viThread, aligned stack D_80063A50[0x1000], queue viEventQueue.
  * Stack end and queue share an address but need distinct source expressions.
  * Keep prototype and extern declarations local for legacy compatibility. */
 
@@ -1704,7 +1704,7 @@ extern u8 D_C5B90[];
  * objects at 0x80038860 / 0x80038830 are exactly Nw2OsViContext, size 0x30).
  * field = *(vu32*)0xA4400010 & 1 (odd/even field).
  * VI state bits: 2 = XSCALE_FACTOR_SET, 4 = YSCALE_FACTOR_SET, 0x20 = BLACK,
- * 0x40 = REPEATLINE, 0x80 = FADE. __additional_scanline = D_8003764C. (distinct name
+ * 0x40 = REPEATLINE, 0x80 = FADE. (distinct name
  * from the SDK's Nw2ViContext so legacy sources keep compiling). */
 typedef struct {
     s32 origin;      /* fldRegs.origin, added to physical framebuffer */
@@ -1743,7 +1743,7 @@ typedef struct {
 
 /* Audio voice record used by __MusIntGetNewNote (state machine, ~0xF8 bytes).
  * Other audio sources declare their own conflicting prototypes for
- * __MusIntFlushPending/15068/15468/177D0/17980/17AC0 and D_800604CC/E0/G80036E80,
+ * __MusIntFlushPending/15068/15468/177D0/17980/17AC0 and mus_voices/E0/G80036E80,
  * so keep those declarations local. */
 typedef struct {
     u8 pad0[4];

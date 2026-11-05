@@ -8,8 +8,8 @@
 
 typedef struct { u8 b0,b1,b2,b3,b4,b5,b6,b7; } Cmd8;
 typedef struct { s16 f0; u8 f2, f3; } Out4;
-extern Cmd8 D_8006A260[];
-extern u8 D_80070A98;
+extern Cmd8 __osContPifRam[];
+extern u8 __osMaxControllers;
 
 /* Unpack the controller read results: for each active slot, decode the status
  * nibble field and, when the poll succeeded, store the button value and the
@@ -22,8 +22,8 @@ void __osContGetInitData(u8 *arg0, s16 *arg1) {
     d = (Out4 *)arg1;
     i = 0;
     res = 0;
-    src = D_8006A260;
-    for (; i < D_80070A98; i++, src++, d++) {
+    src = __osContPifRam;
+    for (; i < __osMaxControllers; i++, src++, d++) {
         Cmd8 t = *src;
         s32 v = (t.b2 & 0xC0) >> 4;
         d->f3 = v;

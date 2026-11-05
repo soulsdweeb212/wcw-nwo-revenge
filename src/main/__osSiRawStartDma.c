@@ -6,10 +6,10 @@
 /* SDK: libultra 2.0I, ultralib src/io/sirawdma.c (same code as the SDK source). */
 #include "common.h"
 
-extern void *g_80038820;
-extern s32 D_80065120;
-extern s32 D_80070480;
-extern s32 D_80070B20;
+extern void *__osTimerList;
+extern s32 __osBaseCounter;
+extern s32 __osViIntrCount;
+extern s32 __osCurrentTime;
 extern s32 D_80070B24;
 
 s32 osWritebackDCache(s32, s32);

@@ -6,9 +6,9 @@
 /* SDK: libultra 2.0I, ultralib src/io/motor.c (same code as the SDK source). */
 #include "common.h"
 
-extern u8 gControllerPakBankBuffers[];
+extern u8 __MotorDataBuf[];
 extern u8 D_800625FC[];
-extern u8 D_8007BD30;
+extern u8 __osContLastCmd;
 
 s32 osRecvMesg(void *, void *, s32);
 s32 __osSiRawStartDma(s32, void *);
@@ -30,7 +30,7 @@ s32 __osMotorAccess(Nw2Obj232A0 *o, s32 arg1) {
     s32 i;
     s32 ret;
 
-    p = &gControllerPakBankBuffers[o->index << 6];
+    p = &__MotorDataBuf[o->index << 6];
     if (!(o->flags & 8)) {
         return 5;
     }
@@ -44,10 +44,10 @@ s32 __osMotorAccess(Nw2Obj232A0 *o, s32 arg1) {
         i--;
         q--;
     } while (i >= 0);
-    D_8007BD30 = 0xFE;
-    __osSiRawStartDma(1, &gControllerPakBankBuffers[o->index << 6]);
+    __osContLastCmd = 0xFE;
+    __osSiRawStartDma(1, &__MotorDataBuf[o->index << 6]);
     osRecvMesg(o->queue, NULL, 1);
-    __osSiRawStartDma(0, &gControllerPakBankBuffers[o->index << 6]);
+    __osSiRawStartDma(0, &__MotorDataBuf[o->index << 6]);
     osRecvMesg(o->queue, NULL, 1);
     ret = p[2] & 0xC0;
     if (ret == 0) {

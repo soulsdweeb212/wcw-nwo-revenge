@@ -7,14 +7,14 @@
 #include "common.h"
 
 s32 n_alSynDelete();
-extern s32 D_80036F50;
-extern s32 D_80036F54;
+extern s32 n_alGlobals;
+extern s32 n_syn;
 
 /* Shut down the registered root object and clear the shared state pool pointers. */
 void n_alClose(void) {
-    if (D_80036F50 != 0) {
+    if (n_alGlobals != 0) {
         n_alSynDelete();
-        D_80036F50 = 0;
-        D_80036F54 = 0;
+        n_alGlobals = 0;
+        n_syn = 0;
     }
 }

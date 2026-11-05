@@ -44,8 +44,8 @@ typedef struct Nw2EnvObj {
     s32 f40;
 } Nw2EnvObj;
 
-extern s16 D_800373F0[];
-extern void *D_80037510;
+extern s16 eqpower[];
+extern void *alGlobals;
 extern char D_8003B710[];
 extern char D_8003B714[];
 void __assert(char *, char *, s32);
@@ -95,14 +95,14 @@ u32 *alEnvmixerPull(Nw2EnvObj *obj, s32 unused, s32 budget, s32 time0, u32 *dl)
                 o->f34 = rec->f14;
                 o->f1A = (s16)((rec->f10 * rec->f10) >> 15);
                 o->f18 = rec->f12;
-                o->f20 = ((u16 *)D_800373F0)[rec->f13];
-                o->f22 = ((u16 *)D_800373F0)[0x7F - rec->f13];
+                o->f20 = ((u16 *)eqpower)[rec->f13];
+                o->f22 = ((u16 *)eqpower)[0x7F - rec->f13];
                 if (rec->f14 != 0) {
                     o->f1C = 1;
                     o->f1E = 1;
                 } else {
-                    o->f1C = (s16)((o->f1A * D_800373F0[o->f18]) >> 15);
-                    o->f1E = (s16)((o->f1A * D_800373F0[0x7F - o->f18]) >> 15);
+                    o->f1C = (s16)((o->f1A * eqpower[o->f18]) >> 15);
+                    o->f1E = (s16)((o->f1A * eqpower[0x7F - o->f18]) >> 15);
                 }
                 {
                     Nw2EnvObj *child = o->f0;
@@ -117,8 +117,8 @@ u32 *alEnvmixerPull(Nw2EnvObj *obj, s32 unused, s32 budget, s32 time0, u32 *dl)
         case 16:
             dl = _pullSubFrame(obj, &sp18, (s16 *)&sp1A, diff, time0, dl);
             if (obj->f30 >= obj->f34) {
-                obj->f28 = (u16)((obj->f1A * D_800373F0[obj->f18]) >> 15);
-                obj->f2E = (u16)((obj->f1A * D_800373F0[0x7F - obj->f18]) >> 15);
+                obj->f28 = (u16)((obj->f1A * eqpower[obj->f18]) >> 15);
+                obj->f2E = (u16)((obj->f1A * eqpower[0x7F - obj->f18]) >> 15);
                 obj->f30 = obj->f34;
                 obj->f1C = obj->f28;
                 obj->f1E = obj->f2E;
@@ -141,8 +141,8 @@ u32 *alEnvmixerPull(Nw2EnvObj *obj, s32 unused, s32 budget, s32 time0, u32 *dl)
                 obj->f34 = *(s32 *)&obj->f3C->f10;
             }
             if (obj->f3C->f8 == 16) {
-                obj->f20 = ((u16 *)D_800373F0)[obj->f3C->fC];
-                obj->f22 = ((u16 *)D_800373F0)[0x7F - obj->f3C->fC];
+                obj->f20 = ((u16 *)eqpower)[obj->f3C->fC];
+                obj->f22 = ((u16 *)eqpower)[0x7F - obj->f3C->fC];
             }
             obj->f38 = 1;
             break;
@@ -161,7 +161,7 @@ u32 *alEnvmixerPull(Nw2EnvObj *obj, s32 unused, s32 budget, s32 time0, u32 *dl)
         case 0:
             {
                 Nw2EnvRec *rr = obj->f3C;
-                void *g = D_80037510;
+                void *g = alGlobals;
                 *(s32 *)((u8 *)rr->fC + 0xD8) = 0;
                 _freePVoice(g, rr->fC);
             }

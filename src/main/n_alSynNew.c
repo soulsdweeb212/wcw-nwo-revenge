@@ -6,13 +6,13 @@
 /* SDK: n_audio, libnaudio/src/n_synthesizer.c (same code as the SDK source). */
 #include "common.h"
 
-/* Initialises the global D_80036F54 state from a config record:
+/* Initialises the global n_syn state from a config record:
  * copies the config fields into the state header, allocates the shared
- * sub-pool (D_80036F54->f34), a small helper pool (->f30, whose +4 callback
+ * sub-pool (n_syn->f34), a small helper pool (->f30, whose +4 callback
  * is n_alFxPull when the config has +0x1C, else n_alAuxBusPull), a block of
  * entry records that are initialised and linked into the sub-pool's index
  * array, and finally a free-list of nodes (stride 0x1C) chained through
- * D_80036F54->f2C. All allocations use the config's size/pool argument. */
+ * n_syn->f2C. All allocations use the config's size/pool argument. */
 typedef struct {
     s32 f0;
     void *f4;
@@ -59,7 +59,7 @@ typedef struct {
     s32 f20;
 } Nw2Sub17B40;
 
-extern Nw2State17B40 *D_80036F54;
+extern Nw2State17B40 *n_syn;
 extern void n_alAuxBusPull(void);
 extern void n_alFxPull(void);
 void *alHeapDBAlloc(s32, s32, s32, s32, s32);
@@ -82,43 +82,43 @@ void n_alSynNew(Nw2Cfg17B40 *arg0) {
     Nw2State17B40 *st;
 
     poolSize = arg0->f14;
-    D_80036F54->f0 = 0;
+    n_syn->f0 = 0;
     tmpF4 = arg0->f4;
-    D_80036F54->f1C = 0;
-    D_80036F54->f20 = 0;
-    D_80036F54->f38 = tmpF4;
-    D_80036F54->f40 = arg0->f18;
-    D_80036F54->f44 = 0xB8;
+    n_syn->f1C = 0;
+    n_syn->f20 = 0;
+    n_syn->f38 = tmpF4;
+    n_syn->f40 = arg0->f18;
+    n_syn->f44 = 0xB8;
     tmpF10 = arg0->f10;
-    D_80036F54->f4C = 1;
-    D_80036F54->f48 = 0;
-    D_80036F54->f24 = tmpF10;
+    n_syn->f4C = 1;
+    n_syn->f48 = 0;
+    n_syn->f24 = tmpF10;
     pool = alHeapDBAlloc(0, 0, poolSize, 1, 0x44);
-    D_80036F54->f34 = pool;
+    n_syn->f34 = pool;
     ((Nw2Sub17B40 *)pool)->f14 = 0;
-    ((Nw2Sub17B40 *)D_80036F54->f34)->f18 = arg0->f4;
-    ((Nw2Sub17B40 *)D_80036F54->f34)->f1C = (s32 *)alHeapDBAlloc(0, 0, poolSize, arg0->f4, 4);
+    ((Nw2Sub17B40 *)n_syn->f34)->f18 = arg0->f4;
+    ((Nw2Sub17B40 *)n_syn->f34)->f1C = (s32 *)alHeapDBAlloc(0, 0, poolSize, arg0->f4, 4);
     pool2 = alHeapDBAlloc(0, 0, poolSize, 1, 0x14);
-    D_80036F54->f30 = pool2;
+    n_syn->f30 = pool2;
     if (arg0->f1C != 0) {
-        ((Nw2Sub17B40 *)D_80036F54->f34)->f20 = n_alSynAllocFX(0, arg0, poolSize);
-        ((Nw2Sub17B40 *)D_80036F54->f30)->f4 = (s32)n_alFxPull;
+        ((Nw2Sub17B40 *)n_syn->f34)->f20 = n_alSynAllocFX(0, arg0, poolSize);
+        ((Nw2Sub17B40 *)n_syn->f30)->f4 = (s32)n_alFxPull;
     } else {
         ((Nw2Sub17B40 *)pool2)->f4 = (s32)n_alAuxBusPull;
     }
-    D_80036F54->f4 = 0;
-    D_80036F54->f8 = 0;
-    D_80036F54->f14 = 0;
-    D_80036F54->f18 = 0;
-    D_80036F54->fC = 0;
-    D_80036F54->f10 = 0;
+    n_syn->f4 = 0;
+    n_syn->f8 = 0;
+    n_syn->f14 = 0;
+    n_syn->f18 = 0;
+    n_syn->fC = 0;
+    n_syn->f10 = 0;
     entries = alHeapDBAlloc(0, 0, poolSize, arg0->f4, 0x8C);
     for (i = 0; i < arg0->f4; i++) {
         entryPtr = (void *)((u8 *)entries + i * 0x8C);
-        alLink(entryPtr, (u8 *)D_80036F54 + 4);
+        alLink(entryPtr, (u8 *)n_syn + 4);
         ((Nw2Sub17B40 *)entryPtr)->f8 = 0;
-        alN_PVoiceNew(entryPtr, D_80036F54->f24, poolSize);
-        sub = (Nw2Sub17B40 *)D_80036F54->f34;
+        alN_PVoiceNew(entryPtr, n_syn->f24, poolSize);
+        sub = (Nw2Sub17B40 *)n_syn->f34;
         {
             s32 idx = sub->f14;
             sub->f14 = idx + 1;
@@ -126,12 +126,12 @@ void n_alSynNew(Nw2Cfg17B40 *arg0) {
         }
     }
     freeList = alHeapDBAlloc(0, 0, poolSize, arg0->f8, 0x1C);
-    st = D_80036F54;
+    st = n_syn;
     st->f2C = NULL;
     for (i = 0; i < arg0->f8; i++) {
         node = (void *)((u8 *)freeList + i * 0x1C);
         *(void **)node = st->f2C;
         st->f2C = node;
     }
-    D_80036F54->f28 = poolSize;
+    n_syn->f28 = poolSize;
 }

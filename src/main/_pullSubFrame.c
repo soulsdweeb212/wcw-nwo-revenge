@@ -39,7 +39,7 @@ typedef struct {
     s32 motion;
 } ALEnvMixer18;
 
-extern s16 D_800373F0[];
+extern s16 eqpower[];
 extern char D_8003B710[];
 extern char D_8003B714[];
 void __assert(char *, char *, s32);
@@ -76,9 +76,9 @@ Acmd18 *_pullSubFrame(void *filter, s16 *inp, s16 *outp, s32 outCount, s32 sampl
 
     if (e->first) {
         e->first = 0;
-        e->ltgt = (e->volume * D_800373F0[e->pan]) >> 15;
+        e->ltgt = (e->volume * eqpower[e->pan]) >> 15;
         e->lratm = _getRate((f64)e->cvolL, (f64)e->ltgt, e->segEnd, &e->lratl);
-        e->rtgt = (e->volume * D_800373F0[128 - e->pan - 1]) >> 15;
+        e->rtgt = (e->volume * eqpower[128 - e->pan - 1]) >> 15;
         e->rratm = _getRate((f64)e->cvolR, (f64)e->rtgt, e->segEnd, &e->rratl);
 
         aSetVolume(ptr++, 6, e->cvolL, 0, 0);

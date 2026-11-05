@@ -5,7 +5,7 @@
  */
 #include "common.h"
 
-extern s32 D_8003764C;
+extern s32 __additional_scanline;
 extern void *__osViCurr;
 extern void *__osViNext;
 extern f64 D_8003B900;
@@ -80,7 +80,7 @@ void __osViSwapContext(void) {
         viNext->yScale = viMode->fldRegs[field].yScale;
     }
 
-    vstart = (viMode->fldRegs[field].vStart - (D_8003764C << 16)) + D_8003764C;
+    vstart = (viMode->fldRegs[field].vStart - (__additional_scanline << 16)) + __additional_scanline;
     hStart = viMode->hStart;
 
     if (viNext->state & 0x20) {

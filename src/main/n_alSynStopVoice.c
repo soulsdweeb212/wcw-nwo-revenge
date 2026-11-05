@@ -6,7 +6,7 @@
 /* SDK: n_audio, libnaudio/src/n_synstopvoice.c (same code as the SDK source). */
 #include "common.h"
 
-extern s32 *D_80036F54;
+extern s32 *n_syn;
 
 s32 *__n_allocParam(void);
 s32 n_alEnvmixerParam(s32 *arg0, s32 arg1, s32 *arg2);
@@ -19,7 +19,7 @@ void n_alSynStopVoice(s32 *arg0) {
     if (arg0[2] != 0) {
         v0 = __n_allocParam();
         if (v0 != 0) {
-            v0[1] = D_80036F54[7] + *(s32 *)((u8 *)arg0[2] + 0x88);
+            v0[1] = n_syn[7] + *(s32 *)((u8 *)arg0[2] + 0x88);
             *(s16 *)((u8 *)v0 + 8) = 0xF;
             v0[0] = 0;
             n_alEnvmixerParam((s32 *)arg0[2], 3, v0);

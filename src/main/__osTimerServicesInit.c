@@ -6,10 +6,10 @@
 /* SDK: libultra 2.0I, ultralib src/os/timerintr.c (same code as the SDK source). */
 #include "common.h"
 
-extern void *g_80038820;
-extern s32 D_80065120;
-extern s32 D_80070480;
-extern s32 D_80070B20;
+extern void *__osTimerList;
+extern s32 __osBaseCounter;
+extern s32 __osViIntrCount;
+extern s32 __osCurrentTime;
 extern s32 D_80070B24;
 
 s32 osWritebackDCache(s32, s32);
@@ -29,10 +29,10 @@ typedef struct {
 
 /* Reset the PI DMA queue node and its associated counters. */
 void __osTimerServicesInit(void) {
-    Node80038820 *p = g_80038820;
-    *(u64 *)&D_80070B20 = 0;
-    D_80065120 = 0;
-    D_80070480 = 0;
+    Node80038820 *p = __osTimerList;
+    *(u64 *)&__osCurrentTime = 0;
+    __osBaseCounter = 0;
+    __osViIntrCount = 0;
     p->b = 0;
     p->a = 0;
     p->prev = p;

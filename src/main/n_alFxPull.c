@@ -37,7 +37,7 @@ typedef struct {
     u8 section_count;
 } ALFx;
 
-extern u8 *D_80036F54;
+extern u8 *n_syn;
 Acmd *n_alAuxBusPull(void);
 Acmd *_n_loadOutputBuffer(ALFx *r, ALDelay *d, s32 buff, Acmd *p);
 Acmd *_n_loadBuffer(ALFx *r, s16 *curr_ptr, s32 buff, s32 count, Acmd *p);
@@ -60,7 +60,7 @@ Acmd *_n_filterBuffer(void *lp, s32 buff, Acmd *p);
 Acmd *n_alFxPull(void)
 {
     Acmd *ptr;
-    ALFx *r = *(ALFx **)(*(u8 **)(D_80036F54 + 0x34) + 0x20);
+    ALFx *r = *(ALFx **)(*(u8 **)(n_syn + 0x34) + 0x20);
     s16 i, buff1, buff2, input, output;
     s16 *in_ptr, *out_ptr, *prev_out_ptr = 0;
     ALDelay *d;

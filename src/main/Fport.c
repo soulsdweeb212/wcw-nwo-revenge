@@ -6,8 +6,8 @@
 /* SDK: libmus, libmus/src/playerinc/player_commands.inc.c (same code as the SDK source). */
 #include "common.h"
 
-extern u32 D_800604C8;
-extern u8 *D_800604D0;
+extern u32 max_channels;
+extern u8 *mus_channels;
 
 /* Decode a one-byte envelope flag into +0xD8 and reload the target when set. */
 u8 *Fport(u8 *arg0, u8 *arg1) {

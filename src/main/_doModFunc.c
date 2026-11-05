@@ -20,6 +20,6 @@ f32 _doModFunc(f32 *arg0,s32 arg1){
     return arg0[7]*v;
 }
 typedef struct {u8 b0,b1,b2,b3; u16 b4; s8 b6,b7;} ReadCmd;
-extern ReadCmd D_8006A260[];
+extern ReadCmd __osContPifRam[];
 extern s32 D_8006A29C;
-extern u8 D_80070A98;
+extern u8 __osMaxControllers;

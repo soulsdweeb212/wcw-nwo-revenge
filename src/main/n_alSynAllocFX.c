@@ -6,7 +6,7 @@
 /* SDK: n_audio, libnaudio/src/n_synallocfx.c (same code as the SDK source). */
 #include "common.h"
 
-extern s32 D_80036F54;
+extern s32 n_syn;
 
 typedef struct {
     u8 pad00[0x30];
@@ -25,10 +25,10 @@ typedef struct {
 extern void n_alFxNew(void *);
 extern s32 *n_alMainBusPull(s32, s32 *);
 
-/* Look up the record at D_80036F54->f34 + arg0*4 + 0x24 and return its field. */
+/* Look up the record at n_syn->f34 + arg0*4 + 0x24 and return its field. */
 s32 n_alSynAllocFX(s32 arg0) {
     s32 t = (s32)(arg0 << 16) >> 14;
-    n_alFxNew(((Nw2Obj36F54 *)D_80036F54)->f34 + (t + 0x24));
-    t = t + (s32)((Nw2Obj36F54 *)D_80036F54)->f34;
+    n_alFxNew(((Nw2Obj36F54 *)n_syn)->f34 + (t + 0x24));
+    t = t + (s32)((Nw2Obj36F54 *)n_syn)->f34;
     return *(s32 *)(t + 0x24);
 }

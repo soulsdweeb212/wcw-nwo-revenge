@@ -6,8 +6,8 @@
 /* SDK: libultra 2.0I, ultralib src/os/gettime.c (same code as the SDK source). */
 #include "common.h"
 
-extern u32 D_80065120;
-extern u64 D_80070B20;
+extern u32 __osBaseCounter;
+extern u64 __osCurrentTime;
 s32 __osDisableInt(void);
 u32 osGetCount(void);
 void __osRestoreInt(s32);
@@ -17,8 +17,8 @@ void __osRestoreInt(s32);
 u64 osGetTime(void) {
     s32 state = __osDisableInt();
     u32 t = osGetCount();
-    u64 acc = D_80070B20;
-    u32 d = t - D_80065120;
+    u64 acc = __osCurrentTime;
+    u32 d = t - __osBaseCounter;
     __osRestoreInt(state);
     return acc + (u64)d;
 }

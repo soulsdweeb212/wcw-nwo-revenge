@@ -49,5 +49,5 @@ typedef struct {
     u8 b0, b1, b2, b3, b4, b5, b6, b7;
 } Cmd8;
 
-extern Cmd8 D_8006A260[];
-extern u8 D_80070A98;
+extern Cmd8 __osContPifRam[];
+extern u8 __osMaxControllers;

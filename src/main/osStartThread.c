@@ -7,7 +7,7 @@
 #include "common.h"
 
 typedef struct ThreadCD20 { struct ThreadCD20 *next; s32 priority; struct ThreadCD20 **queue; struct ThreadCD20 *tlnext; u16 state; } ThreadCD20;
-extern ThreadCD20 *D_80037248, *D_80037250;
+extern ThreadCD20 *__osRunQueue, *__osRunningThread;
 s32 __osDisableInt(void);
 void __osRestoreInt(s32);
 void __osEnqueueThread(ThreadCD20 **, ThreadCD20 *);
@@ -21,13 +21,13 @@ void __osEnqueueAndYield(ThreadCD20 **);
 void osStartThread(ThreadCD20 *thread) {
     s32 mask=__osDisableInt();
     switch(thread->state) {
-    case 8: thread->state=2; __osEnqueueThread(&D_80037248,thread); break;
+    case 8: thread->state=2; __osEnqueueThread(&__osRunQueue,thread); break;
     case 1:
-        if(thread->queue==NULL || thread->queue==&D_80037248) { thread->state=2; __osEnqueueThread(&D_80037248,thread); }
-        else {thread->state=8;__osEnqueueThread(thread->queue,thread);__osEnqueueThread(&D_80037248,__osPopThread(thread->queue));}
+        if(thread->queue==NULL || thread->queue==&__osRunQueue) { thread->state=2; __osEnqueueThread(&__osRunQueue,thread); }
+        else {thread->state=8;__osEnqueueThread(thread->queue,thread);__osEnqueueThread(&__osRunQueue,__osPopThread(thread->queue));}
         break;
     }
-    if(D_80037250==NULL) __osDispatchThread();
-    else if(D_80037250->priority<D_80037248->priority) {D_80037250->state=2;__osEnqueueAndYield(&D_80037248);}
+    if(__osRunningThread==NULL) __osDispatchThread();
+    else if(__osRunningThread->priority<__osRunQueue->priority) {__osRunningThread->state=2;__osEnqueueAndYield(&__osRunQueue);}
     __osRestoreInt(mask);
 }

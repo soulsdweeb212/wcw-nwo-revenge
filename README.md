@@ -4,8 +4,8 @@ A matching decompilation of WCW / nWo  REVENGE for the Nintendo 64, started with
 All 1696 functions build as C objects (100% of the code by size): the main program and both overlays are fully matched. 35 of
 those are hand-written assembly routines wrapped in a top-level `asm()` block (see below), so 1661 are real C that compiles to
 exactly the original code. The Nintendo SDK code linked into the main program (libultra 2.0I, libaudio, n_audio,
-libmus, the KMC GCC runtime) carries its SDK names: [docs/sdk_functions.md](docs/sdk_functions.md) lists the 380
-functions and how each was identified.
+libmus, the KMC GCC runtime) carries its SDK names, functions and data: [docs/sdk_functions.md](docs/sdk_functions.md) lists the 380
+functions and 103 globals and how each was identified.
 `build.py` rebuilds the game from this tree and checks it against your original, byte for byte.
 <!-- Working with this project's owner: read notes/MasterIndex.md first and keep it updated (local only, gitignored). -->
 
@@ -79,13 +79,14 @@ share it.
 - `tools/ghidra.py` uses decompdecomp's Ghidra (needs a JDK). `import` analyses the ROM once into `build/ghidra/`; then `decomp FUNC` prints its C, `unmatched` writes C for every function that is still assembly, `new` lists functions missing from `build.json`, `search` finds instruction sequences (one regex per instruction, `;` between them) and `bytes` finds raw words anywhere in the ROM.
 - `tools/indent_c.py [--check] [--diff] [paths...]` re-indents C files (all of `src/` by default) with 4 spaces per level. It changes
   only leading whitespace, so the build stays identical; its docstring lists the style rules.
-- `tools/rename_func.py [--dry-run] OLD NEW ... | --file MAP.tsv` renames functions everywhere (`symbol_addrs.txt`, `build.json`,
+- `tools/rename_func.py [--dry-run] OLD NEW ... | --file MAP.tsv` renames functions and data symbols everywhere (`symbol_addrs.txt`, `build.json`,
   the file name, every whole-word mention in `src/`, `include/`, the READMEs and `objdiff.json`, the headers) and deletes `asm/`
   so the next build extracts it again with the new names. Rebuild afterwards: a name can change the code (see
   `docs/sdk_functions.md`, `nw2Sqrtf` and `unusedMuldi3`).
 - `tools/ulpp.sh`, `tools/ul.py`, `tools/ulsweep.py` compare [decompals/ultralib](https://github.com/decompals/ultralib) source
   with the ROM (`ULTRALIB=` a checkout): preprocess one file for a libultra version, diff one function against a ROM function,
-  or score all of ultralib against every main function.
+  or score all of ultralib against every main function. `tools/uldata.py MAP.tsv OUT.json` finds the SDK's data globals:
+  it lines identified functions up with their SDK source and collects which SDK variable each data reference is.
 - `nonmatching/` is where near-miss drafts go (`build.py` does not compile it). It is empty now that every function matches; its
   README keeps the matching findings collected along the way.
 - A source file can hold several consecutive functions: give each the same `"c"` in `build.json`; the object is placed once,

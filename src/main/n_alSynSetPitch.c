@@ -6,7 +6,7 @@
 /* SDK: n_audio, libnaudio/src/n_synsetpitch.c (same code as the SDK source). */
 #include "common.h"
 
-extern s32 *D_80036F54;
+extern s32 *n_syn;
 s32 *__n_allocParam(void);
 s32 n_alEnvmixerParam(s32 *, s32, s32 *);
 s32 _n_timeToSamples(s32, s32);
@@ -17,7 +17,7 @@ void n_alSynSetPitch(s32 *arg0, f32 arg1) {
     if (arg0[2] != 0) {
         p = __n_allocParam();
         if (p != 0) {
-            s32 g = D_80036F54[7];
+            s32 g = n_syn[7];
             s32 off = *(s32 *)((u8 *)arg0[2] + 0x88);
             *(s16 *)((u8 *)p + 8) = 7;
             *(f32 *)((u8 *)p + 0xC) = arg1;

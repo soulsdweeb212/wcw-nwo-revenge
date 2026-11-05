@@ -6,12 +6,12 @@
 /* SDK: libultra 2.0I, ultralib src/io/pigetcmdq.c (same code as the SDK source). */
 #include "common.h"
 
-extern s32 D_80037600;
+extern s32 __osPiDevMgr;
 extern s32 D_80037608;
 
 /* Returns the active controller/Pak queue handle, or 0 when uninitialized. */
 s32 osPiGetCmdQueue(void) {
-    switch (D_80037600) {
+    switch (__osPiDevMgr) {
     case 0:
         return 0;
     default:

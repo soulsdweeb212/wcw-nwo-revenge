@@ -6,7 +6,7 @@
 /* SDK: libultra 2.0I, ultralib src/io/aisetfreq.c (same code as the SDK source). */
 #include "common.h"
 
-extern s32 D_80038808;   /* AI clock frequency */
+extern s32 osViClock;   /* AI clock frequency */
 extern f64 D_8003B8F0;   /* 2^32, used to wrap negative rates */
 
 /* Program the AI DAC-rate and bit-rate registers (0xA4500010 / 0xA4500014) for
@@ -19,7 +19,7 @@ s32 osAiSetFrequency(s32 arg0) {
     u32 dacRate;
     u32 bitRate;
 
-    num = (f32)D_80038808;
+    num = (f32)osViClock;
     den = (f64)arg0;
     if (arg0 < 0) {
         den += D_8003B8F0;
@@ -35,5 +35,5 @@ s32 osAiSetFrequency(s32 arg0) {
     }
     *(volatile u32 *)0xA4500010 = dacRate - 1;
     *(volatile u32 *)0xA4500014 = (bitRate & 0xFF) - 1;
-    return D_80038808 / (s32)dacRate;
+    return osViClock / (s32)dacRate;
 }

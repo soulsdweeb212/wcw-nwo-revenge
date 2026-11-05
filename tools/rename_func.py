@@ -1,4 +1,4 @@
-"""Renames functions everywhere the tree names them.
+"""Renames functions and data symbols everywhere the tree names them.
 
     cd source
     python3 tools/rename_func.py [--dry-run] OLD NEW [OLD NEW ...]
@@ -7,8 +7,10 @@
 For each pair it changes the line in symbol_addrs.txt, the function's "name", "asm" and "c" in build.json, moves
 src/<seg>/OLD.c to src/<seg>/NEW.c (git mv) when the file is named after the function, and replaces OLD as a whole
 word in every file under src/ and include/ and in README.md, nonmatching/*.md, objdiff.json and
-tools/list_nonmatching.py. It refuses a NEW name that
-is already a function or symbol. Afterwards it reruns tools/add_headers.py and deletes asm/, so the next build.py
+tools/list_nonmatching.py. An OLD that is not a function is a data symbol: a key of the build.json "symbols" table is
+renamed in place, a name in symbol_addrs.txt is renamed there, and an automatic D_XXXXXXXX name gets a new
+"NEW = 0xXXXXXXXX;" line in symbol_addrs.txt (with the other data names at its end, by address), which splat then uses
+for the label. It refuses a NEW name that is already a function or symbol. Afterwards it reruns tools/add_headers.py and deletes asm/, so the next build.py
 extracts the assembly again (splat) with the new names. Run python3 build.py afterwards; it must still say
 identical."""
 import argparse, json, re, shutil, subprocess, sys
@@ -38,12 +40,16 @@ def main():
     build_path = ROOT / "build.json"
     build = json.loads(build_path.read_text(encoding="utf-8"))
     names = {f["name"]: f for f in build["functions"]}
-    taken = set(names) | set(build["symbols"])
+    sym_path = ROOT / "symbol_addrs.txt"
+    sym = sym_path.read_text(encoding="utf-8")
+    sym_names = dict(re.findall(r"^\s*(\w+)\s*=\s*(0x[0-9A-Fa-f]+)", sym, flags=re.M))
+    taken = set(names) | set(build["symbols"]) | set(sym_names)
     olds = [o for o, _ in pairs]
     news = [n for _, n in pairs]
     for old, new in pairs:
-        if old not in names:
-            sys.exit(f"{old} is not a function in build.json")
+        if old not in names and old not in build["symbols"] and old not in sym_names \
+                and not re.fullmatch(r"D_[0-9A-F]{8}", old):
+            sys.exit(f"{old} is neither a function nor a data symbol")
         if not re.fullmatch(r"[A-Za-z_]\w*", new):
             sys.exit(f"{new} is not a C identifier")
         if new in taken and new not in olds:
@@ -54,9 +60,19 @@ def main():
     word = re.compile(r"\b(" + "|".join(map(re.escape, sorted(olds, key=len, reverse=True))) + r")\b")
 
     # symbol_addrs.txt
-    sym_path = ROOT / "symbol_addrs.txt"
-    sym = sym_path.read_text(encoding="utf-8")
     sym2 = re.sub(r"^(\s*)(\w+)(\s*=)", lambda m: m[1] + mapping.get(m[2], m[2]) + m[3], sym, flags=re.M)
+    new_data = [(int(o[2:], 16), n) for o, n in pairs
+                if o not in names and o not in build["symbols"] and o not in sym_names]
+    if new_data:  # automatic D_ names: add a line among the data names at the end, in address order
+        lines = sym2.rstrip("\n").split("\n")
+        tail = len(lines)
+        while tail and "type:" not in lines[tail - 1]:
+            tail -= 1
+        data = [(int(m[2], 16), l) for l in lines[tail:] if (m := re.match(r"\s*(\w+)\s*=\s*(0x[0-9A-Fa-f]+)", l))]
+        data += [(a, f"{n} = 0x{a:08X};") for a, n in new_data]
+        sym2 = "\n".join(lines[:tail] + [l for _, l in sorted(data)]) + "\n"
+    # build.json symbols table: rename keys in place
+    build["symbols"] = {mapping.get(k, k): v for k, v in build["symbols"].items()}
     # build.json
     moves = []
     for f in build["functions"]:

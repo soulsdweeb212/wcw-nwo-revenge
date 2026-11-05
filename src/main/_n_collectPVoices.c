@@ -8,18 +8,18 @@
 
 s32 alLink(s32, void *);
 s32 alUnlink(s32);
-extern void *D_80036F54;
+extern void *n_syn;
 
-/* Move every node chained at D_80036F54+0x14 onto the list head at D_80036F54+4. */
+/* Move every node chained at n_syn+0x14 onto the list head at n_syn+4. */
 void _n_collectPVoices(void) {
     s32 node;
 
-    node = *(s32 *)((s8 *)D_80036F54 + 0x14);
+    node = *(s32 *)((s8 *)n_syn + 0x14);
     if (node != 0) {
         do {
             alUnlink(node);
-            alLink(node, (s8 *)D_80036F54 + 4);
-            node = *(s32 *)((s8 *)D_80036F54 + 0x14);
+            alLink(node, (s8 *)n_syn + 4);
+            node = *(s32 *)((s8 *)n_syn + 0x14);
         } while (node != 0);
     }
 }

@@ -6,18 +6,18 @@
 /* SDK: n_audio, libnaudio/src/n_synthesizer.c (same code as the SDK source). */
 #include "common.h"
 
-extern void *D_80036F54;
+extern void *n_syn;
 
-/* Pop and return a command packet from the free list at D_80036F54+0x2C. */
+/* Pop and return a command packet from the free list at n_syn+0x2C. */
 s32 *__n_allocParam(void) {
     s32 *pkt;
     s32 *ret;
 
-    pkt = *(s32 **)((u8 *)D_80036F54 + 0x2C);
+    pkt = *(s32 **)((u8 *)n_syn + 0x2C);
     ret = NULL;
     if (pkt != NULL) {
         ret = pkt;
-        *(s32 **)((u8 *)D_80036F54 + 0x2C) = (s32 *) *ret;
+        *(s32 **)((u8 *)n_syn + 0x2C) = (s32 *) *ret;
         *ret = NULL;
     }
     return ret;

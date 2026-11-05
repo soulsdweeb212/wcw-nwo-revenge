@@ -5,11 +5,11 @@
  */
 /* send_mesg: libultra send_mesg (exceptasm.s), the private helper the exception handler __osExceptionPreamble
  * calls to post a hardware event. a0 is the byte offset MESG(OS_EVENT_xxx) = event*8 into
- * __osEventStateTab (D_8007DF30, {OSMesgQueue *queue; OSMesg msg} per event, filled by osSetEventMesg).
+ * __osEventStateTab ({OSMesgQueue *queue; OSMesg msg} per event, filled by osSetEventMesg).
  * If a queue is registered and not full, the event's message is stored at msg[(first + validCount) %
  * msgCount] and validCount++; if a thread is blocked receiving on that queue (mtqueue->next != NULL, the
  * list ends at the -1-priority sentinel) it is popped (__osPopThread) and inserted into
- * __osRunQueue (D_80037248) by __osEnqueueThread. A full queue silently drops the event.
+ * __osRunQueue by __osEnqueueThread. A full queue silently drops the event.
  * Non-standard calling convention, which is why it is asm: it keeps its return address in $s2 (move s2,
  * ra ... jr s2) instead of a stack frame, because it runs inside the exception handler on the interrupted
  * thread's stack, and it never touches the handler's live $t0/$s0/$s1/$k0/$k1. It does overwrite $at,
@@ -36,15 +36,15 @@ typedef struct {
 } OSMesgQueue;
 typedef struct { OSMesgQueue *queue; void *msg; } OSEventState;
 
-extern OSEventState D_8007DF30[];   /* __osEventStateTab[OS_NUM_EVENTS] */
-extern OSThread *D_80037248;        /* __osRunQueue */
+extern OSEventState __osEventStateTab[];   /* __osEventStateTab[OS_NUM_EVENTS] */
+extern OSThread *__osRunQueue;
 void __osEnqueueThread(OSThread **queue, OSThread *thread); /* __osEnqueueThread */
 OSThread *__osPopThread(OSThread **queue);              /* __osPopThread */
 
 /* send_mesg: post the message registered for an event (osSetEventMesg) to its queue.
  * eventOffset is the byte offset into __osEventStateTab, i.e. OS_EVENT_xxx * 8. */
 void send_mesg(s32 eventOffset) {
-    OSEventState *es = (OSEventState *)((u8 *)D_8007DF30 + eventOffset);
+    OSEventState *es = (OSEventState *)((u8 *)__osEventStateTab + eventOffset);
     OSMesgQueue *mq = es->queue;
     s32 count;
 
@@ -57,7 +57,7 @@ void send_mesg(s32 eventOffset) {
     /* A receiver is blocked on the queue: pop it and make it runnable.
      * mtqueue is the first field, so the queue pointer doubles as &mq->mtqueue. */
     if (mq->mtqueue->next != NULL) {
-        __osEnqueueThread(&D_80037248, __osPopThread(&mq->mtqueue));
+        __osEnqueueThread(&__osRunQueue, __osPopThread(&mq->mtqueue));
     }
 }
 #else
@@ -69,8 +69,8 @@ asm(
     ".ent send_mesg\n"
     "send_mesg:\n"
     "addu $s2, $ra, $zero\n"
-    "lui $t2, %hi(D_8007DF30)\n"
-    "addiu $t2, $t2, %lo(D_8007DF30)\n"
+    "lui $t2, %hi(__osEventStateTab)\n"
+    "addiu $t2, $t2, %lo(__osEventStateTab)\n"
     "addu $t2, $t2, $a0\n"
     "lw $t1, 0x0($t2)\n"
     "beqz $t1, .L80026570\n"
@@ -112,9 +112,9 @@ asm(
     "addu $a0, $t1, $zero\n"
     "addu $t2, $v0, $zero\n"
     "addu $a1, $t2, $zero\n"
-    "lui $a0, %hi(D_80037248)\n"
+    "lui $a0, %hi(__osRunQueue)\n"
     "jal __osEnqueueThread\n"
-    "addiu $a0, $a0, %lo(D_80037248)\n"
+    "addiu $a0, $a0, %lo(__osRunQueue)\n"
     ".L80026570:\n"
     "jr $s2\n"
     "nop\n"

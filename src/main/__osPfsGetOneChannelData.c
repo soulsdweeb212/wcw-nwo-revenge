@@ -12,7 +12,7 @@ typedef struct {
 
 extern s32 D_8007E00C[];
 
-extern u8 D_8007DFD0[];
+extern u8 __osPfsPifRam[];
 
 /* Decodes the arg0-th controller response into arg1 (error nibble and, for a
  * good entry, the payload). */
@@ -22,7 +22,7 @@ void __osPfsGetOneChannelData(s32 arg0, u8 *arg1) {
     s32 i;
     u32 v;
 
-    p = D_8007DFD0;
+    p = __osPfsPifRam;
     i = 0;
     if (arg0 > 0) {
         do {

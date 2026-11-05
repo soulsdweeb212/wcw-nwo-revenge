@@ -7,18 +7,18 @@
 #include "common.h"
 
 /* identical to __n_allocParam (matched), with its names changed by decompdecomp */
-extern void *D_80037510;
+extern void *alGlobals;
 
-/* Pop and return a command packet from the free list at D_80037510+0x2C. */
+/* Pop and return a command packet from the free list at alGlobals+0x2C. */
 s32 *__allocParam(void) {
     s32 *pkt;
     s32 *ret;
 
-    pkt = *(s32 **)((u8 *)D_80037510 + 0x2C);
+    pkt = *(s32 **)((u8 *)alGlobals + 0x2C);
     ret = NULL;
     if (pkt != NULL) {
         ret = pkt;
-        *(s32 **)((u8 *)D_80037510 + 0x2C) = (s32 *) *ret;
+        *(s32 **)((u8 *)alGlobals + 0x2C) = (s32 *) *ret;
         *ret = NULL;
     }
     return ret;

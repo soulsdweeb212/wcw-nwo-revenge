@@ -12,14 +12,14 @@ extern s32 D_80062528;
 extern s32 D_8006255C;
 extern s32 D_80036F38;
 extern f64 D_8003B3E8;
-extern void *D_80036F54;
+extern void *n_syn;
 void __amDMA(void);
 s32 osSetIntMask(s32);
 
-/* Push arg0 onto the list at D_80036F54, copying that list's +0x20 into arg0+0x10. */
+/* Push arg0 onto the list at n_syn, copying that list's +0x20 into arg0+0x10. */
 void n_alSynAddPlayer(void *arg0) {
     s32 v = osSetIntMask(1);
-    void *p = D_80036F54;
+    void *p = n_syn;
 
     *(s32 *)((u8 *)arg0 + 0x10) = *(s32 *)((u8 *)p + 0x20);
     *(void **)arg0 = *(void **)p;

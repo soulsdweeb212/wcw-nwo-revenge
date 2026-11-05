@@ -6,10 +6,10 @@
 /* SDK: libultra 2.0I, ultralib src/gu/random.c (same code as the SDK source). */
 #include "common.h"
 
-extern u32 D_80037230;
+extern u32 xseed;
 
 /* Advance the pseudo-random sequence and return the new value. */
 u32 guRandom(void) {
-    s32 t = D_80037230 * 4;
-    return D_80037230 = (u32)((t + 2) * (t + 3)) >> 2;
+    s32 t = xseed * 4;
+    return xseed = (u32)((t + 2) * (t + 3)) >> 2;
 }

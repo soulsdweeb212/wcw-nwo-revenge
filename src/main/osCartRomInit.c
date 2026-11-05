@@ -6,8 +6,8 @@
 /* SDK: libultra 2.0I, ultralib src/io/cartrominit.c (same code as the SDK source). */
 #include "common.h"
 
-extern s32 D_8003761C;
-extern u8 D_8007E198;
+extern s32 __osPiTable;
+extern u8 CartRomHandle;
 extern u8 D_8007E19C;
 extern u8 D_8007E19D;
 extern u8 D_8007E19E;
@@ -43,10 +43,10 @@ void *osCartRomInit(void)
         bzero(base + 2, 0x60);
         do { p = base - 3; } while (0);
         tmp = __osDisableInt();
-        old = D_8003761C;
-        D_8003761C = (s32)p;
+        old = __osPiTable;
+        __osPiTable = (s32)p;
         *(s32 *)p = old;
         __osRestoreInt(tmp);
     }
-    return &D_8007E198;
+    return &CartRomHandle;
 }

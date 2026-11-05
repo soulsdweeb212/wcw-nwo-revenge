@@ -7,9 +7,9 @@
 #include "common.h"
 
 s32 osSendMesg(void *, s32, s32);
-extern s32 D_8007E210;
+extern s32 __osSiAccessQueue;
 
-/* Post a zero message to the D_8007E210 message queue without waiting. */
+/* Post a zero message to the __osSiAccessQueue message queue without waiting. */
 void __osSiRelAccess(void) {
-    osSendMesg(&D_8007E210, 0, 0);
+    osSendMesg(&__osSiAccessQueue, 0, 0);
 }

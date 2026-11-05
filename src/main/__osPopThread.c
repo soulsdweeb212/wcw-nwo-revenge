@@ -8,7 +8,7 @@
  * the priority -1 sentinel thread, and callers only pop when they know a thread is waiting.
  * Callers: osStartThread, osSendMesg, osRecvMesg,
  * osJamMesg, and from asm the dispatcher __osDispatchThread and the
- * exception handler's send_mesg send_mesg (pops the thread waiting on the event's message
+ * exception handler's send_mesg (pops the thread waiting on the event's message
  * queue, then hands it to __osEnqueueThread to put it on __osRunQueue). Pure
  * logic; the original uses $t9 as its temporary, which the C reproduces with a register variable. */
 #ifdef NON_MATCHING

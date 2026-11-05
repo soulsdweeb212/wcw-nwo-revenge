@@ -8,22 +8,22 @@
  * __osInitialize (osInitialize.c) copies those 16 bytes to the R4300 vectors 0x80000000 (TLB
  * refill), 0x80000080 (XTLB), 0x80000100 (cache error) and 0x80000180 (general exception); they just jump
  * to __osExceptionPreamble+0x10, the handler proper. The handler (1) spills $at, SR, $t0-$t2 into the scratch
- * frame __osThreadSave (D_8006A0B0) and disables interrupts (SR &= ~(IE|EXL)); (2) copies those into the
- * running thread (__osRunningThread, D_80037250) and saves every other GPR, LO/HI, EPC (pc) and, if the
+ * frame __osThreadSave and disables interrupts (SR &= ~(IE|EXL)); (2) copies those into the
+ * running thread (__osRunningThread) and saves every other GPR, LO/HI, EPC (pc) and, if the
  * thread has used the FPU (thread->fp), FCSR and f0-f30; while saving it re-ORs into the saved SR / RCP
- * mask the bits the global mask __OSGlobalIntMask (D_80038810) had removed; (3) reads Cause: ExcCode 9
+ * mask the bits the global mask __OSGlobalIntMask had removed; (3) reads Cause: ExcCode 9
  * (break) sets OS_FLAG_CPU_BREAK and posts OS_EVENT_CPU_BREAK; ExcCode 11 (coprocessor unusable) goes to
  * handle_CpU (the separate 13-instruction symbol right after send_mesg) which lazily grants
  * CP1 (thread->fp = 1, SR |= CU1) and resumes the thread; any other non-interrupt code is a fault (thread
- * stopped, OS_FLAG_FAULT, BadVAddr saved, __osFaultedThread D_80037254 set, OS_EVENT_FAULT posted).
- * (4) Interrupts are served highest IP bit first through __osIntOffTable (D_8003B910) and the jump table
+ * stopped, OS_FLAG_FAULT, BadVAddr saved, __osFaultedThread set, OS_EVENT_FAULT posted).
+ * (4) Interrupts are served highest IP bit first through __osIntOffTable and the jump table
  * __osIntTable (jtbl_8003B930): timer (rewrite Compare, OS_EVENT_COUNTER), dev-only IP5/IP6 (dropped),
- * PreNMI (sets __osShutdown D_8003880C once, posts OS_EVENT_PRENMI, masks IM4 in both threads), cart/64DD
- * (hook in __osHwIntTable[1], D_800387D0), software 1/2 (clear the Cause bit), RCP: MI_INTR_REG &
+ * PreNMI (sets __osShutdown once, posts OS_EVENT_PRENMI, masks IM4 in both threads), cart/64DD
+ * (hook in __osHwIntTable[1], __osHwIntTable), software 1/2 (clear the Cause bit), RCP: MI_INTR_REG &
  * global mask, each of SP/VI/AI/SI/PI/DP is acknowledged at its hardware register and posted (SP splits
  * into OS_EVENT_SP vs OS_EVENT_SP_BREAK on SP_STATUS yielded/taskdone; PI first calls the
- * __osPiIntTable hook D_800387F8). Every post goes through send_mesg with MESG(event) =
- * event*8. (5) Redispatch: if the run queue head (__osRunQueue, D_80037248) now outranks the interrupted
+ * __osPiIntTable hook __osPiIntTable). Every post goes through send_mesg with MESG(event) =
+ * event*8. (5) Redispatch: if the run queue head (__osRunQueue) now outranks the interrupted
  * thread it is enqueued by priority, otherwise it is pushed back at the head; then j __osDispatchThread
  * (__osDispatchThread). Must be asm: it runs on no stack of its own, may only touch $k0/$k1 before saving,
  * and saves/restores registers a compiler owns. Differences from ultralib exceptasm.s: matches the
@@ -65,15 +65,15 @@ typedef struct OSThread {
 /* __OSHWIntr: callback plus the stack pointer it runs on (__osSetHWIntrRoutine / PI hook). */
 typedef struct { s32 (*handler)(); void *sp; } OSHWIntr;
 
-extern OSThread D_8006A0B0;    /* __osThreadSave: scratch frame for the first few registers */
-extern OSThread *D_80037248;   /* __osRunQueue */
-extern OSThread *D_80037250;   /* __osRunningThread */
-extern OSThread *D_80037254;   /* __osFaultedThread */
-extern u32 D_80038810;         /* __OSGlobalIntMask: bits 15..8 CPU IM, 21..16 RCP mask */
-extern s32 D_8003880C;         /* __osShutdown: set at the first PreNMI */
-extern OSHWIntr D_800387D0[5]; /* __osHwIntTable (entry 1 = cart / 64DD) */
-extern OSHWIntr D_800387F8;    /* __osPiIntTable (PI hook, VERSION_J and later) */
-extern u8 D_8003B910[32];      /* __osIntOffTable: pending IP bits -> byte offset into the jump table */
+extern OSThread __osThreadSave;    /* scratch frame for the first few registers */
+extern OSThread *__osRunQueue;
+extern OSThread *__osRunningThread;
+extern OSThread *__osFaultedThread;
+extern u32 __OSGlobalIntMask;         /* bits 15..8 CPU IM, 21..16 RCP mask */
+extern s32 __osShutdown;         /* set at the first PreNMI */
+extern OSHWIntr __osHwIntTable[5]; /* __osHwIntTable (entry 1 = cart / 64DD) */
+extern OSHWIntr __osPiIntTable;    /* __osPiIntTable (PI hook, VERSION_J and later) */
+extern u8 __osIntOffTable[32];      /* pending IP bits -> byte offset into the jump table */
 extern vu32 D_A4300000;        /* MI_MODE_REG (write 0x800 = MI_CLR_DP_INTR) */
 extern vu32 D_A4300008;        /* MI_INTR_REG (pending RCP interrupts) */
 extern vu32 D_A430000C;        /* MI_INTR_MASK_REG */
@@ -129,7 +129,7 @@ static inline void hiToT0(void) { __asm__ __volatile__("mfhi $8"); }
 void __osExceptionPreamble(void) {
     register OSThread *k0 asm("$26");
     register u32 k1 asm("$27");
-    OSThread *save = &D_8006A0B0;
+    OSThread *save = &__osThreadSave;
     u32 t0;          /* the asm's $t0: Cause, but clobbered by the RCP handler (see below) */
     u32 s0;          /* pending & enabled CPU interrupts still to service */
     u32 s1;          /* pending & enabled RCP (MI) interrupts still to service */
@@ -150,7 +150,7 @@ void __osExceptionPreamble(void) {
     /* ---- 2. Save the full context of the interrupted (running) thread. ---- */
     {
         OSThread *from = k0;
-        k0 = D_80037250;
+        k0 = __osRunningThread;
         k0->context.at = from->context.at;
         /* one 64-bit ld/sd: copies sr AND the (stale) pc word next to it; pc is rewritten below */
         *(u64 *)&k0->context.sr = *(u64 *)&from->context.sr;
@@ -175,14 +175,14 @@ void __osExceptionPreamble(void) {
     k1 = k0->context.sr;
     bits = k1 & 0xFF00;
     if (bits != 0) {
-        u32 gm = D_80038810;
+        u32 gm = __OSGlobalIntMask;
         k0->context.sr = (k1 & 0xFFFF00FF) | (bits | (~gm & 0xFF00));
         k1 = (k1 & 0xFFFF00FF) | (bits & (gm & 0xFF00));
     }
     /* Saved RCP mask: current MI mask plus the old saved bits the global mask disabled. */
     rcp = D_A430000C;
     if (rcp != 0) {
-        rcp |= (~(D_80038810 >> 16) & 0x3F) & k0->context.rcp;
+        rcp |= (~(__OSGlobalIntMask >> 16) & 0x3F) & k0->context.rcp;
     }
     k0->context.rcp = rcp;
     k0->context.pc = getEPC();
@@ -214,7 +214,7 @@ void __osExceptionPreamble(void) {
             idx = (bits >> 8) + 16;           /* IP0..IP3 (bits 8..11) -> 16..31; 16 = none */
         }
         /* The asm does lw t2, jtbl_8003B930[__osIntOffTable[idx]]; jr t2. */
-        switch (D_8003B910[idx]) {
+        switch (__osIntOffTable[idx]) {
         case 0x00:                            /* nothing left: redispatch */
             goto redispatch;
         case 0x18:                            /* IP5, 0x2000 (dev hardware only): just drop it */
@@ -230,7 +230,7 @@ void __osExceptionPreamble(void) {
             continue;
         case 0x10:                            /* IP3, 0x800 cart (64DD) */
             s0 &= ~0x800;
-            hw = &D_800387D0[1];
+            hw = &__osHwIntTable[1];
             if (hw->handler == NULL) {
                 /* Quirk of the ultralib source as assembled (.set reorder moved
                  * `li a0, 0x10` into the delay slot of the later `beqz v0`), so this
@@ -245,7 +245,7 @@ void __osExceptionPreamble(void) {
             send_mesg(MESG_CART);
             continue;
         case 0x0C:                            /* IP2, 0x400 RCP: look at MI_INTR_REG */
-            t0 = D_80038810 >> 16;            /* libultra bug kept: clobbers the Cause copy */
+            t0 = __OSGlobalIntMask >> 16;            /* libultra bug kept: clobbers the Cause copy */
             s1 = D_A4300008 & t0;
             if (s1 & 0x01) {                  /* SP */
                 u32 status;
@@ -280,7 +280,7 @@ void __osExceptionPreamble(void) {
             if (s1 & 0x10) {                  /* PI */
                 s1 &= 0x2F;
                 D_A4600010 = 2;               /* PI_CLR_INTR */
-                hw = &D_800387F8;
+                hw = &__osPiIntTable;
                 if (hw->handler == NULL) {
                     send_mesg(MESG_PI);
                 } else {
@@ -304,15 +304,15 @@ rcp_done:
         case 0x14:                            /* IP4, 0x1000 PreNMI: reset button pressed */
             k1 = k0->context.sr & ~0x1000;    /* SR.IM4 off: the interrupted thread won't take it again */
             k0->context.sr = k1;
-            if (D_8003880C != 0) {            /* already shutting down */
+            if (__osShutdown != 0) {            /* already shutting down */
                 s0 &= ~0x1000;
                 goto redispatch;
             }
-            D_8003880C = 1;
+            __osShutdown = 1;
             send_mesg(MESG_PRENMI);
             s0 &= ~0x1000;
-            k1 = D_80037248->context.sr & ~0x1000; /* ... nor the thread about to run */
-            D_80037248->context.sr = k1;
+            k1 = __osRunQueue->context.sr & ~0x1000; /* ... nor the thread about to run */
+            __osRunQueue->context.sr = k1;
             goto redispatch;
         case 0x08:                            /* IP1, 0x200 software interrupt 2 */
             t0 &= ~0x200;
@@ -345,18 +345,18 @@ handle_break:
 
 redispatch:
     /* Keep running the interrupted thread unless a woken thread now outranks it. */
-    if (k0->priority < D_80037248->priority) {
-        __osEnqueueThread(&D_80037248, k0);       /* back into the run queue by priority */
+    if (k0->priority < __osRunQueue->priority) {
+        __osEnqueueThread(&__osRunQueue, k0);       /* back into the run queue by priority */
         __osDispatchThread();                      /* j __osDispatchThread */
     }
 enqueueRunning:
-    k0->next = D_80037248;                    /* push at the head (ahead of equal priority) */
-    D_80037248 = k0;
+    k0->next = __osRunQueue;                    /* push at the head (ahead of equal priority) */
+    __osRunQueue = k0;
     __osDispatchThread();                          /* j __osDispatchThread */
 
 panic:
     /* Unhandled exception: stop the thread and post OS_EVENT_FAULT (game's fault thread). */
-    D_80037254 = k0;
+    __osFaultedThread = k0;
     k0->state = 1;                            /* OS_STATE_STOPPED */
     k0->flags = 2;                            /* OS_FLAG_FAULT */
     k0->context.badvaddr = getBadVAddr();
@@ -376,8 +376,8 @@ asm(
     "addiu $k0, $k0, %lo(__osExceptionPreamble + 0x10) /* handwritten instruction */\n"
     "jr $k0\n"
     "nop\n"
-    "lui $k0, %hi(D_8006A0B0) /* handwritten instruction */\n"
-    "addiu $k0, $k0, %lo(D_8006A0B0) /* handwritten instruction */\n"
+    "lui $k0, %hi(__osThreadSave) /* handwritten instruction */\n"
+    "addiu $k0, $k0, %lo(__osThreadSave) /* handwritten instruction */\n"
     "sd $at, 0x20($k0) /* handwritten instruction */\n"
     "mfc0 $k1, $12 /* handwritten instruction */\n"
     "sw $k1, 0x118($k0) /* handwritten instruction */\n"
@@ -390,8 +390,8 @@ asm(
     "sw $zero, 0x18($k0) /* handwritten instruction */\n"
     "mfc0 $t0, $13 /* handwritten instruction */\n"
     "addu $t0, $k0, $zero\n"
-    "lui $k0, %hi(D_80037250) /* handwritten instruction */\n"
-    "lw $k0, %lo(D_80037250)($k0) /* handwritten instruction */\n"
+    "lui $k0, %hi(__osRunningThread) /* handwritten instruction */\n"
+    "lw $k0, %lo(__osRunningThread)($k0) /* handwritten instruction */\n"
     "ld $t1, 0x20($t0)\n"
     "sd $t1, 0x20($k0) /* handwritten instruction */\n"
     "ld $t1, 0x118($t0)\n"
@@ -435,8 +435,8 @@ asm(
     "andi $t1, $k1, 0xFF00 /* handwritten instruction */\n"
     "beqz $t1, .L80026074\n"
     "nop\n"
-    "lui $t0, %hi(D_80038810)\n"
-    "addiu $t0, $t0, %lo(D_80038810)\n"
+    "lui $t0, %hi(__OSGlobalIntMask)\n"
+    "addiu $t0, $t0, %lo(__OSGlobalIntMask)\n"
     "lw $t0, 0x0($t0)\n"
     "addiu $at, $zero, -0x1\n"
     "xor $t2, $t0, $at\n"
@@ -458,8 +458,8 @@ asm(
     "lw $t1, %lo(D_A430000C)($t1)\n"
     "beqz $t1, .L800260AC\n"
     "nop\n"
-    "lui $t0, %hi(D_80038810)\n"
-    "addiu $t0, $t0, %lo(D_80038810)\n"
+    "lui $t0, %hi(__OSGlobalIntMask)\n"
+    "addiu $t0, $t0, %lo(__OSGlobalIntMask)\n"
     "lw $t0, 0x0($t0)\n"
     "srl $t0, $t0, 16\n"
     "addiu $at, $zero, -0x1\n"
@@ -518,9 +518,9 @@ asm(
     "srl $t2, $t1, 8\n"
     "addi $t2, $t2, 0x10 /* handwritten instruction */\n"
     ".L80026164:\n"
-    "lui $at, %hi(D_8003B910)\n"
+    "lui $at, %hi(__osIntOffTable)\n"
     "addu $at, $at, $t2\n"
-    "lbu $t2, %lo(D_8003B910)($at)\n"
+    "lbu $t2, %lo(__osIntOffTable)($at)\n"
     "lui $at, %hi(jtbl_8003B930)\n"
     "addu $at, $at, $t2\n"
     "lw $t2, %lo(jtbl_8003B930)($at)\n"
@@ -543,8 +543,8 @@ asm(
     "and $s0, $s0, $at\n"
     "addiu $at, $zero, -0x801\n"
     "and $s0, $s0, $at\n"
-    "lui $t1, %hi(D_800387D0)\n"
-    "addiu $t1, $t1, %lo(D_800387D0)\n"
+    "lui $t1, %hi(__osHwIntTable)\n"
+    "addiu $t1, $t1, %lo(__osHwIntTable)\n"
     "addi $t1, $t1, 0x8 /* handwritten instruction */\n"
     "lw $t2, 0x0($t1)\n"
     "beqz $t2, .L800261F8\n"
@@ -562,8 +562,8 @@ asm(
     "nop\n"
     "lui $s1, %hi(D_A4300008)\n"
     "lw $s1, %lo(D_A4300008)($s1)\n"
-    "lui $t0, %hi(D_80038810)\n"
-    "addiu $t0, $t0, %lo(D_80038810)\n"
+    "lui $t0, %hi(__OSGlobalIntMask)\n"
+    "addiu $t0, $t0, %lo(__OSGlobalIntMask)\n"
     "lw $t0, 0x0($t0)\n"
     "srl $t0, $t0, 16\n"
     "and $s1, $s1, $t0\n"
@@ -632,8 +632,8 @@ asm(
     "addiu $t1, $zero, 0x2\n"
     "lui $at, %hi(D_A4600010)\n"
     "sw $t1, %lo(D_A4600010)($at)\n"
-    "lui $t1, %hi(D_800387F8)\n"
-    "addiu $t1, $t1, %lo(D_800387F8)\n"
+    "lui $t1, %hi(__osPiIntTable)\n"
+    "addiu $t1, $t1, %lo(__osPiIntTable)\n"
     "lw $t2, 0x0($t1)\n"
     "beqz $t2, .L8002633C\n"
     "nop\n"
@@ -666,8 +666,8 @@ asm(
     "addiu $at, $zero, -0x1001\n"
     "and $k1, $k1, $at\n"
     "sw $k1, 0x118($k0) /* handwritten instruction */\n"
-    "lui $t1, %hi(D_8003880C)\n"
-    "addiu $t1, $t1, %lo(D_8003880C)\n"
+    "lui $t1, %hi(__osShutdown)\n"
+    "addiu $t1, $t1, %lo(__osShutdown)\n"
     "lw $t2, 0x0($t1)\n"
     "beqz $t2, .L800263AC\n"
     "nop\n"
@@ -681,8 +681,8 @@ asm(
     "addiu $a0, $zero, 0x70\n"
     "addiu $at, $zero, -0x1001\n"
     "and $s0, $s0, $at\n"
-    "lui $t2, %hi(D_80037248)\n"
-    "lw $t2, %lo(D_80037248)($t2)\n"
+    "lui $t2, %hi(__osRunQueue)\n"
+    "lw $t2, %lo(__osRunQueue)($t2)\n"
     "lw $k1, 0x118($t2) /* handwritten instruction */\n"
     "addiu $at, $zero, -0x1001\n"
     "and $k1, $k1, $at\n"
@@ -715,28 +715,28 @@ asm(
     "nop\n"
     ".L80026440:\n"
     "lw $t1, 0x4($k0) /* handwritten instruction */\n"
-    "lui $t2, %hi(D_80037248)\n"
-    "lw $t2, %lo(D_80037248)($t2)\n"
+    "lui $t2, %hi(__osRunQueue)\n"
+    "lw $t2, %lo(__osRunQueue)($t2)\n"
     "lw $t3, 0x4($t2)\n"
     "slt $at, $t1, $t3\n"
     "beqz $at, .L80026474\n"
     "nop\n"
     "addu $a1, $k0, $zero\n"
-    "lui $a0, %hi(D_80037248)\n"
+    "lui $a0, %hi(__osRunQueue)\n"
     "jal __osEnqueueThread\n"
-    "addiu $a0, $a0, %lo(D_80037248)\n"
+    "addiu $a0, $a0, %lo(__osRunQueue)\n"
     "j __osDispatchThread\n"
     "nop\n"
     ".L80026474:\n"
-    "lui $t1, %hi(D_80037248)\n"
-    "addiu $t1, $t1, %lo(D_80037248)\n"
+    "lui $t1, %hi(__osRunQueue)\n"
+    "addiu $t1, $t1, %lo(__osRunQueue)\n"
     "lw $t2, 0x0($t1)\n"
     "sw $t2, 0x0($k0) /* handwritten instruction */\n"
     "j __osDispatchThread\n"
     "sw $k0, 0x0($t1) /* handwritten instruction */\n"
     ".L8002648C:\n"
-    "lui $at, %hi(D_80037254)\n"
-    "sw $k0, %lo(D_80037254)($at) /* handwritten instruction */\n"
+    "lui $at, %hi(__osFaultedThread)\n"
+    "sw $k0, %lo(__osFaultedThread)($at) /* handwritten instruction */\n"
     "addiu $t1, $zero, 0x1\n"
     "sh $t1, 0x10($k0) /* handwritten instruction */\n"
     "addiu $t1, $zero, 0x2\n"

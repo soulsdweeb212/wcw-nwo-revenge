@@ -6,12 +6,12 @@
 /* SDK: n_audio, libnaudio/src/n_mainbus.c (same code as the SDK source). */
 #include "common.h"
 
-extern s32 D_80036F54;
+extern s32 n_syn;
 typedef struct { u8 pad00[0x30]; u8 *f30; } Nw2Obj36F54;
 typedef struct { u8 pad0[4]; s32 *(*fn)(s32, s32 *); } Nw2Tbl36F54;
 
 s32 *n_alMainBusPull(s32 arg0, s32 *arg1) {
-    Nw2Obj36F54 *obj = (Nw2Obj36F54 *)D_80036F54;
+    Nw2Obj36F54 *obj = (Nw2Obj36F54 *)n_syn;
     s32 *p;
     s32 *q;
     arg1[0] = 0x020004E0;

@@ -11,7 +11,7 @@ typedef struct {
 
 extern s32 D_8007E00C[];
 
-extern u8 D_8007DFD0[];
+extern u8 __osPfsPifRam[];
 
 extern Nw2IdSubTable lookupSubTables[];
 

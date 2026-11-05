@@ -20,8 +20,8 @@ typedef s32 M2C_UNK32;
 #define M2C_OVERFLOW(a) (0)
 #endif
 
-extern s32 *D_80036F54;
+extern s32 *n_syn;
 
 void n_alSynDelete(void) {
-    *D_80036F54 = 0;
+    *n_syn = 0;
 }

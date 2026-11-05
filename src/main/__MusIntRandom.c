@@ -6,7 +6,7 @@
 /* SDK: libmus, libmus/src/player.c (same code as the SDK source). */
 #include "common.h"
 
-extern s32 D_800604EC;
+extern s32 mus_random_seed;
 
 /* Steps the 32-bit RNG seed eight times (injecting the feedback bit when the
  * tap bits 0x48000000 are 0x48/0x08 patterns) and returns arg0 scaled by the
@@ -19,14 +19,14 @@ s32 __MusIntRandom(s32 arg0) {
 
     var_a2 = 0;
     do {
-        temp_a1 = D_800604EC * 2;
-        temp_v0 = D_800604EC & 0x48000000;
+        temp_a1 = mus_random_seed * 2;
+        temp_v0 = mus_random_seed & 0x48000000;
         temp_v1 = (temp_v0 == 0x48000000) | (temp_v0 == 0x08000000);
-        D_800604EC = temp_a1;
+        mus_random_seed = temp_a1;
         var_a2 += 1;
         if (temp_v1 != 0) {
-            D_800604EC = temp_a1 | 1;
+            mus_random_seed = temp_a1 | 1;
         }
     } while (var_a2 < 8U);
-    return (s32) ((f32) arg0 * (((f32) D_800604EC / 65536.0f) / 65536.0f));
+    return (s32) ((f32) arg0 * (((f32) mus_random_seed / 65536.0f) / 65536.0f));
 }

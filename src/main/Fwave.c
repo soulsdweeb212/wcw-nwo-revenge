@@ -6,8 +6,8 @@
 /* SDK: libmus, libmus/src/playerinc/player_commands.inc.c (same code as the SDK source). */
 #include "common.h"
 
-extern u32 D_800604C8;
-extern u8 *D_800604D0;
+extern u32 max_channels;
+extern u8 *mus_channels;
 
 /* Parses a 16-bit envelope value (with a 0x80 high-bit escape) into +0xCE. */
 void *Fwave(void *arg0, u8 *arg1) {

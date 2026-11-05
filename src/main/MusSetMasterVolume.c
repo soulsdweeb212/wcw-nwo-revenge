@@ -6,16 +6,16 @@
 /* SDK: libmus, libmus/src/player.c (+playerinc/player_api.inc.c) (same code as the SDK source). */
 #include "common.h"
 
-extern s16 D_800604E4;
-extern s16 D_800604E6;
+extern s16 mus_master_volume_effects;
+extern s16 mus_master_volume_songs;
 
-/* Set the global volume pair selected by mask arg0 (bit 0 = D_800604E4, bit 1 =
- * D_800604E6) to arg1. */
+/* Set the global volume pair selected by mask arg0 (bit 0 = mus_master_volume_effects, bit 1 =
+ * mus_master_volume_songs) to arg1. */
 void MusSetMasterVolume(s32 arg0, s16 arg1) {
     if (arg0 & 1) {
-        D_800604E4 = arg1;
+        mus_master_volume_effects = arg1;
     }
     if (arg0 & 2) {
-        D_800604E6 = arg1;
+        mus_master_volume_songs = arg1;
     }
 }

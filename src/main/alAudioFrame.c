@@ -35,7 +35,7 @@ typedef struct G {
     s32 unk48;
 } G;
 
-extern G *D_80037510;
+extern G *alGlobals;
 extern s32 _timeToSamplesNoRound(G *arg0, s32 arg1);
 extern s32 __nextSampleTime(G *arg0, void **arg1);
 extern void _collectPVoices(G *arg0);
@@ -52,7 +52,7 @@ u8 *alAudioFrame(u8 *arg0, s32 *arg1, s32 *arg2, s32 arg3) {
     s32 chunk;
     DObj *dobj;
 
-    g = D_80037510;
+    g = alGlobals;
     remaining = arg3;
     dst = arg0;
     src = arg2;

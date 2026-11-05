@@ -6,7 +6,7 @@
 /* SDK: libultra 2.0I, ultralib src/io/aigetstat.c (same code as the SDK source). */
 #include "common.h"
 
-extern u8 D_80037520;
+extern u8 hdwrBugFlag;
 
 s32 osVirtualToPhysical(s32);
 s32 __osAiDeviceBusy(void);

@@ -9,9 +9,9 @@
 /* identical to __osContGetInitData (matched), with its names changed by decomp.wtf */
 typedef struct { u8 b0,b1,b2,b3,b4,b5,b6,b7; } Cmd8;
 typedef struct { s16 f0; u8 f2, f3; } Out4;
-extern Cmd8 D_8007DFD0[];
-extern u8 D_80070A98;
-/* Decodes the polled controller responses: for each of the D_80070A98 entries
+extern Cmd8 __osPfsPifRam[];
+extern u8 __osMaxControllers;
+/* Decodes the polled controller responses: for each of the __osMaxControllers entries
  * writes the error nibble and (for good entries) the two payload bytes and the
  * type, and returns the connected bitmask in *arg0. */
 void __osPfsGetInitData(u8 *arg0, s16 *arg1) {
@@ -19,8 +19,8 @@ void __osPfsGetInitData(u8 *arg0, s16 *arg1) {
     d = (Out4 *)arg1;
     i = 0;
     res = 0;
-    src = D_8007DFD0;
-    for (; i < D_80070A98; i++, src++, d++) {
+    src = __osPfsPifRam;
+    for (; i < __osMaxControllers; i++, src++, d++) {
         Cmd8 t = *src;
         s32 v = (t.b2 & 0xC0) >> 4;
         d->f3 = v;

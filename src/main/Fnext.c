@@ -3,7 +3,7 @@
  * VRAM 0x800133AC | ROM 0x13FAC | size 0xE0
  * asm: asm/nonmatchings/main/Fnext.s
  */
-/* SDK: libmus, libmus/src/playerinc/player_commands.inc.c (sequence command 0x96 in the command table D_80036E80;
+/* SDK: libmus, libmus/src/playerinc/player_commands.inc.c (sequence command 0x96 in the command table jumptable;
  * it sits before MusInitialize, apart from the other commands). */
 #include "common.h"
 

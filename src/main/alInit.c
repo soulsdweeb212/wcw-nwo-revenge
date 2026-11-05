@@ -7,12 +7,12 @@
 #include "common.h"
 
 s32 alSynNew();
-extern s32 D_80037510;
+extern s32 alGlobals;
 
 /* Register the object-node heap arg0 on first use. */
 void alInit(s32 arg0) {
-    if (D_80037510 == 0) {
-        D_80037510 = arg0;
+    if (alGlobals == 0) {
+        alGlobals = arg0;
         alSynNew();
     }
 }

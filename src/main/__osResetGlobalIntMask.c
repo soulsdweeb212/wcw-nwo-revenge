@@ -8,14 +8,14 @@
 
 s32 __osDisableInt();
 void __osRestoreInt(s32);
-extern s32 D_80038810;
+extern s32 __OSGlobalIntMask;
 
-/* Clear the bits of arg0 in D_80038810 (always leaving bits 0 and 0x400 set), with
+/* Clear the bits of arg0 in __OSGlobalIntMask (always leaving bits 0 and 0x400 set), with
  * interrupts disabled. */
 void __osResetGlobalIntMask(s32 arg0) {
     s32 saved;
 
     saved = __osDisableInt();
-    D_80038810 &= ~arg0 | 0x401;
+    __OSGlobalIntMask &= ~arg0 | 0x401;
     __osRestoreInt(saved);
 }

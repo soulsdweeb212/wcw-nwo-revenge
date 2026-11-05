@@ -20,14 +20,14 @@ typedef s32 M2C_UNK32;
 #define M2C_OVERFLOW(a) (0)
 #endif
 
-extern void *D_80037250;
+extern void *__osRunningThread;
 
 s32 osGetThreadPri(void *arg0) {
     void *var_a0;
 
     var_a0 = arg0;
     if (var_a0 == NULL) {
-        var_a0 = D_80037250;
+        var_a0 = __osRunningThread;
     }
     return M2C_FIELD(var_a0, s32 *, 4);
 }

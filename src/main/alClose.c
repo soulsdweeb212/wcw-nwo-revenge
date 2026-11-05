@@ -8,12 +8,12 @@
 
 typedef s32 M2C_UNK;
 M2C_UNK alSynDelete(void);
-extern s32 D_80037510;
+extern s32 alGlobals;
 
 /* Shuts down the audio stream subsystem once and clears the active flag. */
 void alClose(void) {
-    if (D_80037510 != 0) {
+    if (alGlobals != 0) {
         alSynDelete();
-        D_80037510 = 0;
+        alGlobals = 0;
     }
 }

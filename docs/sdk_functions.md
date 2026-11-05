@@ -2,7 +2,8 @@
 
 The main segment (`src/main/`, 0x80000450..0x8002CA30, 676 functions) holds the game engine and, linked in after it, the
 Nintendo 64 SDK libraries the game was built with. This page lists every SDK function identified there (2026-11-05):
-380 of them are named now, 4 are SDK-looking but unnamed. The rest of the segment is game code.
+380 of them are named now, 4 are SDK-looking but unnamed. The rest of the segment is game code. The SDK's data globals that
+these functions use (103 of them) are named too: see [Data](#data) at the end.
 
 Each renamed file starts (after its `@header`) with a one-line `/* SDK: ... */` comment saying where it comes from; the 35
 hand-written assembly routines carry a longer explanation instead. The table below has the evidence for each one.
@@ -471,3 +472,126 @@ $PY tools/ulsweep.py sweep.json "I J K"     # everything against every main func
 | 800288C0 | `__fixsfdi` |  | KMC | KMC GCC runtime | asm-identified | From the asm comment. Already named |
 | 800289B0 | `__floatdisf` | `signed64ToFloatTrunc` | KMC | KMC GCC runtime | asm-identified | From the asm comment: the (f32)s64 conversion, right after __fixsfdi in the same hand-written style. 12 call sites in calculateObjectVertexCentroid and func_800080A0 (the matched C calls it by name) |
 | 8002BC40 | `rspbootTextStart` | `func_8002BC40` | RSP microcode | rsp/rspboot.s (SDK, not in the ultralib checkout) | asm-identified | From the asm comment: RSP code, not CPU code. Bytes 0-0xCF are rspboot (OSTask.ucode_boot, size D_8002BD10-rspbootTextStart=0xD0), then the audio microcode text starts at D_8002BD10 |
+
+## Data
+
+The SDK functions' global variables carry their SDK names too. They were found with `tools/uldata.py`: it compiles each
+identified function's SDK source, lines its instructions up with the ROM function's, and every pair of aligned
+instructions that refers to data on both sides says "SDK variable S is at address A" (statics are recovered from the
+object's symbol table, offsets from the instruction immediates, since MIPS relocations keep the addend there). A name was
+taken when an exact function voted for it or two votes agreed; where votes split, the majority won, and the few
+single votes from changed functions were taken only with other evidence (osInitialize and osCreatePiManager are proven
+by small edits, the libmus command table index by index, the boot variables sit at fixed addresses). The exception
+handler's globals come from reading its assembly. Function-scope statics keep their source name without GCC's `.N`
+suffix (`xseed`, `hdwrBugFlag`, `retrace`).
+
+Only the start of each object is named. Code that reaches a field through its own symbol (for example `D_80037604`, a
+field of `__osPiDevMgr`) still uses the automatic name; folding those into struct accesses would change the C.
+Not named: `dtor` (guAlign's degrees-to-radians constant, three conflicting candidates), some libmus variables only the
+changed MusInitialize touches, and the game's own data.
+
+| VRAM | name | was | found through |
+| :-- | :-- | :-- | :-- |
+| 80000300 | `osTvType` | `D_80000300` | fixed boot variable 0x80000300 (MusInitialize, __osViInit, osInitialize) |
+| 80000308 | `osRomBase` | `D_80000308` | fixed boot variable 0x80000308 (osPiRawReadIo, osPiRawStartDma) |
+| 8000030C | `osResetType` | `D_8000030C` | fixed boot variable 0x8000030C (osInitialize) |
+| 8000031C | `osAppNMIBuffer` | `D_8000031C` | fixed boot variable 0x8000031C (osInitialize) |
+| 80036E80 | `jumptable` | `D_80036E80` | __MusIntGetNewNote; its 43 entries are the F* sequence commands in libmus 3.14 order |
+| 80036F50 | `n_alGlobals` | `D_80036F50` | n_alClose, n_alInit |
+| 80036F54 | `n_syn` | `D_80036F54` | __n_allocParam, _allocatePVoice, _n_collectPVoices, _n_freePVoice, _n_freeParam, _n_timeToSamples (+20 more) |
+| 80036F60 | `SMALLROOM_PARAMS_N` | `D_80036F60` | n_alFxNew |
+| 80036FC8 | `BIGROOM_PARAMS_N` | `D_80036FC8` | n_alFxNew |
+| 80037050 | `ECHO_PARAMS_N` | `D_80037050` | n_alFxNew |
+| 80037078 | `CHORUS_PARAMS_N` | `D_80037078` | n_alFxNew |
+| 800370A0 | `FLANGE_PARAMS_N` | `D_800370A0` | n_alFxNew |
+| 800370C8 | `NULL_PARAMS_N` | `D_800370C8` | n_alFxNew |
+| 800370F0 | `n_eqpower` | `D_800370F0` | n_alEnvmixerPull |
+| 80037230 | `xseed` | `D_80037230` | guRandom |
+| 80037240 | `__osThreadTail` | `D_80037240` | osCreateMesgQueue |
+| 80037248 | `__osRunQueue` | `D_80037248` | osSetThreadPri, osStartThread, osYieldThread |
+| 8003724C | `__osActiveQueue` | `D_8003724C` | osCreateThread, osDestroyThread |
+| 80037250 | `__osRunningThread` | `D_80037250` | osDestroyThread, osGetThreadPri, osJamMesg, osRecvMesg, osSendMesg, osSetThreadPri (+2 more) |
+| 80037254 | `__osFaultedThread` | `D_80037254` | read from __osExceptionPreamble: set on a CPU fault before OS_EVENT_FAULT is posted |
+| 80037260 | `SMALLROOM_PARAMS` | `D_80037260` | alFxNew |
+| 800372C8 | `BIGROOM_PARAMS` | `D_800372C8` | alFxNew |
+| 80037350 | `ECHO_PARAMS` | `D_80037350` | alFxNew |
+| 80037378 | `CHORUS_PARAMS` | `D_80037378` | alFxNew |
+| 800373A0 | `FLANGE_PARAMS` | `D_800373A0` | alFxNew |
+| 800373C8 | `NULL_PARAMS` | `D_800373C8` | alFxNew |
+| 800373F0 | `eqpower` | `D_800373F0` | _pullSubFrame, alEnvmixerPull |
+| 80037510 | `alGlobals` | `D_80037510` | __allocParam, __freeParam, alAudioFrame, alClose, alEnvmixerPull, alFxParamHdl (+1 more) |
+| 80037520 | `hdwrBugFlag` | `D_80037520` | osAiSetNextBuffer |
+| 80037530 | `__osContinitialized` | `D_80037530` | osContInit |
+| 800375E0 | `__osPfsInodeCacheChannel` | `D_800375E0` | __osPfsRWInode |
+| 800375E4 | `__osPfsInodeCacheBank` | `D_800375E4` | __osPfsGetStatus, __osPfsRWInode |
+| 800375F0 | `__osPfsLastChannel` | `D_800375F0` | __osContRamRead, __osContRamWrite |
+| 80037600 | `__osPiDevMgr` | `D_80037600` | osCreatePiManager, osEPiStartDma, osPiGetCmdQueue |
+| 8003761C | `__osPiTable` | `D_8003761C` | osCartRomInit, osDriveRomInit, osEPiLinkHandle |
+| 80037620 | `__osCurrentHandle` | `D_80037620` | osEPiRawReadIo, osEPiRawStartDma, osEPiRawWriteIo |
+| 80037630 | `__osViDevMgr` | `D_80037630` | osCreateViManager |
+| 8003764C | `__additional_scanline` | `D_8003764C` | __osViSwapContext, osCreateViManager |
+| 80037650 | `osViModeTable` | `D_80037650` | osCreateScheduler |
+| 800387D0 | `__osHwIntTable` | `D_800387D0` | read from __osExceptionPreamble: entry 1 is the cart / 64DD interrupt hook |
+| 800387F8 | `__osPiIntTable` | `D_800387F8` | read from __osExceptionPreamble: the hook called before a PI interrupt is posted (a 2.0J feature) |
+| 80038800 | `osClockRate` | `D_80038800` | osInitialize |
+| 80038808 | `osViClock` | `D_80038808` | osAiSetFrequency, osInitialize |
+| 8003880C | `__osShutdown` | `D_8003880C` | read from __osExceptionPreamble: set at the first PreNMI |
+| 80038810 | `__OSGlobalIntMask` | `D_80038810` | __osResetGlobalIntMask, __osSetGlobalIntMask |
+| 80038820 | `__osTimerList` | `g_80038820` | __osInsertTimer, __osTimerInterrupt, __osTimerServicesInit, osSetTimer |
+| 80038830 | `vi` | `D_80038830` | __osViInit |
+| 800388A0 | `__osSiAccessQueueEnabled` | `D_800388A0` | __osSiCreateAccessQueue, __osSiGetAccess |
+| 800388B0 | `osViModeNtscLan1` | `D_800388B0` | __osViInit |
+| 80038900 | `osViModePalLan1` | `D_80038900` | __osViInit |
+| 80038950 | `osViModeMpalLan1` | `D_80038950` | __osViInit |
+| 800389A0 | `__osPiAccessQueueEnabled` | `D_800389A0` | __osPiCreateAccessQueue, __osPiGetAccess, osCreatePiManager |
+| 8003B650 | `__osRcpImTable` | `D_8003B650` | read from osSetIntMask and __osDispatchThread: the MI_INTR_MASK_REG value for each 6-bit RCP mask |
+| 8003B910 | `__osIntOffTable` | `D_8003B910` | read from __osExceptionPreamble: pending interrupt bits -> offset into its jump table |
+| 800604C8 | `max_channels` | `D_800604C8` | Fstartfx, Ftempo, MusAsk, MusHandleAsk, MusHandleGetPtrBank, MusHandleSetFreqOffset (+11 more) |
+| 800604CC | `mus_voices` | `D_800604CC` | MusInitialize, __MusIntFlushPending, __MusIntGetNewNote, __MusIntMain, __MusIntSetPitch, __MusIntSetVolumeAndPan |
+| 800604D0 | `mus_channels` | `D_800604D0` | Fstartfx, Ftempo, MusAsk, MusHandleAsk, MusHandleGetPtrBank, MusHandleSetFreqOffset (+9 more) |
+| 800604DC | `mus_vsyncs_per_second` | `D_800604DC` | Ftempo, MusInitialize, __MusIntInitialiseChannel |
+| 800604E0 | `mus_next_frame_time` | `D_800604E0` | MusInitialize, __MusIntGetNewNote, __MusIntMain, __MusIntSetVolumeAndPan |
+| 800604E4 | `mus_master_volume_effects` | `D_800604E4` | MusSetMasterVolume, __MusIntSetVolumeAndPan |
+| 800604E6 | `mus_master_volume_songs` | `D_800604E6` | MusSetMasterVolume, __MusIntSetVolumeAndPan |
+| 800604E8 | `mus_current_handle` | `D_800604E8` | MusInitialize, __MusIntStartEffect |
+| 800604EC | `mus_random_seed` | `D_800604EC` | MusInitialize, __MusIntRandom |
+| 800604F0 | `mus_init_bank` | `D_800604F0` | MusInitialize, __MusIntInitialiseChannel |
+| 800604F8 | `mus_songfxchange_flag` | `D_800604F8` | MusSetSongFxChange |
+| 800604FC | `mus_last_fxtype` | `D_800604FC` | MusSetFxType, MusSetSongFxChange |
+| 80060504 | `fifo_start` | `D_80060504` | __MusIntFifoAddCommand, __MusIntFifoOpen, __MusIntMain |
+| 80060508 | `fifo_current` | `D_80060508` | __MusIntFifoAddCommand, __MusIntFifoOpen, __MusIntMain |
+| 8006050C | `fifo_limit` | `D_8006050C` | __MusIntFifoAddCommand, __MusIntFifoOpen, __MusIntMain |
+| 80060510 | `fifo_addr` | `D_80060510` | __MusIntFifoAddCommand, __MusIntFifoOpen, __MusIntMain |
+| 80062580 | `tmp_task` | `D_80062580` | osSpTaskLoad |
+| 800625C0 | `__MotorDataBuf` | `gControllerPakBankBuffers` | __osMotorAccess, osMotorInit |
+| 800626C0 | `piThread` | `D_800626C0` | osCreatePiManager |
+| 80063870 | `piEventQueue` | `D_80063870` | osCreatePiManager |
+| 80063888 | `piEventBuf` | `D_80063888` | osCreatePiManager |
+| 80063890 | `retrace` | `D_80063890` | viMgrMain |
+| 80063898 | `viThread` | `D_80063898` | osCreateViManager |
+| 80064A50 | `viEventQueue` | `D_80064A50` | osCreateViManager |
+| 80064A68 | `viEventBuf` | `D_80064A68` | osCreateViManager |
+| 80064A80 | `viRetraceMsg` | `D_80064A80` | osCreateViManager |
+| 80064A98 | `viCounterMsg` | `D_80064A98` | osCreateViManager |
+| 80064AB0 | `siAccessBuf` | `D_80064AB0` | __osSiCreateAccessQueue, __osSiGetAccess |
+| 80064AC0 | `piAccessBuf` | `D_80064AC0` | __osPiCreateAccessQueue, __osPiGetAccess |
+| 80065120 | `__osBaseCounter` | `D_80065120` | __osTimerServicesInit, osGetTime, viMgrMain |
+| 80065128 | `DriveRomHandle` | `D_80065128` | osDriveRomInit |
+| 8006A0B0 | `__osThreadSave` | `D_8006A0B0` | read from __osExceptionPreamble: the scratch frame the handler spills $at, SR and $t0-$t2 into |
+| 8006A260 | `__osContPifRam` | `D_8006A260` | __osContGetInitData, __osPackReadData, __osPackRequestData, osContGetReadData, osContInit, osContStartQuery (+1 more) |
+| 80070480 | `__osViIntrCount` | `D_80070480` | __osTimerServicesInit, viMgrMain |
+| 80070A98 | `__osMaxControllers` | `D_80070A98` | __osContGetInitData, __osPackReadData, __osPackRequestData, __osPfsGetInitData, __osPfsRequestData, osContGetReadData (+3 more) |
+| 80070AA0 | `__Dom2SpeedParam` | `D_80070AA0` | createSpeedParam (as __Dom1SpeedParam); __osCurrentHandle[1] points here |
+| 80070B20 | `__osCurrentTime` | `D_80070B20` | __osTimerServicesInit, osGetTime, viMgrMain |
+| 80073E98 | `__osPiAccessQueue` | `D_80073E98` | __osPiCreateAccessQueue, __osPiGetAccess, __osPiRelAccess, osCreatePiManager |
+| 8007BD30 | `__osContLastCmd` | `D_8007BD30` | __osContRamRead, __osContRamWrite, __osMotorAccess, __osPfsRequestData, __osPfsRequestOneChannel, osContInit (+3 more) |
+| 8007BD34 | `__osEepromTimerMsg` | `D_8007BD34` | osContInit |
+| 8007BD60 | `__osTimerCounter` | `D_8007BD60` | __osSetTimerIntr, __osTimerInterrupt |
+| 8007DDB8 | `__osPfsInodeCache` | `D_8007DDB8` | __osPfsRWInode |
+| 8007DEB8 | `__Dom1SpeedParam` | `D_8007DEB8` | createSpeedParam (stores to +0 and, changed by the game, +5); __osCurrentHandle[0] points here |
+| 8007DF30 | `__osEventStateTab` | `D_8007DF30` | osSetEventMesg |
+| 8007DFB8 | `__osFinalrom` | `D_8007DFB8` | osInitialize |
+| 8007DFD0 | `__osPfsPifRam` | `D_8007DFD0` | __osContRamRead, __osContRamWrite, __osPfsGetInitData, __osPfsGetOneChannelData, __osPfsGetStatus, __osPfsRequestData (+2 more) |
+| 8007E180 | `__osEepromTimerQ` | `D_8007E180` | osContInit |
+| 8007E198 | `CartRomHandle` | `D_8007E198` | osCartRomInit |
+| 8007E210 | `__osSiAccessQueue` | `D_8007E210` | __osSiCreateAccessQueue, __osSiGetAccess, __osSiRelAccess |

@@ -15,8 +15,8 @@ typedef struct Obj {
     u16 f10;
 } Obj;
 
-extern Obj *D_80037248;
-extern Obj *D_80037250;
+extern Obj *__osRunQueue;
+extern Obj *__osRunningThread;
 extern s32 __osDisableInt(void);
 extern void __osRestoreInt(s32);
 extern void __osDequeueThread(s32, void *);
@@ -33,16 +33,16 @@ void osSetThreadPri(Obj *arg0, s32 arg1) {
     s32 s2 = __osDisableInt();
 
     if (s0 == NULL)
-        s0 = D_80037250;
+        s0 = __osRunningThread;
     if (s0->f4 != s1) {
         s0->f4 = s1;
-        if (s0 != D_80037250 && s0->f10 != 1) {
+        if (s0 != __osRunningThread && s0->f10 != 1) {
             __osDequeueThread(s0->f8, s0);
             __osEnqueueThread(s0->f8, s0);
         }
-        if (D_80037250->f4 < D_80037248->f4) {
-            D_80037250->f10 = 2;
-            __osEnqueueAndYield(&D_80037248);
+        if (__osRunningThread->f4 < __osRunQueue->f4) {
+            __osRunningThread->f10 = 2;
+            __osEnqueueAndYield(&__osRunQueue);
         }
     }
     __osRestoreInt(s2);

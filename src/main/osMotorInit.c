@@ -6,7 +6,7 @@
 /* SDK: libultra 2.0I, ultralib src/io/motor.c (same code as the SDK source). */
 #include "common.h"
 
-extern u8 gControllerPakBankBuffers[];
+extern u8 __MotorDataBuf[];
 s32 __osPfsSelectBank(u8 *, s32);
 s32 __osContRamRead(s32, s32, s32, void *);
 s32 __osContAddressCrc(u16);
@@ -16,7 +16,7 @@ typedef struct { u8 b[0x27]; } Nw2Cmd39;
 /* Reads and then rewrites Controller Pak bank `bank` for pak `pfs`:
  * builds the bank-select command in `cmd`, selects bank 0xFE then 0x80,
  * performs the 0x400-byte transfer into `resp`, and on success writes the
- * zero-filled sector at gControllerPakBankBuffers + bank*0x40 using a 0x23
+ * zero-filled sector at __MotorDataBuf + bank*0x40 using a 0x23
  * write command.  Returns 0 on success, or 2/4/0xB on the various errors. */
 s32 osMotorInit(s32 pfs, u8 *cmd, s32 bank) {
     u8 resp[0x20];
@@ -65,7 +65,7 @@ s32 osMotorInit(s32 pfs, u8 *cmd, s32 bank) {
         return 0xB;
     }
     if (!(*(u32 *)cmd & 8)) {
-        dst = gControllerPakBankBuffers + (bank << 6);
+        dst = __MotorDataBuf + (bank << 6);
         writeCmd.b[0] = 0xFF;
         writeCmd.b[1] = 0x23;
         writeCmd.b[2] = 1;

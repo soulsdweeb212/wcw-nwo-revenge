@@ -6,8 +6,8 @@
 /* SDK: libmus, libmus/src/player.c (+playerinc/player_api.inc.c) (same code as the SDK source). */
 #include "common.h"
 
-extern u32 D_800604C8;
-extern u8 *D_800604D0;
+extern u32 max_channels;
+extern u8 *mus_channels;
 
 /* Return the s32 at +0x98 of the first voice record whose key (+0x60) matches arg0,
  * or 0 when there is no match (or arg0 is 0). */
@@ -18,8 +18,8 @@ s32 MusHandleGetPtrBank(s32 key) {
     if (key == 0) {
         return 0;
     }
-    p = D_800604D0;
-    for (i = 0; i < D_800604C8; i++) {
+    p = mus_channels;
+    for (i = 0; i < max_channels; i++) {
         if (*(s32 *)(p + 0x60) == key) {
             return *(s32 *)(p + 0x98);
         }

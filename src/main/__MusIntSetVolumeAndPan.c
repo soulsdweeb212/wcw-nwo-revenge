@@ -9,10 +9,10 @@
 void n_alSynSetPan(void *, u8);
 void n_alSynSetVol(void *, s16, s32);
 
-extern s32 D_800604CC;
-extern s32 D_800604E0;
-extern u16 D_800604E4;
-extern u16 D_800604E6;
+extern s32 mus_voices;
+extern s32 mus_next_frame_time;
+extern u16 mus_master_volume_effects;
+extern u16 mus_master_volume_songs;
 extern s32 D_80060500;
 
 /* Recomputes audio voice arg1's output volume (s16 +0xC0) and pan (byte +0xDE)
@@ -28,9 +28,9 @@ void __MusIntSetVolumeAndPan(u8 *arg0, s32 arg1) {
         v = 0x7FFF;
     }
     if (*(u16 *)(arg0 + 0xC6) == 0) {
-        scale = D_800604E6;
+        scale = mus_master_volume_songs;
     } else {
-        scale = D_800604E4;
+        scale = mus_master_volume_effects;
     }
     v *= scale;
     v >>= 15;
@@ -40,7 +40,7 @@ void __MusIntSetVolumeAndPan(u8 *arg0, s32 arg1) {
     }
     if (v != *(u16 *)(arg0 + 0xC0)) {
         *(u16 *)(arg0 + 0xC0) = v;
-        n_alSynSetVol((s32 *)(D_800604CC + arg1 * 0x1C), v, D_800604E0);
+        n_alSynSetVol((s32 *)(mus_voices + arg1 * 0x1C), v, mus_next_frame_time);
     }
     v = arg0[0xDD];
     v = ((u32)(v * *(s16 *)(arg0 + 0xD0)) >> 7) & 0x7F;
@@ -49,6 +49,6 @@ void __MusIntSetVolumeAndPan(u8 *arg0, s32 arg1) {
         if (D_80060500 != 0) {
             v = 0x40;
         }
-        n_alSynSetPan((s32 *)(D_800604CC + arg1 * 0x1C), v);
+        n_alSynSetPan((s32 *)(mus_voices + arg1 * 0x1C), v);
     }
 }

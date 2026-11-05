@@ -11,7 +11,7 @@ typedef struct {
 } Nw2WordParam;
 
 extern u8 __osDispatchThread[];
-extern s32 *D_8003724C;
+extern s32 *__osActiveQueue;
 s32 __osDisableInt(void);
 void __osRestoreInt(s32);
 
@@ -37,8 +37,8 @@ void osCreateThread(u8 *o, s32 a1, s32 a2, s32 a3, s32 a4, Nw2WordParam a5) {
     *(s32 *)(o + 4) = *(s32 *)&a5;
     *(s64 *)(o + 0xF0) = v;
     status = __osDisableInt();
-    prev = (s32)D_8003724C;
-    D_8003724C = o;
+    prev = (s32)__osActiveQueue;
+    __osActiveQueue = o;
     *(s32 *)(o + 0xC) = prev;
     __osRestoreInt(status);
 }

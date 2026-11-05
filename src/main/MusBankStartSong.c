@@ -6,10 +6,10 @@
 /* SDK: libmus, libmus/src/player.c (+playerinc/player_api.inc.c) (SDK code with changes, see docs/sdk_functions.md). */
 #include "common.h"
 
-extern s32 D_800604F0;
+extern s32 mus_init_bank;
 extern s32 D_800604F4;
-extern u32 D_800604C8;
-extern u8 *D_800604D0;
+extern u32 max_channels;
+extern u8 *mus_channels;
 s32 MusStartSong(s32);
 
 /* Select arg0 as the current voice owner when it is stopping, run the loader, then
@@ -18,9 +18,9 @@ s32 MusBankStartSong(s32 arg0, s32 arg1) {
     s32 r;
 
     if (arg0 != 0 && *(s32 *)((u8 *)arg0 + 0x10) < 0) {
-        D_800604F0 = arg0;
+        mus_init_bank = arg0;
     }
     r = MusStartSong(arg1);
-    D_800604F0 = D_800604F4;
+    mus_init_bank = D_800604F4;
     return r;
 }

@@ -6,7 +6,7 @@
 /* SDK: libultra 2.0I, ultralib src/os/timerintr.c (same code as the SDK source). */
 #include "common.h"
 
-extern s32 D_8007BD60;
+extern s32 __osTimerCounter;
 s32 __osDisableInt(void);
 s32 osGetCount(void);
 void __osRestoreInt(s32);
@@ -22,7 +22,7 @@ void __osSetTimerIntr(u64 time) {
     saved = __osDisableInt();
     t = osGetCount();
     d = t + time;
-    D_8007BD60 = t;
+    __osTimerCounter = t;
     __osSetCompare((s32)d);
     __osRestoreInt(saved);
 }

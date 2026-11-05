@@ -7,17 +7,17 @@
 #include "common.h"
 
 typedef struct Nw2Timer {struct Nw2Timer *next,*prev; u64 interval,value; void *mq; u32 msg;} Nw2Timer;
-extern Nw2Timer *g_80038820;
+extern Nw2Timer *__osTimerList;
 u32 __osDisableInt(void);
 void __osRestoreInt(u32);
 u64 __osInsertTimer(Nw2Timer *t) {
     Nw2Timer *p; u64 value; u32 mask;
     mask=__osDisableInt();
-    p=g_80038820->next;
+    p=__osTimerList->next;
     value=t->value;
-    while(p!=g_80038820 && p->value<value) {value-=p->value;p=p->next;}
+    while(p!=__osTimerList && p->value<value) {value-=p->value;p=p->next;}
     t->value=value;
-    if(p!=g_80038820) p->value-=value;
+    if(p!=__osTimerList) p->value-=value;
     t->next=p;t->prev=p->prev;p->prev->next=t;p->prev=t;
     __osRestoreInt(mask);
     return value;

@@ -14,16 +14,16 @@ typedef struct Node26 {
     u16 type;
 } Node26;
 
-extern Node26 *D_8003724C;
-extern Node26 *D_80037250;
+extern Node26 *__osActiveQueue;
+extern Node26 *__osRunningThread;
 
 s32 __osDisableInt(void);
 void __osRestoreInt(s32);
 void __osDispatchThread(void);
 void __osDequeueThread(void *, void *);
 
-/* Remove arg0 from the interrupt-protected object list D_8003724C. A NULL arg0
- * means the default node D_80037250; a node whose type isn't 1 is first detached
+/* Remove arg0 from the interrupt-protected object list __osActiveQueue. A NULL arg0
+ * means the default node __osRunningThread; a node whose type isn't 1 is first detached
  * from its owner. When the default node is removed, run __osDispatchThread. */
 void osDestroyThread(Node26 *arg0) {
     Node26 *node = arg0;
@@ -32,15 +32,15 @@ void osDestroyThread(Node26 *arg0) {
     Node26 *cur;
 
     if (node == NULL) {
-        node = D_80037250;
+        node = __osRunningThread;
     } else if (node->type != 1) {
         __osDequeueThread(node->owner, node);
     }
 
     {
-        Node26 *head = D_8003724C;
+        Node26 *head = __osActiveQueue;
         if (head == node) {
-            D_8003724C = node->next;
+            __osActiveQueue = node->next;
         } else {
             prev = head;
             cur = prev->next;
@@ -55,7 +55,7 @@ void osDestroyThread(Node26 *arg0) {
         }
     }
 
-    if (node == D_80037250) {
+    if (node == __osRunningThread) {
         __osDispatchThread();
     }
     __osRestoreInt(state);

@@ -6,8 +6,8 @@
 /* SDK: libmus, libmus/src/player.c (SDK code with changes, see docs/sdk_functions.md). */
 #include "common.h"
 
-extern s32 D_800604DC;
-extern s32 D_800604F0;
+extern s32 mus_vsyncs_per_second;
+extern s32 mus_init_bank;
 typedef struct 
 {
     s32 f0;
@@ -78,7 +78,7 @@ void __MusIntInitialiseChannel(Voice *v)
     }
     v->fEC = 255;
     v->fDE = 255;
-    rate = 0x6000 / D_800604DC;
+    rate = 0x6000 / mus_vsyncs_per_second;
     v->fF2 = 0;
     v->fF3 = 127;
     v->fDC = 127;
@@ -97,7 +97,7 @@ void __MusIntInitialiseChannel(Voice *v)
     v->fBE = 128;
     v->fD0 = 128;
     v->fB8 = 128;
-    v->f98 = D_800604F0;
+    v->f98 = mus_init_bank;
     v->fE9 = saved;
     v->f3C = 99.9f;
     v->f8C = 0.03125f;

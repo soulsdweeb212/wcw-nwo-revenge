@@ -6,10 +6,10 @@
 /* SDK: libultra 2.0I, ultralib src/io/spsetstat.c (same code as the SDK source). */
 #include "common.h"
 
-extern s32 D_800388A0;
-extern u8 D_80064AB0[];
-extern u8 D_8007E210[];
-extern s32 D_80037600;
+extern s32 __osSiAccessQueueEnabled;
+extern u8 siAccessBuf[];
+extern u8 __osSiAccessQueue[];
+extern s32 __osPiDevMgr;
 extern s32 D_80037608;
 extern s32 D_A4080000;
 

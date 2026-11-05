@@ -12,7 +12,7 @@ extern s32 D_80062528;
 extern s32 D_8006255C;
 extern s32 D_80036F38;
 extern f64 D_8003B3E8;
-extern void *D_80036F54;
+extern void *n_syn;
 void __amDMA(void);
 s32 osSetIntMask(s32);
 

@@ -6,7 +6,7 @@
 #include "common.h"
 
 extern s16 D_8002EEC4;
-extern s32 D_80000300;
+extern s32 osTvType;
 extern u8 D_8007FC4F;
 extern s32 D_8007E228;
 typedef struct {u32 words[20];} VideoMode;
@@ -46,7 +46,7 @@ void func_80001260(void) {
         osCreateMesgQueue(D_800467E0,D_800467F8,1);
         osStartThread(q);
         D_800445A0=allocateHeap(0x400);D_800445A4=allocateHeap(0xC00);D_800445A8=allocateHeap(0x10008);
-        if(D_80000300==1) bcopy(&D_80037540,D_80046808,0x50);
+        if(osTvType==1) bcopy(&D_80037540,D_80046808,0x50);
         else bcopy(&D_80037590,D_80046808,0x50);
         t=osSetIntMask(0x80401);
         width=&D_80046810;*width=0x1E0;D_80046828=0x300;D_80046830=0x3C0;D_80046844=0x3C0;

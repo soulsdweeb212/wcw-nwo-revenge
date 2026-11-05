@@ -9,8 +9,8 @@
  * is at offset 0); the walk has no NULL check because every queue ends in the priority -1 sentinel.
  * Callers: osStartThread, osSetThreadPri, the exception handler
  * __osExceptionPreamble (redispatch: put the preempted thread back on __osRunQueue), __osEnqueueAndYield
- * (__osEnqueueAndYield) and the exception handler's send_mesg send_mesg (puts the thread it
- * popped off the event's message queue on __osRunQueue); D_80037248 is __osRunQueue. Same logic as the reference
+ * (__osEnqueueAndYield) and the exception handler's send_mesg (puts the thread it
+ * popped off the event's message queue on __osRunQueue). Same logic as the reference
  * exceptasm.s/thread.c: the C with register variables and empty scheduling barriers is
  * byte-identical. */
 #ifdef NON_MATCHING

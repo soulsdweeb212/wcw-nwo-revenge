@@ -38,8 +38,8 @@ typedef struct {
     u8 padAC[0xAC];
 } Nw2Voice1381C;
 
-extern Nw2Voice1381C *D_800604D0;
-extern s32 D_800604E8;
+extern Nw2Voice1381C *mus_channels;
+extern s32 mus_current_handle;
 void __MusIntRemapPtrs(void *, void *, u32);
 s32 __MusIntFindChannel(void *, s32);
 void __MusIntInitialiseChannel(void *);
@@ -61,16 +61,16 @@ s32 MusStartSong(Nw2SoundRequest *arg0) {
         __MusIntRemapPtrs(arg0->values1, arg0, count);
         __MusIntRemapPtrs(arg0->values2, arg0, count);
     }
-    prev = D_800604E8;
+    prev = mus_current_handle;
     i = 0;
-    D_800604E8 = prev + 1;
+    mus_current_handle = prev + 1;
     base = prev;
     for (i = 0; (u32)i < count; i++) {
         if (arg0->notes[i] == 0) {
             continue;
         }
         off = __MusIntFindChannel(arg0, i) * 0x158;
-        voice = (Nw2Voice1381C *)((u8 *)D_800604D0 + off);
+        voice = (Nw2Voice1381C *)((u8 *)mus_channels + off);
         __MusIntInitialiseChannel(voice);
         voice->request = arg0;
         voice->f0 = voice->f0 | 1;

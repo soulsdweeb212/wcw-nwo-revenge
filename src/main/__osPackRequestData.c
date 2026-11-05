@@ -6,17 +6,17 @@
 /* SDK: libultra 2.0I, ultralib src/io/controller.c (same code as the SDK source). */
 #include "common.h"
 
-extern u8 D_80070A98;
+extern u8 __osMaxControllers;
 extern s32 D_8006A298;
 extern s32 D_8006A29C;
 
 typedef struct {
     u8 b0, b1, b2, b3, b4, b5, b6, b7;
 } Cmd8;
-extern Cmd8 D_8006A260[];
+extern Cmd8 __osContPifRam[];
 
-/* Reset the 8-byte command buffer at D_8006A260: clear the 15 s32 status words ending at
- * D_8006A298, set D_8006A29C to 1, fill the D_80070A98 entries with the request packet
+/* Reset the 8-byte command buffer at __osContPifRam: clear the 15 s32 status words ending at
+ * D_8006A298, set D_8006A29C to 1, fill the __osMaxControllers entries with the request packet
  * {0xFF, 1, 3, arg0, 0xFF, 0xFF, 0xFF, 0xFF} and store the 0xFE terminator byte. */
 void __osPackRequestData(s32 arg0) {
     s32 i;
@@ -40,7 +40,7 @@ void __osPackRequestData(s32 arg0) {
     tmp.b5 = 0xFF;
     tmp.b6 = 0xFF;
     tmp.b7 = 0xFF;
-    for (i = 0; i < D_80070A98; i++) {
+    for (i = 0; i < __osMaxControllers; i++) {
         *q++ = tmp;
     }
     *(u8 *)q = 0xFE;

@@ -6,8 +6,8 @@
 /* SDK: libultra 2.0I, ultralib src/io/pfsgetstatus.c (same code as the SDK source). */
 #include "common.h"
 
-extern u8 D_800375E4;
-extern u8 D_8007DFD0[];
+extern u8 __osPfsInodeCacheBank;
+extern u8 __osPfsPifRam[];
 void __osPfsRequestOneChannel(s32, s32);
 s32 __osSiRawStartDma(s32, void *);
 s32 osRecvMesg(void *, void *, s32);
@@ -21,11 +21,11 @@ s32 __osPfsGetStatus(void *arg0, s32 arg1) {
     struct { u16 buttons; u8 status; u8 rest[3]; } status;
     s32 message;
     s32 result;
-    D_800375E4 = 0xFA;
+    __osPfsInodeCacheBank = 0xFA;
     __osPfsRequestOneChannel(arg1, 0);
-    __osSiRawStartDma(1, D_8007DFD0);
+    __osSiRawStartDma(1, __osPfsPifRam);
     osRecvMesg(arg0, &message, 1);
-    result = __osSiRawStartDma(0, D_8007DFD0);
+    result = __osSiRawStartDma(0, __osPfsPifRam);
     osRecvMesg(arg0, &message, 1);
     __osPfsGetOneChannelData(arg1, &status);
     if ((status.status & 1) && (status.status & 2)) return 2;

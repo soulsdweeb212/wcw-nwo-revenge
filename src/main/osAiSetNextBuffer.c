@@ -6,7 +6,7 @@
 /* SDK: libultra 2.0I, ultralib src/io/aisetnextbuf.c (same code as the SDK source). */
 #include "common.h"
 
-extern u8 D_80037520;
+extern u8 hdwrBugFlag;
 
 s32 osVirtualToPhysical(s32);
 s32 __osAiDeviceBusy(void);
@@ -19,13 +19,13 @@ s32 osAiSetNextBuffer(s32 arg0, s32 arg1) {
     s32 result;
 
     a = arg0;
-    if (D_80037520 != 0) {
+    if (hdwrBugFlag != 0) {
         a -= 0x2000;
     }
     if (((arg0 + arg1) & 0x1FFF) == 0) {
-        D_80037520 = 1;
+        hdwrBugFlag = 1;
     } else {
-        D_80037520 = 0;
+        hdwrBugFlag = 0;
     }
     if (__osAiDeviceBusy() != 0) {
         return -1;

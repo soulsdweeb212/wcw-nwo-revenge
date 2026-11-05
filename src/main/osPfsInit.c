@@ -6,15 +6,15 @@
 /* SDK: libultra 2.0I, ultralib src/io/pfsinit.c (same code as the SDK source). */
 #include "common.h"
 
-extern u8 D_80070A98;
-extern u8 D_8007BD30;
+extern u8 __osMaxControllers;
+extern u8 __osContLastCmd;
 extern s32 D_8006A298;
 extern s32 D_8006A29C;
 
 typedef struct {
     u8 b0, b1, b2, b3, b4, b5, b6, b7;
 } Cmd8;
-extern Cmd8 D_8006A260[];
+extern Cmd8 __osContPifRam[];
 
 extern void __osSiGetAccess(void);
 extern void __osSiRelAccess(void);

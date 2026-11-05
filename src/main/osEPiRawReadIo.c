@@ -6,14 +6,14 @@
 /* SDK: libultra 2.0I, ultralib src/io/epirawread.c (same code as the SDK source). */
 #include "common.h"
 
-extern Nw2PiHandle *D_80037620[];
+extern Nw2PiHandle *__osCurrentHandle[];
 extern char D_8003B9D8[],D_8003B9DC[];
 void __assert(char *,char *,s32);
 s32 osEPiRawReadIo(Nw2PiHandle *h,u32 addr,u32 *value) {
     Nw2PiHandle *old; u32 domain;
     if(value==NULL) __assert(D_8003B9D8,D_8003B9DC,43);
     while(*(vu32 *)0xa4600010 & 3) {}
-    domain=h->domain;old=D_80037620[domain];
+    domain=h->domain;old=__osCurrentHandle[domain];
     if(old!=h){
         if(domain==0){
             if(old->latency!=h->latency) *(vu32 *)0xa4600014=h->latency;
@@ -26,7 +26,7 @@ s32 osEPiRawReadIo(Nw2PiHandle *h,u32 addr,u32 *value) {
             if(old->page!=h->page) *(vu32 *)0xa4600030=h->page;
             if(old->release!=h->release) *(vu32 *)0xa4600028=h->release;
         }
-        D_80037620[domain]=h;
+        __osCurrentHandle[domain]=h;
     }
     *value=*(vu32 *)(h->base|addr|0xa0000000);
     return 0;

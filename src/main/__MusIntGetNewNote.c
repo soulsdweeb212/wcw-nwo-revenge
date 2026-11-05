@@ -7,9 +7,9 @@
 #include "common.h"
 
 typedef u8 *(*Nw2Fn1488C)(Nw2Voice1488C *, u8 *);
-extern Nw2Fn1488C D_80036E80[];
-extern u8 *D_800604CC;
-extern void *D_800604E0;
+extern Nw2Fn1488C jumptable[];
+extern u8 *mus_voices;
+extern void *mus_next_frame_time;
 void __MusIntFlushPending(Nw2Voice1488C *, s32);
 void __MusIntInitEnvelope(Nw2Voice1488C *);
 void __MusIntInitSweep(Nw2Voice1488C *);
@@ -35,7 +35,7 @@ void __MusIntGetNewNote(Nw2Voice1488C *v, s32 idx)
 loop:
         c = *p;
         if (c >= 0x80) {
-            p = D_80036E80[c & 0x7F](v, p + 1);
+            p = jumptable[c & 0x7F](v, p + 1);
             if (p != NULL) {
                 goto loop;
             }
@@ -123,7 +123,7 @@ loop:
         v->unk8 = (*(s32 **)(inst + 0x2C))[key];
         if (v->unkE9 != 0 && v->unkC0 != 0) {
             v->unkC0 = 0;
-            n_alSynSetVol(D_800604CC + idx * 0x1C, 0, D_800604E0);
+            n_alSynSetVol(mus_voices + idx * 0x1C, 0, mus_next_frame_time);
         } else {
             __MusIntFlushPending(v, idx);
         }
@@ -134,7 +134,7 @@ loop:
     ea = v->unkEA;
     if (ea != v->unkEC) {
         v->unkEC = ea;
-        n_alSynSetFXMix(D_800604CC + idx * 0x1C, (u8)(v->unkEB + (((0x80 - v->unkEB) * ea) >> 7)));
+        n_alSynSetFXMix(mus_voices + idx * 0x1C, (u8)(v->unkEB + (((0x80 - v->unkEB) * ea) >> 7)));
     }
     return;
 rest:
@@ -148,7 +148,7 @@ rest:
 stop:
     if (v->unkE9 != 0) {
         v->unkE9 = 0;
-        n_alSynSetVol(D_800604CC + idx * 0x1C, 0, D_800604E0);
-        n_alSynStopVoice(D_800604CC + idx * 0x1C);
+        n_alSynSetVol(mus_voices + idx * 0x1C, 0, mus_next_frame_time);
+        n_alSynStopVoice(mus_voices + idx * 0x1C);
     }
 }

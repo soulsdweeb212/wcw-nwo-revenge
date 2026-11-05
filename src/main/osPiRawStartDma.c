@@ -6,7 +6,7 @@
 /* SDK: libultra 2.0I, ultralib src/io/pirawdma.c (same code as the SDK source). */
 #include "common.h"
 
-extern u32 D_80000308;
+extern u32 osRomBase;
 u32 osVirtualToPhysical(void *);
 
 /* Start a raw PI DMA transfer: wait for the PI to be idle, program the DRAM and
@@ -19,7 +19,7 @@ s32 osPiRawStartDma(s32 direction, u32 devAddr, void *dramAddr, u32 size) {
     stat = *(volatile u32 *)0xA4600010;
     while (stat & 3) stat = *(volatile u32 *)0xA4600010;
     *(volatile u32 *)0xA4600000 = osVirtualToPhysical(dramAddr);
-    *(volatile u32 *)0xA4600004 = (D_80000308 | devAddr) & 0x1FFFFFFF;
+    *(volatile u32 *)0xA4600004 = (osRomBase | devAddr) & 0x1FFFFFFF;
     switch (direction) {
     case 0: reg = (volatile u32 *)0xA460000C; break;
     case 1: reg = (volatile u32 *)0xA4600008; break;

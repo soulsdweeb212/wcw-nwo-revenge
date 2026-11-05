@@ -31,4 +31,4 @@ typedef struct {
     u8 b[8];
 } Ent8;
 
-extern Ent8 D_8006A260[];
+extern Ent8 __osContPifRam[];

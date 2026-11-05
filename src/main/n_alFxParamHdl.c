@@ -34,7 +34,7 @@ typedef struct {
     s32 f40;
 } Ctx19C80;
 
-extern Ctx19C80 *D_80036F54;
+extern Ctx19C80 *n_syn;
 void init_lpfilter(Sub19C80 *);
 
 /* Sets one parameter of one region of an audio object. param 2.. selects the
@@ -65,7 +65,7 @@ s32 n_alFxParamHdl(Obj19C80 *obj, s32 param, s32 *value) {
         obj->regions[param].fC = val;
         break;
     case 5:
-        obj->regions[param].f10 = (f64)((f32)val / 1000.0f) * 2.0 / (f64)D_80036F54->f40;
+        obj->regions[param].f10 = (f64)((f32)val / 1000.0f) * 2.0 / (f64)n_syn->f40;
         break;
     case 6:
         obj->regions[param].f1C = (f64)(f32)val / 173123.404906676 * (f64)(u32)(obj->regions[param].f4 - obj->regions[param].f0);

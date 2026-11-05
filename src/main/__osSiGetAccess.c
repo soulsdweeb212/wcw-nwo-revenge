@@ -6,25 +6,25 @@
 /* SDK: libultra 2.0I, ultralib src/io/siacs.c (same code as the SDK source). */
 #include "common.h"
 
-extern s32 D_800388A0;
-extern s32 D_80037600;
+extern s32 __osSiAccessQueueEnabled;
+extern s32 __osPiDevMgr;
 extern s32 D_80037608;
-extern u8 D_80064AB0[];
-extern u8 D_8007E210[];
+extern u8 siAccessBuf[];
+extern u8 __osSiAccessQueue[];
 
 s32 osCreateMesgQueue(void *, void *, s32);
 s32 osRecvMesg(void *, void *, s32);
 s32 osSendMesg(void *, s32, s32);
 
 /* One-time setup: register the send/receive queues and enqueue message 0,
- * then block on the queue anchored above D_800388A0 for the next message. */
+ * then block on the queue anchored above __osSiAccessQueueEnabled for the next message. */
 void __osSiGetAccess(void) {
     s32 sp10;
 
-    if (D_800388A0 == 0) {
-        D_800388A0 = 1;
-        osCreateMesgQueue(D_80064AB0 + 0x19760, D_80064AB0, 1);
-        osSendMesg(D_8007E210, 0, 0);
+    if (__osSiAccessQueueEnabled == 0) {
+        __osSiAccessQueueEnabled = 1;
+        osCreateMesgQueue(siAccessBuf + 0x19760, siAccessBuf, 1);
+        osSendMesg(__osSiAccessQueue, 0, 0);
     }
-    osRecvMesg((u8 *)&D_800388A0 + 0x45970, &sp10, 1);
+    osRecvMesg((u8 *)&__osSiAccessQueueEnabled + 0x45970, &sp10, 1);
 }

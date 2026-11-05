@@ -6,13 +6,13 @@
 /* SDK: libultra 2.0I, ultralib src/io/si.c (same code as the SDK source). */
 #include "common.h"
 
-extern s32 D_800389A0;
-extern u8 D_80064AC0[];
-extern u8 D_80073E98[];
-extern u8 D_80070A98;
+extern s32 __osPiAccessQueueEnabled;
+extern u8 piAccessBuf[];
+extern u8 __osPiAccessQueue[];
+extern u8 __osMaxControllers;
 
-extern s32 D_80037248;
-extern void *D_80037250;
+extern s32 __osRunQueue;
+extern void *__osRunningThread;
 
 s32 osCreateMesgQueue(void *, void *, s32);
 s32 osRecvMesg(void *, void *, s32);

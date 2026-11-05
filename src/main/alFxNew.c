@@ -15,7 +15,7 @@ typedef struct { s16 f0,f2; u8 pad4[4]; s16 coeff[16]; void *f28; s32 f2C; } Aux
 typedef struct { u32 f0,f4; u16 f8,fA,fC,padE; f32 f10,f14,f18,f1C; AuxBCF *f20; AuxCF *f24; } EntryCF;
 typedef struct { s32 f0; void (*f4)(); u8 pad8[0xC]; u16 *f14,*f18; u32 f1C; EntryCF *f20; u8 f24; u8 pad25[3]; void (*f28)(); } ObjCF;
 typedef struct { u8 pad0[0x18]; s32 f18; u8 f1C; u8 pad1D[3]; s32 *f20; } DescCF;
-extern s32 D_80037260[],D_800372C8[],D_80037350[],D_80037378[],D_800373A0[],D_800373C8[];
+extern s32 SMALLROOM_PARAMS[],BIGROOM_PARAMS[],ECHO_PARAMS[],CHORUS_PARAMS[],FLANGE_PARAMS[],NULL_PARAMS[];
 s32 alHeapDBAlloc(s32,s32,s32,s32,s32);
 void alFilterNew(void*,s32,void (*)(),s32);
 void alFxParam(); void alFxPull(); void alFxParamHdl();
@@ -23,7 +23,7 @@ void alFxNew(ObjCF *obj, DescCF *arg1, s32 arg2) {
     s32 *table; u16 index; u16 i; u16 j; EntryCF *entry;
     alFilterNew(obj,0,alFxParam,5);
     obj->f4=alFxPull; obj->f28=alFxParamHdl;
-    switch(arg1->f1C) {case 1: table=D_80037260;break; case 2:table=D_800372C8;break;case 5:table=D_80037350;break;case 3:table=D_80037378;break;case 4:table=D_800373A0;break;case 6:table=arg1->f20;break;default:table=D_800373C8;break;}
+    switch(arg1->f1C) {case 1: table=SMALLROOM_PARAMS;break; case 2:table=BIGROOM_PARAMS;break;case 5:table=ECHO_PARAMS;break;case 3:table=CHORUS_PARAMS;break;case 4:table=FLANGE_PARAMS;break;case 6:table=arg1->f20;break;default:table=NULL_PARAMS;break;}
     obj->f24=table[0]; obj->f1C=table[1];
     obj->f20=(EntryCF*)alHeapDBAlloc(0,0,arg2,obj->f24,0x28);
     obj->f14=(u16*)alHeapDBAlloc(0,0,arg2,obj->f1C,2); obj->f18=obj->f14;

@@ -23,7 +23,7 @@ void __osPfsRequestOneChannel(s32 arg0, u8 arg1) {
     base = D_8007E00C;
     p = (u8 *)base - 0x3C;
     i = 0;
-    D_8007BD30 = 0xFE;
+    __osContLastCmd = 0xFE;
     base[0] = 1;
     buf[0] = 1;
     buf[1] = 3;
@@ -42,6 +42,6 @@ void __osPfsRequestOneChannel(s32 arg0, u8 arg1) {
     p[6] = 0xFE;
 }
 
-extern u8 D_8007DFD0[];
+extern u8 __osPfsPifRam[];
 
 extern Nw2IdSubTable lookupSubTables[];

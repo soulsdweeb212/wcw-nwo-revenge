@@ -36,7 +36,7 @@ typedef struct {
 u16 _n_getRate(f64, f64, s32, u16 *);
 Nw2Gfx18CC4 *n_alResamplePull(void *, u16 *, void *, s32);
 s32 osVirtualToPhysical(s32);
-extern s16 D_800370F0[];
+extern s16 n_eqpower[];
 
 #define RNUDGE(p) (Nw2Gfx18CC4 *)((u32)(p) | ((u32)(p) & ~(u32)(p)))
 
@@ -56,11 +56,11 @@ void *_n_pullSubFrame(Nw2Obj18CC4 *obj, u16 *cmd, s32 arg2, s32 flag, Nw2Gfx18CC
     g = n_alResamplePull(o, cmd, g, flag == 0);
     if (o->f78 != 0) {
         o->f78 = 0;
-        v = (s32)(o->f5A * D_800370F0[o->f58]) >> 15;
+        v = (s32)(o->f5A * n_eqpower[o->f58]) >> 15;
         o->f68 = v;
         vol = o->f74;
         o->f66 = _n_getRate((f64)o->f5C, (f64)(s16)v, vol, &o->f64);
-        v = (s32)(o->f5A * D_800370F0[0x7F - o->f58]) >> 15;
+        v = (s32)(o->f5A * n_eqpower[0x7F - o->f58]) >> 15;
         vol = o->f74;
         o->f6E = v;
         *(volatile u16 *)&o->f6C = _n_getRate((f64)o->f5E, (f64)(s16)v, vol, &o->f6A);

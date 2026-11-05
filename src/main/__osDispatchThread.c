@@ -4,11 +4,11 @@
  * asm: asm/nonmatchings/main/__osDispatchThread.s
  */
 /* __osDispatchThread: libultra __osDispatchThread (exceptasm.s), followed by __osCleanupThread at +0x17C.
- * Pops the highest-priority thread off __osRunQueue (D_80037248, __osPopThread __osPopThread), makes it
- * __osRunningThread (D_80037250) with state OS_STATE_RUNNING (4), loads Status from its saved SR with the
- * CPU interrupt mask ANDed with __OSGlobalIntMask (D_80038810), reloads all GPRs (64-bit ld), LO/HI, EPC =
+ * Pops the highest-priority thread off __osRunQueue (__osPopThread), makes it
+ * __osRunningThread with state OS_STATE_RUNNING (4), loads Status from its saved SR with the
+ * CPU interrupt mask ANDed with __OSGlobalIntMask, reloads all GPRs (64-bit ld), LO/HI, EPC =
  * saved pc, and, if thread->fp, FCSR and f0-f30; then writes MI_INTR_MASK_REG (0xA430000C) with
- * __osRcpImTable[saved rcp & (globalmask >> 16)] (D_8003B650, 64 u16 set/clear words), waits 4 nops and
+ * __osRcpImTable[saved rcp & (globalmask >> 16)] (__osRcpImTable, 64 u16 set/clear words), waits 4 nops and
  * erets into the thread. Reached by `j` from the exception handler (__osExceptionPreamble), __osEnqueueAndYield
  * (__osEnqueueAndYield), osStartThread when no thread is running yet (osStartThread starting the scheduler) and
  * osDestroyThread when the current thread destroys itself. The last 3 instructions after
@@ -45,10 +45,10 @@ typedef struct OSThread {
     OSThreadContext context; /* +20 */
 } OSThread;
 
-extern OSThread *D_80037248;  /* __osRunQueue (priority-sorted, ends in the -1 sentinel D_80037240) */
-extern OSThread *D_80037250;  /* __osRunningThread */
-extern u32 D_80038810;        /* __OSGlobalIntMask: bits 15..8 CPU IM, bits 21..16 RCP (MI) mask */
-extern u16 D_8003B650[];      /* __osRcpImTable[64]: MI_INTR_MASK_REG set/clear word per 6-bit mask */
+extern OSThread *__osRunQueue;  /* __osRunQueue (priority-sorted, ends in the -1 sentinel __osThreadTail) */
+extern OSThread *__osRunningThread;
+extern u32 __OSGlobalIntMask;        /* bits 15..8 CPU IM, bits 21..16 RCP (MI) mask */
+extern u16 __osRcpImTable[];      /* __osRcpImTable[64]: MI_INTR_MASK_REG set/clear word per 6-bit mask */
 extern vu32 D_A430000C;       /* MI_INTR_MASK_REG */
 OSThread *__osPopThread(OSThread **queue); /* __osPopThread */
 void osDestroyThread(OSThread *thread);       /* osDestroyThread */
@@ -75,14 +75,14 @@ void __osDispatchThread(void) {
     register u32 k1 asm("$27");
     OSThread *t;
 
-    t = __osPopThread(&D_80037248);
-    D_80037250 = t;
+    t = __osPopThread(&__osRunQueue);
+    __osRunningThread = t;
     t->state = 4;                                  /* OS_STATE_RUNNING */
     k0 = t;
 
     /* Status = thread's SR, but CPU interrupt-mask bits only where the global mask allows. */
     k1 = k0->context.sr;
-    setStatus((k1 & 0xFFFF00FF) | (k1 & 0xFF00 & (D_80038810 & 0xFF00)));
+    setStatus((k1 & 0xFFFF00FF) | (k1 & 0xFF00 & (__OSGlobalIntMask & 0xFF00)));
 
     /* Restore all general registers except $0, $k0, $k1 (the original runs this with only
      * $k0/$k1 live; a compiled version cannot guarantee that, see the file comment). */
@@ -112,8 +112,8 @@ void __osDispatchThread(void) {
     /* RCP interrupt mask: the thread's saved 6-bit MI mask ANDed with the global RCP mask
      * (no extra & 0x3F: __OSGlobalIntMask bits above 21 are expected to be 0), translated by
      * the table into the MI_INTR_MASK_REG set/clear word. */
-    k1 = k0->context.rcp & (D_80038810 >> 16);
-    D_A430000C = D_8003B650[k1];
+    k1 = k0->context.rcp & (__OSGlobalIntMask >> 16);
+    D_A430000C = __osRcpImTable[k1];
 
     pipelineNop(); pipelineNop(); pipelineNop(); pipelineNop();  /* let CP0/MI writes settle */
     exceptionReturn();                             /* eret: PC = EPC, clears Status.EXL */
@@ -134,17 +134,17 @@ asm(
     ".globl __osDispatchThread\n"
     ".ent __osDispatchThread\n"
     "__osDispatchThread:\n"
-    "lui $a0, %hi(D_80037248)\n"
+    "lui $a0, %hi(__osRunQueue)\n"
     "jal __osPopThread\n"
-    "addiu $a0, $a0, %lo(D_80037248)\n"
-    "lui $at, %hi(D_80037250)\n"
-    "sw $v0, %lo(D_80037250)($at)\n"
+    "addiu $a0, $a0, %lo(__osRunQueue)\n"
+    "lui $at, %hi(__osRunningThread)\n"
+    "sw $v0, %lo(__osRunningThread)($at)\n"
     "addiu $t0, $zero, 0x4\n"
     "sh $t0, 0x10($v0)\n"
     "addu $k0, $v0, $zero\n"
     "lw $k1, 0x118($k0) /* handwritten instruction */\n"
-    "lui $t0, %hi(D_80038810)\n"
-    "addiu $t0, $t0, %lo(D_80038810)\n"
+    "lui $t0, %hi(__OSGlobalIntMask)\n"
+    "addiu $t0, $t0, %lo(__OSGlobalIntMask)\n"
     "lw $t0, 0x0($t0)\n"
     "andi $t0, $t0, 0xFF00\n"
     "andi $t1, $k1, 0xFF00 /* handwritten instruction */\n"
@@ -212,14 +212,14 @@ asm(
     "ldc1 $fs5, 0x1A8($k0)\n"
     ".L8002683C:\n"
     "lw $k1, 0x128($k0) /* handwritten instruction */\n"
-    "lui $k0, %hi(D_80038810) /* handwritten instruction */\n"
-    "addiu $k0, $k0, %lo(D_80038810) /* handwritten instruction */\n"
+    "lui $k0, %hi(__OSGlobalIntMask) /* handwritten instruction */\n"
+    "addiu $k0, $k0, %lo(__OSGlobalIntMask) /* handwritten instruction */\n"
     "lw $k0, 0x0($k0) /* handwritten instruction */\n"
     "srl $k0, $k0, 16\n"
     "and $k1, $k1, $k0\n"
     "sll $k1, $k1, 1\n"
-    "lui $k0, %hi(D_8003B650) /* handwritten instruction */\n"
-    "addiu $k0, $k0, %lo(D_8003B650) /* handwritten instruction */\n"
+    "lui $k0, %hi(__osRcpImTable) /* handwritten instruction */\n"
+    "addiu $k0, $k0, %lo(__osRcpImTable) /* handwritten instruction */\n"
     "addu $k1, $k1, $k0\n"
     "lhu $k1, 0x0($k1) /* handwritten instruction */\n"
     "lui $k0, (0xA430000C >> 16) /* handwritten instruction */\n"

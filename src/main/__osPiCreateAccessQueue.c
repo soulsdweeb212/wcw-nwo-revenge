@@ -8,14 +8,14 @@
 
 s32 osCreateMesgQueue(s32 *, s32 *, s32);
 s32 osSendMesg(s32 *, s32, s32);
-extern s32 D_800389A0;
-extern s32 D_80064AC0;
-extern s32 D_80073E98;
+extern s32 __osPiAccessQueueEnabled;
+extern s32 piAccessBuf;
+extern s32 __osPiAccessQueue;
 
-/* Initialize the message queue at D_80073E98 from D_80064AC0, mark it active, and
+/* Initialize the message queue at __osPiAccessQueue from piAccessBuf, mark it active, and
  * send a zero message. */
 void __osPiCreateAccessQueue(void) {
-    D_800389A0 = 1;
-    osCreateMesgQueue(&D_80073E98, &D_80064AC0, 1);
-    osSendMesg(&D_80073E98, 0, 0);
+    __osPiAccessQueueEnabled = 1;
+    osCreateMesgQueue(&__osPiAccessQueue, &piAccessBuf, 1);
+    osSendMesg(&__osPiAccessQueue, 0, 0);
 }

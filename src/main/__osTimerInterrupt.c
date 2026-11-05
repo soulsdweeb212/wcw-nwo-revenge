@@ -6,8 +6,8 @@
 /* SDK: libultra 2.0I, ultralib src/os/timerintr.c (same code as the SDK source). */
 #include "common.h"
 
-extern Nw2TimerQueueEntry *g_80038820;
-extern u32 D_8007BD60;
+extern Nw2TimerQueueEntry *__osTimerList;
+extern u32 __osTimerCounter;
 u32 osGetCount(void);
 void __osSetCompare(u32);
 void __osSetTimerIntr(u64);
@@ -17,11 +17,11 @@ void __osTimerInterrupt(void) {
     Nw2TimerQueueEntry *t;
     u32 count, old;
     u64 elapsed;
-    if (g_80038820->next == g_80038820) return;
+    if (__osTimerList->next == __osTimerList) return;
     for (;;) {
-        t=g_80038820->next;
-        if(t==g_80038820) {__osSetCompare(0); D_8007BD60=0; return;}
-        count=osGetCount(); old=D_8007BD60; D_8007BD60=count;
+        t=__osTimerList->next;
+        if(t==__osTimerList) {__osSetCompare(0); __osTimerCounter=0; return;}
+        count=osGetCount(); old=__osTimerCounter; __osTimerCounter=count;
         elapsed=(u32)(count-old);
         if(t->value>elapsed) {t->value-=elapsed; __osSetTimerIntr(t->value); return;}
         t->prev->next=t->next; t->next->prev=t->prev;

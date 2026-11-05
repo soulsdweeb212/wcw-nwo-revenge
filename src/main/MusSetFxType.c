@@ -7,9 +7,9 @@
 #include "common.h"
 
 extern void __MusIntFifoAddCommand(u8 *);
-extern s32 D_800604FC;
-extern u32 D_800604C8;
-extern u8 *D_800604D0;
+extern s32 mus_last_fxtype;
+extern u32 max_channels;
+extern u8 *mus_channels;
 
 typedef struct {
     u8 cmd;
@@ -21,7 +21,7 @@ void MusSetFxType(s32 arg0) {
     Cmd c;
 
     c.data = arg0;
-    D_800604FC = arg0;
+    mus_last_fxtype = arg0;
     c.cmd = 2;
     __MusIntFifoAddCommand(&c.cmd);
 }

@@ -7,11 +7,11 @@
 #include "common.h"
 
 typedef struct {u32 f0; u8 f4,latency,pulse,page,release,domain; u16 pad; u32 base;} PiHandle283A0;
-extern PiHandle283A0 *D_80037620[];
+extern PiHandle283A0 *__osCurrentHandle[];
 s32 osEPiRawWriteIo(PiHandle283A0 *h,u32 addr,u32 value) {
     PiHandle283A0 *old; u32 domain;
     while(*(vu32 *)0xa4600010 & 3) {}
-    domain=h->domain; old=D_80037620[domain];
+    domain=h->domain; old=__osCurrentHandle[domain];
     if(old!=h) {
         if(domain==0) {
             if(old->latency!=h->latency) *(vu32 *)0xa4600014=h->latency;
@@ -24,7 +24,7 @@ s32 osEPiRawWriteIo(PiHandle283A0 *h,u32 addr,u32 value) {
             if(old->page!=h->page) *(vu32 *)0xa4600030=h->page;
             if(old->release!=h->release) *(vu32 *)0xa4600028=h->release;
         }
-        D_80037620[domain]=h;
+        __osCurrentHandle[domain]=h;
     }
     *(vu32 *)(h->base|addr|0xa0000000)=value;
     return 0;

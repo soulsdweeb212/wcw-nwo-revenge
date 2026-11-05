@@ -6,7 +6,7 @@
 /* SDK: libultra 2.0I, ultralib src/gu/translate.c (same code as the SDK source). */
 #include "common.h"
 
-extern u32 D_80037230;
+extern u32 xseed;
 
 typedef struct {
     f32 m[12];
@@ -22,7 +22,7 @@ typedef struct {
     s32 f4;
 } Tbl;
 
-extern Tbl D_8007DF30[];
+extern Tbl __osEventStateTab[];
 
 /* Initialize arg0 as an identity matrix translated to (arg1,arg2,arg3). */
 void guTranslateF(void *arg0, f32 arg1, f32 arg2, f32 arg3) {

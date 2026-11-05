@@ -11,8 +11,8 @@ void __osPackReadData(void);
 s32 __osSiRawStartDma(s32, void *);
 void __osSiGetAccess(void);
 void __osSiRelAccess(void);
-extern u8 D_8006A260[];
-extern u8 D_8007BD30;
+extern u8 __osContPifRam[];
+extern u8 __osContLastCmd;
 
 /* Reads the controllers: if the previous packet is not already buffered it
  * issues the read command and waits on the queue, then retrieves the response.
@@ -21,13 +21,13 @@ s32 osContStartReadData(s32 arg0) {
     s32 temp_v0;
 
     __osSiGetAccess();
-    if (D_8007BD30 != 1) {
+    if (__osContLastCmd != 1) {
         __osPackReadData();
-        __osSiRawStartDma(1, D_8006A260);
+        __osSiRawStartDma(1, __osContPifRam);
         osRecvMesg(arg0, 0, 1);
     }
-    temp_v0 = __osSiRawStartDma(0, D_8006A260);
-    D_8007BD30 = 1;
+    temp_v0 = __osSiRawStartDma(0, __osContPifRam);
+    __osContLastCmd = 1;
     __osSiRelAccess();
     return temp_v0;
 }

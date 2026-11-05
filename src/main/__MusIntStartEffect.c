@@ -7,9 +7,9 @@
 #include "common.h"
 
 extern s32 *D_800604D4;
-extern s32 D_800604DC;
-extern s32 D_800604E8;
-extern s32 D_800604F0;
+extern s32 mus_vsyncs_per_second;
+extern s32 mus_current_handle;
+extern s32 mus_init_bank;
 typedef struct 
 {
     s32 f0;
@@ -81,7 +81,7 @@ s32 __MusIntStartEffect(InitVoice15 *v, s32 kind, s16 pitch, s16 level, s32 prio
     }
     v->fEC = 255;
     v->fDE = 255;
-    rate = 0x6000 / D_800604DC;
+    rate = 0x6000 / mus_vsyncs_per_second;
     v->fF2 = 0;
     v->fF3 = 127;
     v->fDC = 127;
@@ -101,7 +101,7 @@ s32 __MusIntStartEffect(InitVoice15 *v, s32 kind, s16 pitch, s16 level, s32 prio
     v->fBE = 128;
     v->fD0 = 128;
     v->fB8 = 128;
-    v->f98 = D_800604F0;
+    v->f98 = mus_init_bank;
     v->fE9 = saved;
     v->fBE = pitch;
     v->f3C = 99.9f;
@@ -113,9 +113,9 @@ s32 __MusIntStartEffect(InitVoice15 *v, s32 kind, s16 pitch, s16 level, s32 prio
     v->fBC = rate;
     v->fD0 = level;
     v->f64 = priority;
-    v->f60 = D_800604E8;
+    v->f60 = mus_current_handle;
     sample = D_800604D4[kind];
-    D_800604E8++;
+    mus_current_handle++;
     v->f9C = sample;
     v->f4 = sample;
     return v->f60;

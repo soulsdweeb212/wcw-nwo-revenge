@@ -23,7 +23,7 @@ typedef struct {
     u16 state;
 } Nw2Thread;
 
-extern void *D_80037250;
+extern void *__osRunningThread;
 s32 __osDisableInt(void);
 void __osRestoreInt(s32);
 void __osEnqueueAndYield(void *);
@@ -38,7 +38,7 @@ s32 osRecvMesg(Nw2MsgQueue *q, s32 *msg, s32 wait) {
             __osRestoreInt(state);
             return -1;
         }
-        ((Nw2Thread *)D_80037250)->state = 8;
+        ((Nw2Thread *)__osRunningThread)->state = 8;
         __osEnqueueAndYield(q);
     }
     if (msg != NULL) {

@@ -6,9 +6,9 @@
 /* SDK: libmus, libmus/src/playerinc/player_commands.inc.c (same code as the SDK source). */
 #include "common.h"
 
-extern u32 D_800604C8;
-extern u8 *D_800604D0;
-extern s32 D_800604DC;
+extern u32 max_channels;
+extern u8 *mus_channels;
+extern s32 mus_vsyncs_per_second;
 
 typedef struct {
     u8 pad0[0x94];
@@ -21,7 +21,7 @@ typedef struct {
 } Nw2Voice162EC;
 
 /* Read a tuning byte from the sequence stream arg1 and convert it to a pitch:
- * lo = byte * 0x6000 / 120 / D_800604DC, hi = lo * arg1's +0xB8 / 128. If arg0's
+ * lo = byte * 0x6000 / 120 / mus_vsyncs_per_second, hi = lo * arg1's +0xB8 / 128. If arg0's
  * voice slot (+0xC6) is live, store lo in +0xBC; otherwise find the allocated
  * voice with the same id and store lo/hi in its +0xC8/+0xBC. Returns the
  * advanced stream pointer. */
@@ -32,13 +32,13 @@ u8 *Ftempo(u8 *arg0, u8 *arg1)
     u32 i;
     Nw2Voice162EC *p;
 
-    lo = (*arg1++ * 0x6000) / 120 / D_800604DC;
+    lo = (*arg1++ * 0x6000) / 120 / mus_vsyncs_per_second;
     hi = (lo * *(s16 *)(arg0 + 0xB8)) >> 7;
     if (*(u16 *)(arg0 + 0xC6) != 0) {
         *(s16 *)(arg0 + 0xBC) = lo;
     } else {
-        p = (Nw2Voice162EC *)D_800604D0;
-        for (i = 0; i < D_800604C8; i++, p++) {
+        p = (Nw2Voice162EC *)mus_channels;
+        for (i = 0; i < max_channels; i++, p++) {
             if (p->id == *(s32 *)(arg0 + 0x94)) {
                 p->fC8 = lo;
                 p->fBC = hi;

@@ -6,7 +6,7 @@
 /* SDK: n_audio, libnaudio/src/n_save.c (same code as the SDK source). */
 #include "common.h"
 
-extern s32 D_80036F54;
+extern s32 n_syn;
 
 typedef struct {
     u8 pad00[0x30];
@@ -34,7 +34,7 @@ s32 *n_alSavePull(s32 arg0, s32 *arg1) {
     q = p;
     p = p + 2;
     q[0] = 0x0D000000;
-    obj = (Nw2Obj36F54 *)D_80036F54;
+    obj = (Nw2Obj36F54 *)n_syn;
     p[0] = 0x062E0000;
     p[1] = obj->f48;
     return p + 2;

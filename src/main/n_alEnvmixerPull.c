@@ -45,7 +45,7 @@ typedef struct
     s32 f80;
     s32 f84;
 } Nw2EnvObj;
-extern u16 D_800370F0[];
+extern u16 n_eqpower[];
 extern char D_8003B460[];
 extern char D_8003B464[];
 void __assert(char *, char *, s32);
@@ -103,8 +103,8 @@ u8 *n_alEnvmixerPull(Nw2EnvObj *o, s32 time, u8 *out)
                 new_var->f74 = ((r->f14 + 0x5C) / 184) * 184;
                 new_var->f5A = (r->f10 * r->f10) >> 15;
                 new_var->f58 = r->f12;
-                new_var->f60 = D_800370F0[r->f13];
-                new_var->f62 = D_800370F0[0x7F - r->f13];
+                new_var->f60 = n_eqpower[r->f13];
+                new_var->f62 = n_eqpower[0x7F - r->f13];
                 if (r->f14 != 0)
                 {
                     new_var->f5C = 1;
@@ -112,8 +112,8 @@ u8 *n_alEnvmixerPull(Nw2EnvObj *o, s32 time, u8 *out)
                 }
                 else
                 {
-                    new_var->f5C = (new_var->f5A * ((s16) D_800370F0[new_var->f58])) >> 15;
-                    new_var->f5E = (new_var->f5A * ((s16) D_800370F0[0x7F - new_var->f58])) >> 15;
+                    new_var->f5C = (new_var->f5A * ((s16) n_eqpower[new_var->f58])) >> 15;
+                    new_var->f5E = (new_var->f5A * ((s16) n_eqpower[0x7F - new_var->f58])) >> 15;
                 }
                 new_var->f44 = *((f32 *) (&r->value));
                 break;
@@ -127,8 +127,8 @@ u8 *n_alEnvmixerPull(Nw2EnvObj *o, s32 time, u8 *out)
             out = _n_pullSubFrame(new_var, &counter, &accum, delta, out);
             if ((new_var->f70 >= new_var->f74) || (((u32) delta) < 1))
             {
-                new_var->f68 = (new_var->f5A * ((s16) D_800370F0[new_var->f58])) >> 15;
-                new_var->f6E = (new_var->f5A * ((s16) D_800370F0[0x7F - new_var->f58])) >> 15;
+                new_var->f68 = (new_var->f5A * ((s16) n_eqpower[new_var->f58])) >> 15;
+                new_var->f6E = (new_var->f5A * ((s16) n_eqpower[0x7F - new_var->f58])) >> 15;
                 new_var->f70 = new_var->f74;
                 new_var->f5C = new_var->f68;
                 new_var->f5E = new_var->f6E;
@@ -158,8 +158,8 @@ u8 *n_alEnvmixerPull(Nw2EnvObj *o, s32 time, u8 *out)
             }
             if (new_var->f7C->type == 0x10)
             {
-                new_var->f60 = D_800370F0[new_var->f7C->value];
-                *(volatile u16 *)&new_var->f62 = D_800370F0[0x7F - new_var->f7C->value];
+                new_var->f60 = n_eqpower[new_var->f7C->value];
+                *(volatile u16 *)&new_var->f62 = n_eqpower[0x7F - new_var->f7C->value];
             }
             new_var->f78 = 1;
             break;

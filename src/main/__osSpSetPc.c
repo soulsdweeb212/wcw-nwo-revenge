@@ -6,7 +6,7 @@
 /* SDK: libultra 2.0I, ultralib src/io/spsetpc.c (same code as the SDK source). */
 #include "common.h"
 
-extern s32 D_80037600;
+extern s32 __osPiDevMgr;
 extern s32 D_80037608;
 
 /* Start a DMA transfer when the PI status bit 0 is set; returns 0, or -1 if busy. */

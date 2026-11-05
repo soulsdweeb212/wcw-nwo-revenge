@@ -19,20 +19,20 @@ typedef struct {
     u8 f4;
 } Rec6;
 
-extern Cmd8 D_8006A260[];
+extern Cmd8 __osContPifRam[];
 
-/* Copy each 8-byte command/controller record from D_8006A260 into a packed
+/* Copy each 8-byte command/controller record from __osContPifRam into a packed
  * 6-byte destination array: the destination's f4 gets the top two bits of the
  * source's b2 shifted down, and when those bits are zero the source's f4/b6/b7
- * are copied to the destination's f0/f2/f3. D_80070A98 is the record count. */
+ * are copied to the destination's f0/f2/f3. __osMaxControllers is the record count. */
 void osContGetReadData(u16 *out) {
     Rec6 *dst;
     Cmd8 *src;
     s32 i;
 
     dst = (Rec6 *)out;
-    src = D_8006A260;
-    for (i = 0; i < D_80070A98; i++, src++, dst = (Rec6 *)((u8 *)dst + 6)) {
+    src = __osContPifRam;
+    for (i = 0; i < __osMaxControllers; i++, src++, dst = (Rec6 *)((u8 *)dst + 6)) {
         Cmd8 t = *src;
         s32 v = (t.b2 & 0xC0) >> 4;
         dst->f4 = v;

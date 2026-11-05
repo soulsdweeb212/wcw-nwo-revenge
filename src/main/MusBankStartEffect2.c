@@ -16,10 +16,10 @@ typedef struct {
     u8 padC8[0x90];
 } SoundVoice;
 
-extern u32 D_800604C8;      /* number of sound voices */
-extern u8 *D_800604D0;      /* voice array base (stride sizeof(SoundVoice)) */
+extern u32 max_channels;      /* number of sound voices */
+extern u8 *mus_channels;      /* voice array base (stride sizeof(SoundVoice)) */
 extern s32 *D_800604D8;     /* per-sound priority table */
-extern void *D_800604F0;
+extern void *mus_init_bank;
 extern void *D_800604F4;
 s32 __MusIntStartEffect(void *, s32, s32, s32, s32);
 
@@ -36,15 +36,15 @@ s32 MusBankStartEffect2(void *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 
     s32 result;
 
     if (arg0 != NULL && *(s32 *)((u8 *)arg0 + 0x10) < 0)
-        D_800604F0 = arg0;
+        mus_init_bank = arg0;
 
     threshold = arg5;
     if (threshold == -1)
         threshold = D_800604D8[arg1];
 
     if (arg4 != 0) {
-        p = (SoundVoice *)D_800604D0;
-        for (i = 0; i < D_800604C8; i++, p++) {
+        p = (SoundVoice *)mus_channels;
+        for (i = 0; i < max_channels; i++, p++) {
             if (p->soundId == arg1) {
                 result = __MusIntStartEffect(p, arg1, arg2, arg3, threshold);
                 goto done;
@@ -53,8 +53,8 @@ s32 MusBankStartEffect2(void *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 
     }
 
     min = threshold + 1;
-    p = (SoundVoice *)D_800604D0;
-    for (i = 0; i < D_800604C8; i++, p++) {
+    p = (SoundVoice *)mus_channels;
+    for (i = 0; i < max_channels; i++, p++) {
         if (p->inUse == 0) {
             result = __MusIntStartEffect(p, arg1, arg2, arg3, threshold);
             goto done;
@@ -69,6 +69,6 @@ s32 MusBankStartEffect2(void *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 
     else
         result = 0;
 done:
-    D_800604F0 = D_800604F4;
+    mus_init_bank = D_800604F4;
     return result;
 }

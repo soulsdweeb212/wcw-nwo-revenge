@@ -19,9 +19,9 @@ typedef struct {
     u8 datacrc;
 } ContRamReadFormat;
 
-extern u8 D_8007DFD0[];
+extern u8 __osPfsPifRam[];
 extern s32 D_8007E00C;
-extern s32 D_800375F0;
+extern s32 __osPfsLastChannel;
 
 s32 osRecvMesg(void *, void *, s32);
 void bcopy(void *, void *, s32);
@@ -33,15 +33,15 @@ s32 __osPfsGetStatus(void *, s32);
 s32 __osContRamRead(void *mq, s32 channel, u16 addr, u8 *buffer) {
     s32 status;
     s32 i;
-    u8 *pkt = D_8007DFD0;
+    u8 *pkt = __osPfsPifRam;
     ContRamReadFormat *fmt;
     s32 retryCount = 2;
 
     __osSiGetAccess();
     do {
-        if (D_8007BD30 != 2 || D_800375F0 != channel) {
-            D_8007BD30 = 2;
-            D_800375F0 = channel;
+        if (__osContLastCmd != 2 || __osPfsLastChannel != channel) {
+            __osContLastCmd = 2;
+            __osPfsLastChannel = channel;
             for (i = 0; i < channel; i++) {
                 *pkt++ = 0;
             }
@@ -59,9 +59,9 @@ s32 __osContRamRead(void *mq, s32 channel, u16 addr, u8 *buffer) {
         fmt = (ContRamReadFormat *)pkt;
         fmt->hi = addr >> 3;
         fmt->lo = __osContAddressCrc(addr) | (addr << 5);
-        __osSiRawStartDma(1, D_8007DFD0);
+        __osSiRawStartDma(1, __osPfsPifRam);
         osRecvMesg(mq, NULL, 1);
-        __osSiRawStartDma(0, D_8007DFD0);
+        __osSiRawStartDma(0, __osPfsPifRam);
         osRecvMesg(mq, NULL, 1);
         status = (fmt->rxsize & 0xC0) >> 4;
         if (status == 0) {

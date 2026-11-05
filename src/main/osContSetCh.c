@@ -6,15 +6,15 @@
 /* SDK: libultra 2.0I, ultralib src/io/contsetch.c (same code as the SDK source). */
 #include "common.h"
 
-extern u8 D_80070A98;
-extern u8 D_8007BD30;
+extern u8 __osMaxControllers;
+extern u8 __osContLastCmd;
 extern s32 D_8006A298;
 extern s32 D_8006A29C;
 
 typedef struct {
     u8 b0, b1, b2, b3, b4, b5, b6, b7;
 } Cmd8;
-extern Cmd8 D_8006A260[];
+extern Cmd8 __osContPifRam[];
 
 extern void __osSiGetAccess(void);
 extern void __osSiRelAccess(void);
@@ -26,11 +26,11 @@ extern s32 osPfsChecker(void *);
 s32 osContSetCh(s32 arg0) {
     __osSiGetAccess();
     if ((u8)arg0 >= 5) {
-        D_80070A98 = 4;
+        __osMaxControllers = 4;
     } else {
-        D_80070A98 = (u8)arg0;
+        __osMaxControllers = (u8)arg0;
     }
-    D_8007BD30 = 0xFE;
+    __osContLastCmd = 0xFE;
     __osSiRelAccess();
     return 0;
 }

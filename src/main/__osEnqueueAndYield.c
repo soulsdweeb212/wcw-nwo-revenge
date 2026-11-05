@@ -8,10 +8,10 @@
  * osSendMesg and osJamMesg to block on a message queue's wait list, and
  * with &__osRunQueue by osStartThread, osSetThreadPri and osYieldThread
  * (osYieldThread) to let a higher-priority thread run; NULL means "don't requeue me".
- * It saves only what a callee must preserve into __osRunningThread (D_80037250): SR | EXL, s0-s7, gp,
+ * It saves only what a callee must preserve into __osRunningThread: SR | EXL, s0-s7, gp,
  * sp, s8, ra, and pc = ra (so when the thread is next dispatched the eret "returns" from this call), plus
  * FCSR and f20-f30 if the thread uses the FPU; it re-ORs into the saved SR and RCP mask the interrupt bits
- * the global mask __OSGlobalIntMask (D_80038810) had disabled, saves MI_INTR_MASK_REG (0xA430000C) as the
+ * the global mask __OSGlobalIntMask had disabled, saves MI_INTR_MASK_REG (0xA430000C) as the
  * thread's RCP mask, inserts the thread into `queue` by priority (__osEnqueueThread, if
  * queue != NULL) and jumps to __osDispatchThread, never returning normally. Must be asm:
  * it captures the caller's live callee-saved registers and sp with no frame of its own, and reads FCSR
@@ -44,8 +44,8 @@ typedef struct OSThread {
     OSThreadContext context; /* +20 */
 } OSThread;
 
-extern OSThread *D_80037250;  /* __osRunningThread */
-extern u32 D_80038810;        /* __OSGlobalIntMask: bits 15..8 CPU IM, bits 21..16 RCP (MI) mask */
+extern OSThread *__osRunningThread;
+extern u32 __OSGlobalIntMask;        /* bits 15..8 CPU IM, bits 21..16 RCP (MI) mask */
 extern vu32 D_A430000C;       /* MI_INTR_MASK_REG (read: currently enabled MI interrupts) */
 void __osEnqueueThread(OSThread **queue, OSThread *thread); /* __osEnqueueThread */
 void __osDispatchThread(void);                               /* __osDispatchThread (never returns) */
@@ -63,7 +63,7 @@ static inline u32 getFpcsr(void) { u32 v; __asm__ __volatile__("cfc1 %0, $31" : 
  * is dispatched again, eret goes to the saved pc = its return address, with Status.EXL set
  * here so that eret is legal, i.e. the call simply "returns". */
 void __osEnqueueAndYield(OSThread **queue) {
-    OSThread *t = D_80037250;
+    OSThread *t = __osRunningThread;
     OSThreadContext *c = &t->context;
     u32 sr, imask, rcp;
 
@@ -87,7 +87,7 @@ void __osEnqueueAndYield(OSThread **queue) {
     sr = c->sr;
     imask = sr & 0xFF00;
     if (imask != 0) {
-        imask |= ~D_80038810 & 0xFF00;
+        imask |= ~__OSGlobalIntMask & 0xFF00;
         c->sr = (sr & 0xFFFF00FF) | imask;
     }
 
@@ -95,7 +95,7 @@ void __osEnqueueAndYield(OSThread **queue) {
      * saved RCP bits that the global mask has disabled. */
     rcp = D_A430000C;
     if (rcp != 0) {
-        rcp |= ~(D_80038810 >> 16) & 0x3F & c->rcp;
+        rcp |= ~(__OSGlobalIntMask >> 16) & 0x3F & c->rcp;
     }
     c->rcp = rcp;
 
@@ -113,8 +113,8 @@ asm(
     ".globl __osEnqueueAndYield\n"
     ".ent __osEnqueueAndYield\n"
     "__osEnqueueAndYield:\n"
-    "lui $a1, %hi(D_80037250)\n"
-    "lw $a1, %lo(D_80037250)($a1)\n"
+    "lui $a1, %hi(__osRunningThread)\n"
+    "lw $a1, %lo(__osRunningThread)($a1)\n"
     "mfc0 $t0, $12 /* handwritten instruction */\n"
     "ori $t0, $t0, 0x2\n"
     "sw $t0, 0x118($a1)\n"
@@ -148,8 +148,8 @@ asm(
     "andi $t1, $k1, 0xFF00 /* handwritten instruction */\n"
     "beqz $t1, .L80026664\n"
     "nop\n"
-    "lui $t0, %hi(D_80038810)\n"
-    "addiu $t0, $t0, %lo(D_80038810)\n"
+    "lui $t0, %hi(__OSGlobalIntMask)\n"
+    "addiu $t0, $t0, %lo(__OSGlobalIntMask)\n"
     "lw $t0, 0x0($t0)\n"
     "addiu $at, $zero, -0x1\n"
     "xor $t0, $t0, $at\n"
@@ -165,8 +165,8 @@ asm(
     "lw $k1, %lo(D_A430000C)($k1) /* handwritten instruction */\n"
     "beqz $k1, .L8002669C /* handwritten instruction */\n"
     "nop\n"
-    "lui $k0, %hi(D_80038810) /* handwritten instruction */\n"
-    "addiu $k0, $k0, %lo(D_80038810) /* handwritten instruction */\n"
+    "lui $k0, %hi(__OSGlobalIntMask) /* handwritten instruction */\n"
+    "addiu $k0, $k0, %lo(__OSGlobalIntMask) /* handwritten instruction */\n"
     "lw $k0, 0x0($k0) /* handwritten instruction */\n"
     "srl $k0, $k0, 16\n"
     "addiu $at, $zero, -0x1\n"

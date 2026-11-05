@@ -6,7 +6,7 @@
 /* SDK: libultra 2.0I, ultralib src/gu/translate.c (same code as the SDK source). */
 #include "common.h"
 
-extern u32 D_80037230;
+extern u32 xseed;
 
 typedef struct {
     f32 m[12];

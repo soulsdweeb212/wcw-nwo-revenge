@@ -5,10 +5,10 @@
  */
 /* osSetIntMask: libultra osSetIntMask(OSIntMask im), returns the previous mask. An OSIntMask holds the CPU interrupt
  * enables in its low half (Status IM bits 8..15 + IE bit 0, OS_IM_CPU 0xFF01) and the six RCP (MI) interrupt enables
- * SP/SI/AI/VI/PI/DP in bits 16..21. Reads CP0 Status ($12), D_80038810 (__OSGlobalIntMask, the interrupts the OS
+ * SP/SI/AI/VI/PI/DP in bits 16..21. Reads CP0 Status ($12), __OSGlobalIntMask (the interrupts the OS
  * allows at all) and MI_INTR_MASK_REG (0xA430000C). The returned old mask reports globally-forbidden lines as
  * "enabled" (CPU half always, RCP half only if some MI line is enabled), the standard libultra behaviour so a
- * save/restore pair round-trips. New state: MI_INTR_MASK_REG is written with D_8003B650[(im & global & 0x3F0000) >>
+ * save/restore pair round-trips. New state: MI_INTR_MASK_REG is written with __osRcpImTable[(im & global & 0x3F0000) >>
  * 16] (__osRcpImTable: 64 u16 halfwords, each the MI_INTR_MASK_REG SET/CLR bit pattern for one 6-bit RCP enable set;
  * the asm forms the byte offset with >> 15 and reads it with lhu), and Status IM = im & global & 0xFF00 (IE is never
  * changed: the global mask is ANDed with 0xFF00 first, and Status keeps its own bit 0). Two NOPs follow the mtc0 for
@@ -19,9 +19,9 @@
 #ifdef NON_MATCHING
 #include "common.h"
 
-extern u32 D_80038810;      /* __OSGlobalIntMask: interrupts the OS lets anyone enable (CPU IM bits 8..15 + IE in the
+extern u32 __OSGlobalIntMask;      /* interrupts the OS lets anyone enable (CPU IM bits 8..15 + IE in the
                              * low half, RCP SP/SI/AI/VI/PI/DP enables in bits 16..21) */
-extern u16 D_8003B650[];    /* __osRcpImTable: 64 MI_INTR_MASK_REG write values, one per 6-bit RCP enable set */
+extern u16 __osRcpImTable[];    /* 64 MI_INTR_MASK_REG write values, one per 6-bit RCP enable set */
 extern vu32 D_A430000C;     /* MI_INTR_MASK_REG (0x0430000C through KSEG1): reads give the 6 enabled RCP lines,
                              * writes take SET/CLR bit pairs */
 
@@ -40,7 +40,7 @@ static inline void cp0Hazard(void) {
 
 s32 osSetIntMask(s32 mask) {
     u32 sr = getStatus();
-    u32 globalMask = D_80038810;
+    u32 globalMask = __OSGlobalIntMask;
     u32 oldMask;
     u32 rcp;
     u32 cpu;
@@ -57,7 +57,7 @@ s32 osSetIntMask(s32 mask) {
     oldMask |= rcp << 16;
 
     /* New RCP enables: requested AND allowed, translated through the table into a SET/CLR write. */
-    D_A430000C = D_8003B650[((u32)mask & 0x3F0000 & globalMask) >> 16];
+    D_A430000C = __osRcpImTable[((u32)mask & 0x3F0000 & globalMask) >> 16];
 
     /* New CPU enables: requested IM bits AND allowed (globalMask & 0xFF00 has no bit 0, so IE is never
      * set from the argument); Status keeps its own IE and every bit outside IM. */
@@ -79,8 +79,8 @@ asm(
     "osSetIntMask:\n"
     "mfc0 $t4, $12 /* handwritten instruction */\n"
     "andi $v0, $t4, 0xFF01\n"
-    "lui $t0, %hi(D_80038810)\n"
-    "addiu $t0, $t0, %lo(D_80038810)\n"
+    "lui $t0, %hi(__OSGlobalIntMask)\n"
+    "addiu $t0, $t0, %lo(__OSGlobalIntMask)\n"
     "lw $t3, 0x0($t0)\n"
     "addiu $at, $zero, -0x1\n"
     "xor $t0, $t3, $at\n"
@@ -101,9 +101,9 @@ asm(
     "and $t0, $a0, $at\n"
     "and $t0, $t0, $t3\n"
     "srl $t0, $t0, 15\n"
-    "lui $t2, %hi(D_8003B650)\n"
+    "lui $t2, %hi(__osRcpImTable)\n"
     "addu $t2, $t2, $t0\n"
-    "lhu $t2, %lo(D_8003B650)($t2)\n"
+    "lhu $t2, %lo(__osRcpImTable)($t2)\n"
     "lui $at, %hi(D_A430000C)\n"
     "sw $t2, %lo(D_A430000C)($at)\n"
     "andi $t0, $a0, 0xFF01\n"

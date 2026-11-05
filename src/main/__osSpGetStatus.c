@@ -10,7 +10,7 @@ s32 __osSpGetStatus(void) {
     return *(vu32 *)0xA4040010;
 }
 
-extern s32 D_8007BD60;
+extern s32 __osTimerCounter;
 s32 __osDisableInt(void);
 s32 osGetCount(void);
 void __osRestoreInt(s32);

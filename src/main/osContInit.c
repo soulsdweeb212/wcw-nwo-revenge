@@ -6,7 +6,7 @@
 /* SDK: libultra 2.0I, ultralib src/io/controller.c (same code as the SDK source). */
 #include "common.h"
 
-extern s32 D_80037530, D_8006A260, D_8007BD34, D_8007E180;
+extern s32 __osContinitialized, __osContPifRam, __osEepromTimerMsg, __osEepromTimerQ;
 void osCreateMesgQueue(void *, void *, s32);
 s32 osRecvMesg(void *, void *, s32);
 void __osContGetInitData(s32, s32);
@@ -20,23 +20,23 @@ void __osSiCreateAccessQueue(void);
 s32 osContInit(void *arg0, s32 arg1, s32 arg2) {
     u8 sp20[0x20]; u8 sp40[0x18]; u8 sp58[8]; s32 result;
     u64 t;
-    if(D_80037530) return 0;
-    D_80037530=1;
+    if(__osContinitialized) return 0;
+    __osContinitialized=1;
     t=osGetTime();
     if(t < 0x165A0BCULL) {
         osCreateMesgQueue(sp40,sp58,1);
         osSetTimer(sp20,0x165A0BCULL-t,0,sp40,sp58);
         osRecvMesg(sp40,sp58,1);
     }
-    D_80070A98=4;
+    __osMaxControllers=4;
     __osPackRequestData(0);
-    __osSiRawStartDma(1,&D_8006A260);
+    __osSiRawStartDma(1,&__osContPifRam);
     osRecvMesg(arg0,sp58,1);
-    result=__osSiRawStartDma(0,&D_8006A260);
+    result=__osSiRawStartDma(0,&__osContPifRam);
     osRecvMesg(arg0,sp58,1);
     __osContGetInitData(arg1,arg2);
-    D_8007BD30=0;
+    __osContLastCmd=0;
     __osSiCreateAccessQueue();
-    osCreateMesgQueue(&D_8007E180,&D_8007BD34,1);
+    osCreateMesgQueue(&__osEepromTimerQ,&__osEepromTimerMsg,1);
     return result;
 }

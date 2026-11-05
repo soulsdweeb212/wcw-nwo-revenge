@@ -6,15 +6,15 @@
 /* SDK: libmus, libmus/src/player.c (same code as the SDK source). */
 #include "common.h"
 
-extern u32 D_800604C8;
-extern u8 *D_800604D0;
+extern u32 max_channels;
+extern u8 *mus_channels;
 
 /* Applies the mask/value pair (flags & arg1) | arg2 to the flags word of every
  * voice whose key matches arg0. */
 void __MusIntHandleSetFlag(s32 arg0, u32 arg1, u32 arg2) {
     volatile u64 pad;
-    u32 n = D_800604C8;
-    u8 *p = D_800604D0;
+    u32 n = max_channels;
+    u8 *p = mus_channels;
     u32 i = 0;
     u32 count;
 

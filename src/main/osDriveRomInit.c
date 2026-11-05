@@ -6,8 +6,8 @@
 /* SDK: libultra 2.0I, ultralib src/io/driverominit.c (same code as the SDK source). */
 #include "common.h"
 
-extern void *D_8003761C;
-extern u8 D_80065128[];
+extern void *__osPiTable;
+extern u8 DriveRomHandle[];
 extern u8 D_8006512C;
 extern u8 D_8006512D;
 extern u8 D_8006512E;
@@ -25,7 +25,7 @@ void bzero(u8 *, s32);
  * D_80065134 (guard value 0xA6000000): when uninitialized, set the state byte to 1 and the
  * signature, the header bytes 0x40/7/7/2/0, zero the count word, clear the 0x60-byte body
  * via bzero, then under an interrupt guard push the descriptor node (at
- * D_80065128) onto the head of the D_8003761C list. Returns the descriptor base. */
+ * DriveRomHandle) onto the head of the __osPiTable list. Returns the descriptor base. */
 void *osDriveRomInit(void)
 {
     u8 *p = &D_80065134;
@@ -45,10 +45,10 @@ void *osDriveRomInit(void)
         bzero(p + 8, 0x60);
         do { node = p - 0xC; } while (0);
         t = __osDisableInt();
-        old = D_8003761C;
-        D_8003761C = node;
+        old = __osPiTable;
+        __osPiTable = node;
         *(void **)(p - 0xC) = old;
         __osRestoreInt(t);
     }
-    return D_80065128;
+    return DriveRomHandle;
 }

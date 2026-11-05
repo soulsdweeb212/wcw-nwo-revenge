@@ -8,8 +8,8 @@
 
 /* 0x158-byte audio voice record. */
 typedef struct { s32 flags; s32 active; u8 pad8[16]; s32 state; u8 pad1C[20]; s32 value; u8 pad34[146]; u16 kind; u8 padC8[144]; } AudioRec;
-extern u32 D_800604C8;
-extern AudioRec *D_800604D0;
+extern u32 max_channels;
+extern AudioRec *mus_channels;
 
 /* Stop/update active audio voices: walk all voice records, selecting a record when its
  * kind is nonzero and (arg0 & 1) is set, or when its kind is zero and (arg0 & 2) is set.
@@ -22,8 +22,8 @@ void MusStop(s32 arg0, s32 arg1) {
     u32 i;
     value=arg1;
     if (arg1 == 0) value = 1;
-    p = D_800604D0;
-    for (i=0;i<D_800604C8;i++,p++) {
+    p = mus_channels;
+    for (i=0;i<max_channels;i++,p++) {
         if (p->kind != 0) {
             if (arg0 & 1) goto process;
         } else if (arg0 & 2) {

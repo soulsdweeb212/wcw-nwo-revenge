@@ -6,10 +6,10 @@
 /* SDK: libmus, libmus/src/player.c (+playerinc/player_api.inc.c) (same code as the SDK source). */
 #include "common.h"
 
-extern s32 D_800604F0;
+extern s32 mus_init_bank;
 extern s32 D_800604F4;
-extern u32 D_800604C8;
-extern u8 *D_800604D0;
+extern u32 max_channels;
+extern u8 *mus_channels;
 s32 MusStartSong(s32);
 
 /* Sets the pan (clamped 0..0x7F) of every voice whose key matches arg0. Returns
@@ -28,8 +28,8 @@ s32 MusHandleSetReverb(s32 arg0, s32 arg1) {
         arg1 = 0x7F;
     }
     n = 0;
-    p = D_800604D0;
-    for (i = 0; i < D_800604C8; i++) {
+    p = mus_channels;
+    for (i = 0; i < max_channels; i++) {
         if (*(s32 *)(p + 0x60) == arg0) {
             n++;
             p[0xEB] = arg1;

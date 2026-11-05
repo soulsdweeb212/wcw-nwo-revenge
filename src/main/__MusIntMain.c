@@ -7,27 +7,27 @@
 #include "common.h"
 
 /* Per-frame audio voice update.
- * First drains the pending-event queue (__MusIntFifoProcessCommand) from D_80060504 up to
- * D_80060508, wrapping at D_8006050C. Then for each of the D_800604C8 voices
- * (0x158-byte records at D_800604D0) it runs the envelope/lfo updates, advances
+ * First drains the pending-event queue (__MusIntFifoProcessCommand) from fifo_start up to
+ * fifo_current, wrapping at fifo_limit. Then for each of the max_channels voices
+ * (0x158-byte records at mus_channels) it runs the envelope/lfo updates, advances
  * the voice time, handles note-off/release, decay and the pitch (__MusIntProcessVibrato)
  * / volume (__MusIntProcessWobble) modulations, and computes the elapsed time. Returns
- * the audio status word D_800604E0. */
-extern s32 D_80060504,D_80060508,D_8006050C,D_80060500,D_800604E0;
-extern u8 *D_80060510,*D_800604CC;
-extern u32 D_800604C8;
-extern u8 *D_800604D0;
+ * the audio status word mus_next_frame_time. */
+extern s32 fifo_start,fifo_current,fifo_limit,D_80060500,mus_next_frame_time;
+extern u8 *fifo_addr,*mus_voices;
+extern u32 max_channels;
+extern u8 *mus_channels;
 void __MusIntFifoProcessCommand(void *);void __MusIntFlushPending(void *,u32);void __MusIntGetNewNote(void *,u32);void __MusIntProcessContinuousVolume(void *);void __MusIntProcessContinuousPitchBend(void *);void n_alSynStopVoice(void *);void __MusIntProcessEnvelope(void *);void __MusIntProcessSweep(void *);f32 __MusIntProcessVibrato(void *);f32 __MusIntProcessWobble(void *);void __MusIntSetPitch(void *,u32,f32);void __MusIntSetVolumeAndPan(void *,u32);
 #define A145(t,o) (*(t *)(p+(o)))
 s32 __MusIntMain(void) {
     u8 *p;u32 i;f32 value;
-    while(D_80060504!=D_80060508) {
-        __MusIntFifoProcessCommand(D_80060510+D_80060504*8);
-        D_80060504++;
-        if(D_80060504==D_8006050C) D_80060504=0;
+    while(fifo_start!=fifo_current) {
+        __MusIntFifoProcessCommand(fifo_addr+fifo_start*8);
+        fifo_start++;
+        if(fifo_start==fifo_limit) fifo_start=0;
     }
-    p=D_800604D0;
-    for(i=0;i<D_800604C8;i++,p+=0x158) {
+    p=mus_channels;
+    for(i=0;i<max_channels;i++,p+=0x158) {
         if(!A145(s32,4) || (A145(s32,0)&1))continue;
         if(A145(s32,8))__MusIntFlushPending(p,i);
         A145(u64,0x10)+=A145(u16,0xBC);
@@ -42,7 +42,7 @@ s32 __MusIntMain(void) {
         if(A145(s32,0x48) && A145(u64,0x10)>A145(u64,0x28))__MusIntProcessContinuousPitchBend(p);
         if(A145(s32,0x18)!=-1 && --A145(s32,0x18)==-1) {
             A145(s32,0x4C)=0;A145(s32,0x48)=0;A145(s32,0x94)=0;A145(s16,0xC6)=0;A145(s32,0x60)=0;A145(s32,8)=0;A145(s32,4)=0;
-            if(A145(u8,0xE9)) {A145(u8,0xE9)=0;n_alSynStopVoice(D_800604CC+i*0x1C);} else goto elapsed;
+            if(A145(u8,0xE9)) {A145(u8,0xE9)=0;n_alSynStopVoice(mus_voices+i*0x1C);} else goto elapsed;
         }
         if(A145(u8,0xE9)) {
             if(A145(u8,0xE3))__MusIntProcessEnvelope(p);
@@ -55,5 +55,5 @@ s32 __MusIntMain(void) {
         elapsed:A145(u16,0xCA)=(A145(u64,0x10)-A145(u64,0x58))>>8;
         next:;
     }
-    D_80060500=0;return D_800604E0;
+    D_80060500=0;return mus_next_frame_time;
 }

@@ -29,7 +29,7 @@ typedef struct {
     s32 fC, f10;
 } AudioPacket;
 
-extern s32 *D_80036F54;
+extern s32 *n_syn;
 s32 _allocatePVoice(AudioNode **, s16);
 AudioPacket *__n_allocParam(void);
 s32 n_alEnvmixerParam(void *, s32, void *);
@@ -50,13 +50,13 @@ s32 n_alSynAllocVoice(AudioNode *arg0, AudioDesc *arg1) {
         if (result) {
             child->duration = 0x200; child->next->next = 0; child->next = arg0; arg0->next = child;
             packet = __n_allocParam();
-            selected = child; time = D_80036F54[7];
+            selected = child; time = n_syn[7];
             packet->command = 0xB; packet->fC = 0; packet->f4 = time;
             packet->f10 = selected->duration - 0x40;
             n_alEnvmixerParam(arg0->next, 3, packet);
             packet = __n_allocParam();
             if (packet) {
-                s32 time2 = D_80036F54[7];
+                s32 time2 = n_syn[7];
                 s32 value = child->duration;
                 packet->command = 0xF; packet->f0 = 0; packet->f4 = time2 + value;
                 n_alEnvmixerParam(arg0->next, 3, packet);

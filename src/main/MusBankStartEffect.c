@@ -6,10 +6,10 @@
 /* SDK: libmus, libmus/src/player.c (+playerinc/player_api.inc.c) (SDK code with changes, see docs/sdk_functions.md). */
 #include "common.h"
 
-extern u32 D_800604C8;
-extern u8 *D_800604D0;
+extern u32 max_channels;
+extern u8 *mus_channels;
 extern s32 *D_800604D8;
-extern void *D_800604F0;
+extern void *mus_init_bank;
 extern void *D_800604F4;
 s32 __MusIntStartEffect(void *,s32,s32,s32,s32);
 
@@ -26,13 +26,13 @@ s32 MusBankStartEffect(void *arg0, s32 arg1) {
     s32 result;
 
     if (arg0 != NULL && *(s32 *)((u8 *)arg0 + 0x10) < 0)
-        D_800604F0 = arg0;
+        mus_init_bank = arg0;
 
-    p = D_800604D0;
+    p = mus_channels;
     threshold = D_800604D8[arg1];
     min = threshold + 1;
 
-    for (i = 0; i < D_800604C8; i++, p += 0x158) {
+    for (i = 0; i < max_channels; i++, p += 0x158) {
         if (*(s32 *)(p + 4) == 0) {
             result = __MusIntStartEffect(p, arg1, 0x80, 0x80, threshold);
             goto done;
@@ -47,6 +47,6 @@ s32 MusBankStartEffect(void *arg0, s32 arg1) {
     else
         result = 0;
 done:
-    D_800604F0 = D_800604F4;
+    mus_init_bank = D_800604F4;
     return result;
 }

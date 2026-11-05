@@ -21,9 +21,9 @@ typedef struct {
     u32 pifstatus;
 } __OSPifRam;
 
-extern __OSPifRam D_8007DFD0;
-extern u8 D_8007BD30;
-extern s32 D_800375F0;
+extern __OSPifRam __osPfsPifRam;
+extern u8 __osContLastCmd;
+extern s32 __osPfsLastChannel;
 
 #define READFORMAT(ptr) ((__OSContRamReadFormat*)(ptr))
 #define CHNL_ERR(format) (((format).rxsize & 0xC0) >> 4)
@@ -62,7 +62,7 @@ s32 __osPfsGetStatus(void *, int);
 s32 __osContRamWrite(void *mq, int channel, u16 address, u8 *buffer, int force) {
     s32 err = 0;
     s32 ch;
-    u8 *pif = (u8 *)D_8007DFD0.ramarray;
+    u8 *pif = (u8 *)__osPfsPifRam.ramarray;
     s32 tries = 2;
     u8 dataCrc;
 
@@ -73,15 +73,15 @@ s32 __osContRamWrite(void *mq, int channel, u16 address, u8 *buffer, int force) 
     __osSiGetAccess();
 
     do {
-        if (D_8007BD30 != CONT_CMD_WRITE_PAK || (u32)D_800375F0 != channel) {
-            D_8007BD30 = CONT_CMD_WRITE_PAK;
-            D_800375F0 = channel;
+        if (__osContLastCmd != CONT_CMD_WRITE_PAK || (u32)__osPfsLastChannel != channel) {
+            __osContLastCmd = CONT_CMD_WRITE_PAK;
+            __osPfsLastChannel = channel;
 
             for (ch = 0; ch < channel; ch++) {
                 *pif++ = CONT_CMD_REQUEST_STATUS;
             }
 
-            D_8007DFD0.pifstatus = CONT_CMD_EXE;
+            __osPfsPifRam.pifstatus = CONT_CMD_EXE;
 
             READFORMAT(pif)->dummy = CONT_CMD_NOP;
             READFORMAT(pif)->txsize = CONT_CMD_WRITE_PAK_TX;
@@ -99,11 +99,11 @@ s32 __osContRamWrite(void *mq, int channel, u16 address, u8 *buffer, int force) 
 
         bcopy(buffer, READFORMAT(pif)->data, BLOCKSIZE);
 
-        err = __osSiRawStartDma(OS_WRITE, &D_8007DFD0);
+        err = __osSiRawStartDma(OS_WRITE, &__osPfsPifRam);
         dataCrc = __osContDataCrc(buffer);
         osRecvMesg(mq, NULL, OS_MESG_BLOCK);
 
-        err = __osSiRawStartDma(OS_READ, &D_8007DFD0);
+        err = __osSiRawStartDma(OS_READ, &__osPfsPifRam);
         osRecvMesg(mq, NULL, OS_MESG_BLOCK);
 
         err = CHNL_ERR(*READFORMAT(pif));

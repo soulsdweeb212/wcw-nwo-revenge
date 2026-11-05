@@ -8,7 +8,7 @@
 
 typedef struct { u8 pad0[8]; s32 (*refill)(void*); u8 padC[4]; s32 fillLimit; } Node;
 typedef struct { Node *head; u8 pad4[0x18]; s32 writePos; s32 cursor; u8 pad24[0x20]; s32 chunkSize; s32 srcAddr; } Ctx;
-extern Ctx *D_80036F54;
+extern Ctx *n_syn;
 void _n_collectPVoices(void);
 s32 _n_timeToSamplesNoRound(s32);
 s32 *n_alSavePull(s32,s32*);
@@ -18,12 +18,12 @@ s32 *n_alSavePull(s32,s32*);
  * written into *arg1 and returns the advanced destination cursor. */
 s32 *n_alAudioFrame(s32 *arg0,s32 *arg1,s32 *arg2,s32 arg3){
     Node *node,*head; s32 len; s32 *dst,*src; s32 chunk;
-    head=D_80036F54->head; len=arg3; dst=arg0; src=arg2;
+    head=n_syn->head; len=arg3; dst=arg0; src=arg2;
     if(head==NULL){ *arg1=0; } else {
         node=head;
-        while(node->fillLimit-D_80036F54->cursor<len){ D_80036F54->writePos=node->fillLimit&~0xF; node->fillLimit+=_n_timeToSamplesNoRound(node->refill(node)); }
-        D_80036F54->writePos&=~0xF;
-        while(len>0){ chunk=D_80036F54->chunkSize; if(len<chunk) chunk=len; D_80036F54->srcAddr=(s32)src; dst=n_alSavePull(D_80036F54->cursor,dst); len-=chunk; src+=chunk; D_80036F54->cursor+=chunk; }
+        while(node->fillLimit-n_syn->cursor<len){ n_syn->writePos=node->fillLimit&~0xF; node->fillLimit+=_n_timeToSamplesNoRound(node->refill(node)); }
+        n_syn->writePos&=~0xF;
+        while(len>0){ chunk=n_syn->chunkSize; if(len<chunk) chunk=len; n_syn->srcAddr=(s32)src; dst=n_alSavePull(n_syn->cursor,dst); len-=chunk; src+=chunk; n_syn->cursor+=chunk; }
         {s32 *end=dst; *arg1=(s32)(end-arg0)>>1; _n_collectPVoices(); return end;}
     }
     return dst;

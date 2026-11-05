@@ -8,7 +8,7 @@
 
 u64 __osInsertTimer(void *);
 void __osSetTimerIntr(u64);
-extern void *g_80038820;
+extern void *__osTimerList;
 typedef struct { s32 z0, z1; u64 f8; u64 f10; s32 f18, f1C; } Node;
 #define P ((Node *)arg0)
 
@@ -25,6 +25,6 @@ s32 osSetTimer(void *arg0, s32 a1, u64 arg2, u64 arg3, s32 a6, s32 a7) {
     P->f18 = a6;
     P->f1C = a7;
     r = __osInsertTimer(arg0);
-    if (*(void **)g_80038820 == arg0) __osSetTimerIntr(r);
+    if (*(void **)__osTimerList == arg0) __osSetTimerIntr(r);
     return 0;
 }

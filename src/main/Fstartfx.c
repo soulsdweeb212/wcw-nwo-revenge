@@ -16,15 +16,15 @@ typedef struct
     u8 pad9C[0xBC];
 } AudioRec16904;
 
-extern u32 D_800604C8;
-extern AudioRec16904 *D_800604D0;
+extern u32 max_channels;
+extern AudioRec16904 *mus_channels;
 
 s32 MusStartEffect2(s32, u8, u8, s32, s32);
 
 /* Handle one audio-script command: read a variable-length id (one byte; if bit 7 is set a
  * second byte completes it), read the two voice bytes at arg0+0xDC/+0xDD, bump the
  * sequence counter at arg0+0x64 around the call to MusStartEffect2, then for every voice
- * record in D_800604D0 whose +0x60 equals the returned key, copy arg0+0x60/+0x98 into the
+ * record in mus_channels whose +0x60 equals the returned key, copy arg0+0x60/+0x98 into the
  * record's +0x60/+0x98. Returns the advanced script pointer. */
 u8 *Fstartfx(u8 *arg0, u8 *arg1)
 {
@@ -49,8 +49,8 @@ u8 *Fstartfx(u8 *arg0, u8 *arg1)
     *(s32 *)(arg0 + 0x64) -= 1;
     if (result != 0)
     {
-        p = D_800604D0;
-        for (i = 0; i < D_800604C8; i++, p++)
+        p = mus_channels;
+        for (i = 0; i < max_channels; i++, p++)
         {
             if (p->f60 == result)
             {

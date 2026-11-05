@@ -9,10 +9,10 @@
 typedef s32 M2C_UNK;
 M2C_UNK alLink(s32, s32);
 M2C_UNK alUnlink(void);
-extern s32 D_80036F54;
+extern s32 n_syn;
 
-/* Moves the arg0 node to the audio list head at D_80036F54+0x14. */
+/* Moves the arg0 node to the audio list head at n_syn+0x14. */
 void _n_freePVoice(s32 arg0) {
     alUnlink();
-    alLink(arg0, D_80036F54 + 0x14);
+    alLink(arg0, n_syn + 0x14);
 }

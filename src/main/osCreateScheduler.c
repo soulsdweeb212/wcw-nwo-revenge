@@ -7,7 +7,7 @@
 #include "common.h"
 
 extern u8 D_80044570[];
-extern u8 D_80037650[];
+extern u8 osViModeTable[];
 extern u8 D_800420C0[];
 extern u8 D_800440C0[];
 extern s32 D_80044574;
@@ -64,7 +64,7 @@ void osCreateScheduler(Mgr *arg0, void *arg1, s32 arg2, u8 arg3, u8 arg4) {
     osCreateMesgQueue(base - 0x398, base - 0x380, 8);
     osCreateMesgQueue(base - 0x3D0, base - 0x3B8, 8);
     osCreateViManager(0xFE);
-    osViSetMode(((arg3 & 0xFF) * 0x50) + D_80037650);
+    osViSetMode(((arg3 & 0xFF) * 0x50) + osViModeTable);
     osViBlack(1);
     osViSetEvent(arg0->mq, 0x29A, arg4);
     osSetEventMesg(0xE, arg0->mq, 0x29D);

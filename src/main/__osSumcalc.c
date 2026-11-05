@@ -24,4 +24,4 @@ typedef struct {
     u8 b6, b7;
 } Cmd8;
 
-extern Cmd8 D_8006A260[];
+extern Cmd8 __osContPifRam[];

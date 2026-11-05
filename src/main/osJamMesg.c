@@ -8,7 +8,7 @@
 
 typedef struct { s32 *list; s32 *sendList; s32 count, index, limit; s32 *entries; } Nw2SendQueue;
 typedef struct { s32 next, priority; s32 *queue, *threadNext; u16 state; } Nw2Thread;
-extern void *D_80037250;
+extern void *__osRunningThread;
 s32 __osDisableInt(void);
 void __osRestoreInt(s32);
 void __osEnqueueAndYield(void *);
@@ -23,7 +23,7 @@ s32 osJamMesg(Nw2SendQueue *q, s32 msg, s32 wait) {
     s32 state = __osDisableInt();
     while (q->count >= q->limit) {
         if (wait != 1) { __osRestoreInt(state); return -1; }
-        ((Nw2Thread *)D_80037250)->state = 8;
+        ((Nw2Thread *)__osRunningThread)->state = 8;
         __osEnqueueAndYield(&q->sendList);
     }
     q->index = (q->index + q->limit - 1) % q->limit;

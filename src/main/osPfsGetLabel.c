@@ -10,12 +10,12 @@ typedef struct {
     u8 b0, b1, b2, b3, b4, b5, b6, b7;
 } Cmd8;
 
-extern Cmd8 D_8006A260[];
-extern u8 D_80070A98;
-extern u8 D_8007BD30;
-extern Cmd8 D_8007DFD0[];
+extern Cmd8 __osContPifRam[];
+extern u8 __osMaxControllers;
+extern u8 __osContLastCmd;
+extern Cmd8 __osPfsPifRam[];
 extern s32 D_8007E00C;
-extern s32 D_80037600;
+extern s32 __osPiDevMgr;
 
 s32 __osCheckId(s32);
 s32 osPiGetCmdQueue(void);
