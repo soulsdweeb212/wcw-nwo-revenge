@@ -116,6 +116,16 @@ placed with `own`; check the value against the ROM, because the build cannot see
 build.
 
 ### Hand-written assembly (not expected to become C)
+Each of these files now also explains the routine (what it does, its libultra name where it has one, its callers and the
+hardware it touches) and holds an equivalent C version under `#ifdef NON_MATCHING`, with the original `asm()` under `#else`.
+The normal build never defines `NON_MATCHING`, so it keeps using the asm and stays identical. The C is for reading: an
+independent check traced each version against the assembly. It is not a working replacement build. Instructions C has no
+form for (CP0, cache, TLB, `eret`) are one-line inline-asm helpers, and the exception-handler pieces are entered by
+branches, not calls. `func_8002BC40` is not CPU code at all: it is RSP code (libultra's `rspboot` plus the start of the
+audio microcode), so its C model is under `#if 0`. The C versions of `__osEnqueueThread` (`func_800266B4`), `__osPopThread`
+(`func_800266FC`) and the seven one- or two-instruction CP0/FPU accessors also compile to the original bytes (checked with
+`lk.py`, not with a build), but they need register pinning to get there, so the asm stays the built version.
+
 These were written in assembly in the original (CP0/TLB/cache/FPU access, or hand-scheduled `.set noreorder` code with
 `nop` delay slots, which neither KMC GCC nor IDO produces from C). They build as `asm()` objects (`tools/asm_to_c.py`),
 so the ROM is still byte-identical, but they are not decompiled.

@@ -3,6 +3,72 @@
  * VRAM 0x8001C740 | ROM 0x1D340 | size 0xA0
  * asm: asm/nonmatchings/main/func_8001C740.s
  */
+/* func_8001C740: libultra osSetIntMask(OSIntMask im), returns the previous mask. An OSIntMask holds the CPU interrupt
+ * enables in its low half (Status IM bits 8..15 + IE bit 0, OS_IM_CPU 0xFF01) and the six RCP (MI) interrupt enables
+ * SP/SI/AI/VI/PI/DP in bits 16..21. Reads CP0 Status ($12), D_80038810 (__OSGlobalIntMask, the interrupts the OS
+ * allows at all) and MI_INTR_MASK_REG (0xA430000C). The returned old mask reports globally-forbidden lines as
+ * "enabled" (CPU half always, RCP half only if some MI line is enabled), the standard libultra behaviour so a
+ * save/restore pair round-trips. New state: MI_INTR_MASK_REG is written with D_8003B650[(im & global & 0x3F0000) >>
+ * 16] (__osRcpImTable: 64 u16 halfwords, each the MI_INTR_MASK_REG SET/CLR bit pattern for one 6-bit RCP enable set;
+ * the asm forms the byte offset with >> 15 and reads it with lhu), and Status IM = im & global & 0xFF00 (IE is never
+ * changed: the global mask is ANDed with 0xFF00 first, and Status keeps its own bit 0). Two NOPs follow the mtc0 for
+ * the CP0 hazard. Identical to ultralib src/os/setintmask.s (2.0I). Callers (jal scan of asm/): renderTaskThread,
+ * func_80000D28, func_80000D80, func_80001260 (0x80401 = VI + IM2 + IE), func_80017590 (func_8001656C only declares
+ * the prototype), mostly as old = func_8001C740(1) ... func_8001C740(old) to mask everything but IE around a critical
+ * section. Asm because of mfc0/mtc0 on Status; in C those are the getStatus/setStatus inline helpers. */
+#ifdef NON_MATCHING
+#include "common.h"
+
+extern u32 D_80038810;      /* __OSGlobalIntMask: interrupts the OS lets anyone enable (CPU IM bits 8..15 + IE in the
+                             * low half, RCP SP/SI/AI/VI/PI/DP enables in bits 16..21) */
+extern u16 D_8003B650[];    /* __osRcpImTable: 64 MI_INTR_MASK_REG write values, one per 6-bit RCP enable set */
+extern vu32 D_A430000C;     /* MI_INTR_MASK_REG (0x0430000C through KSEG1): reads give the 6 enabled RCP lines,
+                             * writes take SET/CLR bit pairs */
+
+/* CP0 Status ($12): IE bit 0, IM0..IM7 bits 8..15. */
+static inline u32 getStatus(void) {
+    u32 sr;
+    __asm__ __volatile__("mfc0 %0, $12" : "=r"(sr));
+    return sr;
+}
+static inline void setStatus(u32 sr) {
+    __asm__ __volatile__("mtc0 %0, $12" : : "r"(sr));
+}
+static inline void cp0Hazard(void) {
+    __asm__ __volatile__("nop");
+}
+
+s32 func_8001C740(s32 mask) {
+    u32 sr = getStatus();
+    u32 globalMask = D_80038810;
+    u32 oldMask;
+    u32 rcp;
+    u32 cpu;
+
+    /* Old mask, CPU half: current IM bits + IE, plus every IM bit the global mask forbids (those report as on). */
+    oldMask = sr & 0xFF01;                      /* OS_IM_CPU */
+    oldMask |= ~globalMask & 0xFF00;            /* SR_IMASK */
+
+    /* Old mask, RCP half: the enabled MI lines; if any are enabled, also the globally forbidden ones. */
+    rcp = D_A430000C;
+    if (rcp != 0) {
+        rcp |= ~(globalMask >> 16) & 0x3F;
+    }
+    oldMask |= rcp << 16;
+
+    /* New RCP enables: requested AND allowed, translated through the table into a SET/CLR write. */
+    D_A430000C = D_8003B650[((u32)mask & 0x3F0000 & globalMask) >> 16];
+
+    /* New CPU enables: requested IM bits AND allowed (globalMask & 0xFF00 has no bit 0, so IE is never
+     * set from the argument); Status keeps its own IE and every bit outside IM. */
+    cpu = ((u32)mask & 0xFF01) & (globalMask & 0xFF00);
+    sr = (sr & 0xFFFF00FF) | cpu;
+    setStatus(sr);
+    cp0Hazard();
+    cp0Hazard();
+    return oldMask;
+}
+#else
 /* Hand-written in the original; kept as top-level asm so the bytes match exactly. */
 asm(
     ".set noreorder\n"
@@ -56,3 +122,4 @@ asm(
     ".set at\n"
     ".set reorder\n"
     );
+#endif

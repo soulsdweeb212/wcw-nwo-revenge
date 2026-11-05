@@ -3,6 +3,64 @@
  * VRAM 0x80026C80 | ROM 0x27880 | size 0x58
  * asm: asm/nonmatchings/main/func_80026C80.s
  */
+/* func_80026C80: libultra osMapTLBRdb(void). Writes TLB entry 31: Index ($0) = 31, PageMask ($5) = 0 (4 KB pages),
+ * EntryHi ($10) = 0xC0000000 (K2BASE, ASID 0), EntryLo0 ($2) = (0x80000000 >> 6) | 0x17 = 0x02000017 (PFN of physical
+ * 0x80000000, C = 2 uncached, D, V, G), EntryLo1 ($3) = 1 (G only, odd page invalid); tlbwi. So virtual 0xC0000000..
+ * 0xC0000FFF maps uncached to physical 0x80000000, where the development hardware's rdb (remote debugger) port lives
+ * (RDB_BASE_VIRTUAL_ADDR 0x80000000 in PR/rdb.h); on retail hardware the mapping is unused.
+ * The caller's EntryHi is saved and restored. Identical to ultralib src/os/maptlbrdb.s (2.0I). Only caller:
+ * initializePiAndRdram (osInitialize), right after osUnmapTLBAll (func_80026C30). The NOPs are CP0 hazard padding.
+ * Asm because of mtc0/tlbwi. */
+#ifdef NON_MATCHING
+#include "common.h"
+
+/* CP0 TLB registers: Index $0, EntryLo0 $2, EntryLo1 $3, PageMask $5, EntryHi $10. */
+static inline u32 getEntryHi(void) {
+    u32 v;
+    __asm__ __volatile__("mfc0 %0, $10" : "=r"(v));
+    return v;
+}
+static inline void setEntryHi(u32 v) {
+    __asm__ __volatile__("mtc0 %0, $10" : : "r"(v));
+}
+static inline void setEntryLo0(u32 v) {
+    __asm__ __volatile__("mtc0 %0, $2" : : "r"(v));
+}
+static inline void setEntryLo1(u32 v) {
+    __asm__ __volatile__("mtc0 %0, $3" : : "r"(v));
+}
+static inline void setPageMask(u32 v) {
+    __asm__ __volatile__("mtc0 %0, $5" : : "r"(v));
+}
+static inline void setIndex(u32 v) {
+    __asm__ __volatile__("mtc0 %0, $0" : : "r"(v));
+}
+static inline void tlbWriteIndexed(void) {
+    __asm__ __volatile__("tlbwi");
+}
+static inline void cp0Hazard(void) {
+    __asm__ __volatile__("nop");
+}
+
+void func_80026C80(void) {
+    u32 savedEntryHi = getEntryHi();
+
+    setIndex(31);                       /* NTLBENTRIES: the last TLB entry, reserved for rdb */
+    setPageMask(0);                     /* 4 KB pages */
+    setEntryHi(0xC0000000);             /* K2BASE: virtual pair 0xC0000000/0xC0001000, ASID 0 */
+    /* Even page: PFN = 0x80000000 >> 12 (EntryLo PFN field starts at bit 6, hence >> 6), C = 2 uncached
+     * (0x10), D dirty/writable (4), V valid (2), G global (1) -> 0x02000017. */
+    setEntryLo0((0x80000000 >> 6) | 0x17);
+    setEntryLo1(1);                     /* odd page: G only, not valid */
+    cp0Hazard();
+    tlbWriteIndexed();
+    cp0Hazard();
+    cp0Hazard();
+    cp0Hazard();
+    cp0Hazard();
+    setEntryHi(savedEntryHi);
+}
+#else
 /* Hand-written in the original; kept as top-level asm so the bytes match exactly. */
 asm(
     ".set noreorder\n"
@@ -39,3 +97,4 @@ asm(
     ".set at\n"
     ".set reorder\n"
     );
+#endif

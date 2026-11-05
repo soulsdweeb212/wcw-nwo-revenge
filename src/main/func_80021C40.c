@@ -3,6 +3,194 @@
  * VRAM 0x80021C40 | ROM 0x22840 | size 0x31C
  * asm: asm/nonmatchings/main/func_80021C40.s
  */
+/* func_80021C40: libultra bcopy(const void *src, void *dst, s32 len) (src/libc/bcopy.s): copy
+ * len bytes from src to dst, safe for overlap (memmove semantics; note bcopy's src-first argument
+ * order). Returns dst in $v0; the callers in src/ declare it void. 66 call sites, e.g.
+ * __osContRamRead/__osContRamWrite, osPfsFileState, readControllerPakId, loadRspTask, func_80001260.
+ * Method: it returns at once when len == 0 or src == dst. It copies backwards (from the top down)
+ * only when src < dst < src + len. The two pointer compares are SIGNED (slt), which is fine for
+ * KSEG0/KSEG1 pointers. When dst >= src, the end pointer src + len is computed with a trapping
+ * `add` (the backward path also uses trapping adds for src + len and dst + len). For a positive len
+ * and real RDRAM addresses this cannot overflow. Buffers shorter than 16 bytes, or with different
+ * (addr & 3), are copied with lb/sb. Otherwise it copies 1, 2 or 3 bytes up to word alignment
+ * (3 bytes = lb + an aligned lh), then 32-byte blocks (eight lw, then eight sw), then 16-byte
+ * blocks, then single words, then the 0-3 byte tail. The backward path is the mirror image,
+ * aligning the END pointers.
+ * A negative len is not checked. If dst < src, the add is skipped and the byte loop runs until
+ * the pointer wraps around. If dst >= src and src + len crosses below 0x80000000 (e.g. src =
+ * 0x80000010, len = -0x20), the add raises an Integer Overflow exception before any byte is
+ * copied. The C models this with addTrap().
+ * Kept as asm because the compiler never emits the trapping `add` (marked "handwritten instruction").
+ * Checked in an emulator against the ROM bytes: src/dst offsets 0..11 (plus 40/80) with overlap in
+ * both directions, len 0..100, plus negative-len overflow cases (e.g. src 0x80000010, dst
+ * 0x80000020, len -0x20). Same buffer contents, same $v0, and the same add-overflow trap. */
+#ifdef NON_MATCHING
+#include "common.h"
+/* The asm's three "handwritten instruction" adds are the TRAPPING `add` (not addu): if the signed
+ * 32-bit sum overflows, the CPU raises an Integer Overflow exception (Cause ExcCode 12) and no
+ * result is written. C has no such operation, so it is one inline-asm instruction here. */
+static inline s32 addTrap(s32 a, s32 b)
+{
+    s32 r;
+    __asm__ __volatile__("add %0, %1, %2" : "=r"(r) : "r"(a), "r"(b));
+    return r;
+}
+
+void *func_80021C40(const void *src, void *dst, s32 len)
+{
+    const s8 *s = src;
+    s8 *d = dst;
+    const s8 *end;
+
+    if (len == 0 || s == (const s8 *)d) {
+        return dst;
+    }
+
+    /* Signed pointer compares, as the asm uses slt. Copy backwards only when dst
+     * lies inside [src, src + len), i.e. a forward copy would clobber unread source. */
+    /* The trapping add src + len runs only when dst >= src (the && short-circuit = the asm's
+     * bnez over it). */
+    if (!((s32)d < (s32)s) && (s32)d < addTrap((s32)s, len)) {
+        goto backwards;
+    }
+
+    /* ---- forwards ---- */
+    if (len >= 16 && ((u32)s & 3) == ((u32)d & 3)) {
+        switch ((u32)s & 3) {
+        case 0:
+            break;
+        case 1: /* 3 bytes to the boundary: one byte, then an aligned halfword */
+            {
+                s8 b0 = s[0];
+                s16 h1 = *(const s16 *)(s + 1);
+                s += 3;
+                d[0] = b0;
+                *(s16 *)(d + 1) = h1;
+                d += 3;
+                len -= 3;
+                break;
+            }
+        case 2:
+            *(s16 *)d = *(const s16 *)s;
+            s += 2;
+            d += 2;
+            len -= 2;
+            break;
+        default: /* 3 */
+            *d++ = *s++;
+            len -= 1;
+            break;
+        }
+        while (len >= 32) {
+            u32 w0 = ((const u32 *)s)[0], w1 = ((const u32 *)s)[1];
+            u32 w2 = ((const u32 *)s)[2], w3 = ((const u32 *)s)[3];
+            u32 w4 = ((const u32 *)s)[4], w5 = ((const u32 *)s)[5];
+            u32 w6 = ((const u32 *)s)[6], w7 = ((const u32 *)s)[7];
+            s += 32;
+            ((u32 *)d)[0] = w0; ((u32 *)d)[1] = w1;
+            ((u32 *)d)[2] = w2; ((u32 *)d)[3] = w3;
+            ((u32 *)d)[4] = w4; ((u32 *)d)[5] = w5;
+            ((u32 *)d)[6] = w6; ((u32 *)d)[7] = w7;
+            d += 32;
+            len -= 32;
+        }
+        while (len >= 16) {
+            u32 w0 = ((const u32 *)s)[0], w1 = ((const u32 *)s)[1];
+            u32 w2 = ((const u32 *)s)[2], w3 = ((const u32 *)s)[3];
+            s += 16;
+            ((u32 *)d)[0] = w0; ((u32 *)d)[1] = w1;
+            ((u32 *)d)[2] = w2; ((u32 *)d)[3] = w3;
+            d += 16;
+            len -= 16;
+        }
+        while (len >= 4) {
+            *(u32 *)d = *(const u32 *)s;
+            s += 4;
+            d += 4;
+            len -= 4;
+        }
+    }
+    /* Byte copy: short or mutually misaligned buffers, and the 0..3 byte tail. */
+    if (len == 0) {
+        return dst;
+    }
+    end = s + len;
+    do {
+        *d++ = *s++;
+    } while (s != end);
+    return dst;
+
+backwards:
+    /* Overlap with dst above src: copy from the top down. */
+    s = (const s8 *)addTrap((s32)s, len); /* trapping add, src first as in the asm */
+    d = (s8 *)addTrap((s32)d, len);
+    if (len >= 16 && ((u32)s & 3) == ((u32)d & 3)) {
+        switch ((u32)s & 3) {
+        case 0:
+            break;
+        case 3: /* 3 bytes down to the boundary: one byte, then an aligned halfword */
+            {
+                s8 b0 = s[-1];
+                s16 h1 = *(const s16 *)(s - 3);
+                s -= 3;
+                d[-1] = b0;
+                *(s16 *)(d - 3) = h1;
+                d -= 3;
+                len -= 3;
+                break;
+            }
+        case 2:
+            *(s16 *)(d - 2) = *(const s16 *)(s - 2);
+            s -= 2;
+            d -= 2;
+            len -= 2;
+            break;
+        default: /* 1 */
+            *--d = *--s;
+            len -= 1;
+            break;
+        }
+        while (len >= 32) {
+            u32 w0 = ((const u32 *)s)[-1], w1 = ((const u32 *)s)[-2];
+            u32 w2 = ((const u32 *)s)[-3], w3 = ((const u32 *)s)[-4];
+            u32 w4 = ((const u32 *)s)[-5], w5 = ((const u32 *)s)[-6];
+            u32 w6 = ((const u32 *)s)[-7], w7 = ((const u32 *)s)[-8];
+            s -= 32;
+            ((u32 *)d)[-1] = w0; ((u32 *)d)[-2] = w1;
+            ((u32 *)d)[-3] = w2; ((u32 *)d)[-4] = w3;
+            ((u32 *)d)[-5] = w4; ((u32 *)d)[-6] = w5;
+            ((u32 *)d)[-7] = w6; ((u32 *)d)[-8] = w7;
+            d -= 32;
+            len -= 32;
+        }
+        while (len >= 16) {
+            u32 w0 = ((const u32 *)s)[-1], w1 = ((const u32 *)s)[-2];
+            u32 w2 = ((const u32 *)s)[-3], w3 = ((const u32 *)s)[-4];
+            s -= 16;
+            ((u32 *)d)[-1] = w0; ((u32 *)d)[-2] = w1;
+            ((u32 *)d)[-3] = w2; ((u32 *)d)[-4] = w3;
+            d -= 16;
+            len -= 16;
+        }
+        while (len >= 4) {
+            ((u32 *)d)[-1] = ((const u32 *)s)[-1];
+            s -= 4;
+            d -= 4;
+            len -= 4;
+        }
+    }
+    if (len == 0) {
+        return dst;
+    }
+    s--;
+    d--;
+    end = s - len;
+    do {
+        *d-- = *s--;
+    } while (s != end);
+    return dst;
+}
+#else
 /* Hand-written in the original; kept as top-level asm so the bytes match exactly. */
 asm(
     ".set noreorder\n"
@@ -234,3 +422,4 @@ asm(
     ".set at\n"
     ".set reorder\n"
     );
+#endif

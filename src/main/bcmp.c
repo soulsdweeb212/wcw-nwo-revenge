@@ -3,6 +3,105 @@
  * VRAM 0x80027FF0 | ROM 0x28BF0 | size 0x110
  * asm: asm/nonmatchings/main/bcmp.s
  */
+/* bcmp: libultra bcmp(void *s1, void *s2, s32 len) (src/libc/bcmp.s): returns 0 if the len
+ * bytes are identical, 1 otherwise (not an ordering like memcmp). Only caller in the ROM: __osCheckId
+ * (compares the Controller Pak ID block against the cached copy); func_80022154 declares it but
+ * never calls it.
+ * Method: below 16 bytes it compares byte by byte. If s1 and s2 have the same alignment
+ * ((s1 ^ s2) & 3 == 0), it compares the 1-3 head bytes with one `lwl` from each side, then whole
+ * words. The `move $v0, $v1` before the two lwl makes the bytes lwl does not load equal on both
+ * sides, so only the head bytes count. If the alignments differ, it compares bytes until s2 is
+ * word aligned, then compares unaligned words of s1 (lwl/lwr) against aligned lw of s2. The 0-3
+ * byte tail is compared with lbu. len <= 0 returns 0.
+ * Kept as asm because the compiler never emits the lone lwl / register-preload trick.
+ * Checked in an emulator against the ROM bytes: all 16 alignment pairs, len -1..77, equal buffers
+ * and a single differing byte at many positions. Same result every time. */
+#ifdef NON_MATCHING
+#include "common.h"
+/* Big-endian word read from a possibly unaligned address (the asm's lwl/lwr pair). */
+static inline u32 loadWordUnaligned(const u8 *p)
+{
+    return ((u32)p[0] << 24) | ((u32)p[1] << 16) | ((u32)p[2] << 8) | p[3];
+}
+
+s32 bcmp(void *s1, void *s2, s32 len)
+{
+    const u8 *a = s1;
+    const u8 *b = s2;
+    const u8 *end;
+    s32 n;
+
+    if (len >= 16) {
+        if ((((u32)a ^ (u32)b) & 3) == 0) {
+            /* Same alignment: compare the 0..3 head bytes up to a word boundary
+             * (the asm does this with one lwl from each side), then whole words. */
+            n = -(s32)a & 3;
+            len -= n;
+            if (n != 0) {
+                s32 i;
+                for (i = 0; i < n; i++) {
+                    if (a[i] != b[i]) {
+                        return 1;
+                    }
+                }
+                a += n;
+                b += n;
+            }
+            n = len & ~3;
+            len -= n;
+            if (n != 0) {
+                end = a + n;
+                do {
+                    if (*(const u32 *)a != *(const u32 *)b) {
+                        return 1;
+                    }
+                    a += 4;
+                    b += 4;
+                } while (a != end);
+            }
+        } else {
+            /* Different alignment: byte-compare until s2 is word aligned, then
+             * compare unaligned words of s1 against aligned words of s2. */
+            n = -(s32)b & 3;
+            len -= n;
+            if (n != 0) {
+                end = a + n;
+                do {
+                    if (*a != *b) {
+                        return 1;
+                    }
+                    a++;
+                    b++;
+                } while (a != end);
+            }
+            n = len & ~3;
+            len -= n;
+            if (n != 0) {
+                end = a + n;
+                do {
+                    if (loadWordUnaligned(a) != *(const u32 *)b) {
+                        return 1;
+                    }
+                    a += 4;
+                    b += 4;
+                } while (a != end);
+            }
+        }
+    }
+    /* Tail bytes (or everything when len < 16). len <= 0 compares nothing. */
+    if (len > 0) {
+        end = a + len;
+        do {
+            if (*a != *b) {
+                return 1;
+            }
+            a++;
+            b++;
+        } while (a != end);
+    }
+    return 0;
+}
+#else
 /* Hand-written in the original; kept as top-level asm so the bytes match exactly. */
 asm(
     ".set noreorder\n"
@@ -92,3 +191,4 @@ asm(
     ".set at\n"
     ".set reorder\n"
     );
+#endif

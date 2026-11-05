@@ -3,6 +3,64 @@
  * VRAM 0x8001C660 | ROM 0x1D260 | size 0x74
  * asm: asm/nonmatchings/main/func_8001C660.s
  */
+/* func_8001C660: libultra osInvalICache(void *vaddr, s32 nbytes). Makes the instruction cache forget a range so
+ * code just copied/DMA'd into RAM is fetched fresh. nbytes <= 0: nothing. nbytes < 16 KB (ICACHE_SIZE): from vaddr
+ * rounded down to a 32-byte line up to the line holding vaddr+nbytes-1, CACHE op 0x10 (Hit_Invalidate, I-cache) on each
+ * line, which only drops lines that really hold those addresses; a range that wraps past 0xFFFFFFFF is ignored.
+ * nbytes >= 16 KB: CACHE op 0x00 (Index_Invalidate, I-cache) on every line by index from 0x80000000, i.e. the whole
+ * I-cache. Identical to ultralib src/os/invalicache.s (2.0I). Callers: initializePiAndRdram (osInitialize:
+ * osInvalICache(0x80000000, 0x190) after the exception vectors are copied to 0x80000000..0x8000018F) and func_80000700
+ * (the segment loader, over the loaded code range). Asm because CACHE has no C form; loops test the old pointer and
+ * advance in the delay slot. */
+#ifdef NON_MATCHING
+#include "common.h"
+
+/* cache 0x10 = Hit_Invalidate on the primary I-cache: invalidate the line if it currently holds this address. */
+static inline void icacheHitInvalidate(u32 addr) {
+    __asm__ __volatile__("cache 0x10, 0(%0)" : : "r"(addr));
+}
+
+/* cache 0x00 = Index_Invalidate on the primary I-cache: invalidate whatever line the address's index bits select. */
+static inline void icacheIndexInvalidate(u32 addr) {
+    __asm__ __volatile__("cache 0x00, 0(%0)" : : "r"(addr));
+}
+
+void func_8001C660(s32 addr, s32 len) {
+    u32 line;
+    u32 last;
+
+    if (len <= 0) {
+        return;
+    }
+    if ((u32)len < 0x4000) {            /* ICACHE_SIZE 16 KB */
+        line = (u32)addr;
+        last = (u32)addr + (u32)len;
+        if (line >= last) {             /* range wraps past 0xFFFFFFFF */
+            return;
+        }
+        last -= 0x20;                   /* ICACHE_LINESIZE 32: last = start of the final 32 bytes */
+        line -= line & 0x1F;            /* align down to a cache line */
+        for (;;) {
+            icacheHitInvalidate(line);
+            if (line >= last) {
+                break;
+            }
+            line += 0x20;
+        }
+        return;
+    }
+    /* A range as big as the cache: cheaper to invalidate every line by index. */
+    line = 0x80000000;                  /* K0BASE */
+    last = line + 0x4000 - 0x20;
+    for (;;) {
+        icacheIndexInvalidate(line);
+        if (line >= last) {
+            break;
+        }
+        line += 0x20;
+    }
+}
+#else
 /* Hand-written in the original; kept as top-level asm so the bytes match exactly. */
 asm(
     ".set noreorder\n"
@@ -75,3 +133,4 @@ asm(
     ".set at\n"
     ".set reorder\n"
     );
+#endif
