@@ -9735,7 +9735,8 @@
    "vram": 2148073520,
    "rom": 537808,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80090030.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80090030.c"
   },
   {
    "name": "func_80090380",
@@ -9743,7 +9744,8 @@
    "vram": 2148074368,
    "rom": 538656,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80090380.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80090380.c"
   },
   {
    "name": "func_800905A4",
@@ -9751,7 +9753,8 @@
    "vram": 2148074916,
    "rom": 539204,
    "asm": "asm/nonmatchings/ovl2_80090000/func_800905A4.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_800905A4.c"
   },
   {
    "name": "func_800906D8",
@@ -9759,7 +9762,8 @@
    "vram": 2148075224,
    "rom": 539512,
    "asm": "asm/nonmatchings/ovl2_80090000/func_800906D8.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_800906D8.c"
   },
   {
    "name": "func_8009075C",
@@ -9767,7 +9771,8 @@
    "vram": 2148075356,
    "rom": 539644,
    "asm": "asm/nonmatchings/ovl2_80090000/func_8009075C.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_8009075C.c"
   },
   {
    "name": "func_800907A0",
@@ -9775,7 +9780,10 @@
    "vram": 2148075424,
    "rom": 539712,
    "asm": "asm/nonmatchings/ovl2_80090000/func_800907A0.s",
-   "own": {}
+   "own": {
+    ".rodata": 2148417552
+   },
+   "c": "src/ovl2_80090000/func_800907A0.c"
   },
   {
    "name": "func_80090A38",
@@ -9783,7 +9791,10 @@
    "vram": 2148076088,
    "rom": 540376,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80090A38.s",
-   "own": {}
+   "own": {
+    ".rodata": 2148417560
+   },
+   "c": "src/ovl2_80090000/func_80090A38.c"
   },
   {
    "name": "func_80091108",
@@ -9791,7 +9802,10 @@
    "vram": 2148077832,
    "rom": 542120,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80091108.s",
-   "own": {}
+   "own": {
+    ".rodata": 2148417576
+   },
+   "c": "src/ovl2_80090000/func_80091108.c"
   },
   {
    "name": "func_80091748",
@@ -9799,7 +9813,8 @@
    "vram": 2148079432,
    "rom": 543720,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80091748.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80091748.c"
   },
   {
    "name": "func_80091CB4",
@@ -9807,7 +9822,8 @@
    "vram": 2148080820,
    "rom": 545108,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80091CB4.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80091CB4.c"
   },
   {
    "name": "func_80091DF4",
@@ -9815,7 +9831,8 @@
    "vram": 2148081140,
    "rom": 545428,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80091DF4.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80091DF4.c"
   },
   {
    "name": "func_800922C0",
@@ -9831,7 +9848,8 @@
    "vram": 2148090608,
    "rom": 554896,
    "asm": "asm/nonmatchings/ovl2_80090000/func_800942F0.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_800942F0.c"
   },
   {
    "name": "func_80094424",
@@ -9839,7 +9857,8 @@
    "vram": 2148090916,
    "rom": 555204,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80094424.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80094424.c"
   },
   {
    "name": "func_80094804",
@@ -9847,7 +9866,8 @@
    "vram": 2148091908,
    "rom": 556196,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80094804.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80094804.c"
   },
   {
    "name": "func_800948B4",
@@ -9855,7 +9875,8 @@
    "vram": 2148092084,
    "rom": 556372,
    "asm": "asm/nonmatchings/ovl2_80090000/func_800948B4.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_800948B4.c"
   },
   {
    "name": "func_80094A9C",
@@ -9871,7 +9892,8 @@
    "vram": 2148097008,
    "rom": 561296,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80095BF0.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80095BF0.c"
   },
   {
    "name": "func_80095CB0",
@@ -9879,7 +9901,8 @@
    "vram": 2148097200,
    "rom": 561488,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80095CB0.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80095CB0.c"
   },
   {
    "name": "func_80096018",
@@ -9887,7 +9910,8 @@
    "vram": 2148098072,
    "rom": 562360,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80096018.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80096018.c"
   },
   {
    "name": "func_8009608C",
@@ -9895,7 +9919,8 @@
    "vram": 2148098188,
    "rom": 562476,
    "asm": "asm/nonmatchings/ovl2_80090000/func_8009608C.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_8009608C.c"
   },
   {
    "name": "func_80096210",
@@ -9903,7 +9928,8 @@
    "vram": 2148098576,
    "rom": 562864,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80096210.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80096210.c"
   },
   {
    "name": "func_8009678C",
@@ -9911,7 +9937,8 @@
    "vram": 2148099980,
    "rom": 564268,
    "asm": "asm/nonmatchings/ovl2_80090000/func_8009678C.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_8009678C.c"
   },
   {
    "name": "func_80096854",
@@ -9919,7 +9946,8 @@
    "vram": 2148100180,
    "rom": 564468,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80096854.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80096854.c"
   },
   {
    "name": "func_80096CC0",
@@ -9927,7 +9955,8 @@
    "vram": 2148101312,
    "rom": 565600,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80096CC0.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80096CC0.c"
   },
   {
    "name": "func_80096E2C",
@@ -9944,7 +9973,8 @@
    "vram": 2148101684,
    "rom": 565972,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80096E34.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80096E34.c"
   },
   {
    "name": "func_80096F64",
@@ -9952,7 +9982,8 @@
    "vram": 2148101988,
    "rom": 566276,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80096F64.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80096F64.c"
   },
   {
    "name": "func_80096FE8",
@@ -9960,7 +9991,8 @@
    "vram": 2148102120,
    "rom": 566408,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80096FE8.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80096FE8.c"
   },
   {
    "name": "func_8009786C",
@@ -9968,7 +10000,8 @@
    "vram": 2148104300,
    "rom": 568588,
    "asm": "asm/nonmatchings/ovl2_80090000/func_8009786C.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_8009786C.c"
   },
   {
    "name": "func_8009791C",
@@ -9976,7 +10009,8 @@
    "vram": 2148104476,
    "rom": 568764,
    "asm": "asm/nonmatchings/ovl2_80090000/func_8009791C.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_8009791C.c"
   },
   {
    "name": "func_800979CC",
@@ -9984,7 +10018,8 @@
    "vram": 2148104652,
    "rom": 568940,
    "asm": "asm/nonmatchings/ovl2_80090000/func_800979CC.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_800979CC.c"
   },
   {
    "name": "func_80097A74",
@@ -9992,7 +10027,8 @@
    "vram": 2148104820,
    "rom": 569108,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80097A74.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80097A74.c"
   },
   {
    "name": "func_80097B14",
@@ -10000,7 +10036,8 @@
    "vram": 2148104980,
    "rom": 569268,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80097B14.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80097B14.c"
   },
   {
    "name": "func_80097BB4",
@@ -10017,7 +10054,8 @@
    "vram": 2148105184,
    "rom": 569472,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80097BE0.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80097BE0.c"
   },
   {
    "name": "func_80097E34",
@@ -10025,7 +10063,8 @@
    "vram": 2148105780,
    "rom": 570068,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80097E34.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80097E34.c"
   },
   {
    "name": "func_80097EF4",
@@ -10033,7 +10072,10 @@
    "vram": 2148105972,
    "rom": 570260,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80097EF4.s",
-   "own": {}
+   "own": {
+    ".rodata": 2148417760
+   },
+   "c": "src/ovl2_80090000/func_80097EF4.c"
   },
   {
    "name": "func_800982AC",
@@ -10041,7 +10083,8 @@
    "vram": 2148106924,
    "rom": 571212,
    "asm": "asm/nonmatchings/ovl2_80090000/func_800982AC.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_800982AC.c"
   },
   {
    "name": "func_800984C8",
@@ -10049,7 +10092,8 @@
    "vram": 2148107464,
    "rom": 571752,
    "asm": "asm/nonmatchings/ovl2_80090000/func_800984C8.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_800984C8.c"
   },
   {
    "name": "func_80098560",
@@ -10057,7 +10101,8 @@
    "vram": 2148107616,
    "rom": 571904,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80098560.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80098560.c"
   },
   {
    "name": "func_800986DC",
@@ -10065,7 +10110,10 @@
    "vram": 2148107996,
    "rom": 572284,
    "asm": "asm/nonmatchings/ovl2_80090000/func_800986DC.s",
-   "own": {}
+   "own": {
+    ".rodata": 2148417872
+   },
+   "c": "src/ovl2_80090000/func_800986DC.c"
   },
   {
    "name": "func_80098960",
@@ -10073,7 +10121,8 @@
    "vram": 2148108640,
    "rom": 572928,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80098960.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80098960.c"
   },
   {
    "name": "func_80098C64",
@@ -10081,7 +10130,8 @@
    "vram": 2148109412,
    "rom": 573700,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80098C64.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80098C64.c"
   },
   {
    "name": "func_80098CE8",
@@ -10089,7 +10139,8 @@
    "vram": 2148109544,
    "rom": 573832,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80098CE8.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80098CE8.c"
   },
   {
    "name": "func_80098D54",
@@ -10097,7 +10148,8 @@
    "vram": 2148109652,
    "rom": 573940,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80098D54.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80098D54.c"
   },
   {
    "name": "func_80099628",
@@ -10105,7 +10157,8 @@
    "vram": 2148111912,
    "rom": 576200,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80099628.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80099628.c"
   },
   {
    "name": "func_800998EC",
@@ -10113,7 +10166,8 @@
    "vram": 2148112620,
    "rom": 576908,
    "asm": "asm/nonmatchings/ovl2_80090000/func_800998EC.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_800998EC.c"
   },
   {
    "name": "func_80099968",
@@ -10121,7 +10175,8 @@
    "vram": 2148112744,
    "rom": 577032,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80099968.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80099968.c"
   },
   {
    "name": "func_80099E2C",
@@ -10129,7 +10184,8 @@
    "vram": 2148113964,
    "rom": 578252,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80099E2C.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80099E2C.c"
   },
   {
    "name": "func_80099F70",
@@ -10137,7 +10193,8 @@
    "vram": 2148114288,
    "rom": 578576,
    "asm": "asm/nonmatchings/ovl2_80090000/func_80099F70.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_80099F70.c"
   },
   {
    "name": "func_8009A374",
@@ -10145,7 +10202,10 @@
    "vram": 2148115316,
    "rom": 579604,
    "asm": "asm/nonmatchings/ovl2_80090000/func_8009A374.s",
-   "own": {}
+   "own": {
+    ".rodata": 2148417888
+   },
+   "c": "src/ovl2_80090000/func_8009A374.c"
   },
   {
    "name": "func_8009A5F4",
@@ -10153,7 +10213,8 @@
    "vram": 2148115956,
    "rom": 580244,
    "asm": "asm/nonmatchings/ovl2_80090000/func_8009A5F4.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_8009A5F4.c"
   },
   {
    "name": "func_8009A69C",
@@ -10161,7 +10222,8 @@
    "vram": 2148116124,
    "rom": 580412,
    "asm": "asm/nonmatchings/ovl2_80090000/func_8009A69C.s",
-   "own": {}
+   "own": {},
+   "c": "src/ovl2_80090000/func_8009A69C.c"
   },
   {
    "name": "func_8009A714",
@@ -10178,7 +10240,10 @@
    "vram": 2148116316,
    "rom": 580604,
    "asm": "asm/nonmatchings/ovl2_80090000/func_8009A75C.s",
-   "own": {}
+   "own": {
+    ".rodata": 2148417896
+   },
+   "c": "src/ovl2_80090000/func_8009A75C.c"
   },
   {
    "name": "func_8009AAC8",
@@ -10186,7 +10251,10 @@
    "vram": 2148117192,
    "rom": 581480,
    "asm": "asm/nonmatchings/ovl2_80090000/func_8009AAC8.s",
-   "own": {}
+   "own": {
+    ".rodata": 2148417904
+   },
+   "c": "src/ovl2_80090000/func_8009AAC8.c"
   },
   {
    "name": "func_8009B2EC",
@@ -17871,6 +17939,9 @@
   "D_8007FBC0": 2148006848,
   "D_8007E8CC": 2148001996,
   "D_8007E978": 2148002168,
-  "D_8007E99A": 2148002202
+  "D_8007E99A": 2148002202,
+  "D_800E2EA0": 2148413088,
+  "D_800E2EE8": 2148413160,
+  "D_800E2E9A": 2148413082
  }
 }

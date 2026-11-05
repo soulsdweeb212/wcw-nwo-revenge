@@ -1,0 +1,62 @@
+/* @header
+ * func_80091748
+ * VRAM 0x80091748 | ROM 0x84BE8 | size 0x56C
+ * asm: asm/nonmatchings/ovl2_80090000/func_80091748.s
+ */
+#include "common.h"
+
+typedef struct {
+    s32 flags;
+} Node;
+
+typedef struct {
+    u8 pad0[0x14];
+    Node *node;
+    u8 pad18[0xDC - 0x18];
+} Spr;
+
+typedef struct {
+    u8 pad0[0x2C];
+} SprTex;
+
+void func_800907A0(Spr *s, SprTex *t, s16 x, s16 y, f32 a, f32 b, f32 c, f32 d, u8 r, u8 g, u8 bl, u8 al);
+
+s32 func_80091748(Spr *a, SprTex *at, Spr *b, SprTex *bt, s16 t) {
+    s32 r = 1;
+
+    if (!(a->node->flags & 0x80)) {
+        r = 0;
+        if (t < 6) {
+            func_800907A0(a, at, 0xF0, 0xC2, 0.5f, 0.5f, 1.2f, 1.2f, 0xFF, 0xFF, 0xFF, t * 32 + 0x5F);
+            func_800907A0(b, bt, 0xF0, 0xC2, 0.5f, 0.5f, 1.2f, 1.2f, 0xFF, 0xFF, 0xFF, t * 32 + 0x5F);
+        } else if (t < 9) {
+            func_800907A0(a, at, 0xF0, 0xC2, 0.5f, 0.5f, 1.2f, 1.2f, 0xFF, 0xFF, 0xFF, 0xFF);
+            func_800907A0(b, bt, 0xF0, 0xC2, 0.5f, 0.5f, 1.2f, 1.2f, 0xFF, 0xFF, 0xFF, 0xFF);
+        } else if (t < 0x12) {
+            func_800907A0(a, at, 0xF0, 0xC2, 0.5f, 0.5f, 1.2f, 1.2f, 0xFF, 0xFF, 0xFF, 0xFF);
+            func_800907A0(b, bt, 0xF0, 0xC2, 0.5f, 0.5f, 1.2f, 1.2f, 0xFF, 0xFF - (t - 9) * 30, 0xFF - (t - 9) * 30, 0xFF);
+        } else if (t < 0x4E) {
+            func_800907A0(a, at, 0xF0, 0xC2, 0.5f, 0.5f, 1.2f, 1.2f, 0xFF, 0xFF, 0xFF, 0xFF);
+            func_800907A0(b, bt, 0xF0, 0xC2, 0.5f, 0.5f, 1.2f, 1.2f, 0xFF, 0, 0, 0xFF);
+        } else if (t < 0x51) {
+            func_800907A0(a, at, 0xF0, 0xC2, 0.5f, 0.5f, 1.2f, 1.2f, 0xFF, 0xFF, 0xFF, 0xFF);
+            func_800907A0(b, bt, 0xF0, 0xC2, 0.5f, 0.5f, 1.2f, 1.2f, 0xFF, 0xFF, 0xFF, 0xFF);
+        } else if (t < 0x5A) {
+            func_800907A0(a, at, 0xF0, 0xC2, 0.5f, 0.5f, 1.2f, 1.2f, 0xFF, 0xFF, 0xFF, 0xFF);
+            func_800907A0(b, bt, 0xF0, 0xC2, 0.5f, 0.5f, 1.2f, 1.2f, 0xFF, 0xFF - (t - 0x51) * 30, 0xFF - (t - 0x51) * 30, 0xFF);
+        } else if (t < 0x78) {
+            func_800907A0(a, at, 0xF0, 0xC2, 0.5f, 0.5f, 1.2f, 1.2f, 0xFF, 0xFF, 0xFF, 0xFF);
+            func_800907A0(b, bt, 0xF0, 0xC2, 0.5f, 0.5f, 1.2f, 1.2f, 0xFF, 0, 0, 0xFF);
+        } else if (t < 0x7B) {
+            func_800907A0(a, at, 0xF0, 0xC2, 0.5f, 0.5f, 1.2f, 1.2f, 0xFF, 0xFF, 0xFF, 0xFF - (t - 0x78) * 90);
+            func_800907A0(b, bt, 0xF0, 0xC2, 0.5f, 0.5f, 1.2f, 1.2f, 0xFF, 0, 0, 0xFF - (t - 0x78) * 90);
+        } else {
+            func_800907A0(a, at, 0xF0, 0xC2, 0.5f, 0.5f, 1.2f, 1.2f, 0xFF, 0xFF, 0xFF, 0);
+            func_800907A0(b, bt, 0xF0, 0xC2, 0.5f, 0.5f, 1.2f, 1.2f, 0xFF, 0, 0, 0);
+            a->node->flags |= 0x80;
+            b->node->flags |= 0x80;
+            r = 1;
+        }
+    }
+    return r;
+}
