@@ -10,7 +10,7 @@ typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } V;
 typedef struct { u8 pad0[4]; u32 img; u8 pad8[4]; s16 width; s16 height; s16 h; } Spr;
 
 extern V *D_800E7CB4;
-u32 func_8001CE80(V *);
+u32 osVirtualToPhysical(V *);
 void appendPaletteSetupDisplayList(G **);
 
 #define _SHIFTL(v, s, w) ((unsigned int)(((unsigned int)(v) & ((0x01 << (w)) - 1)) << (s)))
@@ -66,7 +66,7 @@ void appendPaletteSetupDisplayList(G **);
   gDPSetTileSize(pkt, 0, (uls) << 2, (ult) << 2, (lrs) << 2, (lrt) << 2); \
 }
 
-#define SPVERTEX(g, v, n, v0) { G *_g = (g); _g->w0 = _SHIFTL(1, 24, 8) | _SHIFTL((n), 12, 8) | _SHIFTL((v0) + (n), 1, 7); _g->w1 = func_8001CE80(v); }
+#define SPVERTEX(g, v, n, v0) { G *_g = (g); _g->w0 = _SHIFTL(1, 24, 8) | _SHIFTL((n), 12, 8) | _SHIFTL((v0) + (n), 1, 7); _g->w1 = osVirtualToPhysical(v); }
 #define TRI_W1(v0, v1, v2) (_SHIFTL((v0) * 2, 16, 8) | _SHIFTL((v1) * 2, 8, 8) | _SHIFTL((v2) * 2, 0, 8))
 #define SP2TRI(g, a0, a1, a2, b0, b1, b2) { G *_g = (g); _g->w0 = (_SHIFTL(7, 24, 8) | TRI_W1(a0, a1, a2)); _g->w1 = TRI_W1(b0, b1, b2); }
 #define VTX(X, Y, S, T) { V *v = D_800E7CB4++; v->ob[0] = (X); v->ob[1] = (Y); v->ob[2] = 0; v->flag = 0; v->tc[0] = (S); v->tc[1] = (T); v->cn[0] = 0xFF; v->cn[1] = 0xFF; v->cn[2] = 0xFF; v->cn[3] = 0xFF; }

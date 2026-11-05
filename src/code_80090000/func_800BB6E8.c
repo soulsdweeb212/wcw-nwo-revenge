@@ -7,8 +7,8 @@
 
 extern f32 D_800DF1F0, D_800DF1F4, D_800DF1F8;
 extern s32 D_800DF200, D_800E79CC;
-void buildScaledRotationTranslationMatrix(void *, f32, f32, f32, f32, f32, f32, f32);
-void func_8001B3EC(void *, f32, f32, f32, f32 *, f32 *, f32 *);
+void guPositionF(void *, f32, f32, f32, f32, f32, f32, f32);
+void guMtxXFMF(void *, f32, f32, f32, f32 *, f32 *, f32 *);
 void func_800B82B8(f32 *, f32 *, f32 *, f32 *, f32 *, f32 *);
 void func_800B83A4(f32, f32, f32, s32);
 void func_800C2CDC_ovl1(s32, f32 *);
@@ -20,8 +20,8 @@ void func_800BB6E8(s32 a) {
     f32 t;
     if (a & 1) {
         func_800B82B8(&x, &y, &z, &rx, &ry, &rz);
-        buildScaledRotationTranslationMatrix(m, x, y, z, 1.0f, rx, ry, rz);
-        func_8001B3EC(m, 0.0f, 0.0f, 500.0f, &x, &y, &z);
+        guPositionF(m, x, y, z, 1.0f, rx, ry, rz);
+        guMtxXFMF(m, 0.0f, 0.0f, 500.0f, &x, &y, &z);
         D_800DF200 = 0;
     } else {
         if (a & 4) {

@@ -35,7 +35,7 @@ void lookupResourceDescriptor(s32 *, u32);
 void func_80003684(s32 *, u32, void *);
 void func_80004E08(void *, s32, s16);
 void buildCiTextureDisplayList(void *, s32);
-u32 func_8001CE80(void *);
+u32 osVirtualToPhysical(void *);
 
 #define GFX_CMD(pkt, a, b) { Gfx74A4 *_g = (pkt); _g->w0 = (a); _g->w1 = (b); }
 
@@ -110,7 +110,7 @@ void func_800074A4(Gfx74A4 *buf, Ent74A4 *arg1, u16 *arg2, s16 arg3)
         if (arg2[i] != 0 && arg1[i].count > 0) {
             if (arg1[i].vtx != NULL) {
                 GFX_CMD(gfx++, 0x01000000 | ((arg1[i].n & 0xFF) << 12) | (((arg1[i].v0 + arg1[i].n) & 0x7F) << 1),
-                        func_8001CE80(arg1[i].vtx));
+                        osVirtualToPhysical(arg1[i].vtx));
             }
             if (arg1[i].dl != 0) {
                 GFX_CMD(gfx++, 0xDE000000, arg1[i].dl - 0x80000000);

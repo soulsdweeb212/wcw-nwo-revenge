@@ -5,7 +5,7 @@
  */
 /* bcmp: libultra bcmp(void *s1, void *s2, s32 len) (src/libc/bcmp.s): returns 0 if the len
  * bytes are identical, 1 otherwise (not an ordering like memcmp). Only caller in the ROM: __osCheckId
- * (compares the Controller Pak ID block against the cached copy); func_80022154 declares it but
+ * (compares the Controller Pak ID block against the cached copy); __osIdCheckSum declares it but
  * never calls it.
  * Method: below 16 bytes it compares byte by byte. If s1 and s2 have the same alignment
  * ((s1 ^ s2) & 3 == 0), it compares the 1-3 head bytes with one `lwl` from each side, then whole

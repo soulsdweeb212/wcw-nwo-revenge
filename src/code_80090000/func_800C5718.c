@@ -15,7 +15,7 @@ extern P D_800EA0BC;
 void func_80003E78(s32);
 s32 func_800ABDDC(void);
 void func_800C55B0(s32);
-void func_80021C40(void *, void *, s32);
+void bcopy(void *, void *, s32);
 
 void func_800C5718(void) {
     s32 n, i, j;
@@ -61,7 +61,7 @@ void func_800C5718(void) {
     if (n >= 4) {
         func_800C55B0(n);
     } else {
-        func_80021C40(&D_8006E178[n], &D_800EA0BC, 0xC);
+        bcopy(&D_8006E178[n], &D_800EA0BC, 0xC);
         D_800EA0C4 = D_800EA0C8[n];
     }
     D_800E81E8 = 0;

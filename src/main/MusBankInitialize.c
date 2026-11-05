@@ -1,0 +1,28 @@
+/* @header
+ * MusBankInitialize  (originally func_80014004)
+ * VRAM 0x80014004 | ROM 0x14C04 | size 0x1C
+ * asm: asm/nonmatchings/main/MusBankInitialize.s
+ */
+/* SDK: libmus, libmus/src/player.c (+playerinc/player_api.inc.c) (SDK code with changes, see docs/sdk_functions.md). */
+#include "common.h"
+
+/* identical to func_80002C58 (matched), with its names changed by decompdecomp */
+/* machine draft (m2c), tried by autopilot */
+#ifndef M2C_DEFINES
+#define M2C_DEFINES
+typedef s32 M2C_UNK;
+typedef s8 M2C_UNK8;
+typedef s16 M2C_UNK16;
+typedef s32 M2C_UNK32;
+#define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
+#define M2C_BITWISE(type, expr) ((type)(expr))
+#define M2C_ERROR(desc) (0)
+#define M2C_CARRY 0
+#define M2C_OVERFLOW(a) (0)
+#endif
+
+M2C_UNK __MusIntRemapPtrBank();                            /* extern */
+
+void MusBankInitialize(void) {
+    __MusIntRemapPtrBank();
+}

@@ -5,7 +5,7 @@
  */
 #include "common.h"
 
-void func_800194B8(void *, s32);
+void n_alLoadParam(void *, s32);
 
 typedef struct {
     u16 id;

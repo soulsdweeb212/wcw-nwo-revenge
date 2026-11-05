@@ -12,7 +12,7 @@ typedef struct { s16 x; s16 y; u8 pad4[0x1C]; } Row;
 
 extern V *D_800E7CB4;
 extern u8 D_800D6210[], D_800D6214[];
-u32 func_8001CE80(V *);
+u32 osVirtualToPhysical(V *);
 T *func_800B75D4(G **, void *, s32);
 T *func_800B7A00(G **, s32, s32);
 void *func_800995EC(s32);
@@ -29,7 +29,7 @@ void func_800A46EC(G **dl, u32 k, s32 n, Row *r) {
     s32 w;
 
     if ((s32)k > 0 && (k & 0x1000000)) {
-        { G *_g = g++; _g->w0 = 0x01004040; _g->w1 = func_8001CE80(D_800E7CB4); }
+        { G *_g = g++; _g->w0 = 0x01004040; _g->w1 = osVirtualToPhysical(D_800E7CB4); }
         VTX(-3, r[n + 1].y, 0, 0);
         VTX(-3, r[n + 2].y, 0x1C0, 0);
         VTX(3, r[n + 1].y, 0, 0x1C0);

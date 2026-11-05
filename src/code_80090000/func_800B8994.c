@@ -15,27 +15,27 @@ void func_800B8994(void) {
 
     D_800DCFC4 = func_8000424C();
     b = allocateHeap(0x100);
-    func_8001C5B0(b, 0x100);
+    osInvalDCache(b, 0x100);
     for (i = 0, q = b; i < 8; i++, q += 0x20) {
         __osContRamRead(D_800DCFC4, 0, (u16)i, q);
     }
     releaseHeapBlock(b);
     b = allocateHeap(0x100);
-    func_8001C5B0(b, 0x100);
+    osInvalDCache(b, 0x100);
     for (i = 0, q = b; i < 8; i++, q += 0x20) {
         __osContRamRead(D_800DCFC4, 0, (u16)i, q);
     }
     for (j = 0; j < 0x100; j++) {
         b[j]++;
     }
-    func_8001C7E0(b, 0x100);
+    osWritebackDCache(b, 0x100);
     for (i = 0, q = b; i < 8; i++, q += 0x20) {
         __osContRamWrite(D_800DCFC4, 0, (u16)i, q, 1);
     }
     releaseHeapBlock(b);
     func_800B9474();
     b = allocateHeap(0x100);
-    func_8001C5B0(b, 0x100);
+    osInvalDCache(b, 0x100);
     for (i = 0, q = b; i < 8; i++, q += 0x20) {
         __osContRamRead(D_800DCFC4, 0, (u16)i, q);
     }

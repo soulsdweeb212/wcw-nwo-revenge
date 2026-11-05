@@ -10,7 +10,7 @@ extern HeapBlock *D_8002EE94;
 extern HeapBlock D_801F0000;
 extern u32 D_801F0004;
 extern s32 D_8007C430;
-void func_80021F60(void *, s32);
+void bzero(void *, s32);
 /* Allocates at least `bytes` from the circular 16-byte-unit free list,
  * initializing the 0x21000-unit heap on first use. Splits a block when it is
  * larger than needed, stamps the 0xCAFE4ABE magic and returns the payload. */
@@ -21,7 +21,7 @@ void *allocateHeap(u32 bytes) {
     u32 size;
     if (prev == NULL) {
         prev = &D_801F0000;
-        func_80021F60(prev, 0x210000);
+        bzero(prev, 0x210000);
         D_8002EE94 = prev;
         D_801F0000.next = prev;
         D_801F0004 = 0x21000;

@@ -24,9 +24,9 @@ void *allocateHeap(u32);
 void readRomSynchronousChunks(void *, void *, s32);
 void *func_80000610(void);
 void func_80003418(s32);
-void initializeAudioSystem(Nw2AudioInit *);
-void func_800137F0(s32, s16);
-void func_80014004(s32, void *);
+void MusInitialize(Nw2AudioInit *);
+void MusSetMasterVolume(s32, s16);
+void MusBankInitialize(s32, void *);
 
 void func_80003120(void) {
     s32 size, start;
@@ -63,10 +63,10 @@ void func_80003120(void) {
     cfg.f3C = 1;
     cfg.f40 = 0x84;
     cfg.f44 = 0x500;
-    initializeAudioSystem(&cfg);
+    MusInitialize(&cfg);
 
     func_80003418(0x7F);
     D_800482DA = 0x7FFF;
-    func_800137F0(1, 0x7FFF);
-    func_80014004(D_800482D4, &D_00E3B300);
+    MusSetMasterVolume(1, 0x7FFF);
+    MusBankInitialize(D_800482D4, &D_00E3B300);
 }

@@ -73,14 +73,14 @@ typedef struct {
      ((p).inode_t.page >= 0x01) && ((p).inode_t.page < 0x80))
 
 s32 __osCheckId(void *);
-s32 readControllerPakId(void *);
+s32 __osGetId(void *);
 s32 corrupted_init(void *, __OSInodeCache *);
-s32 countControllerPakPageReferences(void *, __OSInodeUnit, __OSInodeCache *);
-s32 readWriteControllerPakInode(void *, __OSInode *, u8, u8);
+s32 corrupted(void *, __OSInodeUnit, __OSInodeCache *);
+s32 __osPfsRWInode(void *, __OSInode *, u8, u8);
 s32 __osContRamRead(void *, int, u16, void *);
 s32 __osContRamWrite(void *, int, u16, void *, int);
-s32 func_80025480(void *, s32);
-void func_80021F60(void *, s32);
+s32 __osPfsSelectBank(void *, s32);
+void bzero(void *, s32);
 
 s32 osPfsChecker(OSPfs *pfs) {
     int j;
@@ -101,7 +101,7 @@ s32 osPfsChecker(OSPfs *pfs) {
     ret = __osCheckId(pfs);
 
     if (ret == PFS_ERR_NEW_PACK) {
-        ret = readControllerPakId(pfs);
+        ret = __osGetId(pfs);
     }
 
     if (ret != 0) {
@@ -132,7 +132,7 @@ s32 osPfsChecker(OSPfs *pfs) {
                         bank = next_page.inode_t.bank;
 
                         if (oldbank != bank) {
-                            ret = readWriteControllerPakInode(pfs, &tmp_inode, PFS_READ, bank);
+                            ret = __osPfsRWInode(pfs, &tmp_inode, PFS_READ, bank);
                             oldbank = bank;
                         }
 
@@ -141,7 +141,7 @@ s32 osPfsChecker(OSPfs *pfs) {
                         }
                     }
 
-                    if ((cc = countControllerPakPageReferences(pfs, next_page, &cache) - cl) != 0) {
+                    if ((cc = corrupted(pfs, next_page, &cache) - cl) != 0) {
                         break;
                     }
 
@@ -151,10 +151,10 @@ s32 osPfsChecker(OSPfs *pfs) {
             }
 
             if (cc != 0 || next_page.ipage != PFS_EOF) {
-                func_80021F60(&tmp_dir, sizeof(__OSDir));
+                bzero(&tmp_dir, sizeof(__OSDir));
 
                 if (pfs->activebank != 0) {
-                    ret = func_80025480(pfs, 0);
+                    ret = __osPfsSelectBank(pfs, 0);
                     if (ret != 0) {
                         return ret;
                     }
@@ -182,7 +182,7 @@ s32 osPfsChecker(OSPfs *pfs) {
     }
 
     for (bank = 0; bank < pfs->banks; bank++) {
-        ret = readWriteControllerPakInode(pfs, &tmp_inode, PFS_READ, bank);
+        ret = __osPfsRWInode(pfs, &tmp_inode, PFS_READ, bank);
 
         if (ret != 0 && ret != PFS_ERR_INCONSISTENT) {
             return ret;
@@ -204,7 +204,7 @@ s32 osPfsChecker(OSPfs *pfs) {
                 file_next_node[j] = checked_inode.inode_page[pp] = tmp_inode.inode_page[pp];
             }
         }
-        ret = readWriteControllerPakInode(pfs, &checked_inode, PFS_WRITE, bank);
+        ret = __osPfsRWInode(pfs, &checked_inode, PFS_WRITE, bank);
         if (ret != 0) {
             return ret;
         }

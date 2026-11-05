@@ -19,7 +19,7 @@ extern Cfg D_8007E228;
 extern u8 D_800E7C60[][8];
 extern u8 D_800CCCA4[], D_800CCCAC[], D_800CCCB4[];
 extern f64 D_800D6208;
-u32 func_8001CE80(V *);
+u32 osVirtualToPhysical(V *);
 void func_800B6FE0(G **, s32);
 T *func_800B75D4(G **, void *, s32);
 void *func_8002AD34(s32, s32);
@@ -69,7 +69,7 @@ void func_800A4284(G **dl, Item *it) {
         } else {
             hw = t->w * 7 * D_800D6208;
         }
-        { G *_g = g++; _g->w0 = 0x01004018; _g->w1 = func_8001CE80(D_800E7CB4); }
+        { G *_g = g++; _g->w0 = 0x01004018; _g->w1 = osVirtualToPhysical(D_800E7CB4); }
         {
             V *v = D_800E7CB4++;
             v->ob[0] = -hw; v->ob[1] = -0x4E; v->ob[2] = 0; v->flag = 0;

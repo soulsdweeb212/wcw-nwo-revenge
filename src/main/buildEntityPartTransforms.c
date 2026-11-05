@@ -22,7 +22,7 @@ void func_8000801C(void*,f32,f32,f32,f32*,f32*);
 f32 func_80003A3C(f32,f32);
 f32 func_80003CF0(f32);
 f32 nw2Sqrtf(f32);
-void func_8001BE70(void*,f32,f32,f32);
+void guScaleF(void*,f32,f32,f32);
 void func_80007E14(void*,f32);
 void multiplyMatrix4x4(void*,void*,void*);
 void func_80007E04(void*,f32,f32,s32);
@@ -112,7 +112,7 @@ loop:
         sx = fs * scale;
         dst->f18 = v18;
         sz = (f32)D_800308A8[i] * scale;
-        func_8001BE70(m, sx, 1.0f, sz);
+        guScaleF(m, sx, 1.0f, sz);
         func_80007E14(r, angle);
         multiplyMatrix4x4(m, r, dst->mat);
         func_80007E04(dst->mat, -FLD(D_80070C94,off), height, *(volatile s32*)((u8*)D_80070C9C + off));

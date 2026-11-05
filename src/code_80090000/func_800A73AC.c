@@ -12,7 +12,7 @@ typedef struct { u8 pad0[0xA]; u16 flags; s8 idx; u8 padD[0x14]; u8 col; } Item;
 typedef struct { u8 pad0[4]; V *v; } Spr;
 extern V *D_800E7CB4;
 extern u16 D_800E7C84[];
-u32 func_8001CE80(V *);
+u32 osVirtualToPhysical(V *);
 
 #define EMIT(a, b) { G *_g = g++; _g->w0 = (a); _g->w1 = (b); }
 
@@ -26,7 +26,7 @@ void func_800A73AC(G **dl, Item *it, Spr *s) {
     EMIT(0xFC51FEA3, 0x44FE773B);
     if (!(it->flags & 0x53)) {
         s32 n = it->idx;
-        EMIT(0x01004008, func_8001CE80(D_800E7CB4));
+        EMIT(0x01004008, osVirtualToPhysical(D_800E7CB4));
         {
             V *v = D_800E7CB4++;
             V *q = &src[n * 4 + 0];
@@ -73,7 +73,7 @@ void func_800A73AC(G **dl, Item *it, Spr *s) {
         }
         EMIT(0x07000206, 0x604);
     }
-    EMIT(0x01004010, func_8001CE80(&src[60]));
+    EMIT(0x01004010, osVirtualToPhysical(&src[60]));
     i = D_800E7C84[it->col];
     r = (u32)i >> 11;
     gr = ((u32)i >> 6) & 0x1F;
@@ -85,7 +85,7 @@ void func_800A73AC(G **dl, Item *it, Spr *s) {
     EMIT(0x0210000E, ((r * 16 / 3) << 24) | (((gr * 16 / 3) & 0xFF) << 16) | (((b * 16 / 3) & 0xFF) << 8) | 0xFF);
     EMIT(0x07080A0E, 0x00080E0C);
     for (i = 0; i < 15; i++) {
-        EMIT(0x01004008, func_8001CE80(&src[i * 4]));
+        EMIT(0x01004008, osVirtualToPhysical(&src[i * 4]));
         EMIT(0x07000206, 0x604);
     }
     *dl = g;

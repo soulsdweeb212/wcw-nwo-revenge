@@ -9,7 +9,7 @@ extern void *D_80046860[];
 extern s16 D_80047062;
 extern f32 D_80048288[][4];
 f32 nw2Sqrtf(f32);
-void func_8001B3EC(void *, s32, s32, s32, void *, void *, void *);
+void guMtxXFMF(void *, s32, s32, s32, void *, void *, void *);
 void func_80001EA8(s32 arg0)
 {
     volatile u64 pad;
@@ -54,7 +54,7 @@ void func_80001EA8(s32 arg0)
 
                 }
 
-                func_8001B3EC(((u8 *) a0p) + 0x9C, *((s32 *) (((u8 *) s0) + 0xC)), *((s32 *) (((u8 *) s0) + 0x10)), *((s32 *) (((u8 *) s0) + 0x14)), ((u8 *) s0) + 0x18, ((u8 *) s0) + 0x1C, ((u8 *) s0) + 0x20);
+                guMtxXFMF(((u8 *) a0p) + 0x9C, *((s32 *) (((u8 *) s0) + 0xC)), *((s32 *) (((u8 *) s0) + 0x10)), *((s32 *) (((u8 *) s0) + 0x14)), ((u8 *) s0) + 0x18, ((u8 *) s0) + 0x1C, ((u8 *) s0) + 0x20);
                 ((f32 *) s0)[0xA] = ((f32 *) s0)[0xA] + (((f32 *) s0)[8] * 1024.0f);
                 ((f32 *) s0)[0xA] = ((f32 *) s0)[0xA] + nw2Sqrtf((((f32 *) s0)[6] * ((f32 *) s0)[6]) + (((f32 *) s0)[7] * ((f32 *) s0)[7]));
             }

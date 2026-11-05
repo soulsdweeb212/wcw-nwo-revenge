@@ -10,8 +10,8 @@ typedef struct { Key *keys; f32 x, y, z; s32 r; s16 idx; s16 t; } Anim;
 typedef struct { u8 pad0[0x6B8]; s16 f6B8; u8 pad6BA[0xA]; s32 f6C4; } WrF2F0;
 
 extern f64 D_800D6AD0;
-void buildScaledRotationTranslationMatrix(void *, f32, f32, f32, f32, f32, f32, f32);
-void func_8001B3EC(void *, f32, f32, f32, f32 *, f32 *, f32 *);
+void guPositionF(void *, f32, f32, f32, f32, f32, f32, f32);
+void guMtxXFMF(void *, f32, f32, f32, f32 *, f32 *, f32 *);
 
 void func_800BF2F0(WrF2F0 *w, Anim *a) {
     Key *k = &a->keys[a->idx];
@@ -46,8 +46,8 @@ void func_800BF2F0(WrF2F0 *w, Anim *a) {
         break;
     }
     if (s != 0) {
-        buildScaledRotationTranslationMatrix(m, 0.0f, a->r * D_800D6AD0, 0.0f, 1.0f, a->x, a->y, a->z);
-        func_8001B3EC(m, 0.0f, 0.0f, s, &a->x, &a->y, &a->z);
+        guPositionF(m, 0.0f, a->r * D_800D6AD0, 0.0f, 1.0f, a->x, a->y, a->z);
+        guMtxXFMF(m, 0.0f, 0.0f, s, &a->x, &a->y, &a->z);
     }
     if (!done && w->f6C4 == 4 && -300.0f < a->x && a->x < 300.0f && -300.0f < a->z && a->z < 300.0f) {
         a->y = 90.0f;

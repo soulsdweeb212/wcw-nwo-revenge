@@ -17,7 +17,7 @@ f32 nw2Sqrtf(f32);
 f32 func_80003A3C(f32, f32);
 f32 func_80003CF0(f32);
 s16 func_8000CF64(f32, f32);
-s32 func_8001C580(void);
+s32 guRandom(void);
 s8 func_800D633C(void);
 f32 sinf(f32);
 f32 cosf(f32);
@@ -96,10 +96,10 @@ void func_8009C774(s16 arg0, u16 *ids) {
         D_800E2FDC = kind;
         D_800E2FDE = kind;
         if (kind == 0x1A || kind == 0x1E) {
-            D_800E2FDE = func_8001C580() % 6 + 0x14;
+            D_800E2FDE = guRandom() % 6 + 0x14;
         }
         if (D_800E2FDE == 0x14 || D_800E2FDE == 0x17) {
-            if (func_8001C580() % 5 == 0) {
+            if (guRandom() % 5 == 0) {
                 D_800E2FDE = 0x1A;
             }
         }
@@ -115,7 +115,7 @@ void func_8009C774(s16 arg0, u16 *ids) {
             D_800EB358 = t0;
             D_800E2FE2 = (D_800E2FE2 + 1) & 3;
             if (D_800F99B6 == 0 && !func_800D633C()) {
-                D_800EB3A0 = D_800E2FC8[func_8001C580() % 3];
+                D_800EB3A0 = D_800E2FC8[guRandom() % 3];
             }
         } else {
             D_800EB358 = ang;

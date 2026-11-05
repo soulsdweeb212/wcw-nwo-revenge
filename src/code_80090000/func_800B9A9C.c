@@ -5,7 +5,7 @@
  */
 #include "common.h"
 
-s32 deleteControllerPakFile(s32 *, s32, s32, s32 *, s32 *);   /* extern */
+s32 osPfsDeleteFile(s32 *, s32, s32, s32 *, s32 *);   /* extern */
 s32 func_8000424C();                                /* extern */
 s32 func_80004290();                                  /* extern */
 s32 func_800B8C4C(s32);                               /* extern */
@@ -20,7 +20,7 @@ s32 func_800B9A9C(void) {
     s32 var_s0;
 
     D_800DCFC4 = func_8000424C();
-    D_800DCFBC = deleteControllerPakFile(&D_800DCF50, 0x4538, 0x4E56504A, &D_800D2938, &D_800D2948);
+    D_800DCFBC = osPfsDeleteFile(&D_800DCF50, 0x4538, 0x4E56504A, &D_800D2938, &D_800D2948);
     var_s0 = 0;
     func_80004290();
     do {

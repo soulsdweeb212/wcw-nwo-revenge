@@ -6,7 +6,7 @@
 #include "common.h"
 
 void func_800033C0(s32);
-s32 func_8001381C(s32);
+s32 MusStartSong(s32);
 extern s32 D_8002EED0;
 
 /* When arg0 is nonzero, reset the current track and load the new one; return the
@@ -14,7 +14,7 @@ extern s32 D_8002EED0;
 s32 func_8000337C(s32 arg0) {
     if (arg0 != 0) {
         func_800033C0(0);
-        D_8002EED0 = func_8001381C(arg0);
+        D_8002EED0 = MusStartSong(arg0);
     }
     return D_8002EED0;
 }

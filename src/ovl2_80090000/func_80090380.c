@@ -7,7 +7,7 @@
 
 void func_80004AFC(void);
 void *allocateHeap(u32 bytes);
-u32 func_8001CE80(void *);
+u32 osVirtualToPhysical(void *);
 
 typedef struct {
     u32 w0;
@@ -49,7 +49,7 @@ void func_80090380(Node *n, u16 mode) {
         }
     }
     CMD(g, 0xD9DFFFFF, 0);
-    CMD(g, 0x01004008, func_8001CE80(n->vtx));
+    CMD(g, 0x01004008, osVirtualToPhysical(n->vtx));
     CMD(g, 0x06000204, 0x40206);
     CMD(g, 0xE7000000, 0);
     CMD(g, 0xD9FFFFFF, 0x200000);

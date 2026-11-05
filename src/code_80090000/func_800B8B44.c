@@ -12,7 +12,7 @@ typedef struct { s32 chk; u8 pad[0x98]; } Chk;
 extern u8 *D_800DCFB8;
 s32 func_800B9228(void *, s32);
 u8 *func_8002B790(s32, s32);
-void func_80021C40(void *, void *, s32);
+void bcopy(void *, void *, s32);
 
 void func_800B8B44(void) {
     s32 i, j;
@@ -23,8 +23,8 @@ void func_800B8B44(void) {
         if (c->chk != func_800B9228(p, 0x98)) {
             for (j = 0; j < 4; j++) {
                 r = func_8002B790(i, j);
-                func_80021C40(r, p->r[j].a, 0x18);
-                func_80021C40(r + 0x19, p->r[j].b, 0xA);
+                bcopy(r, p->r[j].a, 0x18);
+                bcopy(r + 0x19, p->r[j].b, 0xA);
                 p->r[j].c = r[0x24];
                 p->r[j].d = r[0x25];
                 p->r[j].e = (r[0x27] & 0x1F) | ((r[0x28] & 0x1F) << 5);

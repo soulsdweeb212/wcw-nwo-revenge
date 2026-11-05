@@ -45,14 +45,14 @@ extern s32 D_800375F0;
 #define OS_READ 0
 #define OS_MESG_BLOCK 1
 
-void func_80027744(void);
-void func_800277B0(void);
-s32 func_80025810(s32, void *);
-s32 func_8001C990(void *, void *, s32);
-void func_80021C40(void *, void *, s32);
-s32 calculateControllerPakAddressCrc(u16);
-s32 calculateControllerPakDataCrc(u8 *);
-s32 func_80024640(void *, int);
+void __osSiGetAccess(void);
+void __osSiRelAccess(void);
+s32 __osSiRawStartDma(s32, void *);
+s32 osRecvMesg(void *, void *, s32);
+void bcopy(void *, void *, s32);
+s32 __osContAddressCrc(u16);
+s32 __osContDataCrc(u8 *);
+s32 __osPfsGetStatus(void *, int);
 
 /* SDK: writes one 32-byte block of Controller Pak data for `channel`. Builds
  * the PIF packet (block header once per channel), writes the address and its
@@ -70,7 +70,7 @@ s32 __osContRamWrite(void *mq, int channel, u16 address, u8 *buffer, int force) 
         return 0;
     }
 
-    func_80027744();
+    __osSiGetAccess();
 
     do {
         if (D_8007BD30 != CONT_CMD_WRITE_PAK || (u32)D_800375F0 != channel) {
@@ -95,22 +95,22 @@ s32 __osContRamWrite(void *mq, int channel, u16 address, u8 *buffer, int force) 
         }
 
         READFORMAT(pif)->addrh = address >> 3;
-        READFORMAT(pif)->addrl = (calculateControllerPakAddressCrc(address) | (address << 5));
+        READFORMAT(pif)->addrl = (__osContAddressCrc(address) | (address << 5));
 
-        func_80021C40(buffer, READFORMAT(pif)->data, BLOCKSIZE);
+        bcopy(buffer, READFORMAT(pif)->data, BLOCKSIZE);
 
-        err = func_80025810(OS_WRITE, &D_8007DFD0);
-        dataCrc = calculateControllerPakDataCrc(buffer);
-        func_8001C990(mq, NULL, OS_MESG_BLOCK);
+        err = __osSiRawStartDma(OS_WRITE, &D_8007DFD0);
+        dataCrc = __osContDataCrc(buffer);
+        osRecvMesg(mq, NULL, OS_MESG_BLOCK);
 
-        err = func_80025810(OS_READ, &D_8007DFD0);
-        func_8001C990(mq, NULL, OS_MESG_BLOCK);
+        err = __osSiRawStartDma(OS_READ, &D_8007DFD0);
+        osRecvMesg(mq, NULL, OS_MESG_BLOCK);
 
         err = CHNL_ERR(*READFORMAT(pif));
 
         if (!err) {
             if (dataCrc != READFORMAT(pif)->datacrc) {
-                if ((err = func_80024640(mq, channel))) {
+                if ((err = __osPfsGetStatus(mq, channel))) {
                     break;
                 } else {
                     err = PFS_ERR_CONTRFAIL;
@@ -121,7 +121,7 @@ s32 __osContRamWrite(void *mq, int channel, u16 address, u8 *buffer, int force) 
         }
     } while ((err == PFS_ERR_CONTRFAIL) && (tries-- >= 0));
 
-    func_800277B0();
+    __osSiRelAccess();
 
     return err;
 }

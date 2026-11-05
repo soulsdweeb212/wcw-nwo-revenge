@@ -6,7 +6,7 @@
 #include "common.h"
 
 s64 __divdi3(s64, s64);
-f32 signed64ToFloatTrunc(s64);
+f32 __floatdisf(s64);
 
 typedef struct {
     s16 x, y, z;
@@ -41,14 +41,14 @@ void func_800080A0(u8 *entity, f32 *avg, f32 *maxOut, f32 *minOut)
             if (v[i].z > maxY) maxZ = v[i].z;
             if (v[i].z < minY) minZ = v[i].z;
         }
-        avg[0] = signed64ToFloatTrunc(sx / count);
-        avg[1] = signed64ToFloatTrunc(sy / count);
-        avg[2] = signed64ToFloatTrunc(sz / count);
-        maxOut[0] = signed64ToFloatTrunc(maxX);
-        maxOut[1] = signed64ToFloatTrunc(maxY);
-        maxOut[2] = signed64ToFloatTrunc(maxZ);
-        minOut[0] = signed64ToFloatTrunc(minX);
-        minOut[1] = signed64ToFloatTrunc(minY);
-        minOut[2] = signed64ToFloatTrunc(minZ);
+        avg[0] = __floatdisf(sx / count);
+        avg[1] = __floatdisf(sy / count);
+        avg[2] = __floatdisf(sz / count);
+        maxOut[0] = __floatdisf(maxX);
+        maxOut[1] = __floatdisf(maxY);
+        maxOut[2] = __floatdisf(maxZ);
+        minOut[0] = __floatdisf(minX);
+        minOut[1] = __floatdisf(minY);
+        minOut[2] = __floatdisf(minZ);
     }
 }

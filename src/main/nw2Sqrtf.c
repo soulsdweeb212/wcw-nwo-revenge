@@ -3,6 +3,9 @@
  * VRAM 0x8001A480 | ROM 0x1B080 | size 0x8
  * asm: asm/nonmatchings/main/nw2Sqrtf.s
  */
+/* SDK: libultra 2.0I sqrtf (ultralib src/gu/sqrtf.s), a single sqrt.s. Named nw2Sqrtf because GCC expands a call named
+ * sqrtf inline (sqrt.s plus a fallback call), which is what libultra's own callers (guAlignF ...) do in the ROM, while
+ * the game calls this address directly; the symbol sqrtf in build.json is the second name the libultra callers use. */
 #include "common.h"
 
 /* machine draft (m2c) for gcc-2.7.2-kmc -G0 -mips3 -mgp32 -mfp32 -O2 -ffast-math, tried by autopilot */

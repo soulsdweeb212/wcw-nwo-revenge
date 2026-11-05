@@ -21,17 +21,17 @@ extern u8 D_3C6D0[],D_3C770[];
 extern s32 readRomSynchronousChunks(void *, void *, s32);
 extern s32 func_80000580(void *, void *);
 extern void *allocateHeap(u32);
-extern s32 func_8001C740(s32);
-extern s32 func_8001C890(void *, void *, s32);
-extern s32 func_8001C8C0(void *, s32, void *, s32, void *, s32);
-extern void startThread(void *);
-extern s32 func_80020ED0(void *);
-extern void setViSpecialFeatures(s32);
-extern void func_80021130(s32);
-extern s32 func_80021C40(void *, void *, s32);
+extern s32 osSetIntMask(s32);
+extern s32 osCreateMesgQueue(void *, void *, s32);
+extern s32 osCreateThread(void *, s32, void *, s32, void *, s32);
+extern void osStartThread(void *);
+extern s32 osViSetMode(void *);
+extern void osViSetSpecialFeatures(s32);
+extern void osViBlack(s32);
+extern s32 bcopy(void *, void *, s32);
 extern void func_80002CC4(void);
-static __inline__ void initRenderQueue(u8 *q) {func_8001C890(q,D_80046780,16);func_80000580(D_80046760,q);}
-static __inline__ void setVideoModeFromWidth(s32 *width) {func_80020ED0((u8 *)width-8);}
+static __inline__ void initRenderQueue(u8 *q) {osCreateMesgQueue(q,D_80046780,16);func_80000580(D_80046760,q);}
+static __inline__ void setVideoModeFromWidth(s32 *width) {osViSetMode((u8 *)width-8);}
 void func_80001260(void) {
     s32 t; u8 *v; u32 *p; u32 i; s16 two; s32 *width; u8 *q;
     if(D_8002EEC4) {
@@ -41,19 +41,19 @@ void func_80001260(void) {
         q=D_80046768;
         initRenderQueue(q);
         q=D_800445B0;
-        func_8001C8C0(q,3,func_80002CC4,0,D_80046760,0x46);
-        func_8001C890(D_800467C0,D_800467D8,1);
-        func_8001C890(D_800467E0,D_800467F8,1);
-        startThread(q);
+        osCreateThread(q,3,func_80002CC4,0,D_80046760,0x46);
+        osCreateMesgQueue(D_800467C0,D_800467D8,1);
+        osCreateMesgQueue(D_800467E0,D_800467F8,1);
+        osStartThread(q);
         D_800445A0=allocateHeap(0x400);D_800445A4=allocateHeap(0xC00);D_800445A8=allocateHeap(0x10008);
-        if(D_80000300==1) func_80021C40(&D_80037540,D_80046808,0x50);
-        else func_80021C40(&D_80037590,D_80046808,0x50);
-        t=func_8001C740(0x80401);
+        if(D_80000300==1) bcopy(&D_80037540,D_80046808,0x50);
+        else bcopy(&D_80037590,D_80046808,0x50);
+        t=osSetIntMask(0x80401);
         width=&D_80046810;*width=0x1E0;D_80046828=0x300;D_80046830=0x3C0;D_80046844=0x3C0;
         i=0;
-        func_8001C740(t);
+        osSetIntMask(t);
         setVideoModeFromWidth(width);
-        setViSpecialFeatures(0x6A);func_80021130(1);
+        osViSetSpecialFeatures(0x6A);osViBlack(1);
         two=2;p=D_80044590;
         do {v=allocateHeap(0x4078);p[i]=(u32)v;*(s16 *)(v+0x4058)=two;*(u8 **)(v+0x4050)=D_80046768;*(u32 *)(v+0x4054)=p[i]+(unsigned)0x4058;i += 1;}while(i<4);
         D_80046858=allocateHeap(0x17000);

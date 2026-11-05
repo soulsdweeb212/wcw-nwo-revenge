@@ -10,7 +10,7 @@ typedef struct { u8 pad0[0x20]; u16 f20; u8 pad22[0x148 - 0x22]; } El;
 extern s32 D_8007E8C0[], D_800DC830[], D_800DC840[], D_800DC850[], D_800E7BF0[], D_800E79A0[], D_800EA098[];
 extern u8 D_8007EF30[], D_800E7C60[][8];
 extern u8 *D_800E948C;
-void func_80021F60(void *, s32);
+void bzero(void *, s32);
 void func_800B3640(void);
 void func_800B5300(s32);
 
@@ -28,7 +28,7 @@ s32 func_800B39C0(void) {
         D_800DC840[i] = -1;
         D_800DC830[i] = -1;
         D_800EA098[i] = -1;
-        func_80021F60(D_800E7C60[i], 8);
+        bzero(D_800E7C60[i], 8);
     }
     for (i = 0, w = (El *)p; i < 4; i++, w += 2) {
         v = w->f20;

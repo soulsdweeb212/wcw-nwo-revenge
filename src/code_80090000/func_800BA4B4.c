@@ -7,7 +7,7 @@
 
 extern u8 *D_800DCFB8;
 u8 *func_8002B790(s32, s32);
-void func_80021C40(void *, void *, s32);
+void bcopy(void *, void *, s32);
 
 s32 func_800BA4B4(void) {
     s32 i, j;
@@ -17,8 +17,8 @@ s32 func_800BA4B4(void) {
         for (j = 0; j < 4; j++) {
             d = func_8002B790(i, j);
             s = D_800DCFB8 + 0x600 + i * 0x9C + j * 0x26;
-            func_80021C40(s, d, 0x18);
-            func_80021C40(s + 0x18, d + 0x19, 0xA);
+            bcopy(s, d, 0x18);
+            bcopy(s + 0x18, d + 0x19, 0xA);
             d[0x24] = s[0x22];
             d[0x25] = s[0x23];
             d[0x26] = 0;

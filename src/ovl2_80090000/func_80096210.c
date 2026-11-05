@@ -50,7 +50,7 @@ extern Rec2C D_800E93F0[];
 extern s16 D_800E9448;
 extern s16 D_800E944A;
 s32 func_8000DEE4(s16);
-void func_80013F7C(s32, s32);
+void MusHandleSetReverb(s32, s32);
 s32 func_80090A38(ObjDC *, Rec2C *, ObjDC *, Rec2C *, f32, s16, s32);
 s32 func_80091108(ObjDC *, Rec2C *, ObjDC *, Rec2C *, f32, s16, s16);
 s32 func_80091748(ObjDC *, Rec2C *, ObjDC *, Rec2C *, s16);
@@ -104,7 +104,7 @@ void func_80096210(void) {
             D_800E8E80.node->flags &= ~0x80;
             done = func_80090A38(&D_800E8DA0, &D_800E8F60[D_800E91CC], &D_800E8E80, &D_800E9098[D_800E91CC], 42.0f, D_800E91D0, 1);
             if (D_800E91D0 == 6 && D_800E2B64[D_800E91CC] > 0) {
-                func_80013F7C(func_8000DEE4(D_800E2B64[D_800E91CC]), 30);
+                MusHandleSetReverb(func_8000DEE4(D_800E2B64[D_800E91CC]), 30);
             }
         }
         D_800E91D0++;

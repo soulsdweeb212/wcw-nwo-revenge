@@ -50,9 +50,9 @@ void initializeResourceStream(s16, s16);
 void updateBodyPartTransforms(s16);
 void func_80007E14(f32 *, f32);
 void func_80007E04(f32 *, f32, f32, f32);
-void func_8001B3EC(f32 *, f32, f32, f32, f32 *, f32 *, f32 *);
+void guMtxXFMF(f32 *, f32, f32, f32, f32 *, f32 *, f32 *);
 void func_80001DC4(void *);
-void nw2Mat4Mul(f32 *, f32 *, f32 *);
+void guMtxCatF(f32 *, f32 *, f32 *);
 void multiplyMatrix4x4(f32 *, f32 *, f32 *);
 
 void func_80008CE8(s16 entity, s16 anim, s16 frame, f32 *pos, f32 *vec, u8 flags) {
@@ -127,9 +127,9 @@ void func_80008CE8(s16 entity, s16 anim, s16 frame, f32 *pos, f32 *vec, u8 flags
         t = &b->f54;
         func_80007E14(o->m, f0);
         func_80007E04(nd->obj->m, D_80070C40[entity][0].fC, D_80070C40[entity][0].f10, D_80070C40[entity][0].f14);
-        nw2Mat4Mul(D_800706A8[entity].mtx, nd->obj->m, nd->obj->m);
+        guMtxCatF(D_800706A8[entity].mtx, nd->obj->m, nd->obj->m);
         multiplyMatrix4x4(nd->m1C, nd->obj->m, nd->m5C);
-        func_8001B3EC(nd->m5C, b->f48, b->f4C, b->f50, &t[0], &t[1], &t[2]);
+        guMtxXFMF(nd->m5C, b->f48, b->f4C, b->f50, &t[0], &t[1], &t[2]);
         t[0] = -t[0];
         pos[0] += old[0] - t[0];
         pos[2] += old[2] - t[2];
@@ -149,10 +149,10 @@ void func_80008CE8(s16 entity, s16 anim, s16 frame, f32 *pos, f32 *vec, u8 flags
             b2 = (Bone8CE8 *)((u8 *)D_80070C40[entity] + i * sizeof(Bone8CE8));
             nd = (Node8CE8 *)((u32)(entity * sizeof(D_800651A0[0])) + (u32)n0);
             t = &b2->f54;
-            func_8001B3EC(nd->m5C, b2->f48, b2->f4C, b2->f50, t, &b2->f58, &b2->f5C);
+            guMtxXFMF(nd->m5C, b2->f48, b2->f4C, b2->f50, t, &b2->f58, &b2->f5C);
             *t = -*t;
             t = &b2->f6C;
-            func_8001B3EC(nd->m5C, b2->f60, b2->f64, b2->f68, t, &b2->f70, &b2->f74);
+            guMtxXFMF(nd->m5C, b2->f60, b2->f64, b2->f68, t, &b2->f70, &b2->f74);
             *t = -*t;
         }
     }

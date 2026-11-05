@@ -33,8 +33,8 @@ void func_800056CC(f32 *, f32 *, f32 *);
 void func_80007E04(void *, f32, f32, f32);
 void func_80007E14(void *, f32);
 void func_80011764(s16);
-void func_8001A490(void *, f32, f32, f32, f32);
-void func_8001B3EC(void *, f32, f32, f32, f32 *, f32 *, f32 *);
+void guAlignF(void *, f32, f32, f32, f32);
+void guMtxXFMF(void *, f32, f32, f32, f32 *, f32 *, f32 *);
 
 void func_80012CD0(void) {
     f32 rot[4][4];
@@ -63,14 +63,14 @@ void func_80012CD0(void) {
                 func_80011764(i);
                 func_800056CC(&px, &py, &pz);
                 m2 = obj + 0x1C;
-                func_8001A490(m2, 0.0f, D_8007E010[i].x - px, D_8007E010[i].y - py, D_8007E010[i].z - pz);
+                guAlignF(m2, 0.0f, D_8007E010[i].x - px, D_8007E010[i].y - py, D_8007E010[i].z - pz);
                 func_80007E04(m2, D_8007E010[i].x, D_8007E010[i].y, D_8007E010[i].z);
             }
             func_80001DC4(obj);
-            func_8001B3EC(obj + 0x5C, zero, zero, zero, &D_8007E010[i].v30[0], &D_8007E010[i].v30[1], &D_8007E010[i].v30[2]);
+            guMtxXFMF(obj + 0x5C, zero, zero, zero, &D_8007E010[i].v30[0], &D_8007E010[i].v30[1], &D_8007E010[i].v30[2]);
             if (D_8007E010[i].e13 != -1) {
                 for (n = 0; n < D_8007E010[i].n; n++) {
-                    func_8001B3EC(obj + 0x5C, D_80036D30[D_8007E010[i].n + n], 0.0f, D_80036D38[D_8007E010[i].n + n],
+                    guMtxXFMF(obj + 0x5C, D_80036D30[D_8007E010[i].n + n], 0.0f, D_80036D38[D_8007E010[i].n + n],
                                   &D_8007E010[i].pts[n][0], &D_8007E010[i].pts[n][1], &D_8007E010[i].pts[n][2]);
                 }
             }

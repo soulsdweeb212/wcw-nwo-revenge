@@ -8,7 +8,7 @@
 
 typedef struct { f32 v; s16 t; } K;
 typedef struct { K *k; s32 n; } S;
-void func_80021F60(void *, s32);
+void bzero(void *, s32);
 
 void func_800B5AE0(S *s, f64 *out) {
     s32 h[34];
@@ -16,7 +16,7 @@ void func_800B5AE0(S *s, f64 *out) {
     K *k;
     s32 n, m, i;
 
-    func_80021F60(out, 0x100);
+    bzero(out, 0x100);
     n = s->n;
     k = s->k;
     out[0] = 0.0;

@@ -21,10 +21,10 @@ typedef struct {
 extern V *D_800E7CB4;
 extern VtxSet D_800CB7B8[];
 extern s32 D_800CCBF8[];
-u32 func_8001CE80(V *);
+u32 osVirtualToPhysical(V *);
 
 #define SHL(v, s, w) ((u32)(((u32)(v) & ((0x01 << (w)) - 1)) << (s)))
-#define SPVERTEX(g, v, n, v0) { G *_g = (g); _g->w0 = SHL(1, 24, 8) | SHL((n), 12, 8) | SHL((v0) + (n), 1, 7); _g->w1 = func_8001CE80(v); }
+#define SPVERTEX(g, v, n, v0) { G *_g = (g); _g->w0 = SHL(1, 24, 8) | SHL((n), 12, 8) | SHL((v0) + (n), 1, 7); _g->w1 = osVirtualToPhysical(v); }
 #define VTX(s, dx, dy) {                    \
     V *v = D_800E7CB4++;                    \
     v->ob[0] = (s)->ob[0] + (dx);           \

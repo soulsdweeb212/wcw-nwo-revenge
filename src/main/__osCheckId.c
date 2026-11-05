@@ -6,7 +6,7 @@
 #include "common.h"
 
 s32 __osContRamRead(s32, s32, s32, void *);
-s32 func_80025480(void *, s32);
+s32 __osPfsSelectBank(void *, s32);
 s32 bcmp(void *, void *, s32);
 
 /* Reads the Controller Pak id block and compares it with the id stored in the
@@ -16,9 +16,9 @@ s32 __osCheckId(u8 *arg0) {
     u8 buf[0x20];
 
     if (arg0[0x65] != 0) {
-        v = func_80025480(arg0, 0);
+        v = __osPfsSelectBank(arg0, 0);
         if (v == 2)
-            v = func_80025480(arg0, 0);
+            v = __osPfsSelectBank(arg0, 0);
         if (v != 0)
             return v;
     }

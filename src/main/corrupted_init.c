@@ -44,7 +44,7 @@ typedef struct {
 #define PFS_READ 0
 #define PFS_ERR_INCONSISTENT 3
 
-s32 readWriteControllerPakInode(void *, __OSInode *, u8, u8);
+s32 __osPfsRWInode(void *, __OSInode *, u8, u8);
 
 s32 corrupted_init(OSPfs *pfs, __OSInodeCache *cache) {
     int i;
@@ -63,7 +63,7 @@ s32 corrupted_init(OSPfs *pfs, __OSInodeCache *cache) {
     for (bank = 0; bank < pfs->banks; bank++) {
         offset = bank > 0 ? 1 : pfs->inode_start_page;
 
-        ret = readWriteControllerPakInode(pfs, &tmp_inode, PFS_READ, bank);
+        ret = __osPfsRWInode(pfs, &tmp_inode, PFS_READ, bank);
 
         if (ret != 0 && ret != PFS_ERR_INCONSISTENT) {
             return ret;

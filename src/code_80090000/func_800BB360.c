@@ -9,16 +9,16 @@ extern s32 D_800DCFC4, D_800DCFBC;
 extern u8 D_800DCF50[];
 s32 func_8000424C(void);
 void func_80004290(void);
-s32 func_80024850(s32, void *, s32);
-s32 readWriteControllerPakBank(s32, void *, s32);
+s32 osPfsInitPak(s32, void *, s32);
+s32 osMotorInit(s32, void *, s32);
 
 s32 func_800BB360(void) {
     u8 buf[0x68];
     s32 x = func_8000424C();
     D_800DCFC4 = x;
-    D_800DCFBC = func_80024850(x, D_800DCF50, 0);
+    D_800DCFBC = osPfsInitPak(x, D_800DCF50, 0);
     if (D_800DCFBC == 0xA) {
-        if (readWriteControllerPakBank(D_800DCFC4, buf, 0) == 0) {
+        if (osMotorInit(D_800DCFC4, buf, 0) == 0) {
             D_800DCFBC = 0x40;
         }
     }

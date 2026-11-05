@@ -12,9 +12,9 @@ extern u8 *D_800DCFDC, *D_800DCFE0, *D_800DCFB8;
 extern s32 D_800DCFD4, D_800DCFE4, D_800DCFE8;
 extern Blk D_800D2900[];
 extern s32 D_80038AA0;
-void func_8001C7E0(u8 *, s32);
-s32 func_800219B0(s32, void *, s32);
-void func_8001C990(void *, void *, s32);
+void osWritebackDCache(u8 *, s32);
+s32 osEPiStartDma(s32, void *, s32);
+void osRecvMesg(void *, void *, s32);
 
 static inline u32 checksum(u8 *p, s32 len) {
     s32 k;
@@ -47,15 +47,15 @@ s32 func_800B9640(s32 off, s32 sz) {
         }
         q = D_800DCFB8 + off;
         o = off + 0x20;
-        func_8001C7E0(q, sz);
+        osWritebackDCache(q, sz);
         D_800DCFDC = D_800DCFF8;
         D_800DCFDA = 0;
         D_800DCFE4 = o;
         D_800DCFE0 = q;
         D_800DCFE8 = sz;
-        while (func_800219B0(D_800DCFD4, D_800DCFD8, 1) != 0) {
+        while (osEPiStartDma(D_800DCFD4, D_800DCFD8, 1) != 0) {
         }
-        func_8001C990(D_800DCFF8, &sp10, 1);
+        osRecvMesg(D_800DCFF8, &sp10, 1);
     }
     return 0;
 }

@@ -4,10 +4,10 @@
  * asm: asm/nonmatchings/main/__moddi3.s
  */
 /* __moddi3: signed 64-bit remainder a % b, the libcall GCC emits for s64 '%'. KMC GCC hand-written
- * runtime (same family as __divdi3 / func_80028860 __udivdi3 / func_80028880 __umoddi3). It is
+ * runtime (same family as __divdi3 / __udivdi3 __udivdi3 / __umoddi3 __umoddi3). It is
  * linked in but no jal in the ROM reaches it.
  * Method: the remainder takes the sign of the DIVIDEND (C99 truncation); b's sign does not matter.
- * Both operands are made positive. For a >= 0 it tail-branches to func_80028880 (__umoddi3).
+ * Both operands are made positive. For a >= 0 it tail-branches to __umoddi3.
  * Otherwise it inlines __umoddi3: for b.hi == 0 it calls func_80028624 and takes the 32-bit
  * remainder that routine leaves in $t1 (high word 0); otherwise it calls func_80028528, whose
  * remainder is left in $a0:$a1. Then it negates. $ra is kept in $t5 and the results come back in
@@ -15,7 +15,7 @@
  * Checked in an emulator against the ROM asm: 3000 random and edge pairs. Same results every time. */
 #ifdef NON_MATCHING
 #include "common.h"
-extern u64 func_80028880(u64, u64); /* __umoddi3: unsigned 64-bit a % b */
+extern u64 __umoddi3(u64, u64); /* __umoddi3: unsigned 64-bit a % b */
 
 s64 __moddi3(s64 a, s64 b)
 {
@@ -26,11 +26,11 @@ s64 __moddi3(s64 a, s64 b)
     u64 r;
 
     if (!negative) {
-        return func_80028880(ua, ub); /* tail branch in the asm */
+        return __umoddi3(ua, ub); /* tail branch in the asm */
     }
     /* Negative dividend: the asm inlines __umoddi3 (remainder from func_80028624's $t1 when
      * b.hi == 0, else from func_80028528's $a0:$a1) and then negates it. */
-    r = func_80028880(ua, ub);
+    r = __umoddi3(ua, ub);
     return -(s64)r;
 }
 #else
@@ -64,7 +64,7 @@ asm(
     "addu $a2, $a2, $t9\n"
     ".L800287F0:\n"
     "and $v1, $v1, $t0\n"
-    ".word 0x10600022 /* beqz func_80028880: target outside this function */\n"
+    ".word 0x10600022 /* beqz __umoddi3: target outside this function */\n"
     "nop\n"
     "bnez $a2, .L80028820\n"
     "nop\n"

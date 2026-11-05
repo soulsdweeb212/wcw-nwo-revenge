@@ -37,9 +37,9 @@ void readRomSynchronousChunks(s32, void *, s32);
 void releaseHeapBlock(void *);
 void func_80003684(void *, s32, void *);
 void func_80008574(s32);
-void func_8001C0F0(void *, f32, f32, f32);
-void func_8001C890(void *, void *, s32);
-s32 initControllerPakDescriptor(void *);
+void guTranslateF(void *, f32, f32, f32);
+void osCreateMesgQueue(void *, void *, s32);
+s32 osCartRomInit(void *);
 
 void func_80008810(void) {
     s32 sp10[4];
@@ -78,10 +78,10 @@ void func_80008810(void) {
         D_800706A8[i].f4 = -1;
         D_800706A8[i].f18 = -1;
         D_800706A8[i].f1A = -1;
-        func_8001C890(&D_800706A8[i].mq, &D_800706A8[i].msg, 1);
+        osCreateMesgQueue(&D_800706A8[i].mq, &D_800706A8[i].msg, 1);
         q = D_800706A8[i].mqs;
-        func_8001C890(&q[0], &D_800706A8[i].msgs[0], 1);
-        func_8001C890(&q[1], &D_800706A8[i].msgs[1], 1);
+        osCreateMesgQueue(&q[0], &D_800706A8[i].msgs[0], 1);
+        osCreateMesgQueue(&q[1], &D_800706A8[i].msgs[1], 1);
         D_800706A8[i].fF8 = 0;
         D_800706A8[i].fFA = 0;
         for (j = 1; j < 8; j++) {
@@ -102,9 +102,9 @@ void func_80008810(void) {
         px += 2;
         dst += 0x40;
         i++;
-        func_8001C0F0(cur, -x, -y, 0);
+        guTranslateF(cur, -x, -y, 0);
         cur = dst;
     } while (i < 20);
-    D_8004859C = initControllerPakDescriptor(dst);
+    D_8004859C = osCartRomInit(dst);
     D_8006E440 = 1;
 }

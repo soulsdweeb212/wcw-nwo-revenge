@@ -43,15 +43,15 @@ void func_800BAD80(void) {
     s32 sp10;
 
     b = allocateHeap(0x100);
-    func_8001C5B0(b, 0x20);
+    osInvalDCache(b, 0x20);
     D_800DCFDC = D_800DCFF8;
     D_800DCFDA = 0;
     D_800DCFE4 = 0;
     D_800DCFE0 = b;
     D_800DCFE8 = 0x20;
-    while (func_800219B0(D_800DCFD4, D_800DCFD8, 0) != 0) {
+    while (osEPiStartDma(D_800DCFD4, D_800DCFD8, 0) != 0) {
     }
-    func_8001C990(D_800DCFF8, &sp10, 1);
+    osRecvMesg(D_800DCFF8, &sp10, 1);
     if (valid(b) == 0) {
         d = D_800DCFB8;
         for (n = 0; n < 4; n++) {
@@ -64,41 +64,41 @@ void func_800BAD80(void) {
             c[3] = sum;
         }
         q = D_800DCFB8;
-        func_8001C7E0(q, 0x2D80);
+        osWritebackDCache(q, 0x2D80);
         D_800DCFDC = D_800DCFF8;
         D_800DCFE4 = 0x20;
         D_800DCFDA = 0;
         D_800DCFE0 = q;
         D_800DCFE8 = 0x2D80;
-        while (func_800219B0(D_800DCFD4, D_800DCFD8, 1) != 0) {
+        while (osEPiStartDma(D_800DCFD4, D_800DCFD8, 1) != 0) {
         }
-        func_8001C990(D_800DCFF8, &sp10, 1);
+        osRecvMesg(D_800DCFF8, &sp10, 1);
         for (j = 0; j < 0x20; j += 4) {
             b[j] = 0x19;
             b[j + 1] = 0x97;
             b[j + 2] = 0x10;
             b[j + 3] = 0x21;
         }
-        func_8001C7E0(b, 0x20);
+        osWritebackDCache(b, 0x20);
         D_800DCFDC = D_800DCFF8;
         D_800DCFDA = 0;
         D_800DCFE4 = 0;
         D_800DCFE0 = b;
         D_800DCFE8 = 0x20;
-        while (func_800219B0(D_800DCFD4, D_800DCFD8, 1) != 0) {
+        while (osEPiStartDma(D_800DCFD4, D_800DCFD8, 1) != 0) {
         }
-        func_8001C990(D_800DCFF8, &sp10, 1);
+        osRecvMesg(D_800DCFF8, &sp10, 1);
     } else {
         q = D_800DCFB8;
-        func_8001C5B0(q, 0x2D80);
+        osInvalDCache(q, 0x2D80);
         D_800DCFDC = D_800DCFF8;
         D_800DCFE4 = 0x20;
         D_800DCFDA = 0;
         D_800DCFE0 = q;
         D_800DCFE8 = 0x2D80;
-        while (func_800219B0(D_800DCFD4, D_800DCFD8, 0) != 0) {
+        while (osEPiStartDma(D_800DCFD4, D_800DCFD8, 0) != 0) {
         }
-        func_8001C990(D_800DCFF8, &sp10, 1);
+        osRecvMesg(D_800DCFF8, &sp10, 1);
         func_800B9330(-1);
     }
     releaseHeapBlock(b);

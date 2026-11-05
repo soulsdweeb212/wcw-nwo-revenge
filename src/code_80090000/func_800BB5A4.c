@@ -6,7 +6,7 @@
 #include "common.h"
 
 s32 func_8002AEE0(void);
-s32 func_8001C580(void);
+s32 guRandom(void);
 
 s32 func_800BB5A4(void) {
     s32 t;
@@ -28,7 +28,7 @@ s32 func_800BB5A4(void) {
     case 0x70:
         return 8;
     }
-    t = func_8001C580() % 100;
+    t = guRandom() % 100;
     if (t < 10) {
         return 1;
     }

@@ -38,13 +38,13 @@ extern Pak3E78 D_80048350[4];
 extern Input3E78 D_8006E178[4];
 extern s32 D_8002EEC0;
 extern s8 D_80030560;
-s32 func_8001C990(void *, void *, s32);
-void func_80021190(void *);
-void func_80021210(void *);
-void func_80022FD0(void *);
-void func_80023058(void *);
-s32 writeControllerPakBank(void *, s32);
-s32 readWriteControllerPakBank(void *, void *, s32);
+s32 osRecvMesg(void *, void *, s32);
+void osContStartQuery(void *);
+void osContGetQuery(void *);
+void osContStartReadData(void *);
+void osContGetReadData(void *);
+s32 __osMotorAccess(void *, s32);
+s32 osMotorInit(void *, void *, s32);
 void func_800042BC(s32);
 void func_800043CC(s16);
 void func_8000440C(s32);
@@ -59,18 +59,18 @@ void func_80003E78(s16 arg0)
     if (D_800484F2 == 1) {
         return;
     }
-    func_8001C990(D_800482F0, NULL, 1);
+    osRecvMesg(D_800482F0, NULL, 1);
     for (i = 0; i < 4; i++) {
         D_80048338[i] = D_80048320[i];
     }
-    func_80023058(D_80048320);
+    osContGetReadData(D_80048320);
     if (D_800484F0 != D_800484F1) {
         D_800484F0 = D_800484F1;
     }
     if (arg0 == 1 && D_8002EEC0 == 0) {
-        func_80021190(D_800482F0);
-        func_8001C990(D_800482F0, NULL, 1);
-        func_80021210(D_80048310);
+        osContStartQuery(D_800482F0);
+        osRecvMesg(D_800482F0, NULL, 1);
+        osContGetQuery(D_80048310);
     } else {
         if (D_8002EEC0 != 0) {
             func_8000440C(1);
@@ -79,7 +79,7 @@ void func_80003E78(s16 arg0)
             if ((D_800484F3 >> i) & 1) {
                 if (D_800484F4[i] != 0 && D_800484FC[i] >= 0) {
                     if (D_800484FC[i] == 0) {
-                        writeControllerPakBank(&D_80048350[i], 1);
+                        __osMotorAccess(&D_80048350[i], 1);
                     }
                     if (D_800484FC[i] >= 0) {
                         D_800484FC[i]++;
@@ -88,9 +88,9 @@ void func_80003E78(s16 arg0)
                     }
                 } else if (D_800484FC[i] < 0) {
                     if (D_800484F8[i] == 1) {
-                        readWriteControllerPakBank(D_800482F0, &D_80048350[i], i);
+                        osMotorInit(D_800482F0, &D_80048350[i], i);
                     }
-                    if (writeControllerPakBank(&D_80048350[i], 0) != 4) {
+                    if (__osMotorAccess(&D_80048350[i], 0) != 4) {
                         if (--D_800484FC[i] < -3) {
                             D_800484F8[i] = 0;
                             D_800484FC[i] = 0;
@@ -98,8 +98,8 @@ void func_80003E78(s16 arg0)
                     }
                 }
             } else if (D_800484FC[i] < 0 && D_800484F8[i] == 1) {
-                readWriteControllerPakBank(D_800482F0, &D_80048350[i], i);
-                writeControllerPakBank(&D_80048350[i], 0);
+                osMotorInit(D_800482F0, &D_80048350[i], i);
+                __osMotorAccess(&D_80048350[i], 0);
                 if (--D_800484FC[i] < -3) {
                     D_800484F8[i] = 0;
                     D_800484FC[i] = 0;
@@ -111,13 +111,13 @@ void func_80003E78(s16 arg0)
             D_80030560 = temp + 1;
             func_800042BC(temp);
         } else {
-            func_80021190(D_800482F0);
-            func_8001C990(D_800482F0, NULL, 1);
-            func_80021210(D_80048310);
+            osContStartQuery(D_800482F0);
+            osRecvMesg(D_800482F0, NULL, 1);
+            osContGetQuery(D_80048310);
             D_80030560 = 0;
         }
     }
-    func_80022FD0(D_800482F0);
+    osContStartReadData(D_800482F0);
     for (i = 0; i < 4; i++) {
         c = &D_8006E178[i];
         if (D_80048320[i].errno != 0 || !((D_800484F0 >> i) & 1)) {

@@ -18,7 +18,7 @@ extern s32 func_80001544(void *);
 extern s32 func_800015AC(void *, s32);
 extern void func_8000F710(void *, s32);
 extern void buildFadeColorDisplayList(void *);
-extern s32 func_8001C580(void);
+extern s32 guRandom(void);
 
 void func_8000FAF8(s32 idx) {
     Slot *s;
@@ -55,7 +55,7 @@ void func_8000FAF8(s32 idx) {
         for (j = 0; j < 3; j++) {
             for (k = 0; k < 4; k++) {
                 v->ob[0] = x;
-                u = func_8001C580() % 8 + 0xE0;
+                u = guRandom() % 8 + 0xE0;
                 v->tc[0] = (x + u) << 5;
                 v->tc[1] = D_80036D20[k] << 5;
                 v->cn[0] = D_80036D24[k];

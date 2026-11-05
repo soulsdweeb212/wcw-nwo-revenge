@@ -14,7 +14,7 @@ void lookupResourceDescriptor(void *, s32);
 void func_80003684(void *, s32, s32);
 void releaseHeapBlock(void *);
 f32 func_8000B370(s16);
-void func_8001BE70(void *, f32, f32, f32);
+void guScaleF(void *, f32, f32, f32);
 
 /* Looks up resource descriptor 0x20F, allocates its size and stashes the block
  * in D_8007BD38. */

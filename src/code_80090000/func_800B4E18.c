@@ -11,7 +11,7 @@ extern u16 D_800E9962;
 extern u8 *D_800E996C;
 extern s32 D_800E73A4[3], D_800E74D4, D_800EA348;
 void buildWrestlerNameRecord(s32, s32, void *);
-void func_80021C40(void *, void *, s32);
+void bcopy(void *, void *, s32);
 #define F(t, o, i) (*(t *)(D_8007EF30 + (o) + ((i) << 4)))
 
 void func_800B4E18(void) {
@@ -21,8 +21,8 @@ void func_800B4E18(void) {
     u8 *d;
     buildWrestlerNameRecord(F(s16, 0x4E, D_800E9962), F(u8, 0x50, D_800E9962), buf);
     d = D_8007E8C0 + 0xB8;
-    func_80021C40(buf, d, 0x18);
-    func_80021C40(buf + 0x19, d + 0x22, 0xA);
+    bcopy(buf, d, 0x18);
+    bcopy(buf + 0x19, d + 0x22, 0xA);
     a = buf[0x24];
     b = buf[0x25];
     D_800E73A4[0] = buf[0x26];

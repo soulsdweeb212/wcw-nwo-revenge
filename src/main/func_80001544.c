@@ -10,8 +10,8 @@ extern s16 D_80047062;
 extern u8 *D_80046858;
 extern s16 D_80047060;
 
-void func_8001C0F0(void *, s32, s32, f32);
-void initIdentityMatrix4x4(void *);
+void guTranslateF(void *, s32, s32, f32);
+void guMtxIdentF(void *);
 
 /* Registers the transform node's +0x14 value in the D_80046860 table (no-op if
  * already present). */

@@ -22,8 +22,8 @@ typedef struct
 } Nw2Effect;
 extern u8 D_800D5D1C[];
 extern u8 D_800D6658[];
-void buildScaledRotationTranslationMatrix(void *, f32, f32, f32, f32, f32, f32, f32);
-void func_8001B3EC(void *, f32, f32, f32, f32 *, f32 *, f32 *);
+void guPositionF(void *, f32, f32, f32, f32, f32, f32, f32);
+void guMtxXFMF(void *, f32, f32, f32, f32 *, f32 *, f32 *);
 void func_80090384(s32 arg0, s32 arg1, s32 arg2)
 {
     f32 m[4][4];
@@ -92,10 +92,10 @@ void func_80090384(s32 arg0, s32 arg1, s32 arg2)
                     *((void **) (base + 0x10)) = ((u8 *) p) + off;
                     r = (f32) ((q->radius * q->active) / q->limit);
                     angle = (q->angle * 360) / 4096;
-                    buildScaledRotationTranslationMatrix(m, zero, angle, zero, 1.0f, (f32) q->x, (f32) ((s16) (q->height / 12)), (f32) q->z);
-                    func_8001B3EC(m, zero, zero, r * 4.0f, &x, &y, &z);
+                    guPositionF(m, zero, angle, zero, 1.0f, (f32) q->x, (f32) ((s16) (q->height / 12)), (f32) q->z);
+                    guMtxXFMF(m, zero, zero, r * 4.0f, &x, &y, &z);
                     do {
-                        buildScaledRotationTranslationMatrix(base + 0x1C, zero, zero, zero, 1.0f, x, y, z);
+                        guPositionF(base + 0x1C, zero, zero, zero, 1.0f, x, y, z);
                     } while (0);
                 }
             }

@@ -8,7 +8,7 @@
 typedef struct { s32 a; u16 b; u8 c[4]; u16 d; u8 e[4]; } E;
 typedef struct { u8 pad[0x40]; E e[6]; } R;
 extern u8 *D_800DCFB8;
-void func_80021C40(void *, void *, s32);
+void bcopy(void *, void *, s32);
 
 s32 func_800BA940(E *out, s32 id) {
     s32 lo = id & 0xF;
@@ -27,8 +27,8 @@ s32 func_800BA940(E *out, s32 id) {
         out->a = p->a;
         out->b = p->b;
         out->d = p->d;
-        func_80021C40(p->c, out->c, 3);
-        func_80021C40(p->e, out->e, 3);
+        bcopy(p->c, out->c, 3);
+        bcopy(p->e, out->e, 3);
         out->c[3] = 0;
         out->e[3] = 0;
     }

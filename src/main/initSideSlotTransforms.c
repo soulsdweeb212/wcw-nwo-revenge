@@ -13,7 +13,7 @@ extern s16 D_8005A382[][3][2];
 s32 func_80010200(s32, s16, f32);
 s32 initializeTransformNode(void *, s32, f32, f32, f32);
 s32 func_80007E14(void *, f32);
-s32 nw2Mat4Mul(void *, void *, void *);
+s32 guMtxCatF(void *, void *, void *);
 s32 func_8000FAF8(u32);
 s32 func_80001DC4(void *);
 
@@ -34,7 +34,7 @@ void initSideSlotTransforms(void) {
             d += D_8003B298;
         }
         func_80007E14(mat, (f32)(d * D_8003B2A0));
-        nw2Mat4Mul(&D_80059D90[i * 0xDC + 0x1C], mat, &D_80059D90[i * 0xDC + 0x1C]);
+        guMtxCatF(&D_80059D90[i * 0xDC + 0x1C], mat, &D_80059D90[i * 0xDC + 0x1C]);
         func_8000FAF8(i);
         func_80001DC4(&D_80059D90[i * 0xDC]);
         for (j = 0; j < 3; j++) {

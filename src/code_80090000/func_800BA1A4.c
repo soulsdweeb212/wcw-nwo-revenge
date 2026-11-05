@@ -14,7 +14,7 @@ extern s32 D_800DCFC4, D_800DCFBC;
 extern Blk D_800D2900[];
 s32 func_8002B5AC(s32);
 u8 *func_8002B790(s32, s32);
-void func_80021C40(void *, void *, s32);
+void bcopy(void *, void *, s32);
 s32 func_8000424C(void);
 s32 func_800B9640(s32, s32);
 void func_80004290(void);
@@ -38,8 +38,8 @@ static inline s32 write(s32 a, s32 b) {
 static inline void copyRec(s32 i, s32 j) {
     u8 *d = func_8002B790(i, j);
     u8 *s = D_800DCFB8 + 0x600 + i * 0x9C + j * 0x26;
-    func_80021C40(d, s, 0x18);
-    func_80021C40(d + 0x19, s + 0x18, 0xA);
+    bcopy(d, s, 0x18);
+    bcopy(d + 0x19, s + 0x18, 0xA);
     s[0x22] = d[0x24];
     s[0x23] = d[0x25];
     *(u16 *)(s + 0x24) = (d[0x27] & 0x1F) | ((d[0x28] & 0x1F) << 5);

@@ -30,8 +30,8 @@ extern Gfx0420 *D_800DC738;
 extern s32 D_800E7BEC;
 extern Vtx0420 D_800CB7B8[];
 extern u8 D_800CCB80[];
-void buildScaledRotationTranslationMatrix(void *, f32, f32, f32, f32, f32, f32, f32);
-u32 func_8001CE80(s32);
+void guPositionF(void *, f32, f32, f32, f32, f32, f32, f32);
+u32 osVirtualToPhysical(s32);
 void func_8009FE3C(Gfx0420 **, Obj0420 *, s32);
 
 #define EMIT(a, b) { Gfx0420 *_g = D_800DC738++; _g->w0 = (a); _g->w1 = (b); }
@@ -44,10 +44,10 @@ void func_800A0420(Obj0420 *a, Pos0420 *p) {
         a->dl = D_800DC738;
         a->f80 &= 0x7F;
         v = &D_800CB7B8[a->def->idx];
-        buildScaledRotationTranslationMatrix(a->mtx, p->rx, p->ry, p->rz, p->s * a->scale,
+        guPositionF(a->mtx, p->rx, p->ry, p->rz, p->s * a->scale,
                                              a->scale * p->s + p->x, a->scale * p->s + p->y,
                                              a->scale * p->s + p->z);
-        EMIT(0x01000000 | ((v->n & 0xFF) << 12) | ((v->n & 0x7F) << 1), func_8001CE80(v->addr));
+        EMIT(0x01000000 | ((v->n & 0xFF) << 12) | ((v->n & 0x7F) << 1), osVirtualToPhysical(v->addr));
         EMIT(0xE7000000, 0);
         if (a->alpha == 0xFF && !(a->def->flags & 0x800)) {
             EMIT(0xE200001C, 0x552048);

@@ -56,12 +56,12 @@ typedef struct {
 #define FALSE 0
 #define ROUND_UP_DIVIDE(numerator, denominator) (((numerator) + (denominator) - 1) / (denominator))
 
-s32 findControllerPakFile(void *, u16, u32, u8 *, u8 *, s32 *);
-s32 getControllerPakFreeBytes(void *, s32 *);
-s32 readWriteControllerPakInode(void *, __OSInode *, u8, u8);
+s32 osPfsFindFile(void *, u16, u32, u8 *, u8 *, s32 *);
+s32 osPfsFreeBlocks(void *, s32 *);
+s32 __osPfsRWInode(void *, __OSInode *, u8, u8);
 s32 __osPfsDeclearPage(void *, __OSInode *, int, int *, u8, int *, int *);
 s32 __osContRamWrite(void *, int, u16, void *, int);
-void func_80021C40(void *, void *, s32);
+void bcopy(void *, void *, s32);
 
 /* Allocates a new file on the Controller Pak: validates the company/game codes,
  * rounds the requested byte size up to 8-page (256-byte) blocks, finds a free
@@ -92,7 +92,7 @@ s32 osPfsAllocateFile(OSPfs *pfs, u16 company_code, u32 game_code, u8 *game_name
 
     file_size_in_pages = ROUND_UP_DIVIDE(file_size_in_bytes, BLOCKSIZE * PFS_ONE_PAGE);
 
-    if (((ret = findControllerPakFile(pfs, company_code, game_code, game_name, ext_name, file_no)) != 0) &&
+    if (((ret = osPfsFindFile(pfs, company_code, game_code, game_name, ext_name, file_no)) != 0) &&
         ret != PFS_ERR_INVALID) {
         return ret;
     }
@@ -101,7 +101,7 @@ s32 osPfsAllocateFile(OSPfs *pfs, u16 company_code, u32 game_code, u8 *game_name
         return PFS_ERR_EXIST;
     }
 
-    ret = getControllerPakFreeBytes(pfs, &bytes);
+    ret = osPfsFreeBlocks(pfs, &bytes);
 
     if (file_size_in_bytes > bytes) {
         return PFS_DATA_FULL;
@@ -111,7 +111,7 @@ s32 osPfsAllocateFile(OSPfs *pfs, u16 company_code, u32 game_code, u8 *game_name
         return PFS_ERR_INVALID;
     }
 
-    if (((ret = findControllerPakFile(pfs, 0, 0, NULL, NULL, file_no)) != 0) && ret != PFS_ERR_INVALID) {
+    if (((ret = osPfsFindFile(pfs, 0, 0, NULL, NULL, file_no)) != 0) && ret != PFS_ERR_INVALID) {
         return ret;
     }
 
@@ -120,7 +120,7 @@ s32 osPfsAllocateFile(OSPfs *pfs, u16 company_code, u32 game_code, u8 *game_name
     }
 
     for (bank = 0; bank < pfs->banks; bank++) {
-        ret = readWriteControllerPakInode(pfs, &inode, PFS_READ, bank);
+        ret = __osPfsRWInode(pfs, &inode, PFS_READ, bank);
         if (ret != 0) {
             return ret;
         }
@@ -136,21 +136,21 @@ s32 osPfsAllocateFile(OSPfs *pfs, u16 company_code, u32 game_code, u8 *game_name
             } else {
                 backup_inode.inode_page[old_last_page].inode_t.bank = bank;
                 backup_inode.inode_page[old_last_page].inode_t.page = start_page;
-                ret = readWriteControllerPakInode(pfs, &backup_inode, PFS_WRITE, old_bank);
+                ret = __osPfsRWInode(pfs, &backup_inode, PFS_WRITE, old_bank);
                 if (ret != 0) {
                     return ret;
                 }
             }
 
             if (file_size_in_pages > decleared) {
-                func_80021C40(&inode, &backup_inode, sizeof(__OSInode));
+                bcopy(&inode, &backup_inode, sizeof(__OSInode));
                 old_last_page = last_page;
                 old_bank = bank;
                 file_size_in_pages -= decleared;
                 firsttime++;
             } else {
                 file_size_in_pages = 0;
-                ret = readWriteControllerPakInode(pfs, &inode, PFS_WRITE, bank);
+                ret = __osPfsRWInode(pfs, &inode, PFS_WRITE, bank);
                 if (ret != 0) {
                     return ret;
                 }
@@ -168,8 +168,8 @@ s32 osPfsAllocateFile(OSPfs *pfs, u16 company_code, u32 game_code, u8 *game_name
     dir.game_code = game_code;
     dir.data_sum = 0;
 
-    func_80021C40(game_name, dir.game_name, PFS_FILE_NAME_LEN);
-    func_80021C40(ext_name, dir.ext_name, PFS_FILE_EXT_LEN);
+    bcopy(game_name, dir.game_name, PFS_FILE_NAME_LEN);
+    bcopy(ext_name, dir.ext_name, PFS_FILE_EXT_LEN);
 
     ret = __osContRamWrite(pfs->queue, pfs->channel, pfs->dir_table + *file_no, (u8 *)&dir, FALSE);
     return ret;

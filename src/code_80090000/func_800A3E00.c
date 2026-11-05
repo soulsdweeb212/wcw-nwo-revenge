@@ -12,7 +12,7 @@ typedef struct { u8 pad0[4]; void *img; u8 pad8[4]; s16 w; s16 h; s16 len; } Spr
 extern V *D_800E7CB4;
 Spr *func_800B600C(s32, s32);
 void appendPaletteSetupDisplayList(G **);
-u32 func_8001CE80(V *);
+u32 osVirtualToPhysical(V *);
 
 #define SHL(v, s, w) ((u32)(((u32)(v) & ((0x01 << (w)) - 1)) << (s)))
 #define SETTIMG(g, fmt, siz, w, i) { G *_g = (g); _g->w0 = SHL(0xFD, 24, 8) | SHL(fmt, 21, 3) | SHL(siz, 19, 2) | SHL((w) - 1, 0, 12); _g->w1 = (u32)(i); }
@@ -32,7 +32,7 @@ u32 func_8001CE80(V *);
     }
 #define TRI_W1(v0, v1, v2) (SHL((v0) * 2, 16, 8) | SHL((v1) * 2, 8, 8) | SHL((v2) * 2, 0, 8))
 #define SP2TRI(g, a0, a1, a2, b0, b1, b2) { G *_g = (g); _g->w0 = (SHL(7, 24, 8) | TRI_W1(a0, a1, a2)); _g->w1 = TRI_W1(b0, b1, b2); }
-#define SPVERTEX(g, v, n, v0) { G *_g = (g); _g->w0 = SHL(1, 24, 8) | SHL((n), 12, 8) | SHL((v0) + (n), 1, 7); _g->w1 = func_8001CE80(v); }
+#define SPVERTEX(g, v, n, v0) { G *_g = (g); _g->w0 = SHL(1, 24, 8) | SHL((n), 12, 8) | SHL((v0) + (n), 1, 7); _g->w1 = osVirtualToPhysical(v); }
 
 void func_800A3E00(G **dl, s32 id) {
     G *g = *dl;

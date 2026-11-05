@@ -22,7 +22,7 @@ extern Obj2110 *D_80046860[];
 extern Obj2110 *D_80047070[][512];
 extern u8 D_80048070[];
 f32 func_80003CF0(f32);
-void func_8001B090(void *, void *);
+void guMtxF2L(void *, void *);
 
 static inline s32 func_80002110_visible(Obj2110 *p)
 {
@@ -59,7 +59,7 @@ void func_80002110(s16 bank, s32 group, s8 kind)
                         continue;
                     }
                     while (p != NULL) {
-                        func_8001B090(p->model + 0x9C, p->mtx[bank]);
+                        guMtxF2L(p->model + 0x9C, p->mtx[bank]);
                         p = p->next;
                     }
                 } else {
@@ -68,7 +68,7 @@ void func_80002110(s16 bank, s32 group, s8 kind)
                         if (dl) {
                             p->dl = dl;
                         }
-                        func_8001B090(p->model + 0x9C, p->mtx[bank]);
+                        guMtxF2L(p->model + 0x9C, p->mtx[bank]);
                         p = p->next;
                     }
                 }

@@ -12,7 +12,7 @@ extern s32 D_800E797C;
 extern s32 D_800E81F8;
 u8 *func_800B600C(s32,s32);
 u8 *func_800B64EC(s32,s32);
-s32 func_8001C580(void);
+s32 guRandom(void);
 extern u8 D_C95F0[];
 extern u8 D_C95B8[];
 #define TIMER (*(s32*)(D_800C94CC+0x20))
@@ -144,7 +144,7 @@ void func_8009A878(G **arg0, State9B *arg1, s32 arg2)
         } else if (CUR >= 0) {
             if (TIMER != 0) {
                 TIMER--;
-                if (TIMER == 0 || TIMER == 15 || !(func_8001C580() & 7)) {
+                if (TIMER == 0 || TIMER == 15 || !(guRandom() & 7)) {
                     E(0xFA000000, 0x80);
                 } else {
                     E(0xFA000000, 0xFF);
@@ -165,7 +165,7 @@ void func_8009A878(G **arg0, State9B *arg1, s32 arg2)
                     E(0x02140006, 0x08000800);
                     E(0x07000206, 0x604);
                 }
-            } else if (!(func_8001C580() & 0x1F)) {
+            } else if (!(guRandom() & 0x1F)) {
                 TIMER = 16;
             }
         }

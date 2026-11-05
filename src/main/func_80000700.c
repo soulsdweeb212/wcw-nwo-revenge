@@ -12,12 +12,12 @@ extern u32 D_8003DDA4;
 extern s32 D_8003DDA8;
 extern s32 D_8003DDAC;
 extern s32 D_8003DDB0;
-extern void func_8001C660(s32, s32);
-extern s32 func_800219B0(s32, u8 *, s32);
-extern void func_8001C5B0(s32, s32);
-extern void func_80021F60(s32, s32);
-extern void func_8001C890(u8 *, s32 *, s32);
-extern void func_8001C990(u8 *, s32 *, s32);
+extern void osInvalICache(s32, s32);
+extern s32 osEPiStartDma(s32, u8 *, s32);
+extern void osInvalDCache(s32, s32);
+extern void bzero(s32, s32);
+extern void osCreateMesgQueue(u8 *, s32 *, s32);
+extern void osRecvMesg(u8 *, s32 *, s32);
 
 /* Range descriptor: each field is a {start, end} pair for one buffer range. */
 typedef struct {
@@ -37,13 +37,13 @@ void func_80000700(Cfg c) {
     s32 ret2;
     s32 size, remaining, x, y, dst, src;
     size = c.srcEnd - c.srcStart;
-    func_8001C660(c.fC, c.f10 - c.fC);
+    osInvalICache(c.fC, c.f10 - c.fC);
     remaining = size;
-    func_8001C5B0(c.f14, c.f18 - c.f14);
+    osInvalDCache(c.f14, c.f18 - c.f14);
     x = c.srcStart;
     y = c.dstStart;
-    func_8001C890(cmd, &ret1, 1);
-    func_8001C5B0(y, remaining);
+    osCreateMesgQueue(cmd, &ret1, 1);
+    osInvalDCache(y, remaining);
     dst = x; src = y;
     if (remaining > 0) {
         do {
@@ -54,13 +54,13 @@ void func_80000700(Cfg c) {
             D_8003DDAC = dst;
             D_8003DDA8 = src;
             D_8003DDB0 = chunk;
-            while (func_800219B0(D_8003DD98, &D_8003DDA0, 0)) {
+            while (osEPiStartDma(D_8003DD98, &D_8003DDA0, 0)) {
             }
-            func_8001C990(cmd, &ret2, 1);
+            osRecvMesg(cmd, &ret2, 1);
             dst += chunk;
             remaining -= chunk;
             src += chunk;
         } while (remaining > 0);
     }
-    func_80021F60(c.f1C, c.f20 - c.f1C);
+    bzero(c.f1C, c.f20 - c.f1C);
 }

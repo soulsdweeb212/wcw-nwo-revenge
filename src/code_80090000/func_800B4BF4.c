@@ -18,7 +18,7 @@ extern s32 D_800E73A4[3];
 s16 func_8000B3DC(u32);
 s16 func_8000B41C(u32);
 s32 func_8002B7E0(s32, s32);
-void func_80021C40(void *, void *, s32);
+void bcopy(void *, void *, s32);
 
 void func_800B4BF4(s32 a) {
     Menu *mn = &D_800E8230[19];
@@ -33,8 +33,8 @@ void func_800B4BF4(s32 a) {
     id = D_8007EF30.pl[a].id;
     p = mn->el;
     e = (u8 *)func_8002B7E0(id, D_8007EF30.pl[a].f4);
-    func_80021C40(e, D_8007E8C0 + 0xB8, 0x18);
-    func_80021C40(e + 0x19, D_8007E8C0 + 0xB8 + 0x22, 0xA);
+    bcopy(e, D_8007E8C0 + 0xB8, 0x18);
+    bcopy(e + 0x19, D_8007E8C0 + 0xB8 + 0x22, 0xA);
     D_800E74D4 = e[0x24];
     D_800EA348 = e[0x25];
     D_800E73A4[0] = e[0x26];

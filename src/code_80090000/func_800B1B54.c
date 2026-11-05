@@ -8,7 +8,7 @@
 
 extern s32 D_800EA0B8;
 extern s32 D_800E9F98[];
-u64 func_80028860(u64, u64);
+u64 __udivdi3(u64, u64);
 
 s32 func_800B1B54(s64 *a, s32 n) {
     s32 i, t, sum, b;
@@ -25,7 +25,7 @@ s32 func_800B1B54(s64 *a, s32 n) {
     } else {
         sum = 0;
         for (i = 0; i < n; i++) {
-            D_800E9F98[i] = func_80028860(a[i] * 1000, t);
+            D_800E9F98[i] = __udivdi3(a[i] * 1000, t);
             sum += D_800E9F98[i];
         }
         b = 0;

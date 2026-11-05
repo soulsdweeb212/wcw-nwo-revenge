@@ -8,8 +8,8 @@
 void initializeTransformNode(void *, s8, f32, f32, f32);
 void func_800015AC(void *, s32);
 void func_80001544(void *);
-void buildOrthoMatrixFloat(f32 m[4][4], f32 l, f32 r, f32 b, f32 t, f32 n, f32 f, f32 scale);
-void func_8001A980(f32 mf[4][4], f32 xEye, f32 yEye, f32 zEye, f32 xAt, f32 yAt, f32 zAt, f32 xUp, f32 yUp, f32 zUp);
+void guOrthoF(f32 m[4][4], f32 l, f32 r, f32 b, f32 t, f32 n, f32 f, f32 scale);
+void guLookAtF(f32 mf[4][4], f32 xEye, f32 yEye, f32 zEye, f32 xAt, f32 yAt, f32 zAt, f32 xUp, f32 yUp, f32 zUp);
 void multiplyMatrix4x4(f32 *, f32 *, f32 *);
 
 typedef struct {
@@ -36,8 +36,8 @@ void func_800905A4(Node *n) {
     initializeTransformNode(n, 5, 0.0f, 0.0f, 0.0f);
     func_800015AC(n, 0);
     func_80001544(n);
-    buildOrthoMatrixFloat(proj, 0.0f, 480.0f, 0.0f, 240.0f, -1.0f, 10.0f, 1.0f);
-    func_8001A980(view, 0.0f, 240.0f, -1.0f, 0.0f, 240.0f, 0.0f, 0.0f, -1.0f, 0.0f);
+    guOrthoF(proj, 0.0f, 480.0f, 0.0f, 240.0f, -1.0f, 10.0f, 1.0f);
+    guLookAtF(view, 0.0f, 240.0f, -1.0f, 0.0f, 240.0f, 0.0f, 0.0f, -1.0f, 0.0f);
     multiplyMatrix4x4((f32 *)view, (f32 *)proj, (f32 *)n->mtx);
     n->f19 = 1;
     n->cam->flags |= 0x80;

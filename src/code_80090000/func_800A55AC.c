@@ -15,7 +15,7 @@ extern V *D_800E7CB4;
 extern struct { u8 pad0[0xA]; u16 fA; } D_8007EF30;
 extern Ent D_800EA0D8[2][10];
 extern f64 D_800D6230;
-u32 func_8001CE80(V *);
+u32 osVirtualToPhysical(V *);
 T *func_800B75D4(G **, void *, s32);
 T *func_800B7A00(G **, s32, s32);
 void *func_8002AD34(s32, s32);
@@ -72,7 +72,7 @@ void func_800A55AC(G **dl, Item *it, u32 k) {
     } else {
         hw = 0x1A;
     }
-    { G *_g = g++; _g->w0 = 0x01004018; _g->w1 = func_8001CE80(D_800E7CB4); }
+    { G *_g = g++; _g->w0 = 0x01004018; _g->w1 = osVirtualToPhysical(D_800E7CB4); }
     VTX(-hw, -6, 0, 0);
     VTX(hw, -6, t->w << 5, 0);
     VTX(-hw, 6, 0, t->h << 5);

@@ -7,7 +7,7 @@
 
 s32 allocateHeap(s32);                                /* extern */
 s32 func_80000A40();                                /* extern */
-s32 func_8001C890(s32 *, s32 *, s32);                       /* extern */
+s32 osCreateMesgQueue(s32 *, s32 *, s32);                       /* extern */
 s32 func_800B8C4C(s32);                               /* extern */
 s32 func_800B9268(s32);                                 /* extern */
 s32 func_800BAD80();                                  /* extern */
@@ -41,6 +41,6 @@ void func_800BB2A0(void) {
     }
     D_800D2970 = 0;
     D_800DCFD4 = func_80000A40();
-    func_8001C890(&D_800DCFF8, &D_800DCFF0, 1);
+    osCreateMesgQueue(&D_800DCFF8, &D_800DCFF0, 1);
     func_800BAD80();
 }

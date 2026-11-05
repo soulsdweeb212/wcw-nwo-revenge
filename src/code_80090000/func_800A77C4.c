@@ -9,7 +9,7 @@ typedef struct { u32 w0, w1; } G;
 typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } V;
 extern V *D_800E7CB4;
 extern u16 D_800C91FC[], D_800C91CC[], D_800C9252[];
-u32 func_8001CE80(V *);
+u32 osVirtualToPhysical(V *);
 void func_800B6FE0(G **, s32);
 
 #define EMIT(a, b) { G *_g = g++; _g->w0 = (a); _g->w1 = (b); }
@@ -18,7 +18,7 @@ void func_800B6FE0(G **, s32);
 void func_800A77C4(G **dl, s32 x, s32 y, s32 w, s32 h, s32 f, s32 mode) {
     G *g = *dl;
 
-    EMIT(0x01004008, func_8001CE80(D_800E7CB4));
+    EMIT(0x01004008, osVirtualToPhysical(D_800E7CB4));
     switch (mode) {
     case 0x1001:
         VTX(-0x34, -0x1C, 0, 0, 0xFF);

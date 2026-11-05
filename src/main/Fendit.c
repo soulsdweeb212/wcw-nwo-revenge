@@ -1,0 +1,21 @@
+/* @header
+ * Fendit  (originally func_800163D0)
+ * VRAM 0x800163D0 | ROM 0x16FD0 | size 0x14
+ * asm: asm/nonmatchings/main/Fendit.s
+ */
+/* SDK: libmus, libmus/src/playerinc/player_commands.inc.c (same code as the SDK source). */
+#include "common.h"
+
+extern f64 D_8003B3C8;
+extern f64 D_8003B3D0;
+extern f64 D_8003B3D8;
+extern f64 D_8003B3E0;
+
+u8 *Fendit(u8 *arg0, u8 *arg1) {
+    u8 v;
+
+    v = *arg1;
+    *(s16 *)(arg0 + 0xD2) = 0;
+    *(s16 *)(arg0 + 0xD4) = v;
+    return arg1 + 1;
+}

@@ -14,8 +14,8 @@ extern Wr *D_800E79B8;
 extern f64 D_800D6C60;
 s32 func_800B5E18(s32, s32);
 f32 nw2Sqrtf(f32);
-void buildScaledRotationTranslationMatrix(void *, f32, f32, f32, f32, f32, f32, f32);
-void func_8001B3EC(void *, f32, f32, f32, f32 *, f32 *, f32 *);
+void guPositionF(void *, f32, f32, f32, f32, f32, f32, f32);
+void guMtxXFMF(void *, f32, f32, f32, f32 *, f32 *, f32 *);
 
 void func_800C1F50(Cam *a, s32 wi, s32 pi) {
     s32 sx = 0;
@@ -86,8 +86,8 @@ void func_800C1F50(Cam *a, s32 wi, s32 pi) {
             spd = nw2Sqrtf(sx * sx + sy * sy) * 0.2f;
         }
     }
-    buildScaledRotationTranslationMatrix(m, 0.0f, a->r * 360 * D_800D6C60, 0.0f, 1.0f, a->x, a->y, a->z);
-    func_8001B3EC(m, 0.0f, 0.0f, spd, &a->x, &a->y, &a->z);
+    guPositionF(m, 0.0f, a->r * 360 * D_800D6C60, 0.0f, 1.0f, a->x, a->y, a->z);
+    guMtxXFMF(m, 0.0f, 0.0f, spd, &a->x, &a->y, &a->z);
     if (w->f6C4 == 4) {
         if (-280.0f < a->x && a->x < 280.0f && -280.0f < a->z && a->z < 280.0f) {
             a->y = 90.0f;

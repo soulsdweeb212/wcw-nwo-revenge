@@ -17,7 +17,7 @@ f32 nw2Sqrtf(f32);
 s16 func_8000CF64(f32, f32);
 s8 func_800A90FC(s16);
 u16 func_800085E4(s16);
-s32 func_8001C580(void);
+s32 guRandom(void);
 s32 func_800A9028(s16);
 f32 func_80003A3C(f32, f32);
 f32 sinf(f32);
@@ -138,11 +138,11 @@ void func_8009B2EC(s16 arg0, u16 *ids) {
                 if (bits >= 9) {
                     D_800E2FB2 = 0;
                     if (bits == 9) {
-                        D_800E2FB2 = func_8001C580() % 4 + 15;
+                        D_800E2FB2 = guRandom() % 4 + 15;
                     }
                 } else {
                     do {
-                        k = func_8001C580() % 5 + 7;
+                        k = guRandom() % 5 + 7;
                         D_800E2FB2 = k;
                     } while (k == D_800E2FB0);
                     D_800E2FB0 = k;
@@ -259,7 +259,7 @@ void func_8009B2EC(s16 arg0, u16 *ids) {
                 ey = 400.0f;
             }
             if (D_800EB352 > 40) {
-                D_800E2FB2 = func_8001C580() % 5 + 7;
+                D_800E2FB2 = guRandom() % 5 + 7;
             }
         } else {
             ey = 400.0f;

@@ -18,17 +18,17 @@ extern u8 D_80046768[], D_800467C0[], D_800467E0[];
 extern Task2CC4 *D_800467FC;
 extern s16 D_80047066;
 extern Obj2CC4 *D_80047070[][512];
-s32 func_8001C990(void *, void *, s32);
-s32 func_8001CAC0(void *, void *, s32);
+s32 osRecvMesg(void *, void *, s32);
+s32 osSendMesg(void *, void *, s32);
 void func_80002324(s16);
 s32 func_80002454(Gfx2CC4 **, s16, s16);
 Gfx2CC4 *buildSceneSetupDisplayList(Task2CC4 *, s32);
 void submitGraphicsTask(Task2CC4 *, Gfx2CC4 *, s32, s16);
 void func_80003098(void);
 void func_800032FC(void);
-void func_8001C860(void);
-void func_80021090(f32);
-void func_80021130(s32);
+void osWritebackDCacheAll(void);
+void osViSetYScale(f32);
+void osViBlack(s32);
 
 #define HANDLE_MSG()                     \
     switch (*msg[0]) {                   \
@@ -40,8 +40,8 @@ void func_80021130(s32);
         break;                           \
     case 4:                              \
         count += 32;                     \
-        func_80021090(1.0f);             \
-        func_80021130(1);                \
+        osViSetYScale(1.0f);             \
+        osViBlack(1);                \
         D_8002EEC0 = 1;                  \
         func_800032FC();                 \
         func_80003098();                 \
@@ -64,7 +64,7 @@ void func_80002CC4(void)
 
     msg[0] = NULL;
     for (;;) {
-        func_8001C990(D_800467C0, NULL, 1);
+        osRecvMesg(D_800467C0, NULL, 1);
         task = D_800467FC;
         if (task != NULL) {
             cur = D_8002EEC8;
@@ -77,20 +77,20 @@ void func_80002CC4(void)
         } else {
             ticks = (D_80046800 == 0);
             while (!ticks) {
-                func_8001C990(D_80046768, msg, 1);
+                osRecvMesg(D_80046768, msg, 1);
                 HANDLE_MSG();
             }
         }
-        func_8001CAC0(D_800467E0, NULL, 1);
+        osSendMesg(D_800467E0, NULL, 1);
         if (task == NULL) {
             continue;
         }
-        while (func_8001C990(D_80046768, msg, 0) != -1) {
+        while (osRecvMesg(D_80046768, msg, 0) != -1) {
             HANDLE_MSG();
         }
         ticks = 0;
         count = 0;
-        func_8001C860();
+        osWritebackDCacheAll();
         index = 0;
         do {
             while ((index < D_80047066) & (count < 4)) {
@@ -103,7 +103,7 @@ void func_80002CC4(void)
                 count++;
                 index = next;
             }
-            func_8001C990(D_80046768, msg, 1);
+            osRecvMesg(D_80046768, msg, 1);
             HANDLE_MSG();
         } while ((index < D_80047066) | (ticks < 2) || count);
         D_8002EECA ^= 1;

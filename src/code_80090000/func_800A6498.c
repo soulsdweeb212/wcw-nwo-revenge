@@ -14,7 +14,7 @@ extern V *D_800E7CB4;
 extern u8 D_8007E8C0[];
 extern s32 D_800E7BF4, D_800E7BF8, D_800E7BFC;
 extern u8 D_800E7542;
-u32 func_8001CE80(V *);
+u32 osVirtualToPhysical(V *);
 Spr *func_800B600C(u8 *, s32);
 void func_800996B0(G **, s32, s32);
 void func_800A2BC0(G **, Spr *, s32 *, s32 *, s32, s32);
@@ -91,7 +91,7 @@ void func_800A6498(G **dl, Item *it) {
         lo = r & 0xFFFF;
         a = lo * x[1] / h;
         b = (lo + ((r >> 16) & 0xFF)) * x[1] / h + 1;
-        { G *_g = g++; _g->w0 = 0x01004028; _g->w1 = func_8001CE80(D_800E7CB4); }
+        { G *_g = g++; _g->w0 = 0x01004028; _g->w1 = osVirtualToPhysical(D_800E7CB4); }
         VTX(a, -6, 0, 0, c);
         VTX(b, -6, 0, 0, 0xFF);
         VTX(a, 8, 0, 0, 0xFF);
@@ -108,7 +108,7 @@ void func_800A6498(G **dl, Item *it) {
         func_800A2BC0(&g, spr, x, y, 4, h);
     }
     if (shown) {
-        { G *_g = g++; _g->w0 = 0x01004028; _g->w1 = func_8001CE80(D_800E7CB4); }
+        { G *_g = g++; _g->w0 = 0x01004028; _g->w1 = osVirtualToPhysical(D_800E7CB4); }
         VTX(a - 1, -7, 0, 0, 0xFF);
         VTX(b + 1, -7, 0x200, 0, 0xFF);
         VTX(a - 1, 9, 0, 0x200, 0xFF);

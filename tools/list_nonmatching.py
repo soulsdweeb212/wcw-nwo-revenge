@@ -10,10 +10,10 @@ import json, re, sys
 from pathlib import Path
 
 HAND = {  # README "Hand-written assembly" section
-    "func_80026AF0", "func_80026B00", "func_80026C20", "func_80028100", "func_80026C10", "nw2DisableInterrupts",
-    "nw2RestoreInterrupts", "func_8001C860", "func_80026C30", "func_80026C80", "func_800266B4", "func_800266FC",
+    "osGetCount", "__osGetSR", "__osSetSR", "__osSetCompare", "__osSetFpcCsr", "__osDisableInt",
+    "__osRestoreInt", "osWritebackDCacheAll", "osUnmapTLBAll", "osMapTLBRdb", "__osEnqueueThread", "__osPopThread",
 }
-LIBGCC = {"func_800284F4", "func_80028860", "func_80028880", "__divdi3", "__moddi3", "__fixsfdi", "signed64ToFloatTrunc",
+LIBGCC = {"unusedMuldi3", "__udivdi3", "__umoddi3", "__divdi3", "__moddi3", "__fixsfdi", "__floatdisf",
           "func_80028528", "func_80028624", "bcmp"}
 root = Path(__file__).resolve().parent.parent
 B = json.loads((root / "build.json").read_text())

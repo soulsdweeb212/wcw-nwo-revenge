@@ -14,7 +14,7 @@ extern s32 D_800E7CC0, D_800E7CC4;
 extern s32 D_800E7C98[];
 extern s32 D_800E9F70, D_800DF1D4, D_800DF1D8, D_800E8210, D_800E79CC, D_800E74C4;
 extern s32 D_800E6B68[], D_800EA308[];
-s32 func_8001C580(void);
+s32 guRandom(void);
 void func_800B807C(s32, s32);
 void func_800BBAC8(s32);
 void func_800BB6E8(s32);
@@ -67,12 +67,12 @@ s32 func_800BBEB8(s32 n) {
         D_800E7C98[0] = D_800E7C98[1] = D_800E7C98[2] = D_800E7C98[3] = -1;
         D_800E9F70 = D_8007EF30.f4;
         do {
-            r = func_8001C580() % 6;
+            r = guRandom() % 6;
         } while ((D_800DF1D4 >> r) & 1);
         D_800DF1D4 |= 1 << r;
         func_800B807C(0, r + 1);
         do {
-            j = func_8001C580() % 5;
+            j = guRandom() % 5;
         } while ((D_800DF1D8 >> j) & 1);
         D_800DF1D8 |= 1 << j;
         D_800E8210 = j;

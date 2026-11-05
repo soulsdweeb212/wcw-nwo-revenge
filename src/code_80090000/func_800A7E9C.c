@@ -10,7 +10,7 @@ typedef struct { u32 w0, w1; } G;
 typedef struct { u8 pad[0x20]; u16 id; } E;
 extern V *D_800E7CB4;
 extern u16 D_800C9254;
-u32 func_8001CE80(V *);
+u32 osVirtualToPhysical(V *);
 void func_800B6FE0(G **, s32);
 
 void func_800A7E9C(G **dl, E *e) {
@@ -42,7 +42,7 @@ void func_800A7E9C(G **dl, E *e) {
     }
     p = g++;
     p->w0 = 0x01004008;
-    p->w1 = func_8001CE80(D_800E7CB4);
+    p->w1 = osVirtualToPhysical(D_800E7CB4);
     v = D_800E7CB4++;
     v->ob[0] = x0 - 2; v->ob[1] = y0 - 2; v->ob[2] = 0; v->flag = 0;
     v->tc[0] = 0; v->tc[1] = 0;

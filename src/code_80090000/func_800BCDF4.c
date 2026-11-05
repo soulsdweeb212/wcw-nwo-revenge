@@ -54,7 +54,7 @@ extern s8 D_800CCA09;
 
 void func_80099478(s32, s32, s32);
 s32 func_800BBEB8(s32);
-s32 func_8001C580(void);
+s32 guRandom(void);
 void func_800B807C(s32, s32);
 void func_8000DFD0(s32);
 u16 func_8002AEE0(s32);
@@ -166,12 +166,12 @@ void func_800BCDF4(void) {
             D_800DF1D8 = 0;
             D_800DF1D4 = 0;
             do {
-                r = func_8001C580() % 6;
+                r = guRandom() % 6;
             } while ((D_800DF1D4 >> r) & 1);
             D_800DF1D4 |= 1 << r;
             func_800B807C(0, r + 1);
             do {
-                r = func_8001C580() % 5;
+                r = guRandom() % 5;
             } while ((D_800DF1D8 >> r) & 1);
             D_800DF1D8 |= 1 << r;
             D_800E8210 = r;
@@ -627,7 +627,7 @@ void func_800BCDF4(void) {
             D_800DF1D8 = 0;
             D_800E7C90++;
             do {
-                v = func_8001C580() % 5;
+                v = guRandom() % 5;
             } while ((D_800DF1D8 >> v) & 1);
             D_800DF1D8 |= 1 << v;
             D_800E8210 = v;

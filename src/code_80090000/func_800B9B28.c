@@ -14,9 +14,9 @@ extern s32 D_800DCFBC, D_800DCFC4, D_800DCFC8, D_800DCFCC, D_800DCFD0;
 s32 func_8000424C(void);
 void func_80004290(void);
 s32 func_800B947C(void);
-void func_80021F60(void *, s32);
-s32 getControllerPakFreeBytes(void *, void *);
-s32 func_80024A40(void *, s32 *, s32 *);
+void bzero(void *, s32);
+s32 osPfsFreeBlocks(void *, void *);
+s32 osPfsNumFiles(void *, s32 *, s32 *);
 R *allocateHeap(s32);
 s32 osPfsFileState(void *, s32, R *);
 
@@ -46,13 +46,13 @@ s32 func_800B9B28(void) {
     }
     k = 0;
     D_800DCFC4 = func_8000424C();
-    D_800DCFBC = getControllerPakFreeBytes(D_800DCF50, &D_800DCFC8);
-    D_800DCFBC = func_80024A40(D_800DCF50, &D_800DCFD0, &D_800DCFCC);
+    D_800DCFBC = osPfsFreeBlocks(D_800DCF50, &D_800DCFC8);
+    D_800DCFBC = osPfsNumFiles(D_800DCF50, &D_800DCFD0, &D_800DCFCC);
     p = D_800D2970 = allocateHeap(D_800DCFCC * 0x50);
     for (i = 0; i < D_800DCFD0; i++) {
         if (osPfsFileState(D_800DCF50, i, p) == 0) {
             d = p->n;
-            func_80021F60(d, 0x30);
+            bzero(d, 0x30);
             d = conv(p->name, d, 0x10);
             if (p->ext[0]) {
                 d[0] = D_800D2B78;

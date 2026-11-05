@@ -17,7 +17,7 @@ extern NameTable lookupSubTables[];
 extern NameEntry D_8003A59C;
 extern char D_80039958[], D_80039B80[];
 void func_8000B630(u8 *, s16, s16);
-void func_80021F60(void *, s32);
+void bzero(void *, s32);
 void func_80028C44(void *, void *);
 void func_80028BB8(void *, void *);
 void buildWrestlerNameRecord(s32 id, s32 variant, u8 *out) {
@@ -37,7 +37,7 @@ lookup:
     if (id == 0) id = 1;
     func_8000B630(values, (s16)id, (s16)variant);
     out[0x24] = values[1]; out[0x25] = values[0]; out[0x26] = values[2]; out[0x27] = values[3]; out[0x28] = values[4];
-    func_80021F60(out, 25); func_80021F60(out + 25, 11);
+    bzero(out, 25); bzero(out + 25, 11);
     if (id == 0x404 && ((variant == 1) | (variant == 3))) name = D_80039958;
     else if (id == 0x601 && ((variant == 1) | (variant == 3))) name = D_80039B80;
     else name = entry->name;

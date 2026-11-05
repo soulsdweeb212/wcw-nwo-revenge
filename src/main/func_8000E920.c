@@ -48,8 +48,8 @@ void func_80004BA8(void *, void *, s32, s32, s32, s32, void *);
 void func_80004F80(void *, s16, s16);
 void func_80007E14(void *, f32);
 void func_8000EF90(void);
-void nw2Mat4Mul(void *, void *, void *);
-void func_80021C40(void *, void *, s32);
+void guMtxCatF(void *, void *, void *);
+void bcopy(void *, void *, s32);
 
 void func_8000E920(void *unused, s16 arg1)
 {
@@ -89,7 +89,7 @@ void func_8000E920(void *unused, s16 arg1)
             if (D_80036C58[j] != 0) {
                 func_80004F80(&parts[n], D_80036C58[j], D_80036C60[j]);
             }
-            nw2Mat4Mul(mtx, ents[n].mtx, ents[n].mtx);
+            guMtxCatF(mtx, ents[n].mtx, ents[n].mtx);
             n++;
         }
         func_80004B34(&ents[n], &parts[n], 0, 0.0f, 0.0f, 0.0f);
@@ -98,7 +98,7 @@ void func_8000E920(void *unused, s16 arg1)
         ents[n].a0 = NULL;
         ents[n].a8 = &ents[n + 2];
         ents[n].a4 = &ents[n + 1];
-        func_80021C40(mtx, ents[n].mtx, 0x40);
+        bcopy(mtx, ents[n].mtx, 0x40);
         n++;
         if (i != 0) {
             func_80004B34(&ents[n], &parts[n], 5, 0.0f, 0.0f, 0.0f);

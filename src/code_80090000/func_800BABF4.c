@@ -12,10 +12,10 @@ void func_80004290(void);
 extern u8 *D_800DCFB8;
 extern u8 D_8007E228[];
 extern u16 D_800D2918, D_800D291A;
-void func_80021C40(void *, void *, s32);
+void bcopy(void *, void *, s32);
 
 s32 func_800BABF4(void) {
-    func_80021C40(D_8007E228 + 0x18, D_800DCFB8 + 0x2D20, 0x40);
+    bcopy(D_8007E228 + 0x18, D_800DCFB8 + 0x2D20, 0x40);
     D_800DCFC4 = func_8000424C();
     D_800DCFBC = func_800B9640(D_800D2918, D_800D291A);
     func_80004290();

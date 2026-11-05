@@ -47,8 +47,8 @@ void func_8002AA28(void);
 void initializeTransformNode(void *, s32, f32, f32, f32);
 void func_800015AC(void *, s32);
 void func_80001544(void *);
-void buildOrthoMatrixFloat(void *, f32, f32, f32, f32, f32, f32, f32);
-void func_8001A980(void *, f32, f32, f32, f32, f32, f32, f32, f32, f32);
+void guOrthoF(void *, f32, f32, f32, f32, f32, f32, f32);
+void guLookAtF(void *, f32, f32, f32, f32, f32, f32, f32, f32, f32);
 void multiplyMatrix4x4(void *, void *, void *);
 void *allocateHeap(s32);
 
@@ -62,8 +62,8 @@ void func_800982AC(void) {
     initializeTransformNode(&D_800EB0B0, 5, 0.0f, 0.0f, 0.0f);
     func_800015AC(&D_800EB0B0, 0);
     func_80001544(&D_800EB0B0);
-    buildOrthoMatrixFloat(proj, 0.0f, 480.0f, 0.0f, 240.0f, -1.0f, 10.0f, 1.0f);
-    func_8001A980(view, 0.0f, 240.0f, -1.0f, 0.0f, 240.0f, 0.0f, 0.0f, -1.0f, 0.0f);
+    guOrthoF(proj, 0.0f, 480.0f, 0.0f, 240.0f, -1.0f, 10.0f, 1.0f);
+    guLookAtF(view, 0.0f, 240.0f, -1.0f, 0.0f, 240.0f, 0.0f, 0.0f, -1.0f, 0.0f);
     multiplyMatrix4x4(view, proj, D_800EB0B0.mtx);
     D_800EB0B0.f19 = 1;
     /* struct fields: the node stores must reload the pointer, and f19 must stay before them */

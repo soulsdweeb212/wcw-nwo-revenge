@@ -24,15 +24,15 @@ static inline void rd(s32 i) {
     n = D_800D2900[i].b;
     q = D_800DCFB8 + o;
     p = o + 0x20;
-    func_8001C5B0(q, n);
+    osInvalDCache(q, n);
     D_800DCFDC = D_800DCFF8;
     D_800DCFDA = 0;
     D_800DCFE4 = p;
     D_800DCFE0 = q;
     D_800DCFE8 = n;
-    while (func_800219B0(D_800DCFD4, D_800DCFD8, 0) != 0) {
+    while (osEPiStartDma(D_800DCFD4, D_800DCFD8, 0) != 0) {
     }
-    func_8001C990(D_800DCFF8, &sp10, 1);
+    osRecvMesg(D_800DCFF8, &sp10, 1);
 }
 
 s32 func_800B97CC(s32 i) {

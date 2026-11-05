@@ -35,4 +35,4 @@ void func_8000E6AC(void) {
 
 extern u16 D_800306A0[];
 s32 func_800032A4(s32, s32, s32, s32, s32);
-void func_80013F7C(s32, s32);
+void MusHandleSetReverb(s32, s32);

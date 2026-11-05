@@ -61,7 +61,7 @@ extern s32 D_800E9F70;
 extern u8 D_800C5C50[];
 extern u8 D_800C9C70[];
 
-void buildScaledRotationTranslationMatrix(void *, f32, f32, f32, f32, f32, f32, f32);
+void guPositionF(void *, f32, f32, f32, f32, f32, f32, f32);
 f32 sinf(f32);
 void func_80090384(s32, s32, s32);
 void func_800936DC(s32);
@@ -122,20 +122,20 @@ void func_80094AE4(Out4AE4 *arg0, Out4AE4 *arg1, s32 arg2) {
                 } else {
                     rot = 0;
                 }
-                buildScaledRotationTranslationMatrix(out->f1C, sub->fE ? (f32)-rot : (f32)rot, sub->fE, 0.0f, 1.0f, sub->f8, sub->fA, sub->fC);
+                guPositionF(out->f1C, sub->fE ? (f32)-rot : (f32)rot, sub->fE, 0.0f, 1.0f, sub->f8, sub->fA, sub->fC);
                 if ((D_800E7CD8 & 2) && !((arg2 + k) & 0xF)) {
                     spawnParticle4AE4(sub->f8, sub->fC, 0x19, 0x30, 0x55, 0x30, ((-(sub->fE != 0)) & 0xC01) | 0x401);
                 }
                 do { k++; } while (0);
             }
         }
-        buildScaledRotationTranslationMatrix(D_800DB678->f1C, 0.0f, D_800E7508.w, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f);
+        guPositionF(D_800DB678->f1C, 0.0f, D_800E7508.w, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f);
         break;
     case 7:
     case 8:
         sr = sinf((((arg2 * 6) & 0x3FF) * 360) * D_800D6010) * D_800D6018 + D_800D6020;
-        buildScaledRotationTranslationMatrix(D_800DB67C->f1C, 0.0f, 0.0f, 0.0f, sr, 0.0f, 0.0f, 0.0f);
-        buildScaledRotationTranslationMatrix(D_800DB678->f1C, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, sr * D_800D6028 - D_800D6028, 0.0f);
+        guPositionF(D_800DB67C->f1C, 0.0f, 0.0f, 0.0f, sr, 0.0f, 0.0f, 0.0f);
+        guPositionF(D_800DB678->f1C, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, sr * D_800D6028 - D_800D6028, 0.0f);
         break;
     }
 
@@ -202,8 +202,8 @@ void func_80094AE4(Out4AE4 *arg0, Out4AE4 *arg1, s32 arg2) {
         func_800945E0(D_800E79BC);
     }
     if (D_800E9F70 >= 0) {
-        buildScaledRotationTranslationMatrix(arg1->f1C, 1.0f, 0.0f, 0.0f, 0.3f, 0.0f, 0.0f, 0.0f);
-        buildScaledRotationTranslationMatrix(arg0->f1C, D_800E7508.x, D_800E7508.y, D_800E7508.z, D_800E7504, D_800E74F8, D_800E74FC, D_800E7500);
+        guPositionF(arg1->f1C, 1.0f, 0.0f, 0.0f, 0.3f, 0.0f, 0.0f, 0.0f);
+        guPositionF(arg0->f1C, D_800E7508.x, D_800E7508.y, D_800E7508.z, D_800E7504, D_800E74F8, D_800E74FC, D_800E7500);
         func_800948BC(arg2);
     }
     tq = (u32)arg0 & 1;

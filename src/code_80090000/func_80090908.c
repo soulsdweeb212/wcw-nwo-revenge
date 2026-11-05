@@ -26,7 +26,7 @@ extern Gfx0908 *D_800DB68C;
 extern s32 D_800DB69C;
 extern s32 D_800DB6A0;
 u8 *func_800B64EC(s32, u16);
-u32 func_8001CE80(s32);
+u32 osVirtualToPhysical(s32);
 
 #define EMIT(a, b) { Gfx0908 *_g = D_800DB68C++; _g->w0 = (a); _g->w1 = (b); }
 #define TRI(f, t) \
@@ -104,7 +104,7 @@ void func_80090908(S0908 *s, s32 arg1)
         if (pr[1] == i) {
             Gfx0908 *gv = D_800DB68C++;
             gv->w0 = 0x01000000 | (pr[0] << 12) | ((pr[0] & 0x7F) << 1);
-            gv->w1 = func_8001CE80(arg1 + k * 16);
+            gv->w1 = osVirtualToPhysical(arg1 + k * 16);
             k += pr[0];
             pr += 2;
         }

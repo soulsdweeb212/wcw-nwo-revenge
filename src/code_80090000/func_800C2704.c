@@ -27,8 +27,8 @@ extern f64 D_800D6C68;
 s32 func_800966B8(void);
 s32 func_800B5E18(s32, s32);
 f32 nw2Sqrtf(f32);
-void buildScaledRotationTranslationMatrix(void *, f32, f32, f32, f32, f32, f32, f32);
-void func_8001B3EC(void *, f32, f32, f32, f32 *, f32 *, f32 *);
+void guPositionF(void *, f32, f32, f32, f32, f32, f32, f32);
+void guMtxXFMF(void *, f32, f32, f32, f32 *, f32 *, f32 *);
 
 static inline Ent *getPoint(s32 idx, Pt *out, s32 path) {
     Ent *t;
@@ -107,8 +107,8 @@ s32 func_800C2704(s32 n) {
             done = 1;
             a = p->cam.a;
         }
-        buildScaledRotationTranslationMatrix(m, 0.0f, a * D_800D6C68, 0.0f, 1.0f, p->cam.x, p->cam.y, p->cam.z);
-        func_8001B3EC(m, 0.0f, 0.0f, d, &p->cam.x, &p->cam.y, &p->cam.z);
+        guPositionF(m, 0.0f, a * D_800D6C68, 0.0f, 1.0f, p->cam.x, p->cam.y, p->cam.z);
+        guMtxXFMF(m, 0.0f, 0.0f, d, &p->cam.x, &p->cam.y, &p->cam.z);
         if (done) {
             if ((s32)pt.a & 0x80) {
                 if (p->f6BC == 0xE6E) {

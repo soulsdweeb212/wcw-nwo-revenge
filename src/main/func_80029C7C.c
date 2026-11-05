@@ -5,7 +5,7 @@
  */
 #include "common.h"
 
-void func_80021F60(void *, s32);
+void bzero(void *, s32);
 s32 func_80028E28(u8 *, u16);
 
 s32 func_80029C7C(u8 *str, s32 arg1, s32 *out, s32 count)
@@ -22,7 +22,7 @@ s32 func_80029C7C(u8 *str, s32 arg1, s32 *out, s32 count)
     u16 f;
 
     f = arg1;
-    func_80021F60(out, count * 4);
+    bzero(out, count * 4);
     row = 0;
     index = 0;
     sum = 0;

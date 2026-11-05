@@ -13,7 +13,7 @@ u8 *func_8002AD04(s32, s32);
 u8 *func_8002AD34(s32, s32);
 void func_8002BB98(s32, s32, void *);
 void func_800BA1A4(s32, s32);
-void func_80021C40(void *, void *, s32);
+void bcopy(void *, void *, s32);
 #define F(t, o, i) (*(t *)(D_8007EF30 + (o) + ((i) << 4)))
 
 s32 func_800B4EFC(void) {
@@ -48,8 +48,8 @@ s32 func_800B4EFC(void) {
         }
     }
     d = D_8007E8C0 + 0xB8;
-    func_80021C40(d, buf, 0x18);
-    func_80021C40(d + 0x22, buf + 0x19, 0xA);
+    bcopy(d, buf, 0x18);
+    bcopy(d + 0x22, buf + 0x19, 0xA);
     buf[0x18] = 0;
     buf[0x23] = 0;
     buf[0x24] = D_800E74D4;

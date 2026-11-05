@@ -16,7 +16,7 @@ typedef struct { s32 flags; } Node;
 s16 func_80098960(G **, s32);
 void func_80098D54(G **, s32);
 s32 func_8000DEE4(s16);
-void func_80013F7C(s32, s32);
+void MusHandleSetReverb(s32, s32);
 void func_800B8C94(void);
 void func_80003418(s8);
 s8 func_80003464(void);
@@ -56,7 +56,7 @@ s16 func_80099968(s16 arg0) {
                             D_800EB2AA = 5;
                         }
                     } while (D_800EB2AC[D_800EB2AA] < 0);
-                    func_80013F7C(func_8000DEE4(0x409), 0);
+                    MusHandleSetReverb(func_8000DEE4(0x409), 0);
                 }
                 if (D_8006E178[arg0 - 1].pressed & 0x400) {
                     do {
@@ -64,7 +64,7 @@ s16 func_80099968(s16 arg0) {
                             D_800EB2AA = 0;
                         }
                     } while (D_800EB2AC[D_800EB2AA] < 0);
-                    func_80013F7C(func_8000DEE4(0x409), 0);
+                    MusHandleSetReverb(func_8000DEE4(0x409), 0);
                 }
                 if (D_8006E178[arg0 - 1].pressed & 0x8000) {
                     switch (D_800EB2AA) {
@@ -85,12 +85,12 @@ s16 func_80099968(s16 arg0) {
                         D_800EB2A8 = 2;
                         break;
                     }
-                    func_80013F7C(func_8000DEE4(0x408), 0);
+                    MusHandleSetReverb(func_8000DEE4(0x408), 0);
                 }
             } else {
                 if (D_8006E178[arg0 - 1].pressed & 0xC00) {
                     D_800EB2A8 = ((D_800EB2A8 - 1) ^ 1) + 1;
-                    func_80013F7C(func_8000DEE4(0x409), 0);
+                    MusHandleSetReverb(func_8000DEE4(0x409), 0);
                 }
                 if (D_8006E178[arg0 - 1].pressed & 0x8000) {
                     if (D_800EB2A8 == 1) {
@@ -101,7 +101,7 @@ s16 func_80099968(s16 arg0) {
                     } else {
                         D_800EB2A8 = 0;
                     }
-                    func_80013F7C(func_8000DEE4(0x408), 0);
+                    MusHandleSetReverb(func_8000DEE4(0x408), 0);
                 }
             }
             func_80098D54(&g, 1);
@@ -125,7 +125,7 @@ s16 func_80099968(s16 arg0) {
         if (D_800EB1D4->flags & 0x80) {
             D_800E2F5A = func_80003464();
             func_80003418(D_800E2F5A / 2);
-            func_80013F7C(func_8000DEE4(0x410), 0);
+            MusHandleSetReverb(func_8000DEE4(0x410), 0);
         }
         D_800EB1D4->flags &= ~0x80;
         if (ret == 0) {

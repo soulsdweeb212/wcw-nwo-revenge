@@ -23,8 +23,8 @@ typedef struct {
 extern Nw2Rec940D8 D_800DB8C0[];
 
 void func_800B82B8(void *, void *, void *, void *, void *, void *);
-void func_8001B3EC(void *, f32, f32, f32, f32 *, f32 *, f32 *);
-void buildScaledRotationTranslationMatrix(void *, f32, f32, f32, f32, f32, f32, f32);
+void guMtxXFMF(void *, f32, f32, f32, f32 *, f32 *, f32 *);
+void guPositionF(void *, f32, f32, f32, f32, f32, f32, f32);
 f32 sinf(f32);
 f32 cosf(f32);
 
@@ -92,7 +92,7 @@ void func_800940D8(void) {
         fs1 = 0.0f;
         fs5 = fs1;
         fp = fs1;
-        func_8001B3EC((u8 *)node + 0x5C, fs1, fs1, fs1, &vec[0], &vec[1], &vec[2]);
+        guMtxXFMF((u8 *)node + 0x5C, fs1, fs1, fs1, &vec[0], &vec[1], &vec[2]);
         lo = s1 & 0xFF;
         if (0 > D_800E74C4) {
             fs0 = fs0 * K_B0;
@@ -163,6 +163,6 @@ void func_800940D8(void) {
             }
         }
 store:
-        buildScaledRotationTranslationMatrix((u8 *)node + 0x5C, fp, fs5, fs1, fs0, vec[0], vec[1], vec[2]);
+        guPositionF((u8 *)node + 0x5C, fp, fs5, fs1, fs0, vec[0], vec[1], vec[2]);
     }
 }

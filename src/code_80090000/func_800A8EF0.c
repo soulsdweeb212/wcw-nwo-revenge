@@ -7,7 +7,7 @@
 
 extern u8 D_800CCA10[], D_8007EF30[];
 void func_800BA59C(s32);
-void func_80021C40(void *, void *, s32);
+void bcopy(void *, void *, s32);
 
 void func_800A8EF0(s32 a) {
     if (a == 7) {
@@ -15,6 +15,6 @@ void func_800A8EF0(s32 a) {
     } else if (a == 8) {
         func_800BA59C(1);
     } else {
-        func_80021C40(D_800CCA10 + a * 12, D_8007EF30 + 0x1A0, 0xB);
+        bcopy(D_800CCA10 + a * 12, D_8007EF30 + 0x1A0, 0xB);
     }
 }

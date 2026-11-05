@@ -23,7 +23,7 @@ s32 func_8009D844(s32, s32, s32);
 s32 func_8009D7A0(s32, s32, s32);
 void runMatchPhaseStateMachine(void);
 s16 func_80099968(s16);
-void func_80013B58(s32, s32);
+void MusStop(s32, s32);
 void func_8009A374(s32);
 s8 func_800D633C(void);
 void func_8000E55C(s32, s32, s32);
@@ -93,7 +93,7 @@ void func_80090030(void) {
                 timer--;
             } else {
                 D_800FADCF |= 0x80;
-                func_80013B58(1, 0x3C);
+                MusStop(1, 0x3C);
             }
         } else if (sel == 0) {
             if (fade == 0 && !(D_800FADCF & 0x80) && D_800F9A9C == 0) {
@@ -131,7 +131,7 @@ void func_80090030(void) {
     func_8000440C(1);
     func_80003E78(0);
     func_8000E09C(0);
-    func_80013B58(1, 1);
+    MusStop(1, 1);
     func_80002C74();
     func_80002C74();
     func_800998EC();

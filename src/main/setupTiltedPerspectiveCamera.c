@@ -7,8 +7,8 @@
 
 extern f32 D_80048500[4][4],D_80048540[4][4];
 extern f32 D_80048580,D_80048584,D_80048588;
-void buildPerspectiveMatrixFloat(void *,u16 *,f32,f32,f32,f32,f32);
-void func_8001A980(void *,f32,f32,f32,f32,f32,f32,f32,f32,f32);
+void guPerspectiveF(void *,u16 *,f32,f32,f32,f32,f32);
+void guLookAtF(void *,f32,f32,f32,f32,f32,f32,f32,f32,f32);
 void func_800014AC(s32,void *,void *);
 void func_800014D0(s32,u16);
 f32 func_80003A3C(f32,f32);
@@ -27,8 +27,8 @@ void setupTiltedPerspectiveCamera(s32 id,f32 tilt,f32 x,f32 y,f32 z,f32 tx,f32 t
     uz=sine*sinf(heading);
     sine=cosf(tilt);
     D_80048580=x;D_80048584=y;D_80048588=z;
-    buildPerspectiveMatrixFloat(D_80048500,&norm,33.0f,1.3333334f,100.0f,4000.0f,1.0f);
-    func_8001A980(D_80048540,x,y,z,tx,ty,tz,ux,sine,uz);
+    guPerspectiveF(D_80048500,&norm,33.0f,1.3333334f,100.0f,4000.0f,1.0f);
+    guLookAtF(D_80048540,x,y,z,tx,ty,tz,ux,sine,uz);
     func_800014AC(id,D_80048500,D_80048540);
     func_800014D0(id,norm);
 }

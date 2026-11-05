@@ -6,7 +6,7 @@
 /* func_80028528: internal helper of this ROM's hand-written 64-bit division runtime (same family as func_80028624; not
  * libultra, name unknown): the "divisor needs 64 bits" path, used by __udivdi3/__umoddi3/__divdi3/__moddi3 when the
  * divisor high word $a2 is non-zero. In: dividend $a0:$a1, divisor $a2:$a3. Out: quotient in $v0:$v1 ($v0 always 0: a
- * divisor >= 2^32 leaves a quotient < 2^32) and, outside the C ABI, the remainder in $a0:$a1 (func_80028880/__umoddi3
+ * divisor >= 2^32 leaves a quotient < 2^32) and, outside the C ABI, the remainder in $a0:$a1 (__umoddi3
  * and __moddi3 read it). Method: d > n gives 0; d == n gives 1, remainder 0; otherwise shift d left (with a quotient
  * bit mask) while the shifted d stays strictly below n or until d's top bit is set, then restoring division back down
  * to bit 0. Edge case kept from the asm (a real bug in the ROM): when d << k == n exactly for some k >= 1 the
@@ -16,12 +16,12 @@
  * whose divisor is >= 2^32 and that divide exactly (remainder 0) with a quotient that is a power of two >= 2; with a
  * non-zero remainder a power-of-two quotient comes out right (e.g. (2^33 + 1) / 2^32 = 2 rem 1). The 32-bit bit mask
  * also means it is wrong if called directly with $a2 == 0 and a quotient >= 2^32 (no caller does). Callers (all asm):
- * func_80028860 (tail call), func_80028880, __divdi3, __moddi3. In the C the out-of-ABI remainder is handed back
+ * __udivdi3 (tail call), __umoddi3, __divdi3, __moddi3. In the C the out-of-ABI remainder is handed back
  * through the setRemainderA0A1 inline-asm helper as the last step. */
 #ifdef NON_MATCHING
 #include "common.h"
 
-/* Hands the 64-bit remainder back in $a0:$a1 (hi:lo), outside the C ABI, as the asm does: __umoddi3 (func_80028880)
+/* Hands the 64-bit remainder back in $a0:$a1 (hi:lo), outside the C ABI, as the asm does: __umoddi3
  * and __moddi3 read $a0/$a1 straight after the call. One asm statement so neither input can be given $a0/$a1 and
  * be overwritten by the other move; it must be the last thing before the return. */
 static inline void setRemainderA0A1(u32 hi, u32 lo) {

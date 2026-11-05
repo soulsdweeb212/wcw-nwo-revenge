@@ -6,7 +6,7 @@
 #include "common.h"
 
 /* Read a 32-byte block from a Controller Pak channel: build the read packet
- * (header + address + CRC), send it with func_80025810/func_8001C990, then
+ * (header + address + CRC), send it with __osSiRawStartDma/osRecvMesg, then
  * verify the data CRC and copy the payload out. Retries up to 3 times. */
 typedef struct {
     u8 unk00;
@@ -23,12 +23,12 @@ extern u8 D_8007DFD0[];
 extern s32 D_8007E00C;
 extern s32 D_800375F0;
 
-s32 func_8001C990(void *, void *, s32);
-void func_80021C40(void *, void *, s32);
-s32 func_80025810(s32, void *);
-void func_80027744(void);
-void func_800277B0(void);
-s32 func_80024640(void *, s32);
+s32 osRecvMesg(void *, void *, s32);
+void bcopy(void *, void *, s32);
+s32 __osSiRawStartDma(s32, void *);
+void __osSiGetAccess(void);
+void __osSiRelAccess(void);
+s32 __osPfsGetStatus(void *, s32);
 
 s32 __osContRamRead(void *mq, s32 channel, u16 addr, u8 *buffer) {
     s32 status;
@@ -37,7 +37,7 @@ s32 __osContRamRead(void *mq, s32 channel, u16 addr, u8 *buffer) {
     ContRamReadFormat *fmt;
     s32 retryCount = 2;
 
-    func_80027744();
+    __osSiGetAccess();
     do {
         if (D_8007BD30 != 2 || D_800375F0 != channel) {
             D_8007BD30 = 2;
@@ -58,25 +58,25 @@ s32 __osContRamRead(void *mq, s32 channel, u16 addr, u8 *buffer) {
         }
         fmt = (ContRamReadFormat *)pkt;
         fmt->hi = addr >> 3;
-        fmt->lo = calculateControllerPakAddressCrc(addr) | (addr << 5);
-        func_80025810(1, D_8007DFD0);
-        func_8001C990(mq, NULL, 1);
-        func_80025810(0, D_8007DFD0);
-        func_8001C990(mq, NULL, 1);
+        fmt->lo = __osContAddressCrc(addr) | (addr << 5);
+        __osSiRawStartDma(1, D_8007DFD0);
+        osRecvMesg(mq, NULL, 1);
+        __osSiRawStartDma(0, D_8007DFD0);
+        osRecvMesg(mq, NULL, 1);
         status = (fmt->rxsize & 0xC0) >> 4;
         if (status == 0) {
-            if ((u8)calculateControllerPakDataCrc(pkt + 6) != fmt->datacrc) {
-                status = func_80024640(mq, channel);
+            if ((u8)__osContDataCrc(pkt + 6) != fmt->datacrc) {
+                status = __osPfsGetStatus(mq, channel);
                 if (status != 0) break;
                 status = 4;
             } else {
-                func_80021C40(pkt + 6, buffer, 32);
+                bcopy(pkt + 6, buffer, 32);
             }
         } else {
             status = 1;
         }
         if (status != 4) break;
     } while (0 <= retryCount--);
-    func_800277B0();
+    __osSiRelAccess();
     return status;
 }

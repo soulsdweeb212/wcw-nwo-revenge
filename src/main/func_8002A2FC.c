@@ -12,7 +12,7 @@ void func_80029A24(void *, s32, s32, void *);
 void fillNibblePixelLevels(Nw2ResourceEntryHashed *);
 void slantNibbleBitmapRows(Nw2ResourceEntryHashed *, s32);
 void func_8002A1C4(Nw2ResourceEntryHashed *);
-void func_80021F60(void *, s32);
+void bzero(void *, s32);
 void *allocateHeap(u32);
 
 typedef struct {
@@ -98,7 +98,7 @@ have:
         entry->key = 0;
         return NULL;
     }
-    func_80021F60(allocation, *(u32 *)((u8 *)entry + 8));
+    bzero(allocation, *(u32 *)((u8 *)entry + 8));
     func_800295B4(entry, flags);
     if (key & 0x40000000) {
         entry->key = key;

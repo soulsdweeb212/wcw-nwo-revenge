@@ -20,7 +20,7 @@ s32 func_8000DE68(s16 arg0) {
     return 0;
 }
 extern u32 D_800604C8;extern u8 *D_800604D0; extern s32 *D_800604D8;
-s32 func_80015F64(void *,s32,s32,s32,s32);
+s32 __MusIntStartEffect(void *,s32,s32,s32,s32);
 extern s32 *D_80036F54;
-void func_8002023C(void *);void func_8002021C(void *,void *);
-s32 *func_80017F18(void); s32 func_80018C24(s32*,s32,s32*);
+void alUnlink(void *);void alLink(void *,void *);
+s32 *__n_allocParam(void); s32 n_alEnvmixerParam(s32*,s32,s32*);

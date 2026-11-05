@@ -14,7 +14,7 @@ void lookupResourceDescriptor(void *, s32);
 void func_80003684(void *, s32, s32);
 void releaseHeapBlock(void *);
 f32 func_8000B370(s16);
-void func_8001BE70(void *, f32, f32, f32);
+void guScaleF(void *, f32, f32, f32);
 
 /* Return a pointer to record arg0 (stride 0x24) in the table at D_8007BD38. */
 u8 *func_800087DC(s32 arg0) {

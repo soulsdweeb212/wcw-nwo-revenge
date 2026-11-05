@@ -15,14 +15,14 @@ extern s32 D_800CCF8C[];
 extern s32 D_800CCBF8[];
 extern u16 D_800C9254[];
 extern struct { u8 pad0[0xA]; u16 fA; } D_8007EF30;
-u32 func_8001CE80(V *);
+u32 osVirtualToPhysical(V *);
 void func_800B6FE0(G **, s32);
 void func_800B7260(G **, s32, s32, s32);
 s32 func_800A9F64(s32);
 void func_800A8140(G **, s32, s32, s32);
 
 #define EMIT(a, b) { G *_g = g++; _g->w0 = (a); _g->w1 = (b); }
-#define SPVERTEX(n, v0) { G *_g = g++; _g->w0 = 0x01000000 | ((n) << 12) | (((v0) + (n)) << 1); _g->w1 = func_8001CE80(D_800E7CB4); }
+#define SPVERTEX(n, v0) { G *_g = g++; _g->w0 = 0x01000000 | ((n) << 12) | (((v0) + (n)) << 1); _g->w1 = osVirtualToPhysical(D_800E7CB4); }
 #define VTX(x, y, s, t) {                   \
     V *v = D_800E7CB4++;                    \
     v->ob[0] = (x);                         \

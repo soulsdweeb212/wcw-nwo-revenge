@@ -5,7 +5,7 @@
  */
 #include "common.h"
 
-void func_80021C40(void *, void *, s32);
+void bcopy(void *, void *, s32);
 void func_80001DC4(void *);
 
 typedef struct {
@@ -18,7 +18,7 @@ typedef struct {
 } Nw2Node1DC4;
 
 /* Recursively recompute world matrices for a scene-graph list: with no parent,
- * copy the local matrix verbatim (func_80021C40); with a parent, multiply the
+ * copy the local matrix verbatim (bcopy); with a parent, multiply the
  * local matrix by the parent's matrix at +0x5C. Then recurse into the child and
  * continue along the sibling list. */
 void func_80001DC4(void *arg0)
@@ -35,7 +35,7 @@ void func_80001DC4(void *arg0)
 
     while (node != NULL) {
         if (node->parent == 0) {
-            func_80021C40(node->local, node->world, 0x40);
+            bcopy(node->local, node->world, 0x40);
         } else {
             m = (f32 (*)[4])((u8 *)node->parent + 0x5C);
             i = 0;

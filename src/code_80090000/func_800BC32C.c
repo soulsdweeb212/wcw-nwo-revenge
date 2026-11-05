@@ -12,7 +12,7 @@ extern f32 D_800E7510, D_800E750C, D_800E7508, D_800E7500, D_800E74FC, D_800E74F
 extern s16 D_8006E440;
 extern u8 D_8007EF30[];
 void func_800BBEB8(s32);
-s32 func_8001C580(void);
+s32 guRandom(void);
 void func_800B807C(s32, s32);
 void func_8000DFD0(s32);
 
@@ -36,12 +36,12 @@ void func_800BC32C(void) {
     D_800DF1D8 = 0;
     D_800DF1D4 = 0;
     do {
-        r = func_8001C580() % 6;
+        r = guRandom() % 6;
     } while ((D_800DF1D4 >> r) & 1);
     D_800DF1D4 |= 1 << r;
     func_800B807C(0, r + 1);
     do {
-        r = func_8001C580() % 5;
+        r = guRandom() % 5;
     } while ((D_800DF1D8 >> r) & 1);
     D_800DF1D8 |= 1 << r;
     D_800E8210 = r;

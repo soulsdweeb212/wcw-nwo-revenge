@@ -40,13 +40,13 @@ typedef struct {
 #define PFS_INITIALIZED 1
 #define FALSE 0
 
-void func_80027744(void);
-void func_800277B0(void);
-s32 func_80024640(void *, int);
-s32 readControllerPakId(void *);
-s32 func_80025480(void *, s32);
+void __osSiGetAccess(void);
+void __osSiRelAccess(void);
+s32 __osPfsGetStatus(void *, int);
+s32 __osGetId(void *);
+s32 __osPfsSelectBank(void *, s32);
 s32 __osContRamWrite(void *, int, u16, u8 *, s32);
-u16 func_80022120(u8 *, s32);
+u16 __osSumcalc(u8 *, s32);
 
 s32 osPfsReFormat(OSPfs *pfs, void *queue, int channel) {
     int j;
@@ -56,22 +56,22 @@ s32 osPfsReFormat(OSPfs *pfs, void *queue, int channel) {
     u8 *ptr;
     s32 ret;
 
-    func_80027744();
-    ret = func_80024640(queue, channel);
+    __osSiGetAccess();
+    ret = __osPfsGetStatus(queue, channel);
     if (ret != 0) {
-        func_800277B0();
+        __osSiRelAccess();
         return ret;
     }
     pfs->status ^= PFS_INITIALIZED;
     pfs->queue = queue;
     pfs->channel = channel;
-    func_800277B0();
-    ret = readControllerPakId(pfs);
+    __osSiRelAccess();
+    ret = __osGetId(pfs);
     if (ret != 0) {
         return ret;
     }
     if (pfs->activebank != 0) {
-        ret = func_80025480(pfs, 0);
+        ret = __osPfsSelectBank(pfs, 0);
         if (ret != 0) {
             return ret;
         }
@@ -91,7 +91,7 @@ s32 osPfsReFormat(OSPfs *pfs, void *queue, int channel) {
     for (j = pfs->inode_start_page; j < ARRLEN(inode.inode_page); j++) {
         inode.inode_page[j].ipage = 3;
     }
-    inode.inode_page[0].ipage = func_80022120((u8 *)(inode.inode_page + pfs->inode_start_page),
+    inode.inode_page[0].ipage = __osSumcalc((u8 *)(inode.inode_page + pfs->inode_start_page),
                                               (ARRLEN(inode.inode_page) - pfs->inode_start_page) * sizeof(__OSInodeUnit));
     ptr = (u8 *)&inode;
     for (j = 0; j < PFS_ONE_PAGE; j++) {
@@ -108,7 +108,7 @@ s32 osPfsReFormat(OSPfs *pfs, void *queue, int channel) {
         for (j = 1; j < ARRLEN(inode.inode_page); j++) {
             inode.inode_page[j].ipage = 3;
         }
-        inode.inode_page[0].ipage = func_80022120((u8 *)(inode.inode_page + 1),
+        inode.inode_page[0].ipage = __osSumcalc((u8 *)(inode.inode_page + 1),
                                                   (ARRLEN(inode.inode_page) - 1) * sizeof(__OSInodeUnit));
         ptr = (u8 *)&inode;
         for (j = 0; j < PFS_ONE_PAGE; j++) {

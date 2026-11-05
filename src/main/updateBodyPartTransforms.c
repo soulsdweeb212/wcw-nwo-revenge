@@ -33,7 +33,7 @@ extern s8 D_800307E8[];
 extern s8 D_800307FC[];
 void func_80007E04(void *, f32, f32, f32);
 void multiplyMatrix4x4(void *, void *, void *);
-void func_8001B3EC(void *, f32, f32, f32, f32 *, f32 *, f32 *);
+void guMtxXFMF(void *, f32, f32, f32, f32 *, f32 *, f32 *);
 
 /* For each body part of entity arg0: derive its local rotation from its Euler
  * angles and its translation from its parent's offset, build the part's world
@@ -50,7 +50,7 @@ void updateBodyPartTransforms(s16 arg0) {
             f32 *parentMatrix = (f32 *)(D_800738D0 + (parent << 6));
             s32 dx = D_800307C0[part * 2] - D_800307C0[parent * 2];
             s32 dy = D_800307C0[part * 2 + 1] - D_800307C0[parent * 2 + 1];
-            func_8001B3EC(parentMatrix, (f32)dx, (f32)dy, 0, pos, &partTf->posY, &partTf->posZ);
+            guMtxXFMF(parentMatrix, (f32)dx, (f32)dy, 0, pos, &partTf->posY, &partTf->posZ);
         }
         {
             s32 off = part << 6;

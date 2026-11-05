@@ -21,7 +21,7 @@ extern u16 D_8003A4FC[][4];
 s32 func_8002B528(s32);
 s32 func_800B0EC4(s32);
 s32 func_8002B668(s32, s32);
-s32 func_8001C580(void);
+s32 guRandom(void);
 
 void func_800AEB68(void) {
     Pl *p = D_8007EF30.pl;
@@ -60,8 +60,8 @@ void func_800AEB68(void) {
                 }
             }
             for (j = 0; j < cnt; j++) {
-                a = func_8001C580() % cnt;
-                b = func_8001C580() % cnt;
+                a = guRandom() % cnt;
+                b = guRandom() % cnt;
                 id = buf[a];
                 buf[a] = buf[b];
                 buf[b] = id;

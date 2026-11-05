@@ -9,7 +9,7 @@ extern s32 gRandSeed;
 extern s32 D_800EB634;
 extern u16 D_800EB638[];
 
-s32 func_8001C580(void);
+s32 guRandom(void);
 void func_800D427C(void *, s32);
 s32 func_800D4204(void);
 

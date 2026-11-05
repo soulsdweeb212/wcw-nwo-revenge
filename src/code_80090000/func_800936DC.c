@@ -110,10 +110,10 @@ void *allocateHeap(u32);
 void func_80003684(void *, u16, void *);
 Vtx936 *func_800B64EC(void *, u16);
 void func_80090908(Part936 *, Vtx936 *);
-s32 func_8001C580(void);
+s32 guRandom(void);
 void func_800914F0(Out936 *);
 void func_80092DE0(Enc936 *, s32, s32);
-void buildScaledRotationTranslationMatrix(void *, f32, f32, f32, f32, f32, f32, f32);
+void guPositionF(void *, f32, f32, f32, f32, f32, f32, f32);
 void func_800015AC(Out936 *, s32);
 void relinkEntityList(void);
 void releaseHeapBlock(void *);
@@ -190,7 +190,7 @@ void func_800936DC(s32 arg0) {
                     enc->f4 = out;
                     enc->fC = sub->id;
                     enc->f8 = &D_800C6508[sub->id];
-                    enc->f12 = func_8001C580() % 7;
+                    enc->f12 = guRandom() % 7;
                     enc->f14 = D_800C5E00[enc->f12 * 3];
                     enc->f15 = D_800C5E00[enc->f12 * 3 + 1];
                     enc->f16 = D_800C5E00[enc->f12 * 3 + 2];
@@ -242,7 +242,7 @@ void func_800936DC(s32 arg0) {
                     g->w0 = 0xDF000000;
                     g->w1 = 0;
                 }
-                buildScaledRotationTranslationMatrix(out->f1C, 0.0f, sub->fE, 0.0f, 1.0f, sub->f8, sub->fA, sub->fC);
+                guPositionF(out->f1C, 0.0f, sub->fE, 0.0f, 1.0f, sub->f8, sub->fA, sub->fC);
                 if (arg0 < 6 && k == 0) {
                     out->f14->f24 = 1024.0f;
                 }

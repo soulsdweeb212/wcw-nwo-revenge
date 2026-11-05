@@ -9,7 +9,7 @@ extern s32 D_8003764C;
 extern void *__osViCurr;
 extern void *__osViNext;
 extern f64 D_8003B900;
-u32 func_8001CE80(void *);
+u32 osVirtualToPhysical(void *);
 
 typedef struct {
     s32 origin;
@@ -61,7 +61,7 @@ void __osViSwapContext(void) {
     viNext = (ViContext *)__osViNext;
     viMode = viNext->modep;
     field = *(vu32 *)0xA4400010 & 1;
-    origin = func_8001CE80(viNext->framep) + viMode->fldRegs[field].origin;
+    origin = osVirtualToPhysical(viNext->framep) + viMode->fldRegs[field].origin;
 
     if (viNext->state & 2) {
         viNext->xScale |= viMode->xScale & 0xFFFFF000;
@@ -88,11 +88,11 @@ void __osViSwapContext(void) {
     }
     if (viNext->state & 0x40) {
         viNext->yScale = 0;
-        origin = func_8001CE80(viNext->framep);
+        origin = osVirtualToPhysical(viNext->framep);
     }
     if (viNext->state & 0x80) {
         viNext->yScale = (viNext->yOffset << 16) & 0x3FF0000;
-        origin = func_8001CE80(viNext->framep);
+        origin = osVirtualToPhysical(viNext->framep);
     }
 
     *(vu32 *)0xA4400004 = origin;

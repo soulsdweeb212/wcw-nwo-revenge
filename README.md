@@ -3,7 +3,9 @@
 A matching decompilation of WCW / nWo  REVENGE for the Nintendo 64, started with [decompdecomp](https://github.com/n-delic/decompdecomp).
 All 1696 functions build as C objects (100% of the code by size): the main program and both overlays are fully matched. 35 of
 those are hand-written assembly routines wrapped in a top-level `asm()` block (see below), so 1661 are real C that compiles to
-exactly the original code.
+exactly the original code. The Nintendo SDK code linked into the main program (libultra 2.0I, libaudio, n_audio,
+libmus, the KMC GCC runtime) carries its SDK names: [docs/sdk_functions.md](docs/sdk_functions.md) lists the 380
+functions and how each was identified.
 `build.py` rebuilds the game from this tree and checks it against your original, byte for byte.
 <!-- Working with this project's owner: read notes/MasterIndex.md first and keep it updated (local only, gitignored). -->
 
@@ -37,6 +39,7 @@ If `build.py` can't find decompdecomp's Python, run it with that interpreter dir
 | `asm/nonmatchings/` | Assembly of every function (the target for the decompiled ones). |
 | `asm/data/`, `asm/*.s`, `assets/` | Data, start-up code and binary parts, still as assembly or binary. |
 | `include/common.h` | Types, structs and prototypes worked out so far. |
+| `docs/sdk_functions.md` | The Nintendo SDK functions in the main program, with the evidence for each name. |
 | `game.ld` | Places every function and data block at its original address. |
 | `build.json`, `build.py` | How each file is built, and the build. |
 | `objdiff.json` | Per-function units for [objdiff](https://github.com/encounter/objdiff) (`python3 build.py targets` makes their targets). |
@@ -76,6 +79,13 @@ share it.
 - `tools/ghidra.py` uses decompdecomp's Ghidra (needs a JDK). `import` analyses the ROM once into `build/ghidra/`; then `decomp FUNC` prints its C, `unmatched` writes C for every function that is still assembly, `new` lists functions missing from `build.json`, `search` finds instruction sequences (one regex per instruction, `;` between them) and `bytes` finds raw words anywhere in the ROM.
 - `tools/indent_c.py [--check] [--diff] [paths...]` re-indents C files (all of `src/` by default) with 4 spaces per level. It changes
   only leading whitespace, so the build stays identical; its docstring lists the style rules.
+- `tools/rename_func.py [--dry-run] OLD NEW ... | --file MAP.tsv` renames functions everywhere (`symbol_addrs.txt`, `build.json`,
+  the file name, every whole-word mention in `src/`, `include/`, the READMEs and `objdiff.json`, the headers) and deletes `asm/`
+  so the next build extracts it again with the new names. Rebuild afterwards: a name can change the code (see
+  `docs/sdk_functions.md`, `nw2Sqrtf` and `unusedMuldi3`).
+- `tools/ulpp.sh`, `tools/ul.py`, `tools/ulsweep.py` compare [decompals/ultralib](https://github.com/decompals/ultralib) source
+  with the ROM (`ULTRALIB=` a checkout): preprocess one file for a libultra version, diff one function against a ROM function,
+  or score all of ultralib against every main function.
 - `nonmatching/` is where near-miss drafts go (`build.py` does not compile it). It is empty now that every function matches; its
   README keeps the matching findings collected along the way.
 - A source file can hold several consecutive functions: give each the same `"c"` in `build.json`; the object is placed once,
@@ -85,7 +95,7 @@ share it.
 - Labels in the middle of a function that other code jumps to (`alabel` in the splat output) need an entry in the
   `symbols` table of `build.json`.
 - A C function with a jump table or double constants needs its `own` `.rodata` base in `build.json` (the address of the
-  table in the game, e.g. `setAudioRegionParameter` -> `0x8003B4F0`). `build.py check` reads the function's own overlay, so it
+  table in the game, e.g. `n_alFxParamHdl` -> `0x8003B4F0`). `build.py check` reads the function's own overlay, so it
   can verify these.
 
 ### Switch tables are checked against the ROM
@@ -121,27 +131,25 @@ hardware it touches) and holds an equivalent C version under `#ifdef NON_MATCHIN
 The normal build never defines `NON_MATCHING`, so it keeps using the asm and stays identical. The C is for reading: an
 independent check traced each version against the assembly. It is not a working replacement build. Instructions C has no
 form for (CP0, cache, TLB, `eret`) are one-line inline-asm helpers, and the exception-handler pieces are entered by
-branches, not calls. `func_8002BC40` is not CPU code at all: it is RSP code (libultra's `rspboot` plus the start of the
-audio microcode), so its C model is under `#if 0`. The C versions of `__osEnqueueThread` (`func_800266B4`), `__osPopThread`
-(`func_800266FC`) and the seven one- or two-instruction CP0/FPU accessors also compile to the original bytes (checked with
+branches, not calls. `rspbootTextStart` is not CPU code at all: it is RSP code (libultra's `rspboot` plus the start of the
+audio microcode), so its C model is under `#if 0`. The C versions of `__osEnqueueThread`, `__osPopThread` and the seven one- or two-instruction CP0/FPU accessors also compile to the original bytes (checked with
 `lk.py`, not with a build), but they need register pinning to get there, so the asm stays the built version.
 
 These were written in assembly in the original (CP0/TLB/cache/FPU access, or hand-scheduled `.set noreorder` code with
 `nop` delay slots, which neither KMC GCC nor IDO produces from C). They build as `asm()` objects (`tools/asm_to_c.py`),
 so the ROM is still byte-identical, but they are not decompiled.
-- `func_80026AF0` (reads CP0 Count), `func_80026B00` / `func_80026C20` (read / write CP0 Status), `func_80028100` (writes CP0 Compare)
-- `func_80026C10` (reads and writes the FPU control register)
-- `nw2DisableInterrupts`, `nw2RestoreInterrupts` (edit CP0 Status)
-- `func_8001C860` (data-cache `cache` loop), `func_80026C30`, `func_80026C80` (TLB setup)
-- `func_800266B4`, `func_800266FC` (thread queue insert / pop: tried in C with KMC GCC and IDO 5.3/7.1, delay slots and registers differ)
+- `osGetCount` (reads CP0 Count), `__osGetSR` / `__osSetSR` (read / write CP0 Status), `__osSetCompare` (writes CP0 Compare)
+- `__osSetFpcCsr` (reads and writes the FPU control register)
+- `__osDisableInt`, `__osRestoreInt` (edit CP0 Status)
+- `osWritebackDCacheAll` (data-cache `cache` loop), `osUnmapTLBAll`, `osMapTLBRdb` (TLB setup)
+- `__osEnqueueThread`, `__osPopThread` (thread queue insert / pop: tried in C with KMC GCC and IDO 5.3/7.1, delay slots and registers differ)
 - Also classified as hand-written by `tools/list_nonmatching.py` (CP0/cache/TLB instructions, or a "Handwritten" marker in the
-  splat output); not all individually reviewed: `func_80021F60` (a `bzero` that aligns with a lone `swl`), `func_800264BC` (a helper inside the
-  exception handler `func_80025F30`; it keeps its return address in `$s2`), `func_80025F30`, `func_8002BC40`,
-  `func_80021C40`, `func_800265AC`, `func_8002670C`, `func_80026578`, `func_80026B50`, `func_8001C5B0`, `func_8001C660`,
-  `func_8001C740`, `func_8001C7E0`.
+  splat output); not all individually reviewed: `bzero` (aligns with a lone `swl`), `send_mesg` (a helper inside the
+  exception handler `__osExceptionPreamble`; it keeps its return address in `$s2`), `__osExceptionPreamble`, `rspbootTextStart`,
+  `bcopy`, `__osEnqueueAndYield`, `__osDispatchThread`, `handle_CpU`, `__osProbeTLB`, `osInvalDCache`, `osInvalICache`,
+  `osSetIntMask`, `osWritebackDCache`.
 
-The compiler-runtime routines are hand-written assembly too and are built the same way: `bcmp` and the 64-bit helpers `func_800284F4`
-(a 64-bit multiply from three 32x32 multiplies), `func_80028528` (unsigned 64-bit divide, shift-and-subtract), `func_80028624` (divide by a
-32-bit divisor), `func_80028860` / `func_80028880` (dispatchers that pick one of the two by the divisor's high word: they look like
-`__udivdi3` / `__umoddi3`), `__divdi3`, `__moddi3`, `__fixsfdi` and `signed64ToFloatTrunc`. They use `lwl`/`lwr`, `$t9` as scratch, tail
+The compiler-runtime routines are hand-written assembly too and are built the same way: `bcmp` and the 64-bit helpers `unusedMuldi3`
+(a 64-bit multiply from three 32x32 multiplies that nothing calls), `func_80028528` (unsigned 64-bit divide, shift-and-subtract), `func_80028624` (divide by a
+32-bit divisor), `__udivdi3` / `__umoddi3` (dispatchers that pick one of the two by the divisor's high word), `__divdi3`, `__moddi3`, `__fixsfdi` and `__floatdisf`. They use `lwl`/`lwr`, `$t9` as scratch, tail
 jumps between each other and `$ra` kept in `$t5`, which C cannot produce. (Identified from reading the assembly, not from a reference source.)

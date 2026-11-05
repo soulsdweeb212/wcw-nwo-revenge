@@ -6,7 +6,7 @@
 #include "common.h"
 
 extern u8 D_8007EF30[];
-void func_80021C40(void *, void *, s32);
+void bcopy(void *, void *, s32);
 
 void func_800AA38C(s32 i, s32 j) {
     u8 t[16];
@@ -21,9 +21,9 @@ void func_800AA38C(s32 i, s32 j) {
         a = x + q;
         y = j << 5;
         b = y + q;
-        func_80021C40(a, t, 0x10);
-        func_80021C40(b, a, 0x10);
-        func_80021C40(t, b, 0x10);
+        bcopy(a, t, 0x10);
+        bcopy(b, a, 0x10);
+        bcopy(t, b, 0x10);
         {
             u8 *r = p + 0x54;
             a = x + r;
@@ -35,7 +35,7 @@ void func_800AA38C(s32 i, s32 j) {
         a = k + q;
         b = (j << 4) + q;
     }
-    func_80021C40(a, t, 0x10);
-    func_80021C40(b, a, 0x10);
-    func_80021C40(t, b, 0x10);
+    bcopy(a, t, 0x10);
+    bcopy(b, a, 0x10);
+    bcopy(t, b, 0x10);
 }

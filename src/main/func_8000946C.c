@@ -38,17 +38,17 @@ extern A2B2Rec D_8006A2B2[];
 
 void func_8000B2B8(s32);
 void lookupResourceDescriptor(void *, u16);
-void func_8001C5B0(void *, s32);
-s32 func_800219B0(s32, void *, s32);
-s32 func_8001C990(void *, void *, s32);
+void osInvalDCache(void *, s32);
+s32 osEPiStartDma(s32, void *, s32);
+s32 osRecvMesg(void *, void *, s32);
 
 /* Loads/advances a streamed resource for slot D_800706AC[slot].  If the requested
  * resource or frame differs from the current one it aborts the slot
  * (func_8000B2B8), looks up the resource descriptor, sets the source/destination
  * pointers and the remaining byte count at a per-frame offset (frame>>1 * 0x62)
- * inside the resource, primes the first chunk (func_8001C5B0), fills the DMA
+ * inside the resource, primes the first chunk (osInvalDCache), fills the DMA
  * queue message without waiting for a free slot, and enqueues it
- * (func_8001C990).  Then it clamps the requested frame to the resource's per-slot
+ * (osRecvMesg).  Then it clamps the requested frame to the resource's per-slot
  * maximum from D_8006A2B2 and records the destination buffer pointer. */
 void func_8000946C(s16 slot, s16 resourceId, s16 frame) {
     s32 desc[4];
@@ -68,7 +68,7 @@ void func_8000946C(s16 slot, s16 resourceId, s16 frame) {
         D_800706AC[slot].remaining = desc[2] - headerBytes;
         D_800706AC[slot].state = frame;
         chunk = 0x100;
-        func_8001C5B0(D_800706AC[slot].destination, D_800706AC[slot].remaining);
+        osInvalDCache(D_800706AC[slot].destination, D_800706AC[slot].remaining);
         if (D_800706AC[slot].remaining < 0x100) {
             chunk = D_800706AC[slot].remaining;
         }
@@ -78,14 +78,14 @@ void func_8000946C(s16 slot, s16 resourceId, s16 frame) {
         D_800706AC[slot].cart = D_800706AC[slot].source;
         D_800706AC[slot].dram = D_800706AC[slot].destination;
         do {
-        } while (func_800219B0(D_8004859C, &D_800706AC[slot].type, 0) != 0);
+        } while (osEPiStartDma(D_8004859C, &D_800706AC[slot].type, 0) != 0);
         D_800706AC[slot].f16 = -1;
         D_800706AC[slot].id = resourceId;
         D_800706AC[slot].f14 = resourceId;
         D_800706AC[slot].source += chunk;
         D_800706AC[slot].destination += chunk;
         D_800706AC[slot].remaining -= chunk;
-        func_8001C990(D_800706AC[slot].queue, 0, 1);
+        osRecvMesg(D_800706AC[slot].queue, 0, 1);
     }
 
     {

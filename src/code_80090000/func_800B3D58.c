@@ -18,8 +18,8 @@ extern s32 D_800EA094[];
 extern s32 D_800EA220[][11];
 extern Ent D_800EA0D8[];
 extern u8 D_800E7C58[][8];
-void func_80021C40(void *, void *, s32);
-void func_80021F60(void *, s32);
+void bcopy(void *, void *, s32);
+void bzero(void *, s32);
 void func_800B34F8(s32, s32);
 void func_800BAA64(Ent *, s32);
 
@@ -31,9 +31,9 @@ static inline void record(s32 n) {
     Ent *e = &D_800EA0D8[D_800EA094[D_8007E8C0.f0[n]]];
 
     e->f0 = D_800EA220[n][10];
-    func_80021C40(D_800E7C58[D_8007E8C0.f0[n]], e->f6, 4);
+    bcopy(D_800E7C58[D_8007E8C0.f0[n]], e->f6, 4);
     e->f4 = D_8007E228.ids[n] | ((D_8007E8C0.f70[n] & 3) << 12);
-    func_80021F60(e->fC, 4);
+    bzero(e->fC, 4);
     e->fA = 0;
 }
 

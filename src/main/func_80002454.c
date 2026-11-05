@@ -21,7 +21,7 @@ typedef struct Obj2454 {
 
 extern Obj2454 *D_80047070[][512];
 extern s16 D_80047066;
-u32 func_8001CE80(void *);
+u32 osVirtualToPhysical(void *);
 
 s16 func_80002454(Gfx2454 **gfx, s16 bank, s16 first)
 {
@@ -52,7 +52,7 @@ s16 func_80002454(Gfx2454 **gfx, s16 bank, s16 first)
                 g->w1 = 0x10000;
             }
             if (p->vtx != NULL) {
-                addr = func_8001CE80(p->vtx);
+                addr = osVirtualToPhysical(p->vtx);
                 n = p->count;
                 start = p->start;
                 while (n > 32) {

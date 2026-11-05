@@ -14,7 +14,7 @@ typedef struct { s32 x; s32 y; s32 page; s32 len; } Kb;
 extern V *D_800E7CB4;
 extern s32 D_800CCD40;
 extern Kb D_800E7BF0;
-u32 func_8001CE80(V *);
+u32 osVirtualToPhysical(V *);
 s32 func_80099694(u16, u16);
 Spr *func_800B600C(s32, s32);
 void appendPaletteSetupDisplayList(G **);
@@ -106,7 +106,7 @@ void func_800A5A30(G **dl, Item *it) {
         x--;
         y = D_800E7BF0.y * 12;
         EMIT(0xFA000000, it->f16 >> 1);
-        EMIT(0x01008038, func_8001CE80(D_800E7CB4));
+        EMIT(0x01008038, osVirtualToPhysical(D_800E7CB4));
         VTX(x - 6, y - 6, 0, 0);
         VTX(x + 6, y - 6, 0, 0);
         VTX(x - 6, y + 6, 0, 0);

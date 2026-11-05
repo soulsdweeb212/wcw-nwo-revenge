@@ -35,7 +35,7 @@ void lookupResourceDescriptor(s32 *, u32);
 void func_80003684(s32 *, u32, void *);
 void func_80004E08(void *, s32, s16);
 void buildCiTextureDisplayList(void *, s32);
-u32 func_8001CE80(void *);
+u32 osVirtualToPhysical(void *);
 
 #define GFX_CMD(pkt, a, b) { Gfx7020 *_g = (pkt); _g->w0 = (a); _g->w1 = (b); }
 
@@ -89,7 +89,7 @@ Gfx7020 *func_80007020(Ent7020 *arg0, s16 *arg1, u16 *arg2, s16 arg3)
         if (arg2[i] != 0 && arg0[i].count > 0) {
             if (arg0[i].vtx != NULL) {
                 GFX_CMD(gfx++, 0x01000000 | ((arg0[i].n & 0xFF) << 12) | (((arg0[i].v0 + arg0[i].n) & 0x7F) << 1),
-                        func_8001CE80(arg0[i].vtx));
+                        osVirtualToPhysical(arg0[i].vtx));
             }
             if (arg0[i].dl != 0) {
                 GFX_CMD(gfx++, 0xDE000000, arg0[i].dl - 0x80000000);

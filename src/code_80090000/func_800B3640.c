@@ -15,7 +15,7 @@ extern s32 D_800E7BF0[];
 extern Sc D_800EA220[];
 extern s32 D_800EA098[];
 void func_800BA940(Ent *, s32);
-void func_80021C40(void *, void *, s32);
+void bcopy(void *, void *, s32);
 
 void func_800B3640(void) {
     s32 score[14];
@@ -67,12 +67,12 @@ void func_800B3640(void) {
             }
         }
     }
-    func_80021C40(D_800EA0D8[0], D_800EA0D8[1], 0xA0);
+    bcopy(D_800EA0D8[0], D_800EA0D8[1], 0xA0);
     for (i = 0; i < 10; i++) {
         if (order[i] & 0x80) {
             D_800EA098[order[i] & 0x7F] = i;
         } else {
-            func_80021C40(&D_800EA0D8[1][order[i]], &D_800EA0D8[0][i], 0x10);
+            bcopy(&D_800EA0D8[1][order[i]], &D_800EA0D8[0][i], 0x10);
         }
     }
     if ((D_8007EF30.mode & 0x60) && D_800DC830[0] != D_800DC830[1] && D_800EA098[D_800DC830[0]] >= 0) {

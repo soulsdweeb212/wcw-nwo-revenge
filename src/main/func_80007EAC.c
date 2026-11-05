@@ -8,7 +8,7 @@
 f32 cosf(f32);
 f32 sinf(f32);
 extern f32 D_800307B0;
-void initIdentityMatrix4x4(void *);
+void guMtxIdentF(void *);
 
 /* Build a perspective/frustum matrix in arg0: after clearing it to identity, write
  *   m[0][0] (0x00) = tan(fov/2 * D_800307B0) * aspect
@@ -23,7 +23,7 @@ void func_80007EAC(void *arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     f32 temp_fs3;
     f32 temp_fv0;
 
-    initIdentityMatrix4x4(arg0);
+    guMtxIdentF(arg0);
     temp_fs0 = arg1 * D_800307B0 * 0.5f;
     temp_fs0_2 = sinf(temp_fs0);
     temp_fs0_3 = temp_fs0_2 / cosf(temp_fs0);

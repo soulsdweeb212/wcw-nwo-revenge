@@ -22,7 +22,7 @@ extern V D_800CCD48[][3];
 extern s32 D_800E9F98[]; /* [4][16], indexed m * 16 + i */
 extern u16 D_800CCF6C[]; /* pairs {a, b}; read as [lo * 2] / [lo * 2 + 1] */
 extern u16 D_800CCF58[];
-u32 func_8001CE80(void *);
+u32 osVirtualToPhysical(void *);
 void func_800B6FE0(G **, s32);
 void func_800B7260(G **, s32, s32, s32);
 u8 *func_800B600C(s32, s32);
@@ -55,7 +55,7 @@ void func_800A6B24(G **dl, Obj *o) {
     EMIT(0xFA000000, o->f16);
     func_800B7260(&g, (m + 1) << 4, 0x10, 0x58);
     EMIT(0x07000206, 0x604);
-    EMIT(0x0100600C, func_8001CE80(&p[(o->f22 & 0xF) * 3]));
+    EMIT(0x0100600C, osVirtualToPhysical(&p[(o->f22 & 0xF) * 3]));
     EMIT(0x02140004, 0x0BE00000);
     EMIT(0x02140006, 0x1E0);
     EMIT(0x0214000A, 0x0BE001E0);
@@ -65,7 +65,7 @@ void func_800A6B24(G **dl, Obj *o) {
         v = D_800E9F98[m * 16 + i];
         hi = v >> 4;
         lo = v & 0xF;
-        EMIT(0x0100600C, func_8001CE80(&p[i * 3]));
+        EMIT(0x0100600C, osVirtualToPhysical(&p[i * 3]));
         if (hi >= 2) {
             t = func_800B600C(D_800CCF6C[lo * 2 + 1], 0);
             if (t) {

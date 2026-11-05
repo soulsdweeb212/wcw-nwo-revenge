@@ -9,7 +9,7 @@
  * $a0:$a1 and $a2:$a3, result in $v0:$v1 (high word first).
  * Method: the quotient's sign is the sign bit of (a.hi ^ b.hi). Both operands are made positive
  * (~x + 1 with carry; INT64_MIN stays 0x8000000000000000, which is then read as unsigned 2^63).
- * For a non-negative result it tail-branches to func_80028860 (__udivdi3). Otherwise it inlines
+ * For a non-negative result it tail-branches to __udivdi3. Otherwise it inlines
  * __udivdi3's dispatch (b.hi != 0 -> func_80028528, a shift-subtract 64/64 divide; else
  * func_80028624, a 64/32 divide built from divu, which does `break 7` on b == 0), then negates the
  * quotient. It saves $ra in $t5 instead of on the stack and the helpers return values in
@@ -18,7 +18,7 @@
  * pairs, including INT64_MIN, -1 and 2^32 boundaries. Same results every time. */
 #ifdef NON_MATCHING
 #include "common.h"
-extern u64 func_80028860(u64, u64); /* __udivdi3: unsigned 64-bit a / b */
+extern u64 __udivdi3(u64, u64); /* __udivdi3: unsigned 64-bit a / b */
 
 s64 __divdi3(s64 a, s64 b)
 {
@@ -29,11 +29,11 @@ s64 __divdi3(s64 a, s64 b)
     u64 q;
 
     if (!negative) {
-        return func_80028860(ua, ub); /* tail branch in the asm */
+        return __udivdi3(ua, ub); /* tail branch in the asm */
     }
     /* Negative result: the asm inlines __udivdi3's dispatch here (b.hi != 0 -> func_80028528,
      * else 64/32 func_80028624) and then negates the quotient. */
-    q = func_80028860(ua, ub);
+    q = __udivdi3(ua, ub);
     return -(s64)q;
 }
 #else
@@ -68,7 +68,7 @@ asm(
     "addu $a2, $a2, $t9\n"
     ".L80028744:\n"
     "and $v1, $v1, $t0\n"
-    ".word 0x10600045 /* beqz func_80028860: target outside this function */\n"
+    ".word 0x10600045 /* beqz __udivdi3: target outside this function */\n"
     "nop\n"
     "bnez $a2, .L8002876C\n"
     "nop\n"

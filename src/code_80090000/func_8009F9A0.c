@@ -91,7 +91,7 @@ extern s16 D_800CC8A8[6];
 extern Tint D_800CC8E4[];
 
 void initializeTransformNode(void *, u8, f32, f32, f32);
-void buildScaledRotationTranslationMatrix(void *, f32, f32, f32, f32, f32, f32, f32);
+void guPositionF(void *, f32, f32, f32, f32, f32, f32, f32);
 void func_800015AC(void *, s32);
 void func_80001544(void *);
 
@@ -122,7 +122,7 @@ void func_8009F9A0(void) {
         d = it->defs;
         initializeTransformNode(&m->node, 3, 0.0f, 0.0f, 0.0f);
         m->node.child = &el->node;
-        buildScaledRotationTranslationMatrix(m->node.mtx, D_800CC8A8[3], D_800CC8A8[4], D_800CC8A8[5], 1.0f,
+        guPositionF(m->node.mtx, D_800CC8A8[3], D_800CC8A8[4], D_800CC8A8[5], 1.0f,
                                              D_800CC8A8[0], D_800CC8A8[1], D_800CC8A8[2]);
         for (j = 0; j < it->n; j++, el++, d++) {
             v = &D_800CB7B8[d->idx];

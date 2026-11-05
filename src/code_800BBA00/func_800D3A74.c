@@ -10,7 +10,7 @@ f32 cosf(f32);
 f32 sinf(f32);
 f32 func_80003A3C(f32,f32);
 f32 nw2Sqrtf(f32);
-s32 func_8001C580(void);
+s32 guRandom(void);
 s16 func_800D4204(void);
 extern s32 gRandSeed, D_800EB634;
 extern s16 D_800EB638[];

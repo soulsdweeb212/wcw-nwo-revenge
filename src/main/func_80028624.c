@@ -11,15 +11,15 @@
  * while the running dividend r:n_lo is still wider than 32 bits, shift it and d right together until it fits, divide
  * by (d >> k) + 1 (an under-estimate), add that to the quotient (64-bit add with carry) and subtract estimate * d
  * (multu, 64-bit subtract with borrow); finally q += n_lo / d and the remainder is n_lo % d. d == 0 traps (break 7,
- * the standard divide-by-zero check). Callers (all asm): func_80028860 (__udivdi3), func_80028880 (__umoddi3, reads
- * $t1), __divdi3 and __moddi3 (reads $t1). The prototypes in func_80028C44/func_80025810/func_80027040 are unused
+ * the standard divide-by-zero check). Callers (all asm): __udivdi3, __umoddi3 (reads
+ * $t1), __divdi3 and __moddi3 (reads $t1). The prototypes in func_80028C44/__osSiRawStartDma/__osTimerServicesInit are unused
  * declarations. Verified with a MIPS interpreter on ~4000 inputs: quotient and $t1 remainder always exact. In the C
  * the out-of-ABI remainder is handed back through the setT1 inline-asm helper as the last step, so it can stand in for
  * the asm with these callers. */
 #ifdef NON_MATCHING
 #include "common.h"
 
-/* Hands the 32-bit remainder back in $t1 ($9), outside the C ABI, as the asm does: __umoddi3 (func_80028880) and
+/* Hands the 32-bit remainder back in $t1 ($9), outside the C ABI, as the asm does: __umoddi3 and
  * __moddi3 read $t1 straight after the call. Must be the last thing before the return so nothing reuses $t1. */
 static inline void setT1(u32 rem) {
     __asm__ __volatile__("move $9, %0" : : "r"(rem) : "$9");

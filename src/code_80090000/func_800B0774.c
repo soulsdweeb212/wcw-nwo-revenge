@@ -27,7 +27,7 @@ extern Game D_8007EF30;
 extern s32 D_80038AA8;
 s32 func_8002B528(s32);
 s32 func_800B0524(s32);
-s32 func_8001C580(void);
+s32 guRandom(void);
 void func_800B0654(void);
 
 /* -1 if `id` is this cup's f14E entry, 1 if it is f158 in cup 2, else 0 (always 0 outside mode 0x8000). */
@@ -93,8 +93,8 @@ void func_800B0774(void) {
         }
         n /= 2;
         for (i = 0; i < n; i++) {
-            x = func_8001C580() % n * 2;
-            y = func_8001C580() % n * 2;
+            x = guRandom() % n * 2;
+            y = guRandom() % n * 2;
             t = ids[x];
             ids[x] = ids[y];
             ids[y] = t;
@@ -131,8 +131,8 @@ void func_800B0774(void) {
             }
         }
         for (i = 0; i < n; i++) {
-            s32 j = func_8001C580() % n;
-            s32 k = func_8001C580() % n;
+            s32 j = guRandom() % n;
+            s32 k = guRandom() % n;
             t = ids[j];
             ids[j] = ids[k];
             ids[k] = t;

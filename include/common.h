@@ -65,7 +65,7 @@ extern s8 D_800484F4[];
 extern s8 D_800484F8[];
 extern s8 D_800484FC[];
 
-/* command-buffer state (func_800213CC/21480/21540):
+/* command-buffer state (__osContGetInitData/21480/21540):
  * D_8006A260 is an array of 8-byte entries; D_80070A98 is the entry count.
  * D_8006A260+0x38 = D_8006A298, D_8006A260+0x3C = D_8006A29C (flag).
  * D_8007BD30 is a byte status written 0xFE. */
@@ -75,7 +75,7 @@ extern s32 D_8006A298;
 extern s32 D_8006A29C;
 
 /* Layout of the objects pointed to by the global pointers at 0x80038894 (->0x80038860)
- * and 0x80038890 (->0x80038830).  func_80020ED0/800210E0/80021130 and func_80020DF0 read them.
+ * and 0x80038890 (->0x80038830).  osViSetMode/800210E0/80021130 and osViGetCurrentFramebuffer read them.
  * NOTE: those matched sources define their own local types of the same layout, so use these
  * distinct names in new code (__osViNext itself is declared locally as `extern void *`). */
 typedef struct {
@@ -108,9 +108,9 @@ extern s16 D_800EB37A;
 extern s32 D_800F99C0;
 extern s32 *D_800F99D4;
 
-/* xform/scene record built by initIdentityMatrix4x4 (12 f32 "matrix") and given 3 coords:
- * func_8001C0F0(obj, x,y,z) writes 0x30/0x34/0x38, func_8001C144 builds it on the stack (size 0x40).
- * func_8001B090(xform, out) converts 16 f32 pairs into 2x4 words. */
+/* xform/scene record built by guMtxIdentF (12 f32 "matrix") and given 3 coords:
+ * guTranslateF(obj, x,y,z) writes 0x30/0x34/0x38, guTranslate builds it on the stack (size 0x40).
+ * guMtxF2L(xform, out) converts 16 f32 pairs into 2x4 words. */
 typedef struct {
     f32 m[12];
     f32 x, y, z;
@@ -119,8 +119,8 @@ typedef struct {
 /* setIndexedS16Pair stores a pair of s16 values; both indices are s16.
  * Declare locally while legacy callers use narrower index prototypes. */
 
-void initIdentityMatrix4x4(void *);
-/* func_8001C0F0(void *, f32, f32, f32) -- declared locally in the saved 0x800014xx file,
+void guMtxIdentF(void *);
+/* guTranslateF(void *, f32, f32, f32) -- declared locally in the saved 0x800014xx file,
  * which uses (void *, s32, s32, f32); declare it yourself in new files. */
 void func_800A6C48(void *, s32);
 void func_800D93DC(void *);
@@ -130,16 +130,16 @@ void func_800D93DC(void *);
 /* func_800D2BEC forwards entity pointers and a float scale to func_800D2CAC.
  * Declare locally: legacy callers use raw s32 float bits in their prototypes. */
 
-/* Eight-byte PIF controller-read packet, verified by packControllerReadCommands.
+/* Eight-byte PIF controller-read packet, verified by __osPackReadData.
  * Signed stick fields preserve the -1 initialization separately from dummy=0xFF. */
 typedef struct {
     u8 dummy, txSize, rxSize, command;
     u16 buttons;
     s8 stickX, stickY;
 } Nw2ControllerReadPacket;
-/* updateTriangleOscillator updates float phase at +0x14 by rate(+0x10)*ticks,
+/* _doModFunc updates float phase at +0x14 by rate(+0x10)*ticks,
  * wraps above 2 by subtracting 4, returns amplitude(+0x1C)*(abs(phase)-1). */
-f32 updateTriangleOscillator(f32 *, s32);
+f32 _doModFunc(f32 *, s32);
 
 /* Four-way XZ heading from a three-float vector; 4096 angle units per turn. */
 s32 getXZDirectionQuadrant(f32 *);
@@ -329,30 +329,30 @@ typedef struct {
  */
 
 /* Controller Pak CRCs: address input is the 11-bit block address; data is 32 bytes. */
-s32 calculateControllerPakAddressCrc(u16);
-s32 calculateControllerPakDataCrc(u8 *);
-/* func_8001F3EC dispatches messages to child pointer +0 via callback +8.
+s32 __osContAddressCrc(u16);
+s32 __osContDataCrc(u8 *);
+/* alResampleParam dispatches messages to child pointer +0 via callback +8.
  * Messages 4/9 reset/set parent state and forward with third argument zero.
  * Message 1 sets child; 7 sets +0x18; 8 sets +0x1C to one. */
 
 /* Audio command queue: 8-byte message records, read index D_80060504,
  * write index D_80060508, capacity D_8006050C, buffer pointer D_80060510.
  * Declare these locally where needed for legacy source compatibility.
- * s32 func_8001446C(void *message); copies eight bytes, returns success.
- * void func_80015EF8(void *source, void *destination, s32 bytes);
- * func_80014418 consumes {u8 type; padding[3]; s32 value;} messages:
- * types 0/1 call func_800160E8(value,-2,1/0); type2 is a no-op.
+ * s32 __MusIntFifoAddCommand(void *message); copies eight bytes, returns success.
+ * void __MusIntMemMove(void *source, void *destination, s32 bytes);
+ * __MusIntFifoProcessCommand consumes {u8 type; padding[3]; s32 value;} messages:
+ * types 0/1 call __MusIntHandleSetFlag(value,-2,1/0); type2 is a no-op.
  */
 
 /* Matched signatures (declare locally for legacy caller compatibility):
- * s32 readControllerPakId(void *);
- * s32 func_80025480(u8 *, s32); -- fill 32-byte Controller Pak bank select command
- * s32 func_800254F0(u8 *, u8 *); -- optional 32-byte name update
+ * s32 __osGetId(void *);
+ * s32 __osPfsSelectBank(u8 *, s32); -- fill 32-byte Controller Pak bank select command
+ * s32 osPfsSetLabel(u8 *, u8 *); -- optional 32-byte name update
  * s32 __osContRamWrite(s32, s32, s32, void *, s32);
- * s32 func_8001446C(void *); -- enqueue 8-byte {u8 type; s32 value;} record
- * void func_80015EF8(void *source, void *destination, s32 size);
+ * s32 __MusIntFifoAddCommand(void *); -- enqueue 8-byte {u8 type; s32 value;} record
+ * void __MusIntMemMove(void *source, void *destination, s32 size);
  */
-void cachePiDomainTimings(void);
+void createSpeedParam(void);
 
 /* Matched CDEE4/C9AC0: entity+0x20 is u64 flags. Natural KMC literals
  * 0x80000 and 0x200000 test the word at +0x24 in these functions.
@@ -380,10 +380,10 @@ void cachePiDomainTimings(void);
 
 /* Matched 13994: D_800604D8 is s32 *thresholds, D_800604D0 a
  * pointer to records of stride 0x158 (not an inline array in this routine).
- * func_80015F64(void *, s32, s32, s32, s32) takes FIVE arguments;
+ * __MusIntStartEffect(void *, s32, s32, s32, s32) takes FIVE arguments;
  * the fifth is the selected table threshold, passed at stack+0x10.
- * Matched 17700: func_8002023C(void *) takes only the list node;
- * func_8002021C(void *, void *) moves it to a list head.
+ * Matched 17700: alUnlink(void *) takes only the list node;
+ * alLink(void *, void *) moves it to a list head.
  */
 
 /* Confirmed by matched 800AE75C/800ABFF8/800ABCD8/800ABC40 (0x800AExxx action-record family):
@@ -396,22 +396,22 @@ void cachePiDomainTimings(void);
  */
 
 /* Confirmed by matched 800178F0/80017860/80017980 (same family as 800177D0/80017A30/80017AC0):
- * D_80036F54 is s32 *; func_80017F18 returns a fresh command packet (s32 *); the packet
+ * D_80036F54 is s32 *; __n_allocParam returns a fresh command packet (s32 *); the packet
  * layout is p[0]=0, p[1]=D_80036F54[7]+child[0x88], s16 command at byte +8, s32/f32 payload
  * at +0xC, p[3] extra at +0xC too (payload word), p[4] at +0x10. Send with
- * func_80018C24(child, 3, p). Commands: 7 (float payload, 178F0), 0xC (arg&0xFF, 17860),
- * 0xB (s16 payload + func_80018044(arg2, p[1]) -> p[4], 17980).
- * s32 *func_80017F18(void); s32 func_80018C24(s32 *, s32, s32 *); s32 func_80018044(s32, s32);
+ * n_alEnvmixerParam(child, 3, p). Commands: 7 (float payload, 178F0), 0xC (arg&0xFF, 17860),
+ * 0xB (s16 payload + _n_timeToSamples(arg2, p[1]) -> p[4], 17980).
+ * s32 *__n_allocParam(void); s32 n_alEnvmixerParam(s32 *, s32, s32 *); s32 _n_timeToSamples(s32, s32);
  */
 
-/* Matched 1BED0 (buildScaleMatrixFixed): void (void *, f32, f32, f32);
- * uses f32 m[4][4], local pointer p=m, initializes with initIdentityMatrix4x4,
- * sets [0][0], [1][1], [2][2], [3][3]=1, converts via func_8001B090.
- * Matched 1D4E4/1D594: func_8001F070 takes FOUR arguments:
+/* Matched 1BED0 (guScale): void (void *, f32, f32, f32);
+ * uses f32 m[4][4], local pointer p=m, initializes with guMtxIdentF,
+ * sets [0][0], [1][1], [2][2], [3][3]=1, converts via guMtxF2L.
+ * Matched 1D4E4/1D594: alFilterNew takes FOUR arguments:
  * (object, callback0, callback1, mode). Object is incoming a0.
  */
 
-/* Audio voice records used by func_80013B58: 0x158-byte stride.
+/* Audio voice records used by MusStop: 0x158-byte stride.
  * A typed record pointer is important for alias analysis / hoisting voice count. */
 typedef struct {
     s32 flags;
@@ -441,26 +441,26 @@ typedef struct {
  * Keep these declarations local (legacy callers disagree). */
 
 /* Assert/warning printer stub used with the string pair D_8003B970 ("EX") and
- * D_8003B974 ("sprawdma.c"): func_8001CEE0 is EMPTY (jr ra; nop) and takes
+ * D_8003B974 ("sprawdma.c"): __assert is EMPTY (jr ra; nop) and takes
  * (char *tag, char *file, s32 line). Call sites: PI DMA helpers 800273D0/275F0/
  * 27680/277E0/28210, 18660, 1E340, 1E960, 1F4B0, 20090, 20928.
- * void func_8001CEE0(char *, char *, s32);
+ * void __assert(char *, char *, s32);
  * Hardware PI registers must be written as literal volatile addresses
  * (`*(vu32 *)0xA4040000`), not extern symbols -- see note for 800273D0. */
 
-/* Matched startPiRawDma: direction 0 writes PI_WR_LEN (cart->RAM),
+/* Matched osPiRawStartDma: direction 0 writes PI_WR_LEN (cart->RAM),
  * direction 1 writes PI_RD_LEN (RAM->cart); returns 0 or -1.
- * s32 startPiRawDma(s32 direction, u32 devAddr, void *dramAddr, u32 size);
- * u32 func_8001CE80(void *); -- translates virtual address to physical.
+ * s32 osPiRawStartDma(s32 direction, u32 devAddr, void *dramAddr, u32 size);
+ * u32 osVirtualToPhysical(void *); -- translates virtual address to physical.
  * Declare locally to avoid legacy caller conflicts. */
 
 /* Matched 07BB8: all matrix-call numeric arguments are f32, including
  * register arguments a1/a2/a3. Local matrix is f32[4][4] (0x40 bytes).
- * void func_8001A490(void *, f32, f32, f32, f32);
- * void func_8001BB50(void *, f32, f32, f32);
- * void buildScaledRotationTranslationMatrix(void *, f32, f32, f32, f32, f32, f32, f32);
- * void func_8001BE70(void *, f32, f32, f32);
- * void buildOrthoMatrixFloat(void *, f32, f32, f32, f32, f32, f32, f32);
+ * void guAlignF(void *, f32, f32, f32, f32);
+ * void guRotateRPYF(void *, f32, f32, f32);
+ * void guPositionF(void *, f32, f32, f32, f32, f32, f32, f32);
+ * void guScaleF(void *, f32, f32, f32);
+ * void guOrthoF(void *, f32, f32, f32, f32, f32, f32, f32);
  * Keep prototypes local for legacy caller compatibility. */
 
 /* Matched F620: two arrays of 0xDC-byte records at D_80056968 (8)
@@ -522,7 +522,7 @@ typedef struct {
     s32 f34;
 } Nw2Sub4BA8;
 
-/* Matched func_800162EC (audio voice pitch/level update):
+/* Matched Ftempo (audio voice pitch/level update):
  * lo = (*arg1++ * 0x6000) / 120 / D_800604DC; then
  * t2 = (lo * s16[arg0+0xB8]) >> 7; if (u16[arg0+0xC6] != 0) s16[arg0+0xBC] = lo;
  * else walk D_800604D0 (D_800604C8 records, stride 0x158) and for records whose
@@ -541,10 +541,10 @@ typedef struct {
     u8 padCA[0x8E];
 } Nw2VoiceRecord162EC;
 
-/* Matched 00E0C: event dispatcher waits via func_8001C990(queue,msg*,1)
+/* Matched 00E0C: event dispatcher waits via osRecvMesg(queue,msg*,1)
  * at object+0x40. Event 0x29A increments +0x27C and sends object to
  * listener queues; event 0x29D sends object+0x20. Listener head +0x260,
- * each listener {next pointer, queue pointer}. func_8001CAC0(queue,msg,0)
+ * each listener {next pointer, queue pointer}. osSendMesg(queue,msg,0)
  * sends. Both queue helpers return s32; keep prototypes local. */
 
 /* Matched B630: void func_8000B630(u8 *out5, u32 id, s16 variant).
@@ -646,9 +646,9 @@ s32 func_800BED3C(u8 *, s32, u32);
  * returns one otherwise. D_800F9D12/1A/1C/4E are these field tables.
  * Keep prototype and extern declarations local for legacy compatibility. */
 
-/* Matched 24640: s32 func_80024640(void *queue, s32 channel).
- * Uses func_80024730(s32,s32), func_80025810(s32,void *) -> s32,
- * func_8001C990(void *,void *,s32) -> s32, func_800247C4(s32,void *).
+/* Matched 24640: s32 __osPfsGetStatus(void *queue, s32 channel).
+ * Uses __osPfsRequestOneChannel(s32,s32), __osSiRawStartDma(s32,void *) -> s32,
+ * osRecvMesg(void *,void *,s32) -> s32, __osPfsGetOneChannelData(s32,void *).
  * Local controller status: u16 type at +0, u8 status at +2, u8 error at +3;
  * tests status bits1/2/4 and big-endian u16 at +2 masked with 0x1FF.
  * D_800375E4 is command byte (set 0xFA); D_8007DFD0 is I/O buffer.
@@ -659,7 +659,7 @@ s32 func_800BED3C(u8 *, s32, u32);
  * u16 run countdown +0xC2, u8 decoded value +0xDC.
  * Byte <128 means value with run 1; high-bit value introduces run length
  * (next byte+2 or next two bytes, with high bit stripped, +2).
- * void func_80015628(void *); keep declaration local for legacy callers. */
+ * void __MusIntProcessContinuousVolume(void *); keep declaration local for legacy callers. */
 
 /* Matched A63D8: s8 func_800CE6E4(void *, s32) (low-byte boolean);
  * void func_800CE388(void *, s32, void *); void beginEntityActionA8D8C(void *);
@@ -712,26 +712,26 @@ typedef struct {
  * s8 selectNewLinkedTarget(void *entity, s32 flags);
  */
 
-/* insertTimer: delta-time timer queue; value is remaining relative delay. */
+/* __osInsertTimer: delta-time timer queue; value is remaining relative delay. */
 typedef struct Nw2TimerQueueEntry {
     struct Nw2TimerQueueEntry *next, *prev;
     u64 interval, value;
     void *queue;
     u32 message;
 } Nw2TimerQueueEntry;
-/* u64 insertTimer(Nw2TimerQueueEntry *); declare locally for legacy types. */
+/* u64 __osInsertTimer(Nw2TimerQueueEntry *); declare locally for legacy types. */
 
 /* Matched 14F5C: audio voice float +40 interpolates from +68 using
  * byte duration +D8 and u16 elapsed +CA; +6C caches interpolation.
  * +38 is additive pitch, +3C cached total; byte +DB clears on ratio >2.
- * func_80015858(f32) approximates 2^x; takes only ONE argument.
- * void func_80014F5C(void *, s32 voiceIndex, f32 delta); keep local.
+ * __MusIntPowerOf2(f32) approximates 2^x; takes only ONE argument.
+ * void __MusIntSetPitch(void *, s32 voiceIndex, f32 delta); keep local.
  */
 
-/* getControllerPakFreeBytes: Controller Pak +60 s32 first usable page,
- * +64 u8 bank count. readWriteControllerPakInode(void *,u16 *,s32,s32) reads 128 inode
+/* osPfsFreeBlocks: Controller Pak +60 s32 first usable page,
+ * +64 u8 bank count. __osPfsRWInode(void *,u16 *,s32,s32) reads 128 inode
  * entries for a bank; entry 3 means free, page size 256 bytes.
- * s32 getControllerPakFreeBytes(void *,s32 *); keep local legacy declarations.
+ * s32 osPfsFreeBlocks(void *,s32 *); keep local legacy declarations.
  */
 
 /* Matched B678C: entity signed-byte +354 caches another entity's ID;
@@ -770,7 +770,7 @@ typedef struct {
  * result float+4 compared with D_800E6AF8 / D_800E6B00 (f64).
  */
 
-/* startThread (8001CD20): OS thread header +0 next, +4 s32 priority,
+/* osStartThread (8001CD20): OS thread header +0 next, +4 s32 priority,
  * +8 queue pointer, +C thread-list next, +10 u16 state.
  * State1 stopped,2 runnable,8 waiting. D_80037248 runnable queue,
  * D_80037250 current thread. 266B4 enqueue(queue**,thread*),
@@ -796,7 +796,7 @@ typedef struct {
 
 /* Matched 175E0: audio link node +8 pointer, +C s32, +14 s16,
  * +16/+18 u16 descriptor copies, +1A s16 byte-mode copy, +88 s32 time.
- * Descriptor is {u16 id,u16 value,u8 mode}. func_80017700(void **,s16)
+ * Descriptor is {u16 id,u16 value,u8 mode}. _allocatePVoice(void **,s16)
  * returns a status and supplies a child pointer. Keep prototypes local.
  * Command packets are {s32 f0,f4; s16 command,pad; s32 fC,f10;}.
  */
@@ -810,8 +810,8 @@ typedef struct {
 /* Matched 055AC camera matrix wrapper: all eleven numeric arguments after
  * the destination ID are f32. D_80048500/540 are f32[4][4] projection/view
  * work matrices; D_80048580/584/588 cache eye X/Y/Z. Verified prototypes:
- * void buildPerspectiveMatrixFloat(void *,u16 *,f32,f32,f32,f32,f32);
- * void func_8001A980(void *,f32,f32,f32,f32,f32,f32,f32,f32,f32);
+ * void guPerspectiveF(void *,u16 *,f32,f32,f32,f32,f32);
+ * void guLookAtF(void *,f32,f32,f32,f32,f32,f32,f32,f32,f32);
  * void func_800014AC(s32,void *,void *); void func_800014D0(s32,u16);
  * Keep declarations local to accommodate legacy sources.
  */
@@ -845,7 +845,7 @@ typedef struct {
 
 /* Matched 04450: Controller Pak API call wrapper has local pfs[0x68],
  * message queue[0x18], state[0x20] in that declaration order, at stack
- * +0x20,+0x88,+0xA0. func_80024850(queue,pfs,0) initializes the Pak,
+ * +0x20,+0x88,+0xA0. osPfsInitPak(queue,pfs,0) initializes the Pak,
  * osPfsFileState(pfs,0,state) reads file state. Wrapper then calls most
  * Pak APIs with null/zero arguments; preserve seven args to 23630,
  * six to 252E0 and 24B40, five to 24180. */
@@ -854,8 +854,8 @@ typedef struct {
  * +8 count, +C readIndex, +10 capacity, +14 s32 *entries. Both wait lists
  * are dereferenced before testing for a waiter. Send waits only when wait==1;
  * receive 1C990 waits for any nonzero wait. yield(&sendWaitList) on full,
- * startThread(dequeue(queue)) after enqueue. Local declarations avoid legacy types.
- * s32 func_8001CAC0(void *queue, s32 message, s32 wait); */
+ * osStartThread(dequeue(queue)) after enqueue. Local declarations avoid legacy types.
+ * s32 osSendMesg(void *queue, s32 message, s32 wait); */
 
 /* Matched CEAE0: s8 func_800D3B24(void *,void *,f32,s32) tests XZ proximity.
  * D_800FADE4 and D_800FADEC are f32 field tables at 0x5C-byte stride
@@ -876,7 +876,7 @@ typedef struct {
 void copyPartCoordinateFields(void);
 
 /* Matched 1852C: initializer takes (void *object,s32 (*callback)(void *),s32).
- * func_800202B0(s32,s32,s32,s32,s32) returns s32; called with
+ * alHeapDBAlloc(s32,s32,s32,s32,s32) returns s32; called with
  * (0,0,arg2,1,0x20) three times and (0,0,arg2,1,0x50) once.
  * callback(object+0x2C) returns the word stored at object+0x28.
  * Object fields are volatile, including intentional duplicate +0x64/+0x66 stores.
@@ -900,9 +900,9 @@ typedef struct { s32 offset; u8 bytes[24]; } Nw2AnimationMetadata;
  * u16 bit40 inhibits it for entity state1. Keep prototype local. */
 
 /* Timer interrupt core: count is a wrapping 32-bit hardware counter;
- * programTimerCountdown programs the timer from a 64-bit delay. Keep declarations
- * local for legacy drafts: u32 func_80026AF0(void);
- * void programTimerCountdown(u64); void func_80028100(u32);
+ * __osSetTimerIntr programs the timer from a 64-bit delay. Keep declarations
+ * local for legacy drafts: u32 osGetCount(void);
+ * void __osSetTimerIntr(u64); void __osSetCompare(u32);
  * D_8007BD60 is u32 last count; g_80038820 is Nw2TimerQueueEntry *.
  */
 
@@ -914,7 +914,7 @@ typedef struct { s32 offset; u8 bytes[24]; } Nw2AnimationMetadata;
  * s32 completion; controls are three records of four f32 values each.
  */
 
-/* PI handle prefix used by writePiHandleWord: timings are bytes +5..+8,
+/* PI handle prefix used by osEPiRawWriteIo: timings are bytes +5..+8,
  * domain byte +9 selects cached handle D_80037620[domain], base address +C. */
 typedef struct {
     u32 f0;
@@ -922,7 +922,7 @@ typedef struct {
     u16 pad;
     u32 base;
 } Nw2PiHandle;
-/* s32 writePiHandleWord(Nw2PiHandle *,u32 address,u32 value);
+/* s32 osEPiRawWriteIo(Nw2PiHandle *,u32 address,u32 value);
  * Keep declaration local for legacy callers. */
 
 /* Matched DFC8C: quadrant-indexed u16 direction-mask tables D_800E3CD0
@@ -996,7 +996,7 @@ typedef struct {
  * returns1 iff position >= threshold. Local f32 vec[3] initializes only
  * X/Z; Y intentionally unused. Keep prototype local for legacy callers. */
 
-/* setViSpecialFeatures (80020F20): nonvolatile VI context view required for
+/* osViSetSpecialFeatures (80020F20): nonvolatile VI context view required for
  * mask constant hoisting into branch delay slots. The volatile view above
  * is useful for other SDK entry points but changes this routine's schedule. */
 typedef struct {
@@ -1037,7 +1037,7 @@ typedef union {
 } Nw2PakInodeUnit;
 /* 24018 counts references to page, stops at two, propagates read errors
  * other than 3; inode cache has selected bank byte +100 and bitmap +101.
- * s32 countControllerPakPageReferences(u8 *pfs,Nw2PakInodeUnit page,u8 *inodeCache);
+ * s32 corrupted(u8 *pfs,Nw2PakInodeUnit page,u8 *inodeCache);
  * Keep declaration local for compatibility with legacy sources. */
 
 /* Matched 0498C: void func_8000498C(Nw2Descr4BA8 *,u16 resourceId).
@@ -1050,15 +1050,15 @@ typedef union {
  * allocate records in optional pool at descriptor+28. Keep prototypes local.
  */
 
-/* Matched loadAudioRingBuffer (8001FC7C): builds RSP SETBUFF/LOADBUFF
+/* Matched _loadBuffer (8001FC7C): builds RSP SETBUFF/LOADBUFF
  * commands for s16 ring samples, wrapping when requested span exceeds end.
  * Buffer prefix +14=s16 *base, +1C=s32 sampleCount. Arguments:
  * (buffer, s16 *start, s32 dmemByteOffset, s32 sampleCount, command *out),
  * returns next eight-byte command. Keep prototype local for legacy callers.
  */
 
-/* Matched saveAudioRingBuffer (8001FDEC): same buffer/arguments/return as
- * loadAudioRingBuffer. SETBUFF word1 packs output DMEM offset<<16 with
+/* Matched _saveBuffer (8001FDEC): same buffer/arguments/return as
+ * _loadBuffer. SETBUFF word1 packs output DMEM offset<<16 with
  * byte count; SAVEBUFF opcode06000000. Split spans reset SETBUFF after
  * saving the wrapped second span; contiguous spans emit just two commands.
  */
@@ -1194,13 +1194,13 @@ typedef struct {
     s32 f58;
 } Nw2F5CAction;
 
-/* Matched resetControllers (216D0): s32 (void *queue,u8 *connectedMask).
+/* Matched osPfsIsPlug (216D0): s32 (void *queue,u8 *connectedMask).
  * Status records are {u16 type;u8 status,error;}[4], stack +10, followed
  * by s32 message at +20 and u8 temporary mask at +24.
  * 2184C(s32 command),218F0(u8 *mask,status*),27744(void),277B0(void).
  * Keep declarations local for legacy types. */
 
-/* selectAudioVoiceSlot(void *owner,s32 index) returns a voice index.
+/* __MusIntFindChannel(void *owner,s32 index) returns a voice index.
  * Audio voice +64 s32 priority, +94 owner pointer, +9C sample word,
  * +C6 u16 kind. Owner +4 is s32 *sample table. The third scan intentionally
  * tests only the first voice repeatedly (no pointer increment).
@@ -1220,9 +1220,9 @@ typedef struct {
  * f64 distance threshold are const ROM data. Declare locally as const
  * to permit threshold-load / command-store scheduling across each other. */
 
-/* readPiHandleWord (80028210): checks output pointer with EX/epirawread.c line43,
+/* osEPiRawReadIo (80028210): checks output pointer with EX/epirawread.c line43,
  * waits for PI idle, updates cached domain timings, reads uncached base|address.
- * s32 readPiHandleWord(Nw2PiHandle *,u32,u32 *); declare locally for legacy types. */
+ * s32 osEPiRawReadIo(Nw2PiHandle *,u32,u32 *); declare locally for legacy types. */
 
 /* Matched AC208: s8 requestAttachmentAction(void); maps attachment halfword IDs
  * (+24 if action s16+24>=65, else +26), minus1, into actions36..3C/2F/30.
@@ -1248,7 +1248,7 @@ typedef struct { s32 f0; Nw2CentroidMesh *mesh; s32 f8; f32 x,y,z; } Nw2Centroid
  * void func_80012B38(s16 side,s16 descriptor,s16 slot); local declaration.
  */
 
-/* findControllerPakFile (252E0): s32 (void *pfs,u16 company,u32 game,
+/* osPfsFindFile (252E0): s32 (void *pfs,u16 company,u32 game,
  * u8 *optionalName16,u8 *optionalExtension4,s32 *outIndex).
  * Directory entry: u32 game@0, u16 company@4, extension[4]@C,
  * name[16]@10, total32 bytes. pfs +50 directory count, +5C start block.
@@ -1288,8 +1288,8 @@ typedef struct {
  * its address across both conditional corrections and the last load.
  */
 
-/* Matched deleteControllerPakFile (80024180):
- * s32 deleteControllerPakFile(void *pfs,u16 company,u32 game,u8 *name,u8 *extension);
+/* Matched osPfsDeleteFile (80024180):
+ * s32 osPfsDeleteFile(void *pfs,u16 company,u32 game,u8 *name,u8 *extension);
  * PFS prefix: queue s32+4, channel s32+8, directoryBase s32+5C,
  * bankCount u8+64, activeBank u8+65. Directory record is32 bytes,
  * starting inode {bank,page} at bytes6/7. Locals declared inode u16[128],
@@ -1302,20 +1302,20 @@ typedef struct {
  * Local declarations retained for legacy signatures. */
 typedef struct { s32 reserved0; u32 vertices; u16 count; } Nw2VertexDescriptor927;
 
-/* Synthesizer command builder family (func_8002060C/80020800/80020894/80020928,
+/* Synthesizer command builder family (alAudioFrame/80020800/80020894/80020928,
  * segment main). D_80037510 points to a state record:
  *  +0x00 head of pending list (nodes: +0 next, +8 fn(node)->s32, +0x10 s32 time)
- *  +0x14 deferred free-list consumed by func_80020800
+ *  +0x14 deferred free-list consumed by _collectPVoices
  *  +0x1C current time (s32), +0x20 play position in samples (s32)
  *  +0x38 sink record {void *f0; Gfx*(*f4)(void*,s16*,s32,s32,Gfx*); void (*f8)(void*,s32,s32*);}
  *  +0x48 max chunk size (s32)
- * func_80020928(st,&node) returns the pending node with minimal (node+0x10 - st+0x20)
+ * __nextSampleTime(st,&node) returns the pending node with minimal (node+0x10 - st+0x20)
  * and writes it through the out pointer (NULL when list empty); 80020894(st,x) advances
- * a node; 80020800(st) frees the deferred list via func_8002023C/2021C.
+ * a node; 80020800(st) frees the deferred list via alUnlink/2021C.
  * Emitted graphics command is 8 bytes {u32 w0; u32 w1;}, w0=0x07000000.
  * NOTE: declare the prototypes locally with void* so legacy sources stay compatible:
- *   s32 func_80020928(void *, void **); s32 func_80020894(void *, s32);
- *   void func_80020800(void *);
+ *   s32 __nextSampleTime(void *, void **); s32 _timeToSamplesNoRound(void *, s32);
+ *   void _collectPVoices(void *);
  * Matching quirk (unresolved in 8002060C): KMC hoists the 0x07000000 word into a
  * callee-saved register ($s6) out of the second loop; writing it as a plain literal
  * rematerializes `lui` in-loop instead and every callee-saved colour shifts.
@@ -1339,7 +1339,7 @@ void func_800A700C(void *);
 /* 90738: 48 transform/effect records at D_800D6D50, stride 0x178.
  * world matrix +0x5C, visibility flags +0x18 (bit80 hidden),
  * signed active count +0x160, signed amount +0x164, float scale +0x174.
- * Local prototypes: void func_8001B3EC(void *,f32,f32,f32,f32 *,f32 *,f32 *);
+ * Local prototypes: void guMtxXFMF(void *,f32,f32,f32,f32 *,f32 *,f32 *);
  * void func_800B82B8(f32 *,f32 *,f32 *,s32 *,s32 *,s32 *);
  */
 typedef struct {
@@ -1353,7 +1353,7 @@ typedef struct {
  * +0 (25 bytes), short name +0x19 (11 bytes), appearance bytes +0x24..28.
  * ID404 variants1/3 use "<Mortis>"; ID601 variants1/3 use "<THQ man>".
  * Local prototypes: void func_8000B630(u8 *,s16,s16);
- * void func_80021F60(void *,s32); void func_80028C44(void *,void *);
+ * void bzero(void *,s32); void func_80028C44(void *,void *);
  * void func_80028BB8(void *,void *);
  */
 
@@ -1382,9 +1382,9 @@ typedef struct {
  * paired actions34/35 for target byte37 bit1 and shared flag40 in range,
  * otherwise action40. Calls E212C before all but action9. */
 
-/* buildScaledRotationTranslationMatrixFixed(void *out,f32 x,f32 y,f32 z,
+/* guPosition(void *out,f32 x,f32 y,f32 z,
  * f32 scale,f32 tx,f32 ty,f32 tz) builds a local float Euler matrix then
- * converts through func_8001B090(floatMatrix,out). Declare locally. */
+ * converts through guMtxF2L(floatMatrix,out). Declare locally. */
 
 /* entity flag word at D_800F9D30 (u64): D_800F9D30 is the HIGH u32, D_800F9D34 the LOW u32.
  * Access per-entity with *(u64 *)(D_800F9D30 + i*0x3B0) (stride 0x3B0). func_800B955C clears
@@ -1440,7 +1440,7 @@ typedef struct {
  * D_800FAF62/FAF64 are s16 field tables with 6-byte entity stride.
  * Keep declarations local for legacy source compatibility. */
 
-/* OSTask prefix copied and physicalized by loadRspTask (osSpTaskLoad). */
+/* OSTask prefix copied and physicalized by osSpTaskLoad. */
 typedef struct {
     u32 type, flags;
     void *boot; u32 bootSize;
@@ -1451,7 +1451,7 @@ typedef struct {
     void *input; u32 inputSize;
     u32 *yield; u32 yieldSize;
 } Nw2RspTask;
-/* void loadRspTask(Nw2RspTask *); declare locally for legacy sources. */
+/* void osSpTaskLoad(Nw2RspTask *); declare locally for legacy sources. */
 
 /* Matched E27B4: s16 func_800D4D44(void *entity,s32 mode,f32 value);
  * s8 func_800D8D74(void *entity,s32 mode); void func_800D7E80(void *,s32);
@@ -1483,7 +1483,7 @@ typedef struct {
  * u16 +E bits1/2 track input attempted / B71F8 success. Signature local:
  * s8 func_800B71F8(void *,s32,s32); u16 func_800B6DEC(void *,s32,s32). */
 
-/* Matched updateAudioVoices (80014500): s32(void). Voice stride0x158:
+/* Matched __MusIntMain (80014500): s32(void). Voice stride0x158:
  * u64 clock+10 incremented by u16+BC; event times u64+20/+28/+50;
  * countdown s32+18 (-1 disabled), stream flags s32+48/+4C;
  * u64 prior clock+58 -> u16 elapsed+CA = (clock-prior)>>8.
@@ -1506,7 +1506,7 @@ typedef struct {
  * target itself; otherwise signed link byte D_800FA063 (entity+353)
  * redirects flags D_800FA070 (entity+360). FA061 is entity+351. */
 
-/* updateAudioVoiceEnvelope (80015118) verified field view. Other voice
+/* __MusIntProcessEnvelope (80015118) verified field view. Other voice
  * routines may use different local views of the same 0x158-byte record. */
 typedef struct {
     u8 reserved0[0x10];
@@ -1554,7 +1554,7 @@ typedef struct {
  * to preserve the original lwc1+mfc1 instead of KMC's combined lw.
  */
 
-/* Audio voice prefix used by matched countAudioVoicesByKey/80013DB0:
+/* Audio voice prefix used by matched MusHandleAsk/80013DB0:
  * 0x158-byte records, s32 key at +0x60 and s16 value at +0xBE.
  * 13DB0 returns number of matching nonzero-key voices whose +BE it sets.
  * Use typed record pointer when storing fields so KMC hoists D_800604C8.
@@ -1651,13 +1651,13 @@ typedef struct { u8 reserved0[0x60]; s32 key; u8 reserved64[0x5A]; s16 valueBE; 
  * Keep local declarations for legacy caller compatibility.
  */
 
-/* Matched 21230 (controller init): func_80026DD0 returns native u64 time;
- * func_80026FA0 takes (void *timer,u64 delay,u64 interval,void *queue,void *message).
+/* Matched 21230 (controller init): osGetTime returns native u64 time;
+ * osSetTimer takes (void *timer,u64 delay,u64 interval,void *queue,void *message).
  * ABI leaves a1 unused; first u64 occupies a2/a3, next occupies stack10/14.
  * Keep declarations local for legacy callers. Threshold is 23437500 ticks.
  */
 
-/* Matched createViManager(s32 priority), formerly 258C0:
+/* Matched osCreateViManager(s32 priority), formerly 258C0:
  * D_80037630 manager is 0x1C bytes: s32 active, thread*, queue*, eventQueue*,
  * three callback/access pointers. D_8003764C is a separate counter, NOT a field.
  * Thread D_80063898, aligned stack D_80063A50[0x1000], queue D_80064A50.
@@ -1702,7 +1702,7 @@ extern u8 D_C5B90[];
  * programs the VI from the "next" osViContext and swaps __osViCurr/__osViNext.
  * __osViNext = __osViNext, __osViCurr = __osViCurr (pointers; the two context
  * objects at 0x80038860 / 0x80038830 are exactly Nw2OsViContext, size 0x30).
- * field = *(vu32*)0xA4400010 & 1 (odd/even field). func_8001CE80 = osVirtualToPhysical.
+ * field = *(vu32*)0xA4400010 & 1 (odd/even field).
  * VI state bits: 2 = XSCALE_FACTOR_SET, 4 = YSCALE_FACTOR_SET, 0x20 = BLACK,
  * 0x40 = REPEATLINE, 0x80 = FADE. __additional_scanline = D_8003764C. (distinct name
  * from the SDK's Nw2ViContext so legacy sources keep compiling). */
@@ -1741,9 +1741,9 @@ typedef struct {
     u32 yScale;      /* +0x2C y.scale  */
 } Nw2OsViContext;    /* size 0x30 (copied whole by __osViSwapContext) */
 
-/* Audio voice record used by func_8001488C (state machine, ~0xF8 bytes).
+/* Audio voice record used by __MusIntGetNewNote (state machine, ~0xF8 bytes).
  * Other audio sources declare their own conflicting prototypes for
- * func_80014D78/15068/15468/177D0/17980/17AC0 and D_800604CC/E0/G80036E80,
+ * __MusIntFlushPending/15068/15468/177D0/17980/17AC0 and D_800604CC/E0/G80036E80,
  * so keep those declarations local. */
 typedef struct {
     u8 pad0[4];
@@ -1826,7 +1826,7 @@ typedef struct { f32 pitch, yaw, roll; } Nw2TargetLookAngles;
  * s16 func_800B6DEC(void*,s32,s32); void func_800D7690(void*,s32,s32).
  * Keep prototypes local for legacy source compatibility. */
 
-/* readWriteControllerPakInode (2286C): (pak, u8 *inode256, s32 rw, u8 bank)
+/* __osPfsRWInode (2286C): (pak, u8 *inode256, s32 rw, u8 bank)
  * rw low byte0 reads,1 writes. Cache keyed channel+bank; verifies byte-sum
  * of inode[first*2..255] against inode[1], tries mirror on mismatch,
  * repairs primary if mirror is valid. Returns3 for both copies corrupt.
@@ -1862,19 +1862,19 @@ typedef struct { f32 pitch, yaw, roll; } Nw2TargetLookAngles;
  * Intensity assignment is naturally (u32)float, which generates the unsigned conversion bias path.
  */
 
-/* Matched loadResampledAudioRingBuffer (8001FA64):
+/* Matched _loadOutputBuffer (8001FA64):
  * (buffer, oscillator, s32 dmemOffset, s32 sampleCount, void *commands)->void *.
  * Oscillator +0 start,+4 end,+18 position,+24 resample pointer;
  * resample +14 state pointer,+20 f32 fraction,+24 u32 flags (byte+27).
  * Keep prototype local for legacy caller compatibility. */
 
-/* Matched pushAudioSequenceLoopState (800165FC): voice arrays +100/+110/+120
+/* Matched Ffor (800165FC): voice arrays +100/+110/+120
  * are four u8* each; +130/+138 are four u16 each; +140/+144/+148 are four u8
  * each. +FB u8 depth; +DC u8 stream value; +90 f32 saved as unsigned byte;
  * +48/+4C cursors; +C2/+C4 u16 countdowns. Direct typed arrays are crucial
  * for initial parameter-copy register allocation. Returns input cursor+1. */
 
-/* Matched pullAudioMixerChildren (8001E230):
+/* Matched alAuxBusPull (8001E230):
  * (mixer, void *context, s32 sampleCount, void *arg3, commands)->commands.
  * Mixer +14 s32 childCount,+1C child-pointer array; child +4 is callback
  * commands *pull(child,context,sampleCount,arg3,commands).

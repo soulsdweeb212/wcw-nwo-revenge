@@ -11,8 +11,8 @@ extern T D_800EA248[];
 extern u8 D_800EA0D8[];
 extern u16 D_800EA0E2[];
 extern u8 D_8007E8C0[], D_8007E228[], D_800E7C58[];
-void func_80021C40(void *, void *, s32);
-void func_80021F60(void *, s32);
+void bcopy(void *, void *, s32);
+void bzero(void *, s32);
 
 /*
  * Placeholders (see MasterIndex, func_800B34F8):
@@ -40,9 +40,9 @@ void func_800B34F8(s32 a, s32 b) {
     k = b << 2;
     x = (s32 *)(g + k);
     *(s32 *)e = v;
-    func_80021C40(*x * 8 + D_800E7C58, e + 6, 4);
+    bcopy(*x * 8 + D_800E7C58, e + 6, 4);
     *(u16 *)(e + 4) = *(s32 *)(D_8007E228 + 0x688 + k) | ((*(s32 *)(D_8007E8C0 + 0x70 + k) & 3) << 12);
-    func_80021F60(e + 0xC, 4);
+    bzero(e + 0xC, 4);
     do { } while (0);
     if (n) {
         g = D_8007E228;
@@ -56,7 +56,7 @@ void func_800B34F8(s32 a, s32 b) {
     m = D_8007E228 + 0x688;
     h = D_8007E8C0 + 0x70;
     if (y != *x) {
-        func_80021C40(y * 8 + D_800E7C58, t + (D_800EA0D8 + 0xC), 4);
+        bcopy(y * 8 + D_800E7C58, t + (D_800EA0D8 + 0xC), 4);
     }
     if (n) {
         m = D_8007E228;

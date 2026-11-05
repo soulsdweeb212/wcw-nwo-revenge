@@ -31,8 +31,8 @@ typedef struct {
 
 extern Stream9990 D_800706A8[];
 extern void *D_8004859C;
-s32 func_800219B0(void *, void *, s32);
-s32 func_8001C990(void *, void *, s32);
+s32 osEPiStartDma(void *, void *, s32);
+s32 osRecvMesg(void *, void *, s32);
 
 void func_80009990(s16 n)
 {
@@ -52,11 +52,11 @@ void func_80009990(s16 n)
     D_800706A8[n].io[idx].devAddr = D_800706A8[n].dev;
     D_800706A8[n].io[idx].dramAddr = D_800706A8[n].dram;
     D_800706A8[n].io[idx].size = count;
-    while (func_800219B0(D_8004859C, &D_800706A8[n].io[idx], 0) != 0) {
+    while (osEPiStartDma(D_8004859C, &D_800706A8[n].io[idx], 0) != 0) {
     }
     idx ^= 1;
     if (D_800706A8[n].started) {
-        func_8001C990(D_800706A8[n].mq[idx], NULL, 1);
+        osRecvMesg(D_800706A8[n].mq[idx], NULL, 1);
     } else {
         D_800706A8[n].started = 1;
     }

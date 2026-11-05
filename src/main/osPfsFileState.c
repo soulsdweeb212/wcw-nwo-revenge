@@ -61,10 +61,10 @@ typedef struct {
 #define BLOCKSIZE 32
 
 s32 __osCheckId(void *);
-s32 func_80025480(void *, u8);
+s32 __osPfsSelectBank(void *, u8);
 s32 __osContRamRead(void *, int, u16, void *);
-s32 readWriteControllerPakInode(void *, __OSInode *, u8, u8);
-void func_80021C40(void *, void *, s32);
+s32 __osPfsRWInode(void *, __OSInode *, u8, u8);
+void bcopy(void *, void *, s32);
 
 s32 osPfsFileState(OSPfs *pfs, s32 file_no, OSPfsState *state) {
     s32 ret;
@@ -85,7 +85,7 @@ s32 osPfsFileState(OSPfs *pfs, s32 file_no, OSPfsState *state) {
         return ret;
     }
     if (pfs->activebank != 0) {
-        ret = func_80025480(pfs, 0);
+        ret = __osPfsSelectBank(pfs, 0);
         if (ret != 0) {
             return ret;
         }
@@ -105,7 +105,7 @@ s32 osPfsFileState(OSPfs *pfs, s32 file_no, OSPfsState *state) {
             break;
         } else if (next_page.inode_t.bank != bank) {
             bank = next_page.inode_t.bank;
-            ret = readWriteControllerPakInode(pfs, &inode, PFS_READ, bank);
+            ret = __osPfsRWInode(pfs, &inode, PFS_READ, bank);
             if (ret != 0) {
                 return ret;
             }
@@ -119,7 +119,7 @@ s32 osPfsFileState(OSPfs *pfs, s32 file_no, OSPfsState *state) {
     state->file_size = pages * (PFS_ONE_PAGE * BLOCKSIZE);
     state->company_code = dir.company_code;
     state->game_code = dir.game_code;
-    func_80021C40(dir.game_name, state->game_name, 16);
-    func_80021C40(dir.ext_name, state->ext_name, 4);
+    bcopy(dir.game_name, state->game_name, 16);
+    bcopy(dir.ext_name, state->ext_name, 4);
     return 0;
 }
