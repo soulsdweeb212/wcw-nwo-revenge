@@ -5,8 +5,7 @@
  */
 #include "common.h"
 
-s32 func_800D2CAC(void *, void *, void *, f32, void *, void *, void *, u16, s32, u16);
-/* Simplest boundary-correction wrapper. */
-s32 func_800D2BAC(void *arg0, void *arg1, f32 arg2, s32 arg3) {
-    return func_800D2CAC(arg0, arg1, NULL, arg2, NULL, NULL, NULL, 0, arg3, 1);
+/* Boundary correction of w, moving other along with it: func_800D2CAC(w, other, divisor, bodyMask, apply). */
+s32 func_800D2BAC(Wrestler *w, Wrestler *other, f32 divisor, s32 bodyMask) {
+    return func_800D2CAC(w, other, NULL, divisor, NULL, NULL, NULL, 0, bodyMask, 1);
 }

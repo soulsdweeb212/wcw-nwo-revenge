@@ -6,34 +6,31 @@
 #include "common.h"
 
 extern s16 D_800EB420[];
-void func_800A7C40(void *, s8, s16);
-s32 func_800A8D14(void *, void *);
+void func_800A7C40(Wrestler *, s8, s16);
+s32 func_800A8D14(Wrestler *, Wrestler *);
 s8 func_800D4198(s16);
-#define F(p,t,o) (*(t *)((u8 *)(p)+(o)))
 
-/* arg0: attacker  (+0x0 s8 facing, +0x6 s16 anim frame, +0x2C u32 state flags,
- *                  +0x371 u8 anim frame count, +0x386 u16 reaction id,
- *                  +0x3AC u32 hit flags)
- * arg1: victim    (+0x20 u64 flags, +0x360 u16 state word)
+/* attacker = the opponent (D_800F9B00), victim = the wrestler being updated (D_800FAF5C).
  *
- * If the attacker's animation is on one of its last two frames, both entities
- * pass the state/flag gates, and a random check allows it, mark the victim with
- * flag 2 and queue the hit-reaction animation (using the attack's own reaction
- * id unless the attacker has a facing-table entry). */
-void tryApplyHitReaction(void *arg0, void *arg1, s32 arg2, s32 arg3) {
+ * When attacker->animFrame is on one of the two frames before attacker->anim.hitEnd, attacker->move.flags has 0x1,
+ * victim->flags has neither 0x1 nor 0x8, arg3 has 0x10, and attacker->grappleCtx 0x1 is clear or the random check
+ * func_800D4198(250) passes: set 0x2 in victim->pairSignals and give the victim a move from the
+ * attacker's move table (func_800A7C40): entry attacker->moveId + 1 when D_800EB420[attacker->id] is set or
+ * attacker->grappleCtx has bit 0x400000, else func_800A8D14(attacker, victim) - 2 (moveId - 1 .. moveId + 2). */
+void tryApplyHitReaction(Wrestler *attacker, Wrestler *victim, s32 arg2, s32 arg3) {
     s16 animFrame;
     u8 animLimit;
-    animLimit = F(arg0, u8, 0x371);
-    animFrame = F(arg0, s16, 6);
+    animLimit = attacker->anim.hitEnd;
+    animFrame = attacker->animFrame;
     if (animFrame >= animLimit - 2 && animFrame < animLimit &&
-        (F(arg0, u32, 0x3AC) & 1) && !(F(arg1, u64, 0x20) & 9) && (arg3 & 0x10) &&
-        (!(F(arg0, u32, 0x2C) & 1) || func_800D4198(250))) {
-        F(arg1, u16, 0x360) |= 2;
-        if (D_800EB420[F(arg0, s8, 0)] || (F(arg0, u32, 0x2C) & 0x400000)) {
-            func_800A7C40(arg1, F(arg0, s8, 0), F(arg0, u16, 0x386) + 1);
+        (attacker->move.flags & 1) && !(victim->flags & 9) && (arg3 & 0x10) &&
+        (!(attacker->grappleCtx & 1) || func_800D4198(250))) {
+        victim->pairSignals |= 2;
+        if (D_800EB420[attacker->id] || (attacker->grappleCtx & 0x400000)) {
+            func_800A7C40(victim, attacker->id, attacker->moveId + 1);
         } else {
-            s16 reaction = func_800A8D14(arg0, arg1) - 2;
-            func_800A7C40(arg1, F(arg0, s8, 0), reaction);
+            s16 reaction = func_800A8D14(attacker, victim) - 2;
+            func_800A7C40(victim, attacker->id, reaction);
         }
     }
 }

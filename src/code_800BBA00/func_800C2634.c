@@ -8,7 +8,12 @@
 s16 func_800D7B08(s32);
 extern s32 D_800E3C90[];
 
-s32 func_800C2634(void *arg0, u16 arg1) {
+/* Maps the input direction arg1 to a ring side (0..3); for the diagonal inputs
+ * (func_800D7B08(arg1) != -1) moves to the next side when the angle between
+ * D_800E3C90[side] and w->heading is in 0x201..0x5FF. Then, if hitInfo bit 12 is
+ * set and that angle is below 0xE3, or bit 12 is clear and it is >= 0x71D, stores
+ * the side in w->dirIndex and returns 1; otherwise returns 0. */
+s32 func_800C2634(Wrestler *w, u16 arg1) {
     s16 direction;
     s32 angle;
     u32 flag;
@@ -18,7 +23,7 @@ s32 func_800C2634(void *arg0, u16 arg1) {
         if (arg1 == 0x500) direction = 1;
         if (arg1 == 0x600) direction = 2;
         if (arg1 == 0xA00) direction = 3;
-        angle = func_800D3550(func_800D3684(D_800E3C90[direction], *(s32 *)((u8 *)arg0 + 0x58)));
+        angle = func_800D3550(func_800D3684(D_800E3C90[direction], w->heading));
         if ((u32)(angle - 0x201) < 0x3FF) {
             direction = (direction + 1) & 3;
         }
@@ -28,10 +33,10 @@ s32 func_800C2634(void *arg0, u16 arg1) {
         if (arg1 == 0x400) direction = 2;
         if (arg1 == 0x200) direction = 3;
     }
-    angle = func_800D3550(func_800D3684(D_800E3C90[direction], *(s32 *)((u8 *)arg0 + 0x58)));
-    flag = *(u32 *)((u8 *)arg0 + 0x30) >> 12;
+    angle = func_800D3550(func_800D3684(D_800E3C90[direction], w->heading));
+    flag = w->hitInfo >> 12;
     if (((flag & 1) & (angle < 0xE3)) || (((flag ^ 1) & 1) & (angle >= 0x71D))) {
-        *(s16 *)((u8 *)arg0 + 0x3E) = direction;
+        w->dirIndex = direction;
         return 1;
     }
     return 0;

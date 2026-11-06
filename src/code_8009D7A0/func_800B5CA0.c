@@ -6,25 +6,25 @@
 #include "common.h"
 
 f32 func_800D3EEC(void *, void *, s32);
-void func_800E212C(void *);
-void func_800A6C48(void *, s32);
+void func_800E212C(Wrestler *);
 extern f64 D_800E54D8;
 extern s32 D_800F9B14;
 
-/* p: attacker  -- +0x20 u64 flags, +0x58 s32 heading, +0x6C f32[3] position
- * q: target    -- +0x20 u64 flags, +0x4C f32[3] position, +0x58 s32 heading
+/* p: the wrestler being updated (heading, pelvis jointA[1]); q: its opponent (root x/y/z, heading, flags).
+ * Both callers (func_8009E624, and func_800B5730 forwarding its arguments) pass D_800EB408, D_800EB40C,
+ * D_800FABE6 as flags and D_800F9B0C as distance.
  *
- * If p may attack (flags & 0x4000) and p and q agree on an attack or pain flag
- * while q is in a vulnerable state, check whether p is within q's reach (3D
- * distance below reach + epsilon) and within facing range; if so issue command
- * 0x56 and the hit reaction, returning 1. Otherwise 0. */
-s32 func_800B5CA0(u8 *p, u8 *q, s32 flags, f32 distance) {
+ * If flags & 0x4000, p and q are both WR_FLAG_IN_RING or both WR_FLAG_ON_FLOOR, q has flags bit 0x400000, and
+ * distance is below func_800D3EEC(&q->x, &p->jointA[1], q->heading) + D_800E54D8 (130), and the angle between
+ * D_800F9B14 and p->heading is below 0x200, then p is put in state 0x56 (func_800A6C48, handler rerun this tick),
+ * func_800E212C(p) is called and 1 is returned. Otherwise 0. */
+s32 func_800B5CA0(Wrestler *p, Wrestler *q, s32 flags, f32 distance) {
     u64 common;
     if (flags & 0x4000) {
-        common = *(u64 *)(p + 0x20) & *(u64 *)(q + 0x20);
-        if (((common & 0x40) || (common & 0x100)) && (*(u64 *)(q + 0x20) & 0x400000) &&
-            ((f64)distance < (f64)func_800D3EEC(q + 0x4C, p + 0x6C, *(s32 *)(q + 0x58)) + D_800E54D8)) {
-            if (func_800D3550(func_800D3684(D_800F9B14, *(s32 *)(p + 0x58))) < 0x200) {
+        common = p->flags & q->flags;
+        if (((common & WR_FLAG_IN_RING) || (common & WR_FLAG_ON_FLOOR)) && (q->flags & 0x400000) &&
+            ((f64)distance < (f64)func_800D3EEC(&q->x, &p->jointA[1], q->heading) + D_800E54D8)) {
+            if (func_800D3550(func_800D3684(D_800F9B14, p->heading)) < 0x200) {
                 func_800A6C48(p, 0x56);
                 func_800E212C(p);
                 return 1;

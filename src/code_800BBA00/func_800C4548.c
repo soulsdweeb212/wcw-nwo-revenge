@@ -13,21 +13,21 @@ typedef struct {
 
 void func_800D3890(void *, void *, void *);
 
-/* Facing check between arg0 and arg1: clear the u64 flags 0x8008000000 on arg0, build the
- * direction record from arg0's position (+0x6C) toward arg1's, then set flag 0x08000000
- * when the absolute facing delta (from arg0's heading +0x58 to the direction angle) is
- * >= 0x400, and set flag 0x8000000000 when that delta is negative. */
-void func_800C4548(void *arg0, void *arg1) {
+/* Facing check of w against other: clear flag bits 0x8008000000 on w, take the XZ direction from w's pelvis
+ * (jointA[1]) to other's (func_800D3890), then set flag 0x08000000 when the absolute angle difference between w's
+ * heading and that direction (func_800D3550(func_800D3684(heading, angle))) is >= 0x400, and set flag
+ * 0x8000000000 when func_800D3684(heading, angle) is negative. */
+void func_800C4548(Wrestler *w, Wrestler *other) {
     Nw2Dir dir;
     s32 d;
 
-    *(u64 *)((u8 *)arg0 + 0x20) &= ~0x8008000000ULL;
-    func_800D3890((u8 *)arg0 + 0x6C, (u8 *)arg1 + 0x6C, &dir);
-    d = func_800D3550(func_800D3684(*(s32 *)((u8 *)arg0 + 0x58), dir.angle));
+    w->flags &= ~0x8008000000ULL;
+    func_800D3890(&w->jointA[1], &other->jointA[1], &dir);
+    d = func_800D3550(func_800D3684(w->heading, dir.angle));
     if (d >= 0x400) {
-        *(u64 *)((u8 *)arg0 + 0x20) |= 0x08000000ULL;
+        w->flags |= 0x08000000ULL;
     }
-    if (func_800D3684(*(s32 *)((u8 *)arg0 + 0x58), dir.angle) < 0) {
-        *(u64 *)((u8 *)arg0 + 0x20) |= 0x8000000000ULL;
+    if (func_800D3684(w->heading, dir.angle) < 0) {
+        w->flags |= 0x8000000000ULL;
     }
 }

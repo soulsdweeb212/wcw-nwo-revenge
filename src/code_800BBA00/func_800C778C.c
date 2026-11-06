@@ -5,12 +5,13 @@
  */
 #include "common.h"
 
-/* Selects an attachment/action id from arg0's +0x30 flag word: bit 0x1000
- * selects the 0x104A/0x104C/0x104E group, otherwise 0x104B/0x104D apply and
- * bit 0x10000000 uses the attachment record's signed byte +0x1E to pick
- * 0x107B..0x1080 (falling back to 0x1049). arg1 is the caller's default. */
-s16 func_800C778C(u8 *arg0, s32 arg1) {
-    u32 flags=*(u32 *)(arg0+0x30);
+/* Selects an animation/action id from w->hitInfo: bit 0x1000 selects the
+ * 0x104A/0x104C/0x104E group, otherwise 0x104B/0x104D apply and bit 0x10000000
+ * uses the signed profile byte +0x1E to pick 0x107B..0x1080 (falling back to
+ * 0x1049). arg1 is returned when no bit applies (the known callers, func_8009F468
+ * and func_800C72DC, pass only the record). */
+s16 func_800C778C(Wrestler *w, s32 arg1) {
+    u32 flags=w->hitInfo;
     if(flags & 0x1000) {
         if(flags & 0x10000000) arg1=0x104A;
         if(flags & 0x20000000) arg1=0x104C;
@@ -19,7 +20,7 @@ s16 func_800C778C(u8 *arg0, s32 arg1) {
         if(flags & 0x20000000) arg1=0x104B;
         if(flags & 0x40000000) arg1=0x104D;
         if(flags & 0x10000000) {
-            s8 index=(*(u8 **)(arg0+0x364))[0x1E]-1;
+            s8 index=w->profile[0x1E]-1;
             switch(index) {
             case 0: arg1=0x107B; break;
             case 1: arg1=0x107C; break;

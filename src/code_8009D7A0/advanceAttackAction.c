@@ -14,23 +14,23 @@ void func_800D4AD0(void *);
 s16 func_800D5438(void *, s32);
 extern s8 D_800FADB8;
 
-/* Attack action on D_800EB408: state 0 plays animation 0xAE, sets the action
- * from func_800D5438 and runs the two setup handlers; state 1 drives the action
- * until the entry value at +0x4 equals the state, then completes with command
+/* Attack action on D_800EB408: step 0 plays animation 0xAE, sets the action
+ * from func_800D5438 and runs the two setup handlers; step 1 drives the action
+ * until animFramesLeft equals the step (1), then completes with command
  * 0x2B. */
 void advanceAttackAction(void) {
-    s16 state = ((Nw2F408 *)D_800EB408)->fC;
-    switch (state) {
+    s16 step = D_800EB408->step;
+    switch (step) {
     case 0:
         func_800A7C40(D_800EB408, D_800FADB8, 0xAE);
         func_800D427C(D_800EB408, func_800D5438(D_800EB408, 0), 1);
         func_800A7F6C(D_800EB408, 0);
         func_800A837C(D_800EB408);
-        ((Nw2F408 *)D_800EB408)->fC++;
+        D_800EB408->step++;
         break;
     case 1:
         func_800D2B64(D_800EB408, 1.0f, 0, 0xFFFFE);
-        if (((Nw2F408 *)D_800EB408)->f4 == state) {
+        if (D_800EB408->animFramesLeft == step) {
             func_800D4AD0(D_800EB408);
             func_800A6C48(D_800EB408, 0x2B);
         }

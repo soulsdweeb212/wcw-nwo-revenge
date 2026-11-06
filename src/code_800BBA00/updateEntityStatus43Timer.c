@@ -11,20 +11,20 @@ extern s16 D_800EB4D0[];
 void func_800D2638(void *, u16, f32);
 s32 func_800D2B64(void *, f32, u16, s32);
 
-/* Per-entity timer for entity status 0x43: arg1==0 reloads 60, arg1==1 counts
- * down and clears the +0x43 status when it reaches zero. */
-void updateEntityStatus43Timer(void *arg0, s16 arg1) {
+/* Per-wrestler timer D_800EB4D0[id] for comboHits: mode 0 (called when a hit adds to comboHits) reloads it to 60;
+ * mode 1 counts it down and, once it has reached zero, clears w->comboHits. */
+void updateEntityStatus43Timer(Wrestler *w, s16 mode) {
     s16 *timer;
     s16 value;
-    switch (arg1) {
+    switch (mode) {
     case 0:
-        D_800EB4D0[*(s8 *)arg0] = 60;
+        D_800EB4D0[w->id] = 60;
         return;
     case 1:
-        timer = &D_800EB4D0[*(s8 *)arg0];
+        timer = &D_800EB4D0[w->id];
         value = *timer;
         if (value <= 0) {
-            *((s8 *)arg0 + 0x43) = 0;
+            w->comboHits = 0;
             return;
         }
         *timer = value - 1;

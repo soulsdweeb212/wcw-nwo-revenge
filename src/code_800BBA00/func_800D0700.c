@@ -5,12 +5,15 @@
  */
 #include "common.h"
 
-s8 func_800B71F8(void *, void *, s32);
-void func_800D0700(void *arg0, void *arg1, s32 arg2) {
-    if ((*(u64 *)((u8 *)arg0+0x20) & 0x80000) || !(*(u64 *)((u8 *)arg1+0x20) & 0x80000)) {
-        if (!(*(u64 *)((u8 *)arg0+0x20) & 9) && !(*(u64 *)((u8 *)arg0+0x20) & 0x4000000) && (arg2 & 0xC030)) {
-            if (func_800B71F8(arg0,arg1,1)) *(u64 *)((u8 *)arg0+0x20) |= 0x2000000;
-            *(u64 *)((u8 *)arg0+0x20) |= 0x4000000;
+/* Called with (D_800FAF5C, D_800F9B00, D_800FAF8A). Unless the opponent has WR_FLAG_SPECIAL and self does not:
+ * when self has none of flag bits 9 and 0x4000000 and arg2 has a bit of 0xC030, set self flag 0x4000000, plus
+ * 0x2000000 when func_800B71F8(self, opponent, 1) returns nonzero. */
+s8 func_800B71F8(Wrestler *, Wrestler *, s32);
+void func_800D0700(Wrestler *self, Wrestler *opponent, s32 arg2) {
+    if ((self->flags & WR_FLAG_SPECIAL) || !(opponent->flags & WR_FLAG_SPECIAL)) {
+        if (!(self->flags & 9) && !(self->flags & 0x4000000) && (arg2 & 0xC030)) {
+            if (func_800B71F8(self,opponent,1)) self->flags |= 0x2000000;
+            self->flags |= 0x4000000;
         }
     }
 }

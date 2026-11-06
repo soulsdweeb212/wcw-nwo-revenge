@@ -5,11 +5,10 @@
  */
 #include "common.h"
 
-/* D_800EB408 action state machine (cases 0..2) driving D_800EB40C: state 0 picks a
- * follow-up mode from the attachment byte and starts the matching animation; state 1
- * begins the close-range action once the actor's animation frame is inside the window,
- * the target is in range and the timer has elapsed; state 2 runs the finish helper. */
-extern void *D_800EB40C;
+/* D_800EB408 action step machine (cases 0..2) driving the opponent D_800EB40C: step 0
+ * picks a follow-up mode from profile byte 15 and starts the matching animation; step 1
+ * begins the close-range action once the animation frame is inside the hit window,
+ * the opponent is in range and facing away; step 2 runs the finish helper. */
 extern f32 D_800F9B0C;
 extern f64 D_800E4540;
 extern s32 D_800F9B14;
@@ -23,20 +22,14 @@ void func_800A6BE0(void *, s32);
 void func_800A837C(void *);
 void func_800A7188(void *);
 
-#define Actor ((u8 *)D_800EB408)
-#define Target ((u8 *)D_800EB40C)
-#define ReadS16(p, n) (*(s16 *)((p) + (n)))
-#define ReadS32(p, n) (*(s32 *)((p) + (n)))
-#define ReadFlags(p) (*(u64 *)((p) + 0x20))
-
 void updateActionStateA110C(void) {
     u8 x;
     u64 flags;
     s16 mode, anim, frame, state, temp;
 
-    switch (ReadS16(Actor, 12)) {
+    switch (D_800EB408->step) {
     case 0:
-        mode = *(s8 *)(*(u8 **)(Actor + 0x364) + 15);
+        mode = *(s8 *)(D_800EB408->profile + 15);
         if (mode == 2) mode = 0;
         if (mode >= 3) mode = (func_800D4198(500) == 0);
         D_800EB400[D_800FADB8] = mode;
@@ -47,24 +40,24 @@ void updateActionStateA110C(void) {
         }
         func_800D427C(D_800EB408, anim, 3);
         func_800A7F6C(D_800EB408, 0x4C);
-        ReadS16(Actor, 12)++;
+        D_800EB408->step++;
         break;
     case 1:
-        frame = ReadS16(Actor, 6);
-        if (frame >= Actor[0x370] && Actor[0x371] >= frame && (ReadFlags(Target) & 0x100000ULL)) {
-            state = ReadS16(Target, 10);
-            if (state != 4 && (state != 3 || ReadS16(Target, 12) != 2)
+        frame = D_800EB408->animFrame;
+        if (frame >= D_800EB408->anim.hitStart && D_800EB408->anim.hitEnd >= frame && (D_800EB40C->flags & 0x100000ULL)) {
+            state = D_800EB40C->state;
+            if (state != 4 && (state != 3 || D_800EB40C->step != 2)
                 && (f64)D_800F9B0C < D_800E4540
-                && (u32)(func_800D3550(func_800D3684(ReadS32(Target, 0x58), D_800F9B14)) - 0x100) >= 0x601) {
+                && (u32)(func_800D3550(func_800D3684(D_800EB40C->heading, D_800F9B14)) - 0x100) >= 0x601) {
                 if (D_800EB400[D_800FADB8] == 2)
-                    *(u16 *)(Target + 0x28) |= 0x200;
-                Target[0x351] = (u8)D_800FADB8;
-                addEntityHealthDelta(D_800EB408, *(s8 *)(Actor + 0x391));
+                    D_800EB40C->moveMode |= 0x200;
+                D_800EB40C->heldById = D_800FADB8;
+                addEntityHealthDelta(D_800EB408, D_800EB408->move.spiritGainSelf);
                 func_800A6BE0(D_800EB40C, 0x1A);
-                { u8 *b = Target; u8 *a = Actor;
-                    ReadFlags(b) |= 0x20000000ULL;
+                { Wrestler *b = D_800EB40C; Wrestler *a = D_800EB408;
+                    b->flags |= 0x20000000ULL;
                     func_800A837C(a); }
-                ReadS16(Actor, 12)++;
+                D_800EB408->step++;
             }
         }
         /* fallthrough */

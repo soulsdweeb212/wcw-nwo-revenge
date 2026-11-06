@@ -21,13 +21,7 @@ typedef struct Nw2AimAction {
     u32 f5C;
 } Nw2AimAction;
 
-typedef struct Nw2AimEntity {
-    u8 pad0[0xA];
-    u16 fA;
-} Nw2AimEntity;
-
 extern Nw2AimAction *D_800FABD0;
-extern Nw2AimEntity *D_800F9B60;
 extern f64 D_800E5220;
 extern f64 D_800E5228;
 s8 func_800D4198(s16);
@@ -36,12 +30,12 @@ s8 func_800D4198(s16);
  * f16, scales the aim angle f12 with two double-precision factors, and if the
  * randomised aim test passes writes the pitch constant 0xC030 to f8. Unless the
  * action is already in the steady state f14 == 3, it then resets the aim fields
- * and copies the entity's mode (D_800F9B60 + 0xA) into f2E. */
+ * and copies the opponent's state (D_800F9B60->state) into f2E. */
 void func_800AFEC8(void) {
     f32 scale;
     s16 angle;
     Nw2AimAction *action;
-    Nw2AimEntity *entity;
+    Wrestler *opponent;
 
     if (D_800FABD0->f16 >= 0x81) {
         scale = 0.9f;
@@ -61,10 +55,10 @@ void func_800AFEC8(void) {
     }
     action = D_800FABD0;
     if (action->f14 != 3) {
-        entity = D_800F9B60;
+        opponent = D_800F9B60;
         action->f2 = 0;
         action->f4 = 0;
-        action->f2E = entity->fA;
+        action->f2E = (u16)opponent->state;
         action->f5C &= ~7;
     }
 }

@@ -8,23 +8,23 @@
 extern u8 D_80075468[];
 void unpackAnimationParameters(void *, void *);
 
-/* Set entity p's animation id (+0x384) and reaction id (+0x386), then unpack
- * the animation parameters for the chosen model (D_80075468 + 0x10 + id*0x1A30)
- * and reaction into p+0x38C. For reactions below 0xEF, set or clear the
- * 0x4000000000000000 flag from bit 0x8000 of p+0x3AC. */
-void func_800A7C40(u8 *p, s8 arg1, s16 arg2) {
+/* Set w's current move to entry moveId of owner's move table: store moveOwnerId and moveId, then unpack the
+ * 0x18-byte entry (D_80075468 + 0x10 + owner*0x1A30 + moveId*0x18) into w->move. For moveId below 0xEF, set or
+ * clear the 0x4000000000000000 flag from bit 0x8000 of move.flags. */
+void func_800A7C40(Wrestler *w, s8 owner, s16 moveId) {
     s32 idx;
     u8 *tbl;
 
-    *(volatile u8 *)(p + 0x384) = arg1;
-    idx = *(s8 *)(p + 0x384);
-    *(s16 *)(p + 0x386) = arg2;
+    /* volatile store: the asm stores moveOwnerId and loads it back (lb); a plain member store does not match */
+    *(volatile s8 *)&w->moveOwnerId = owner;
+    idx = w->moveOwnerId;
+    w->moveId = moveId;
     tbl = &D_80075468[0x10] + idx * 0x1A30;
-    unpackAnimationParameters(p + 0x38C, tbl + arg2 * 0x18);
-    if (arg2 < 0xEF) {
-        if (*(s32 *)(p + 0x3AC) & 0x8000)
-            *(u64 *)(p + 0x20) |= 0x4000000000000000ULL;
+    unpackAnimationParameters(&w->move, tbl + moveId * 0x18);
+    if (moveId < 0xEF) {
+        if (w->move.flags & 0x8000)
+            w->flags |= 0x4000000000000000ULL;
         else
-            *(u64 *)(p + 0x20) &= ~0x4000000000000000ULL;
+            w->flags &= ~0x4000000000000000ULL;
     }
 }

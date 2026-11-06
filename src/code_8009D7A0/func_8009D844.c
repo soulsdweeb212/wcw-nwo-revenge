@@ -5,18 +5,13 @@
  */
 #include "common.h"
 
-typedef struct { s32 f0; s16 f4; s16 f6; s32 f8; s16 fC; s16 fE; } T_F408;
-extern void *D_800EB408;
-extern s32 D_800EB40C;
 extern s16 D_800EB37A;
 extern s32 *D_800F99D4;
 extern s32 D_800F99C0;
 
 extern void buildColorOverlayDisplayList(void *, s32, s32, s32, s32);
 extern void func_800D2B64(void *, s32, s32, s32);
-extern void func_800D93DC(void *);
 extern void func_800D427C(void *, s32, s32);
-extern void func_800A6C48(void *, s32);
 extern void func_800D2BEC(void *, s32, s32, s32, s32, s32);
 extern void func_800D4AD0(void *);
 extern void beginEntityActionA8D8C(void *);

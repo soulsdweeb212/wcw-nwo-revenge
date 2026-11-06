@@ -5,43 +5,6 @@
  */
 #include "common.h"
 
-/* Per-frame paired-move outer hook: while the entity's timer/frame is inside
- * its active window, resolve the movement direction (func_800D3890 /
- * func_800D37C0), translate it and step a shared counter; then clear the
- * sub-action bit and, once past the window, clear the paired flags and run the
- * follow-up. */
-typedef struct Nw2EntDB348 {
-    u8 f0;
-    u8 pad1[5];
-    s16 f6;
-    u8 pad8[2];
-    s16 fA;
-    u8 padC[0x14];
-    u64 flags;
-    u8 pad28[0xC];
-    u8 f34;
-    u8 pad35[0x1B];
-    f32 f50;
-    u8 pad54[8];
-    u8 f5C[0x2E0];
-    f32 f33C;
-    f32 f340;
-    f32 f344;
-    u8 pad348[0x29];
-    u8 f371;
-    u8 pad372[8];
-    u8 f37A;
-    u8 f37B;
-    u8 pad37C[0x1B];
-    s8 f397;
-} Nw2EntDB348;
-
-typedef struct {
-    u8 pad[0xA];
-    s16 fA;
-    s16 fC;
-} Nw2OtherDB348;
-
 typedef struct {
     f32 x, y, z;
     s32 angle;
@@ -55,32 +18,39 @@ void func_800D37C0(s32, f32, void *);
 void translateEntityXZ(void *, void *);
 s32 func_800D2B64(void *, f32, u16, s32);
 
-void func_800DB348(Nw2EntDB348 *e, Nw2OtherDB348 *o) {
+/* Per-frame movement of self's dive / jump toward the point func_800DACE4 stored (D_800F9890[id]). Sets flag
+ * 0x80000000000. While animFrame is inside anim.activeStart..activeEnd: takes the XZ direction from
+ * jointA[move.activeJoint[0]] to that point, stores distance / D_800F9888[id] (the frames left) at that heading in
+ * moveDelta, moves the body by it (translateEntityXZ), adds moveDelta[1] to y in states 0x6C and 0x6F, and
+ * decrements D_800F9888[id]. Then, if unk034 has bit 2 and other is not in state 0x2C step 3, clears unk034 bit
+ * 0x10. Once animFrame reaches anim.hitEnd, clears flag 0x80000000000 and WR_FLAG_ON_APRON and runs
+ * func_800D2B64(self, 4.0f, 0, 0xFFFFE) (boundary correction of self alone). */
+void func_800DB348(Wrestler *self, Wrestler *other) {
     Nw2DirRes dir;
     s32 id;
     u8 flagBits;
     s8 idx;
 
-    e->flags |= 0x80000000000ULL;
-    id = e->f0;
-    if (e->f6 < e->f37A || e->f37B < e->f6)
+    self->flags |= 0x80000000000ULL;
+    id = (u8)self->id;
+    if (self->animFrame < self->anim.activeStart || self->anim.activeEnd < self->animFrame)
         goto skip;
-    idx = e->f397;
-    func_800D3890(e->f5C + idx * 0x10, D_800F9890 + (s8)id * 0x10, &dir);
-    func_800D37C0(dir.angle, dir.y / (f32)D_800F9888[(s8)id], &e->f33C);
-    translateEntityXZ(e, &e->f33C);
-    if (e->fA == 0x6C) {
-        e->f50 += e->f340;
-    } else if (e->fA == 0x6F) {
-        e->f50 += e->f340;
+    idx = self->move.activeJoint[0];
+    func_800D3890(&self->jointA[idx], D_800F9890 + (s8)id * 0x10, &dir);
+    func_800D37C0(dir.angle, dir.y / (f32)D_800F9888[(s8)id], self->moveDelta);
+    translateEntityXZ(self, self->moveDelta);
+    if (self->state == 0x6C) {
+        self->y += self->moveDelta[1];
+    } else if (self->state == 0x6F) {
+        self->y += self->moveDelta[1];
     }
     ((u16 *)D_800F9888)[(s8)id]--;
 skip:
-    flagBits = e->f34;
-    if ((flagBits & 2) && (o->fA != 0x2C || o->fC != 3))
-        e->f34 = flagBits & ~0x10;
-    if (e->f6 < e->f371)
+    flagBits = self->unk034;
+    if ((flagBits & 2) && (other->state != 0x2C || other->step != 3))
+        self->unk034 = flagBits & ~0x10;
+    if (self->animFrame < self->anim.hitEnd)
         return;
-    e->flags &= ~0x80000000080ULL;
-    func_800D2B64(e, 4.0f, 0, 0xFFFFE);
+    self->flags &= ~(0x80000000000ULL | WR_FLAG_ON_APRON);
+    func_800D2B64(self, 4.0f, 0, 0xFFFFE);
 }

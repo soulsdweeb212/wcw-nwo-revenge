@@ -5,17 +5,6 @@
  */
 #include "common.h"
 
-typedef struct {
-    u8 p0[0x10];
-    u64 flags;
-    u8 p18[0x32B];
-    u8 f343;
-    u8 p344[0xE];
-    s8 links[2];
-    u8 p354[0x5C];
-} RecBBA00;
-extern RecBBA00 D_800F9D20[];
-extern u8 D_800F9D10[];
 extern u8 D_8006A2A0[];
 extern u8 D_800EB466;
 extern u8 D_800FABE4;
@@ -38,14 +27,14 @@ void func_800BBA00(void)
     for (i = 0; i < 4; i++)
     {
         o = i;
-        if (D_800F9D20[o].flags & 0x40000000ULL)
+        if (D_800F9D10[o].flags & WR_FLAG_PAIR_LEADER)
         {
             tq = (u32)o & 1;
             if (tq >> 1)
             {
                 D_800FADB8 = 0;
             }
-            if (D_800F9D20[o].links[0] != (-1))
+            if (D_800F9D10[o].attached[0] != (-1))
             {
                 for (k = 0; k < 4; k++)
                 {
@@ -57,24 +46,24 @@ void func_800BBA00(void)
 
     func_800D49A0();
     seq = (s8) D_800EB466;
-    D_800F9D20[0].flags &= ~0x20000000ULL;
-    D_800F9D20[1].flags &= ~0x20000000ULL;
-    D_800F9D20[2].flags &= ~0x20000000ULL;
-    D_800F9D20[3].flags &= ~0x20000000ULL;
+    D_800F9D10[0].flags &= ~WR_FLAG_UPDATED;
+    D_800F9D10[1].flags &= ~WR_FLAG_UPDATED;
+    D_800F9D10[2].flags &= ~WR_FLAG_UPDATED;
+    D_800F9D10[3].flags &= ~WR_FLAG_UPDATED;
     do
     {
-        if ((D_800F9D20[seq].flags & 0x40000000ULL) && (!(D_800F9D20[seq].flags & 0x20000000ULL)))
+        if ((D_800F9D10[seq].flags & WR_FLAG_PAIR_LEADER) && (!(D_800F9D10[seq].flags & WR_FLAG_UPDATED)))
         {
             D_800FADB8 = seq;
-            D_800FABE4 = D_800F9D20[seq].f343;
+            D_800FABE4 = D_800F9D10[seq].opponentId;
             func_800BBFD8();
             for (i = 0; i < 2; i++)
             {
-                s8 link = D_800F9D20[seq].links[i];
-                if (!(D_800F9D20[link].flags & 0x20000000ULL))
+                s8 link = D_800F9D10[seq].attached[i];
+                if (!(D_800F9D10[link].flags & WR_FLAG_UPDATED))
                 {
                     D_800FADB8 = link;
-                    D_800FABE4 = D_800F9D20[D_800F9D20[seq].links[i]].f343;
+                    D_800FABE4 = D_800F9D10[D_800F9D10[seq].attached[i]].opponentId;
                     if (link != (-1))
                     {
                         func_800BBFD8();
@@ -88,10 +77,10 @@ void func_800BBA00(void)
     seq = (s8) D_800EB466;
     do
     {
-        if (!(D_800F9D20[seq].flags & 0x20000000ULL))
+        if (!(D_800F9D10[seq].flags & WR_FLAG_UPDATED))
         {
             D_800FADB8 = seq;
-            D_800FABE4 = D_800F9D20[seq].f343;
+            D_800FABE4 = D_800F9D10[seq].opponentId;
             func_800BBFD8();
         }
         seq = (seq + 1) & 3;
@@ -100,10 +89,10 @@ void func_800BBA00(void)
     seq = (s8) D_800EB466;
     do
     {
-        if (D_800F9D20[seq].flags & 0x10000000ULL)
+        if (D_800F9D10[seq].flags & WR_FLAG_RERUN)
         {
             D_800FADB8 = seq;
-            D_800FABE4 = D_800F9D20[seq].f343;
+            D_800FABE4 = D_800F9D10[seq].opponentId;
             func_800BBFD8();
         }
         seq = (seq + 1) & 3;
@@ -112,16 +101,15 @@ void func_800BBA00(void)
     seq = 0;
     for (; seq < 4; seq++)
     {
-        o = ((s32) seq) * 944;
-        if (D_800F9D20[seq].flags & 0x100000000ULL)
+        if (D_800F9D10[seq].flags & WR_FLAG_AUTO_FACE)
         {
-            s8 v = (s8)D_800F9D20[seq].f343;
-            func_800A712C(D_800F9D10 + o, D_800F9D10 + (((s32) v) * 944), angle, NULL);
+            s8 v = D_800F9D10[seq].opponentId;
+            func_800A712C(&D_800F9D10[seq], &D_800F9D10[v], angle, NULL);
             do
             {
             }
             while (0);
-            func_800A7240(D_800F9D10 + o, angle[0], 0x155, 0ULL);
+            func_800A7240(&D_800F9D10[seq], angle[0], 0x155, 0ULL);
         }
     }
 
@@ -131,7 +119,7 @@ void func_800BBA00(void)
     updatePlayerEntryStates();
     for (; i < 4; i++)
     {
-        if (D_800F9D20[i].flags & 4)
+        if (D_800F9D10[i].flags & 4)
         {
             D_8006A2A0[i] = 0;
         }

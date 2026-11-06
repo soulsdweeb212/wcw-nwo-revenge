@@ -5,23 +5,6 @@
  */
 #include "common.h"
 
-typedef struct 
-{
-    u8 p0[4];
-    s16 f4;
-    s16 f6;
-    s16 f8;
-    s16 fA;
-    s16 fC;
-    u8 pE[0x12];
-    u64 flags;
-    u8 p28[0x30];
-    s32 f58;
-    u8 p5C[0x315];
-    u8 f371;
-} E5440;
-extern E5440 *D_800FAF5C;
-extern E5440 *D_800F9B00;
 extern s8 D_800FADB8;
 extern s16 D_800F9B70[];
 extern u16 D_800FAF8E[];
@@ -30,7 +13,6 @@ extern f32 D_800F9B0C;
 extern s32 D_800F9B14;
 extern s32 D_800E3F20[];
 extern s32 D_800FABD8;
-extern u8 D_800F9D10[];
 void func_800D6658(void *, void *, u16, s32, f32);
 void func_800A7240(void *, s32, s32, u64);
 s8 func_800C7870(void *, void *, f32);
@@ -45,21 +27,21 @@ void func_800D2B64(void *, f32, s32, s32);
 void func_800A7188(void *);
 void func_800C5440(void)
 {
-    E5440 *e = D_800FAF5C;
+    Wrestler *e = D_800FAF5C;
     s16 a;
     s32 m;
     s8 r;
     f32 two;
-    E5440 *o;
-    switch (e->fC)
+    Wrestler *o;
+    switch (e->step)
     {
     case 0:
         D_800F9B70[D_800FADB8] = 0;
         D_800FAF8E[D_800FADB8] = 0;
-        e->fC++;
+        e->step++;
 
     case 1:
-        if ((D_800FAF5C->flags & 0x20000000000ULL) && (D_800FAF5C->f4 <= 0))
+        if ((D_800FAF5C->flags & 0x20000000000ULL) && (D_800FAF5C->animFramesLeft <= 0))
         {
             D_800FAF5C->flags &= ~0x20000000000ULL;
         }
@@ -94,7 +76,7 @@ void func_800C5440(void)
         }
         if ((D_800F9B00->flags & 0x100000ULL) && (((D_800FAF5C->flags & D_800F9B00->flags) & 0x40) || ((D_800FAF5C->flags & D_800F9B00->flags) & 0x100)))
         {
-            if (func_800D3550(func_800D3684(D_800FAF5C->f58, D_800F9B00->f58)) > 0x600)
+            if (func_800D3550(func_800D3684(D_800FAF5C->heading, D_800F9B00->heading)) > 0x600)
             {
                 func_800A6C48(D_800FAF5C, 0x20);
                 break;
@@ -124,7 +106,7 @@ void func_800C5440(void)
         func_800A7C40(D_800FAF5C, D_800FADB8, a);
         func_800D427C(D_800FAF5C, func_800D5438(D_800FAF5C, 0), 3);
         func_800A7F6C(D_800FAF5C, 0);
-        D_800FAF5C->fC++;
+        D_800FAF5C->step++;
         break;
 
     case 2:
@@ -132,8 +114,8 @@ void func_800C5440(void)
         r = func_800C2CDC(e, 1);
         if (r != (-1))
         {
-            D_800FAF5C->fC++;
-            func_800C3A78(D_800FAF5C, D_800F9D10 + (r * 0x3B0), 1);
+            D_800FAF5C->step++;
+            func_800C3A78(D_800FAF5C, &D_800F9D10[r], 1);
         }
 
     case 3:
@@ -143,14 +125,14 @@ void func_800C5440(void)
         if (o->flags & 0x100ULL) {
             func_800D2B64(o, two, 0, 0xFFFFE);
         } else {
-            switch ((s16)(o->fA - 7)) {
+            switch ((s16)(o->state - 7)) {
             case 15:
-                if (o->f6 > o->f371) {
+                if (o->animFrame > o->anim.hitEnd) {
                     func_800D2B64(o, 2.0f, 0, 0xE);
                 }
                 break;
             case 0: case 24: case 25: case 26: case 29: case 30: case 31: case 78: case 79:
-                if (o->f6 > o->f371) {
+                if (o->animFrame > o->anim.hitEnd) {
                     func_800D2B64(o, 4.0f, 0, 0xFFFFE);
                 } else {
                     func_800D2B64(o, 2.0f, 0, 0xE);

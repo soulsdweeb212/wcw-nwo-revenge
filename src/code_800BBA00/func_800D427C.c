@@ -5,63 +5,47 @@
  */
 #include "common.h"
 
-typedef struct {
-    s8 f0;
-    u8 pad[7];
-    s16 f8;
-    u8 padA[0x362];
-    u8 f36C;
-    u8 pad36D[3];
-    u8 f370;
-    u8 f371;
-    u8 pad372[6];
-    u8 f378;
-    u8 pad379[2];
-    u8 f37B;
-    u8 f37C;
-    u8 pad37D[5];
-    u8 f382;
-} Nw2ObjD427C;
 extern s16 D_800EB680[];
 extern s32 D_800EB6B8[];
 s32 decodeAnimationMetadata(void *, s16);
-/* Start an animation on the object: record the previous animation id per entity
- * slot, then if it actually changed, decode the new animation's metadata into
- * the object's part records, resolve the 0/0xFF sentinel blend/timer bytes to
- * the animation's default duration (f36C), reset the +4/+6 timers and store the
- * caller's mode into the per-entity mode table D_800EB6B8. */
-void func_800D427C(Nw2ObjD427C *e, s16 animId, s32 mode) {
-    D_800EB680[e->f0] = e->f8;
-    e->f8 = animId;
-    if (animId != D_800EB680[e->f0]) {
-        D_800EB680[e->f0] = animId;
-        decodeAnimationMetadata((u8 *)e + 0x368, e->f8);
-        if (e->f370 == 0) {
-            e->f370 = 1;
+/* Start an animation on the wrestler: record the previous animId per slot in
+ * D_800EB680, store the new animId, and if it actually changed, decode the new
+ * animation's metadata into anim, resolve the 0/0xFF sentinel bytes (hitStart,
+ * hitEnd, activeEnd, reversalFrame, cancelFrame, unk37D[5]) to 1 or to
+ * anim.frameCount, reset animFrame to 0 and animFramesLeft to anim.frameCount,
+ * and store the caller's mode into the per-slot table D_800EB6B8. */
+void func_800D427C(Wrestler *w, s16 animId, s32 mode) {
+    D_800EB680[w->id] = w->animId;
+    w->animId = animId;
+    if (animId != D_800EB680[w->id]) {
+        D_800EB680[w->id] = animId;
+        decodeAnimationMetadata(&w->anim, w->animId);
+        if (w->anim.hitStart == 0) {
+            w->anim.hitStart = 1;
         }
-        if (e->f370 == 0xFF) {
-            e->f370 = e->f36C;
+        if (w->anim.hitStart == 0xFF) {
+            w->anim.hitStart = w->anim.frameCount;
         }
-        if (e->f371 == 0) {
-            e->f371 = 1;
+        if (w->anim.hitEnd == 0) {
+            w->anim.hitEnd = 1;
         }
-        if (e->f371 == 0xFF) {
-            e->f371 = e->f36C;
+        if (w->anim.hitEnd == 0xFF) {
+            w->anim.hitEnd = w->anim.frameCount;
         }
-        if (e->f37B == 0xFF) {
-            e->f37B = e->f36C;
+        if (w->anim.activeEnd == 0xFF) {
+            w->anim.activeEnd = w->anim.frameCount;
         }
-        if (e->f378 == 0) {
-            e->f378 = 1;
+        if (w->anim.reversalFrame == 0) {
+            w->anim.reversalFrame = 1;
         }
-        if (e->f37C == 0) {
-            e->f37C = 1;
+        if (w->anim.cancelFrame == 0) {
+            w->anim.cancelFrame = 1;
         }
-        if (e->f382 == 0) {
-            e->f382 = e->f36C;
+        if (w->anim.unk37D[5] == 0) {
+            w->anim.unk37D[5] = w->anim.frameCount;
         }
-        *(s16 *)((u8 *)e + 6) = 0;
-        *(s16 *)((u8 *)e + 4) = e->f36C;
-        D_800EB6B8[e->f0] = mode;
+        w->animFrame = 0;
+        w->animFramesLeft = w->anim.frameCount;
+        D_800EB6B8[w->id] = mode;
     }
 }

@@ -20,27 +20,6 @@ extern s32 D_800E3F20[];
 extern u8 D_800E3F30[];
 extern u32 D_800EB6B8[];
 
-typedef struct {
-    s16 f0;
-    s16 f2;
-    s16 f4;
-    s16 f6;
-    u16 f8;
-    u8 padA[0x16];
-    u64 flags;
-    u8 pad28[0x24];
-    f32 fx;
-    f32 fy;
-    f32 fz;
-    s32 f58;
-    u8 pad5C[0x2F7];
-    s8 f353;
-    u8 pad354[0x2E];
-    u8 f382;
-    u8 pad383[0x2D];
-} Nw2Ent;
-
-extern Nw2Ent D_800F9D10[];
 extern s16 D_800EB6D0[4][0x258][6];
 
 typedef struct {
@@ -68,21 +47,21 @@ void func_800D54A0(void)
 
     if (!(D_800FABD8 & 4)) {
         for (i = 0; i < 4; i++) {
-            if (D_800F9D10[i].f2 == -1) {
+            if (D_800F9D10[i].characterId == -1) {
                 D_800EB6D0[i][D_800F97D0.f2][4] = -1;
             } else {
                 s16 v;
                 s32 mask;
 
-                D_800EB6D0[i][D_800F97D0.f2][4] = D_800F9D10[i].f8;
-                v = D_800F9D10[i].f6 - 1;
+                D_800EB6D0[i][D_800F97D0.f2][4] = D_800F9D10[i].animId;
+                v = D_800F9D10[i].animFrame - 1;
                 if (v < 0)
                     v = 0;
                 D_800EB6D0[i][D_800F97D0.f2][5] = v & 0x3FF;
-                D_800EB6D0[i][D_800F97D0.f2][0] = D_800F9D10[i].fx * D_800E6D20;
-                D_800EB6D0[i][D_800F97D0.f2][1] = D_800F9D10[i].fz * D_800E6D20;
-                D_800EB6D0[i][D_800F97D0.f2][2] = D_800F9D10[i].fy * D_800E6D20;
-                D_800EB6D0[i][D_800F97D0.f2][3] = D_800F9D10[i].f58;
+                D_800EB6D0[i][D_800F97D0.f2][0] = D_800F9D10[i].x * D_800E6D20;
+                D_800EB6D0[i][D_800F97D0.f2][1] = D_800F9D10[i].z * D_800E6D20;
+                D_800EB6D0[i][D_800F97D0.f2][2] = D_800F9D10[i].y * D_800E6D20;
+                D_800EB6D0[i][D_800F97D0.f2][3] = D_800F9D10[i].heading;
 
                 mask = 0;
                 switch (D_800EB6B8[i]) {
@@ -114,8 +93,8 @@ void func_800D54A0(void)
             if (D_8007EF30[3] == 0) {
                 count = 0;
                 for (i = 0; i < 4; i++) {
-                    if (D_800F9D10[i].f2 != -1) {
-                        if (D_800F9D10[i].flags & 0x200)
+                    if (D_800F9D10[i].characterId != -1) {
+                        if (D_800F9D10[i].flags & WR_FLAG_LEGAL)
                             count++;
                     }
                 }
@@ -126,21 +105,21 @@ void func_800D54A0(void)
                         s32 id;
                         s16 frame;
 
-                        if (D_800F9D10[i].f2 == -1)
+                        if (D_800F9D10[i].characterId == -1)
                             continue;
-                        if (!(D_800F9D10[i].flags & 0x200))
+                        if (!(D_800F9D10[i].flags & WR_FLAG_LEGAL))
                             continue;
-                        id = D_800F9D10[i].f353;
-                        if (!(D_800F9D10[id].flags & 0x200))
+                        id = D_800F9D10[i].opponentId;
+                        if (!(D_800F9D10[id].flags & WR_FLAG_LEGAL))
                             continue;
-                        if (D_800F9D10[i].f6 != D_800F9D10[i].f382 + 0xF)
+                        if (D_800F9D10[i].animFrame != D_800F9D10[i].anim.unk37D[5] + 0xF)
                             continue;
                         if (!(D_800FABD8 & D_800E3F20[i]))
                             continue;
 
                         D_800FABD8 = D_800E3F20[i] | 1;
                         REC->f0 = i;
-                        REC->f1 = D_800F9D10[i].f353;
+                        REC->f1 = D_800F9D10[i].opponentId;
                         REC->f4 = 2;
                         REC->f6 = -0xF;
                         REC->f10 = 1;

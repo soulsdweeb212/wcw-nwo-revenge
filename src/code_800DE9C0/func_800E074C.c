@@ -5,15 +5,15 @@
  */
 #include "common.h"
 
-s32 checkEntityAttackHit(void *, s32);
+s32 checkEntityAttackHit(Wrestler *, s32);
 s32 isEntityActionEligible(void *, void *, s16);
-void func_800A6C48(void *, s32);
 void func_800E212C(void *);
 
-/* When flag 8 is set, report whether the entity's attack hit arg1. */
-s32 func_800E074C(s32 arg0, s32 arg1, s32 arg2) {
+/* When arg2 has bit 8, returns 1 if checkEntityAttackHit(w, arg1 & 0xFFFF)
+ * (attack hit test between w and its partner record) succeeds; else 0. */
+s32 func_800E074C(Wrestler *w, s32 arg1, s32 arg2) {
     if (arg2 & 8) {
-        if ((checkEntityAttackHit((void *)arg0, arg1 & 0xFFFF) << 24) != 0) {
+        if ((checkEntityAttackHit(w, arg1 & 0xFFFF) << 24) != 0) {
             return 1;
         }
     }

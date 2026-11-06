@@ -6,7 +6,7 @@
 #include "common.h"
 
 /* stepRecordedFramePlayback: advance one tick of a recorded pose animation.
- * Up to four player slots are active (gated by D_800F9D12[player][0] and the
+ * Up to four player slots are active (gated by D_800F9D10[player].characterId and the
  * per-player enable mask D_800E3F38[player]).  For each active slot the pose
  * sample at the current frame is decoded and applied; afterwards the four
  * output transforms are rebuilt.  Finally the shared frame timer advances,
@@ -20,7 +20,6 @@ extern const f64 D_800E6D48, D_800E6D50, D_800E6D58;
 extern u8 D_800EB6D0[], D_800EB6D2[], D_800EB6D4[], D_800EB6D6[], D_800EB6D8[], D_800EB6DA[];
 extern u8 D_800F2750[], D_800F2751[], D_800F2752[], D_800F2754[], D_800F2756[];
 extern u8 D_800F2758[], D_800F2759[], D_800F275A[], D_800F275B[];
-extern s16 D_800F9D12[][472];
 
 void func_80010200(s16, s16, s32);
 void func_8000DB90(s32, s32);
@@ -48,7 +47,7 @@ void stepRecordedFramePlayback(void) {
     pframe = &D_800F97DA;
     D_800FABD8 &= ~8;
     for (; player < 4; player++) {
-        if (D_800F9D12[player][0] == inactive)
+        if (D_800F9D10[player].characterId == inactive)
             continue;
         recOffset = (s32)*pframe * 12 + (s32)player * 0x1C20;
         if (*(s16 *)(D_800EB6D8 + recOffset) == inactive) {

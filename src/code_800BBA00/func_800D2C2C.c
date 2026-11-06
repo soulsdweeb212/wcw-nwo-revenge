@@ -5,10 +5,8 @@
  */
 #include "common.h"
 
-s32 func_800D2CAC(void *, void *, void *, f32, void *, void *, void *, u16, s32, u16);
-
-/* Boundary-correction wrapper (entity, two linked entities, optional buffer,
- * divisor) with the apply flag set. */
-s32 func_800D2C2C(void *arg0, void *arg1, void *arg2, f32 arg3, void *arg4, s32 arg5) {
-    return func_800D2CAC(arg0, arg1, arg2, arg3, NULL, NULL, arg4, 0, arg5, 1);
+/* Boundary correction of wrestler w, moving the linked records linked1 / linked2 and the position pos along with
+ * it: func_800D2CAC(w, linked1, linked2, divisor, pos, bodyMask, apply). */
+s32 func_800D2C2C(Wrestler *w, Wrestler *linked1, Wrestler *linked2, f32 divisor, void *pos, s32 bodyMask) {
+    return func_800D2CAC(w, linked1, linked2, divisor, NULL, NULL, pos, 0, bodyMask, 1);
 }

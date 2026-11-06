@@ -5,17 +5,17 @@
  */
 #include "common.h"
 
-void func_800A6BE0(void *, s32);
-/* Pairs two entities: plays complementary animations 0x7F/0x80 (chosen by
- * arg0's 0x200 flag), raises arg0's 0x1000000000 and arg1's 0x1020000000 flags,
- * and when arg2 is set puts both into state 2. */
-void func_800D9E1C(void *arg0, void *arg1, s16 arg2) {
-    func_800A6BE0(arg0, (*(u64 *)((u8 *)arg0+0x20) & 0x200) ? 0x80 : 0x7F);
-    *(u64 *)((u8 *)arg0+0x20) |= 0x1000000000ULL;
-    func_800A6BE0(arg1, (*(u64 *)((u8 *)arg0+0x20) & 0x200) ? 0x7F : 0x80);
-    *(u64 *)((u8 *)arg1+0x20) |= 0x1020000000ULL;
-    if (arg2) {
-        *(s16 *)((u8 *)arg0+0xC)=2;
-        *(s16 *)((u8 *)arg1+0xC)=2;
+void func_800A6BE0(Wrestler *, s32);
+/* Pairs two wrestlers: puts self into state 0x80 and other into 0x7F when self is the legal man (WR_FLAG_LEGAL),
+ * else self 0x7F and other 0x80 (func_800A6BE0); raises flag 0x1000000000 on self and 0x1000000000 |
+ * WR_FLAG_UPDATED on other, and when setStep2 is set puts both at step 2. */
+void func_800D9E1C(Wrestler *self, Wrestler *other, s16 setStep2) {
+    func_800A6BE0(self, (self->flags & WR_FLAG_LEGAL) ? 0x80 : 0x7F);
+    self->flags |= 0x1000000000ULL;
+    func_800A6BE0(other, (self->flags & WR_FLAG_LEGAL) ? 0x7F : 0x80);
+    other->flags |= 0x1000000000ULL | WR_FLAG_UPDATED;
+    if (setStep2) {
+        self->step = 2;
+        other->step = 2;
     }
 }

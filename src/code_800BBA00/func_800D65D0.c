@@ -11,9 +11,10 @@ extern u16 D_800E3F8C[];
 extern u8 D_80030560[];
 extern u8 D_8007C438[];
 
-/* Classify the entity's quadrant (+0x3C) against mask arg1: 1, 2 or 0. */
-s32 func_800D65D0(u8 *arg0, s32 arg1) {
-    s32 idx = *(s16 *)(arg0 + 0x3C);
+/* Classify the wrestler's ringSide against mask arg1: 1 when D_800E3F84[ringSide]
+ * shares a bit with it, else 2 when D_800E3F8C[ringSide] does, else 0. */
+s32 func_800D65D0(Wrestler *w, s32 arg1) {
+    s32 idx = w->ringSide;
 
     if (D_800E3F84[idx] & arg1) {
         return 1;

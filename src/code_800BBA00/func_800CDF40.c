@@ -5,18 +5,23 @@
  */
 #include "common.h"
 
-/* Attack-eligibility tick for an entity: count down a re-arm timer, choose the
- * falling action id from the entity's state bits, latch the "new action" bit
- * when eligible, and otherwise return a mask describing which attack inputs
- * are accepted (writes the animation id to *animOut). */
+/* Attack-eligibility tick for a wrestler: count down self->stateTimer (reset to 0
+ * first when func_800A93C0 (a global check; it takes no argument) is true or
+ * inputBits has 0x10); when it goes negative, start the animation picked from
+ * self->grappleCtx bits 0x400/0x40/0x80/0x100/0x200 (0xE8C..0xE9C, the last set
+ * bit wins) and return 2. Otherwise latch grappleCtx bit 0x200000
+ * and return 1 when flag is set and grappleCtx has 0x401 or isEntityActionEligible
+ * passes for 0x7E or 0x6E; else return 1 with *animOut = accepted input bits
+ * (0xC028 with grappleCtx 0x40, 0xC004 without) | (animBits & 0xF00), 3 for input
+ * 0x20 with grappleCtx 0x400 (and not 0x40), or 0. */
 s8 func_800A93C0(void*);s8 isEntityActionEligible(void*,s32,s32);void func_800D427C(void*,s16,s32);
-s32 func_800CDF40(u8*self,u16 animBits,u16 inputBits,s16 flag,s16*animOut){
+s32 func_800CDF40(Wrestler*self,u16 animBits,u16 inputBits,s16 flag,s16*animOut){
     s16 action;
     s32 bits,mask;
-    if(func_800A93C0(self))*(s16*)(self+0x16)=0;
-    if(inputBits&0x10)*(s16*)(self+0x16)=0;
-    if(--*(s16*)(self+0x16)<0){
-        s32 state=*(s32*)(self+0x2C);
+    if(func_800A93C0(self))self->stateTimer=0;
+    if(inputBits&0x10)self->stateTimer=0;
+    if(--self->stateTimer<0){
+        s32 state=self->grappleCtx;
         if(state&0x400)action=0xE8C;
         if(state&0x40)action=0xE90;
         if(state&0x80)action=0xE94;
@@ -25,20 +30,20 @@ s32 func_800CDF40(u8*self,u16 animBits,u16 inputBits,s16 flag,s16*animOut){
         func_800D427C(self,action,1);
         return 2;
     }
-    bits=*(s32*)(self+0x2C);
+    bits=self->grappleCtx;
     if(((bits&0x401)==0x401)&((s8)flag!=0)){
-        *(s32*)(self+0x2C)|=0x200000;
+        self->grappleCtx|=0x200000;
         return 1;
     }
     if(isEntityActionEligible(self,0,0x7E)&&(s8)flag){
-        *(s32*)(self+0x2C)|=0x200000;
+        self->grappleCtx|=0x200000;
         return 1;
     }
     if(isEntityActionEligible(self,0,0x6E)&&(s8)flag){
-        *(s32*)(self+0x2C)|=0x200000;
+        self->grappleCtx|=0x200000;
         return 1;
     }
-    bits=*(s32*)(self+0x2C);
+    bits=self->grappleCtx;
     if(bits&0x40){
         mask=inputBits&0xC028;
         if(mask){

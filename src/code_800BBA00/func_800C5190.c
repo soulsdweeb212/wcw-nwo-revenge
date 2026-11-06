@@ -5,19 +5,9 @@
  */
 #include "common.h"
 
-typedef struct {
-    u8 pad0[0xA];
-    s16 fA;
-    s16 fC;
-    u8 padE[0x12];
-    u64 flags;
-} Nw2Act5190;
-
-extern Nw2Act5190 *D_800FAF5C;
 extern s8 D_800FADB8;
 extern u32 D_800FABD8;
 extern u32 D_800E3F20[];
-extern u8 D_800F9D10[];
 
 void func_800A7C40(void *, s8, s16);
 s16 func_800D5438(void *, s32);
@@ -30,7 +20,7 @@ s32 func_800D2B64(void *, f32, u16, s32);
 void func_800A7188(void *);
 
 void func_800C5190(void) {
-    Nw2Act5190 *o;
+    Wrestler *o;
     s16 snd;
     s16 eff;
     s32 flag;
@@ -38,9 +28,9 @@ void func_800C5190(void) {
     f32 two;
 
     o = D_800FAF5C;
-    switch (o->fC) {
+    switch (o->step) {
     case 0:
-        switch (o->fA) {
+        switch (o->state) {
         case 0x1B:
             snd = 0xB5;
             break;
@@ -58,10 +48,10 @@ void func_800C5190(void) {
         func_800A7C40(D_800FAF5C, D_800FADB8, snd);
         func_800D427C(D_800FAF5C, func_800D5438(D_800FAF5C, 0), 2);
         func_800A7F6C(D_800FAF5C, 0);
-        D_800FAF5C->fC++;
+        D_800FAF5C->step++;
     case 1:
         D_800FABD8 &= ~D_800E3F20[D_800FADB8];
-        switch (D_800FAF5C->fA) {
+        switch (D_800FAF5C->state) {
         case 0x1B:
             eff = 0x11;
             break;
@@ -74,8 +64,8 @@ void func_800C5190(void) {
         }
         ent = func_800C2CDC(D_800FAF5C, eff);
         if (ent != -1) {
-            D_800FAF5C->fC++;
-            switch (D_800FAF5C->fA) {
+            D_800FAF5C->step++;
+            switch (D_800FAF5C->state) {
             case 0x1B:
                 flag = 0x20;
                 break;
@@ -86,7 +76,7 @@ void func_800C5190(void) {
                 flag = 0x80;
                 break;
             }
-            func_800C3A78(D_800FAF5C, &D_800F9D10[ent * 0x3B0], flag);
+            func_800C3A78(D_800FAF5C, &D_800F9D10[ent], flag);
         }
     case 2:
         two = 2.0f;

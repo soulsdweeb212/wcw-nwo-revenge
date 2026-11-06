@@ -7,13 +7,12 @@
 
 extern s16 D_800EB420[], D_800F9B78[];
 
-/* Initialize entity entityId's state timer from its base value, clamped to a
- * minimum of 30. */
-void func_800AD6D0(s8 *entityId)
+/* Set D_800F9B78[w->id] to 10 * D_800EB420[w->id], at least 30. */
+void func_800AD6D0(Wrestler *w)
 {
     s16 *timer;
-    D_800F9B78[*entityId] = D_800EB420[*entityId] * 10;
-    timer = &D_800F9B78[*entityId];
+    D_800F9B78[w->id] = D_800EB420[w->id] * 10;
+    timer = &D_800F9B78[w->id];
     if (*timer < 30)
         *timer = 30;
 }

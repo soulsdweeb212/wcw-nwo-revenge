@@ -6,17 +6,10 @@
 #include "common.h"
 
 typedef struct {
-    u8 pad0[0x20];
-    u64 flags;
-    u8 pad28[0x388];
-} Nw2RecA578;
-
-typedef struct {
     u8 pad[0x58];
     u16 f58;
 } Nw2GlobA578;
 
-extern Nw2RecA578 D_800F9D10[];
 extern Nw2GlobA578 D_8007E228;
 
 s32 func_800BA578(s8 arg0) {

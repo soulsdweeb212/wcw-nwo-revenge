@@ -5,7 +5,6 @@
  */
 #include "common.h"
 
-extern s8 D_800FA063[];
 extern s16 D_800E3270[];
 extern s16 D_800E3262[];
 extern u8 D_8007E228[];
@@ -15,7 +14,7 @@ void func_800D4AD0(void *);
 s32 func_800D4CC4(void *);
 void func_800D427C(void *, s16, s32);
 
-/* Entity arg0's type byte. */
+/* Wrestler arg0's current opponent id. */
 s8 func_800A90FC(s16 arg0) {
-    return D_800FA063[arg0 * 0x3B0];
+    return D_800F9D10[arg0].opponentId;
 }

@@ -14,23 +14,24 @@ void func_800D4AD0(void *);
 u8 func_800D4CC4(void *);
 void func_800D427C(void *, s16, s32);
 
-/* Returns 1 when the entity's state (+8) is one of the D_800E3270 states,
- * optionally returning the adjusted heading in *arg1. */
-s32 func_800A9208(void *arg0, s32 *arg1) {
+/* Returns 1 when w's animId is one of the animations listed in D_800E3270 (0-terminated); then *outHeading (if
+ * not NULL) gets heading + anim.headingDelta, wrapped (the facing after the animation's built-in turn).
+ * Otherwise returns 0 and *outHeading gets the plain heading. */
+s32 func_800A9208(Wrestler *w, s32 *outHeading) {
     s16 v;
     s16 i = 0;
 
     do {
         v = D_800E3270[i];
         if (v == 0) {
-            if (arg1 != NULL) {
-                *arg1 = *(s32 *)((u8 *)arg0 + 0x58);
+            if (outHeading != NULL) {
+                *outHeading = w->heading;
             }
             return 0;
         }
-        if (*(s16 *)((u8 *)arg0 + 8) == v) {
-            if (arg1 != NULL) {
-                *arg1 = func_800D35B0(*(s32 *)((u8 *)arg0 + 0x58), *(s32 *)((u8 *)arg0 + 0x368));
+        if (w->animId == v) {
+            if (outHeading != NULL) {
+                *outHeading = func_800D35B0(w->heading, w->anim.headingDelta);
             }
             return 1;
         }

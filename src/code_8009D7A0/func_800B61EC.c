@@ -5,31 +5,33 @@
  */
 #include "common.h"
 
-typedef struct {
-    u8 pad0[0x20];
-    u64 flags;
-    u16 f28;
-    u8 pad2A[0x14];
-    s16 f3E;
-    u8 pad40[0x2C];
-    f32 f6C;
-    f32 f70;
-    f32 f74;
-} Ent61EC;
-
 extern u16 D_8007E280;
 extern s32 D_800E3CA0[];
 extern f64 D_800E5510, D_800E5518, D_800E5520, D_800E5528, D_800E5530, D_800E5538, D_800E5540, D_800E5548, D_800E5550;
 extern f64 D_800E5558, D_800E5560, D_800E5568, D_800E5570, D_800E5578, D_800E5580, D_800E5588, D_800E5590, D_800E5598;
 extern f64 D_800E55A0, D_800E55A8, D_800E55B0;
-s8 func_800C2830(void *);
-s8 isEntityActionAllowedC2870(void *);
+s8 func_800C2830(Wrestler *);
+s8 isEntityActionAllowedC2870(Wrestler *);
 f32 func_800D3564(f32);
 f32 func_800D3890(void *, void *, s32);
 void getRingBoundaryPointAlongHeading(f32 *, s32, f32 *);
-void func_800E212C(void *);
+void func_800E212C(Wrestler *);
 
-s32 func_800B61EC(Ent61EC *p, Ent61EC *q, u16 mode, s32 heading) {
+/* p: the wrestler being updated, q: its opponent; func_8009E624 passes D_800FABE6 as mode and either
+ * D_800EB3E0[slot] or p->heading as heading. Always clears moveMode bit 0x8000 first; returns 0 when the old
+ * moveMode had 0x20 or 0x8 set. Positions are p's pelvis, jointA[1].
+ * - WR_FLAG_IN_RING: with mode & 8 and old moveMode & 1, if jointA[1].z (sides 0/2) or .x (sides 1/3) of the side
+ *   dirIndex is in 185..200 (sides 0/1) or -200..-185 (sides 2/3), sets moveMode 0x8000, calls func_800E212C(p)
+ *   and returns 1. With mode & 4, func_800C2830(p) nonzero and q on the apron or floor, returns 1 when the XZ
+ *   distance from the pelvis to the rope-line point along heading (getRingBoundaryPointAlongHeading) is in 80..95.
+ * - else WR_FLAG_ON_FLOOR: with mode & 8 (and isEntityActionAllowedC2870(p) or D_8007E280 & 0x200), moveMode & 1
+ *   and not 0x10, and the side opposite the pelvis quadrant equal to dirIndex, if |coordinate toward that side| is
+ *   between 280 and 335 and |the other coordinate| < 230, sets moveMode 0x8000, calls func_800E212C(p) and
+ *   returns 1. With mode & 4 and isEntityActionAllowedC2870(p), picks the side k (0..3) whose window (one
+ *   coordinate within +-230, the other 280..335 out toward k; D_800E5558..D_800E55B0) holds the pelvis; when
+ *   heading is within 0x2AA of D_800E3CA0[k], sets dirIndex = k and returns 1.
+ * Otherwise returns 0. */
+s32 func_800B61EC(Wrestler *p, Wrestler *q, u16 mode, s32 heading) {
     u16 fl;
     f32 d;
     s32 r;
@@ -40,24 +42,24 @@ s32 func_800B61EC(Ent61EC *p, Ent61EC *q, u16 mode, s32 heading) {
     f32 *pos;
     f32 pt[3];
 
-    fl = p->f28;
-    p->f28 = fl & 0x7FFF;
+    fl = p->moveMode;
+    p->moveMode = fl & 0x7FFF;
     if (fl & 0x28) {
         return 0;
     }
-    if (p->flags & 0x40) {
+    if (p->flags & WR_FLAG_IN_RING) {
         if ((mode & 8) && (fl & 1)) {
-            switch (p->f3E) {
+            switch (p->dirIndex) {
             case 0:
             case 2:
-                d = p->f74;
+                d = p->jointA[1].z;
                 break;
             case 1:
             case 3:
-                d = p->f6C;
+                d = p->jointA[1].x;
                 break;
             }
-            dir = p->f3E;
+            dir = p->dirIndex;
             r = 0;
             if (dir >= 0) {
                 if (dir < 2) {
@@ -72,48 +74,48 @@ s32 func_800B61EC(Ent61EC *p, Ent61EC *q, u16 mode, s32 heading) {
             }
             t = r;
             if (t) {
-                p->f28 |= 0x8000;
+                p->moveMode |= 0x8000;
                 func_800E212C(p);
                 return 1;
             }
         }
         t = mode & 4;
-        if (t && func_800C2830(p) && (q->flags & 0x180)) {
-            pos = &p->f6C;
+        if (t && func_800C2830(p) && (q->flags & (WR_FLAG_ON_APRON | WR_FLAG_ON_FLOOR))) {
+            pos = &p->jointA[1].x;
             getRingBoundaryPointAlongHeading(pos, heading, pt);
             d = func_800D3890(pos, pt, 0);
             if (D_800E5530 <= d && d <= D_800E5538) {
                 return 1;
             }
         }
-    } else if (p->flags & 0x100) {
+    } else if (p->flags & WR_FLAG_ON_FLOOR) {
         if ((mode & 8) && (isEntityActionAllowedC2870(p) || (D_8007E280 & 0x200))) {
-            if ((p->f28 & 1) && !(p->f28 & 0x10)) {
-                quad = (getXZDirectionQuadrant(&p->f6C) + 2) & 3;
-                if (quad == p->f3E) {
+            if ((p->moveMode & 1) && !(p->moveMode & 0x10)) {
+                quad = (getXZDirectionQuadrant(&p->jointA[1].x) + 2) & 3;
+                if (quad == p->dirIndex) {
                     switch (quad) {
                     case 0:
                     case 2:
-                        d = func_800D3564(p->f74);
+                        d = func_800D3564(p->jointA[1].z);
                         break;
                     case 1:
                     case 3:
-                        d = func_800D3564(p->f6C);
+                        d = func_800D3564(p->jointA[1].x);
                         break;
                     }
                     if (d < D_800E5540 && D_800E5548 < d) {
-                        switch (p->f3E) {
+                        switch (p->dirIndex) {
                         case 0:
                         case 2:
-                            d = func_800D3564(p->f6C);
+                            d = func_800D3564(p->jointA[1].x);
                             break;
                         case 1:
                         case 3:
-                            d = func_800D3564(p->f74);
+                            d = func_800D3564(p->jointA[1].z);
                             break;
                         }
                         if (d < D_800E5550) {
-                            p->f28 |= 0x8000;
+                            p->moveMode |= 0x8000;
                             func_800E212C(p);
                             return 1;
                         }
@@ -123,24 +125,24 @@ s32 func_800B61EC(Ent61EC *p, Ent61EC *q, u16 mode, s32 heading) {
         }
         if ((mode & 4) && isEntityActionAllowedC2870(p)) {
             k = -1;
-            if (D_800E5558 < p->f6C && p->f6C < D_800E5560) {
-                if (p->f74 < D_800E5568 && D_800E5570 < p->f74) {
+            if (D_800E5558 < p->jointA[1].x && p->jointA[1].x < D_800E5560) {
+                if (p->jointA[1].z < D_800E5568 && D_800E5570 < p->jointA[1].z) {
                     k = 0;
                 }
-                if (D_800E5578 < p->f74 && p->f74 < D_800E5580) {
+                if (D_800E5578 < p->jointA[1].z && p->jointA[1].z < D_800E5580) {
                     k = 2;
                 }
             }
-            if (D_800E5588 < p->f74 && p->f74 < D_800E5590) {
-                if (p->f6C < D_800E5598 && D_800E55A0 < p->f6C) {
+            if (D_800E5588 < p->jointA[1].z && p->jointA[1].z < D_800E5590) {
+                if (p->jointA[1].x < D_800E5598 && D_800E55A0 < p->jointA[1].x) {
                     k = 1;
                 }
-                if (D_800E55A8 < p->f6C && p->f6C < D_800E55B0) {
+                if (D_800E55A8 < p->jointA[1].x && p->jointA[1].x < D_800E55B0) {
                     k = 3;
                 }
             }
             if (k != -1 && func_800D3550(func_800D3684(heading, D_800E3CA0[k])) < 0x2AA) {
-                p->f3E = k;
+                p->dirIndex = k;
                 return 1;
             }
         }

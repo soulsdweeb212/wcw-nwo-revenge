@@ -5,23 +5,25 @@
  */
 #include "common.h"
 
-/* Per-entity stun/recovery timer driver, indexed by the entity id.
- * mode 0 resets the four timers; mode 1 ticks the main timer and steps the
- * entity's 0x14 counter (faster recovery when this entity is 0x100-flagged and
- * the other is not); mode 2 ticks the three sub-timers according to the
- * 0x20000/0x40000/0x80000 status bits, each resetting the counter on expiry;
- * mode 3 shortens sub-timers; mode 4 returns the current 0x80000 timer. */
+/* Per-wrestler spirit timers, indexed by w->id: D_800EB498 (spirit drift, 0x78 ticks), D_800EB4A0
+ * (WR_FLAG_SPIRIT_EMPTY, 0x12C), D_800EB4A8 (WR_FLAG_SPIRIT_FULL, 0x258), D_800EB4B0 (WR_FLAG_SPECIAL, 0x258).
+ * mode 0 reloads all four. mode 1 (other = the opponent): unless one of the three spirit flags is set, reloads the
+ * flag timers and counts the drift timer down; when it runs out it is reloaded and w->spirit moves one step: -8 (to
+ * at least 1) when w is on the floor and other is not, otherwise toward 50 (-1 above 50, +2 from 31..49, +3 below
+ * 31). mode 2 counts down the timer of each spirit flag that is set; on expiry the flag is cleared and spirit set to
+ * 70 (SPIRIT_FULL) or 50 (SPECIAL, SPIRIT_EMPTY). mode 3 takes 60 ticks off the SPIRIT_FULL and SPECIAL timers.
+ * mode 4 returns the SPECIAL timer. Other modes and modes 0..3 return 0. */
 extern u16 D_800EB498[];
 extern u16 D_800EB4A0[];
 extern u16 D_800EB4A8[];
 extern u16 D_800EB4B0[];
 
-s32 updateEntityStunTimer(u8 *entity, u8 *other, s16 mode) {
+s32 updateEntityStunTimer(Wrestler *w, Wrestler *other, s16 mode) {
     u8 id;
     s16 v;
     s16 h;
 
-    id = entity[0];
+    id = w->id;
     switch (mode) {
     case 0:
         D_800EB498[(s8)id] = 0x78;
@@ -30,7 +32,7 @@ s32 updateEntityStunTimer(u8 *entity, u8 *other, s16 mode) {
         D_800EB4B0[(s8)id] = 0x258;
         return 0;
     case 1:
-        if (*(u64 *)(entity + 0x20) & 0xE0000ULL) {
+        if (w->flags & (WR_FLAG_SPIRIT_EMPTY | WR_FLAG_SPIRIT_FULL | WR_FLAG_SPECIAL)) {
             return 0;
         }
         D_800EB4A0[(s8)id] = 0x12C;
@@ -40,15 +42,15 @@ s32 updateEntityStunTimer(u8 *entity, u8 *other, s16 mode) {
             return 0;
         }
         D_800EB498[(s8)id] = 0x78;
-        if ((*(u64 *)(entity + 0x20) & 0x100ULL) && !(*(u64 *)(other + 0x20) & 0x100ULL)) {
-            v = *(s16 *)(entity + 0x14) - 8;
-            *(s16 *)(entity + 0x14) = v;
+        if ((w->flags & WR_FLAG_ON_FLOOR) && !(other->flags & WR_FLAG_ON_FLOOR)) {
+            v = w->spirit - 8;
+            w->spirit = v;
             if (v > 0) {
                 return 0;
             }
             v = 1;
         } else {
-            h = *(s16 *)(entity + 0x14);
+            h = w->spirit;
             if (h >= 0x33) {
                 v = h - 1;
             } else {
@@ -62,39 +64,39 @@ s32 updateEntityStunTimer(u8 *entity, u8 *other, s16 mode) {
                 }
             }
         }
-        *(s16 *)(entity + 0x14) = v;
+        w->spirit = v;
         return 0;
     case 2:
-        if (*(u64 *)(entity + 0x20) & 0x40000ULL) {
+        if (w->flags & WR_FLAG_SPIRIT_FULL) {
             D_800EB4A0[(s8)id] = 0x12C;
             D_800EB4B0[(s8)id] = 0x258;
             if ((s16)--D_800EB4A8[(s8)id] <= 0) {
-                *(s16 *)(entity + 0x14) = 0x46;
-                *(u64 *)(entity + 0x20) &= ~0x40000ULL;
+                w->spirit = 0x46;
+                w->flags &= ~WR_FLAG_SPIRIT_FULL;
             }
         }
-        if (*(u64 *)(entity + 0x20) & 0x80000ULL) {
+        if (w->flags & WR_FLAG_SPECIAL) {
             D_800EB4A0[(s8)id] = 0x12C;
             D_800EB4A8[(s8)id] = 0x258;
             if ((s16)--D_800EB4B0[(s8)id] <= 0) {
-                *(s16 *)(entity + 0x14) = 0x32;
-                *(u64 *)(entity + 0x20) &= ~0x80000ULL;
+                w->spirit = 0x32;
+                w->flags &= ~WR_FLAG_SPECIAL;
             }
         }
-        if (*(u64 *)(entity + 0x20) & 0x20000ULL) {
+        if (w->flags & WR_FLAG_SPIRIT_EMPTY) {
             D_800EB4A8[(s8)id] = 0x258;
             D_800EB4B0[(s8)id] = 0x258;
             if ((s16)--D_800EB4A0[(s8)id] <= 0) {
-                *(s16 *)(entity + 0x14) = 0x32;
-                *(u64 *)(entity + 0x20) &= ~0x20000ULL;
+                w->spirit = 0x32;
+                w->flags &= ~WR_FLAG_SPIRIT_EMPTY;
             }
         }
         return 0;
     case 3:
-        if (*(u64 *)(entity + 0x20) & 0x40000ULL) {
+        if (w->flags & WR_FLAG_SPIRIT_FULL) {
             D_800EB4A8[(s8)id] -= 0x3C;
         }
-        if (*(u64 *)(entity + 0x20) & 0x80000ULL) {
+        if (w->flags & WR_FLAG_SPECIAL) {
             D_800EB4B0[(s8)id] -= 0x3C;
         }
         return 0;

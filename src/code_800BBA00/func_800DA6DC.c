@@ -5,24 +5,23 @@
  */
 #include "common.h"
 
-s8 func_800D8DF0(void *);
-s8 func_800D96A0(void *);
+s8 func_800D8DF0(Wrestler *);
+s8 func_800D96A0(Wrestler *);
 
-/* Return 1 when the entity is in a state that blocks normal processing:
- * either its +0x20 flag bit 0x200 is set, or its +0x358 flags have any of the
- * high-word bits 0x6000, or one of the sub-handlers func_800D8DF0 /
- * func_800D96A0 reports active. Returns 0 otherwise. */
-s32 func_800DA6DC(s32 entity) {
-    if (*(u64 *)(entity + 0x20) & 0x200) {
+/* Return 1 when any of these holds: the wrestler is the legal man (WR_FLAG_LEGAL), its partner's flags
+ * (partnerFlags) have any of the bits 0x600000000000, or one of func_800D8DF0 / func_800D96A0 returns nonzero.
+ * Returns 0 otherwise. */
+s32 func_800DA6DC(Wrestler *w) {
+    if (w->flags & WR_FLAG_LEGAL) {
         goto ret1;
     }
-    if (*(u64 *)(entity + 0x358) & ((u64)0x6000 << 32)) {
+    if (w->partnerFlags & ((u64)0x6000 << 32)) {
         goto ret1;
     }
-    if (func_800D8DF0((void *)entity)) {
+    if (func_800D8DF0(w)) {
         goto ret1;
     }
-    if (func_800D96A0((void *)entity)) {
+    if (func_800D96A0(w)) {
         goto ret1;
     }
     return 0;

@@ -5,28 +5,20 @@
  */
 #include "common.h"
 
-extern u8 D_800F9D12[];
-extern u8 D_800F9D30[];
-extern u8 D_800F9D34[];
-extern u8 D_800FA072[];
-extern u8 D_800FA073[];
-
-/* Unlinks the entity id at *arg0 from the two partner slots (D_800FA072/73) of
- * each of the four 0x3B0-stride entities: any slot matching the id is cleared to
- * -1 and that entity's 0x40000000 flag is dropped. */
-void func_800A700C(void *arg0) {
+/* Unlinks the wrestler w from the attached[] slots of each of the four
+ * records: any slot holding its id is cleared to -1 and that record's
+ * WR_FLAG_PAIR_LEADER is dropped. */
+void func_800A700C(Wrestler *w) {
     s16 i = 0;
-    s32 off = 0;
     for (; i < 4; i++) {
-        off = i * 0x3B0;
-        if (*(s16 *)(D_800F9D12 + off) != -1) {
-            if (*(s8 *)(D_800FA072 + off) == *(s8 *)arg0) {
-                *(s8 *)(D_800FA072 + off) = -1;
-                *(u64 *)(D_800F9D30 + off) &= ~0x40000000ULL;
+        if (D_800F9D10[i].characterId != -1) {
+            if (D_800F9D10[i].attached[0] == w->id) {
+                D_800F9D10[i].attached[0] = -1;
+                D_800F9D10[i].flags &= ~WR_FLAG_PAIR_LEADER;
             }
-            if (*(s8 *)(D_800FA073 + off) == *(s8 *)arg0) {
-                *(s8 *)(D_800FA073 + off) = -1;
-                *(u64 *)(D_800F9D30 + off) &= ~0x40000000ULL;
+            if (D_800F9D10[i].attached[1] == w->id) {
+                D_800F9D10[i].attached[1] = -1;
+                D_800F9D10[i].flags &= ~WR_FLAG_PAIR_LEADER;
             }
         }
     }

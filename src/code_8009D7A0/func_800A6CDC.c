@@ -6,21 +6,19 @@
 #include "common.h"
 
 extern u8 D_8007EF30[];
-void func_800DECAC(void *, s32, s32, s32);
 
-/* Reset an entity's action to `action`: clears the sub-state/timer fields
- * (entity+0xA/+0xC/+0xE/+0x360), replaces the flag bits 0x10810000000 in the
- * +0x20 u64 with 0x1000000000, reinitialises the action via func_800DECAC, then
- * marks both "linked target" bytes (+0x362/+0x363) as -1 and clears flag
- * 0x40000000. */
-void func_800A6CDC(void *entity, s16 action) {
-    *(s16 *)((u8 *)entity + 0xA) = action;
-    *(s16 *)((u8 *)entity + 0xC) = 0;
-    *(s16 *)((u8 *)entity + 0xE) = 0;
-    *(s16 *)((u8 *)entity + 0x360) = 0;
-    *(u64 *)((u8 *)entity + 0x20) = (*(u64 *)((u8 *)entity + 0x20) & ~0x10810000000ULL) | 0x1000000000ULL;
-    func_800DECAC(entity, 0, 0, 0);
-    *(s8 *)((u8 *)entity + 0x362) = -1;
-    *(s8 *)((u8 *)entity + 0x363) = -1;
-    *(u64 *)((u8 *)entity + 0x20) &= ~0x40000000ULL;
+/* Put the wrestler in state `action`: clears step, stepFlags and pairSignals, replaces the flag bits
+ * 0x10800000000 | WR_FLAG_RERUN with 0x1000000000, calls func_800DECAC(w, 0, 0, 0) (zeroes the slot's
+ * D_800F98D0 counter), then empties both
+ * attached[] slots (-1) and clears WR_FLAG_PAIR_LEADER. */
+void func_800A6CDC(Wrestler *w, s16 action) {
+    w->state = action;
+    w->step = 0;
+    w->stepFlags = 0;
+    w->pairSignals = 0;
+    w->flags = (w->flags & ~0x10810000000ULL) | 0x1000000000ULL;
+    func_800DECAC(w, 0, 0, 0);
+    w->attached[0] = -1;
+    w->attached[1] = -1;
+    w->flags &= ~WR_FLAG_PAIR_LEADER;
 }

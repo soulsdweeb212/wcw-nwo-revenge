@@ -4,8 +4,11 @@ Everything the match engine knows about a wrestler during a match lives in one 0
 one per player slot, in an array at `D_800F9D10` (0x800F9D10..0x800FABD0, overlay 2's BSS). This page explains what is
 in a record: where the wrestler is, what they are doing (including grapples), how the game knows whether they are in
 the ring, on the apron or outside, and their health and spirit. [`include/wrestler.h`](../include/wrestler.h) is the
-record as a C struct. Its 84 field offsets and its size are checked with the game's compiler. The matched C does not
-use the struct yet: it still reads the record through raw offsets such as `*(f32 *)((u8 *)p + 0x4C)`.
+record as a C struct. Its 84 field offsets and its size are checked with the game's compiler. common.h includes it,
+and the matched C reaches the records through it (`D_800FAF5C->x`, `D_800F9D10[i].state`). A handful of accesses stay
+as casts because only that form compiles to the original code: a 32-bit read across `moveMode` (+0x28) or
+`pairSignals` (+0x360), the flags copied a word at a time (`WrFlagWords`), and two stores the compiler would otherwise
+reorder.
 
 Status (2026-11-06): five mapping passes (layout, position, state, ring, vitals) each had their claims re-checked in
 the code by an independent verifier. Nothing was refuted; about 50 claims were corrected, and the corrections are
@@ -406,9 +409,10 @@ Offsets in hex. The names are the ones in `include/wrestler.h`.
 | 368 | struct | anim | animation metadata: turn, length, end zone, end pose, hit / busy / active windows, cancel frame | proven |
 | 384 | s8 | moveOwnerId | whose move table | proven |
 | 386 | s16 | moveId | index in that table | proven |
+| 388 | s16 | moveStatKind | statistics category of the current move, 0..0x56 (0x57 = not counted); row of the per-player 87-row counter table at `D_8007EF30 + 0x1B0`, set and counted by `func_800A7F6C`, second word counted by `func_800A837C` | proven |
 | 38C | struct | move | current move: power, spirit changes, KO/stun bits, body parts, joints, range, flags (`+0x3AC`) | proven / likely |
 
-Unused or unknown bytes: `001`, `01A..01F`, `02A`, `034`, `036`, `038`, `039`, `046`, `04A`, `356`, `388`, and parts of
+Unused or unknown bytes: `001`, `01A..01F`, `02A`, `034`, `036`, `038`, `039`, `046`, `04A`, `356`, `38A`, and parts of
 `anim` and `move`.
 
 ## The flag word (+0x20)

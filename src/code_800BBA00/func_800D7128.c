@@ -8,13 +8,20 @@
 extern f64 D_800E6D80,D_800E6D88,D_800E6D90;
 extern f32 D_800E3E20[],D_800F9800[]; extern s32 D_800F97F0[]; extern s8 D_800FADB8;
 f32 func_800D3890(void *,void *,void *); s32 func_800D35B0(s32,s32); s32 func_800D3E40(void *,void *,s32,void *);
-/* Aim/position the two nodes of a segment (root -> joint) relative to target:
- * take the pairwise directions, blend the distances, orient joint toward target,
- * write the three direction records into the caller's scratch (out+0x10 and
- * out+0x20), and derive the player's speed entries from the total length. */
-s16 func_800D7128(u8 *root,u8 *joint,void *target,u8 *out) {
+/* Builds the three 16-byte points of the quadratic spline that moves self
+ * (the wrestler being updated) toward target, using opp's root position
+ * (callers pass the opponent and the current wrestler). With func_800D3890
+ * (XZ distance and heading) and func_800D3E40 (offset a point by a distance
+ * along a heading) it writes the middle point at out+0x10 (from opp, on the
+ * bisector of the headings to self and to target, at D_800E6D80 times the
+ * summed distances), the start point at out+0x00 (from self) and the end point
+ * at out+0x20 (from target). The total length is scaled by D_800E3E20[turn /
+ * 113] and D_800E6D88; the slot's spline parameter D_800F97F0 is reset to 0
+ * and its step D_800F9800 set to D_800E6D90 / len. Returns len + D_800E6D90
+ * as an integer. */
+s16 func_800D7128(Wrestler *opp, Wrestler *self, void *target, u8 *out) {
     Nw2DirectionResult d; f32 dist; s32 ang; s32 idx; f32 len;
-    void *pa=root+0x4C; void *pb=joint+0x4C;
+    void *pa=&opp->x; void *pb=&self->x;
     func_800D3890(pa,pb,&d);
     dist=d.y; ang=d.angle;
     func_800D3890(pa,target,&d);

@@ -5,20 +5,14 @@
  */
 #include "common.h"
 
-/* Begin an action for the current entity. Resolves the entity (D_800FAF58),
- * its target (D_800F9B60), the entity it faces (D_800FAF80) and the facing
- * deal (D_800FADDC) from D_800F9D10 records, fills the action context
+/* Begin an action for the current wrestler. Resolves the AI's self (D_800FAF58),
+ * its opponent (D_800F9B60), its partner (D_800FAF80) and the partner's
+ * opponent (D_800FADDC) from the D_800F9D10 records, fills the action context
  * (D_800FABD0) with relative vectors/angles, picks the action id from the
  * relative-facing case table, and dispatches through D_800E3660. */
 extern s8 D_800FADB8;
 extern s8 D_800FABE4;
-extern u8 D_800F9D10[];
 extern u8 D_800F9B88[];
-extern s8 D_800FA063[];
-extern u8 *D_800FAF58;
-extern u8 *D_800F9B60;
-extern u8 *D_800FAF80;
-extern u8 *D_800FADDC;
 extern f32 D_800E3C50[];
 extern f32 D_800E3C54[];
 extern f64 D_800E4BF0;
@@ -69,10 +63,10 @@ void startEntityAction(void)
     f32 vec[4];
     Nw2Act *act;
 
-    D_800FAF58 = D_800F9D10 + D_800FADB8 * 0x3B0;
-    D_800F9B60 = D_800F9D10 + D_800FABE4 * 0x3B0;
-    D_800FAF80 = D_800F9D10 + *(s8 *)(D_800FAF58 + 0x355) * 0x3B0;
-    D_800FADDC = D_800F9D10 + D_800FA063[*(s8 *)(D_800FAF58 + 0x355) * 0x3B0] * 0x3B0;
+    D_800FAF58 = &D_800F9D10[D_800FADB8];
+    D_800F9B60 = &D_800F9D10[D_800FABE4];
+    D_800FAF80 = &D_800F9D10[D_800FAF58->partnerId];
+    D_800FADDC = &D_800F9D10[D_800F9D10[D_800FAF58->partnerId].opponentId];
     act = (Nw2Act *)(D_800F9B88 + D_800FADB8 * 0x60);
     D_800FABD0 = act;
     act->fC = 0;
@@ -81,21 +75,21 @@ void startEntityAction(void)
     D_800FABD0->f14 = func_800AD7B0(D_800FAF58, D_800FAF58);
     D_800FABD0->f22 = func_800AD7B0(D_800F9B60, D_800FAF58);
     func_800ADB44();
-    func_800D3890(D_800FAF58 + 0x6C, D_800F9B60 + 0x6C, D_800FABD0->f38);
+    func_800D3890(&D_800FAF58->jointA[1], &D_800F9B60->jointA[1], D_800FABD0->f38);
     i = 0;
 loop:
     k = i;
     vec[0] = D_800E3C50[k * 2];
     vec[2] = D_800E3C54[k * 2];
-    D_800FABD0->f48[k] = func_800D3890(D_800FAF58 + 0x6C, vec, NULL);
+    D_800FABD0->f48[k] = func_800D3890(&D_800FAF58->jointA[1], vec, NULL);
     i++;
     if (i < 4) goto loop;
-    D_800FABD0->f58 = (f32)((f64)func_800D3EEC(D_800F9B60 + 0x4C, D_800FAF58 + 0x6C, *(s32 *)(D_800F9B60 + 0x58)) + D_800E4BF0);
+    D_800FABD0->f58 = (f32)((f64)func_800D3EEC(&D_800F9B60->x, &D_800FAF58->jointA[1], D_800F9B60->heading) + D_800E4BF0);
     D_800FABD0->f1C = func_800ADAE4(D_800FAF58);
     D_800FABD0->f2A = func_800ADAE4(D_800F9B60);
-    D_800FABD0->f1E = getXZDirectionQuadrant((f32 *)(D_800FAF58 + 0x6C));
-    D_800FABD0->f2C = getXZDirectionQuadrant((f32 *)(D_800F9B60 + 0x6C));
-    *(u64 *)(D_800FAF58 + 0x20) &= ~0x10000000ULL;
+    D_800FABD0->f1E = getXZDirectionQuadrant(&D_800FAF58->jointA[1].x);
+    D_800FABD0->f2C = getXZDirectionQuadrant(&D_800F9B60->jointA[1].x);
+    D_800FAF58->flags &= ~WR_FLAG_RERUN;
     switch ((s16)(D_800FABD0->f14 - 3)) {
     case 0: func_800AD958(0x10); break;
     case 2: func_800AD958(0x11); break;
@@ -107,11 +101,11 @@ loop:
     case 13: func_800AD9E8(0xE); break;
     case 16: func_800AD9E8(0x8); break;
     }
-    if (*(s16 *)(D_800F9B60 + 0xA) == 0x29) {
+    if (D_800F9B60->state == 0x29) {
         if (func_800D4198(0x12C)) func_800AD9E8(0x22);
         else func_800AD9E8(0x27);
     }
-    if ((*(u64 *)(D_800FAF58 + 0x20) & 0x200ULL) && (*(u64 *)(D_800FAF58 + 0x20) & 0x80ULL)) {
+    if ((D_800FAF58->flags & WR_FLAG_LEGAL) && (D_800FAF58->flags & WR_FLAG_ON_APRON)) {
         D_800FABD0->f30 += 1;
         if ((s16)D_800FABD0->f30 >= 0x97) {
             D_800FABD0->f30 = 0;

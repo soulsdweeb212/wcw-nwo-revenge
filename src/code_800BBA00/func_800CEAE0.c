@@ -8,19 +8,19 @@
 extern f64 D_800E6A10, D_800E6A18, D_800E6A20;
 extern f32 D_800FADE4[][23], D_800FADEC[][23];
 s8 func_800D3B24(void *, void *, f32, s32);
-/* Proximity test between a source (arg0) and a target entity (arg1): interpolate
- * the source's XZ between +0xEC/F4 and +0x16C/174 by D_800E6A10, then test that
- * point against the target's +0x8C circle (margin D_800FADEC + D_800E6A18)
- * first, and failing that against the target's +0x6C circle (D_800FADE4 scaled
- * by D_800E6A20 + margin). */
-s32 func_800CEAE0(u8 *arg0, s8 *arg1) {
+/* Proximity test between a source (src) and a target wrestler (tgt): interpolate
+ * the source's XZ between jointA[9] and jointA[17] by D_800E6A10, then test that
+ * point against the target's jointA[3] circle (radius D_800FADEC[tgt->id][0] +
+ * D_800E6A18) first, and failing that against the target's pelvis (jointA[1])
+ * circle (D_800FADE4[tgt->id][0] scaled by D_800E6A20 + D_800E6A18). */
+s32 func_800CEAE0(Wrestler *src, Wrestler *tgt) {
     f32 point[3];
     f64 margin;
     s32 hit;
-    point[0] = (*(f32 *)(arg0 + 0x16C) - *(f32 *)(arg0 + 0xEC)) * D_800E6A10 + *(f32 *)(arg0 + 0xEC);
-    point[2] = (*(f32 *)(arg0 + 0x174) - *(f32 *)(arg0 + 0xF4)) * D_800E6A10 + *(f32 *)(arg0 + 0xF4);
+    point[0] = (src->jointA[17].x - src->jointA[9].x) * D_800E6A10 + src->jointA[9].x;
+    point[2] = (src->jointA[17].z - src->jointA[9].z) * D_800E6A10 + src->jointA[9].z;
     margin = D_800E6A18;
-    if (func_800D3B24(point, arg1 + 0x8C, D_800FADEC[*arg1][0] + margin, 0)) hit = 1;
-    else hit = func_800D3B24(point, arg1 + 0x6C, D_800FADE4[*arg1][0] * D_800E6A20 + margin, 0) != 0;
+    if (func_800D3B24(point, &tgt->jointA[3], D_800FADEC[tgt->id][0] + margin, 0)) hit = 1;
+    else hit = func_800D3B24(point, &tgt->jointA[1], D_800FADE4[tgt->id][0] * D_800E6A20 + margin, 0) != 0;
     return hit;
 }

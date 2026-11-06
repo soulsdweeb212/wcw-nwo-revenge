@@ -5,10 +5,15 @@
  */
 #include "common.h"
 
-/* Turn/step animation selector: reads the driver's state flags (+0x2C) and sets
- * `actor`'s heading and animation accordingly, then stores the per-frame heading
- * delta divided by the actor's step count into actor+0x348. The step count is
- * reset to 6 (or 0xA for the 0x40000 case) in D_800EB628[actorId]. */
+/* Turn/step animation selector for `actor` paired with `driver`: from the driver's grappleCtx bits it picks the
+ * animation (0xE8B, 0xE8F, 0xE93, 0xE97, 0xE9B, 0xEB5, 0xE89; later bits win) and the target heading
+ * D_800EB610[id], mostly the driver's heading table entry D_800EB600[driver id] turned by 0x800 (bit 0x40: taken
+ * unchanged). Bit 0x100 also calls func_800A7364(actor) (root x/z to the pelvis, then onto the apron line of its
+ * ringSide); bit 0x200 sets moveDelta (func_800A72FC, over the step count) toward the point 82.5 from the driver's
+ * root in the direction of the target heading turned by 0x800; bits 0x40640 move the actor by the XZ offset from
+ * its root to its pelvis (jointA[1]). The step count D_800EB628[id] is 6 (0xA for bit 0x40000). Starts the
+ * animation with func_800D427C(actor, anim, 2) and sets turnPerTick to the signed turn from heading to the target
+ * heading divided by the step count. */
 extern s32 D_800EB600[];
 extern s32 D_800EB610[];
 extern s16 D_800EB628[];
@@ -20,11 +25,11 @@ void func_800D3E40(void *, f32 *, s32, void *);
 void func_800A72FC(void *, void *, s16);
 void func_800A7364(void *);
 void func_800D427C(void *, s16, s32);
-void translateEntityXZ(void *, void *);
+void translateEntityXZ(Wrestler *, f32 *);
 
-void selectTurnAnimationCDC04(void *actor, void *driver) {
-    s8 id = *(s8 *)actor;
-    s16 driverId = *(s8 *)driver;
+void selectTurnAnimationCDC04(Wrestler *actor, Wrestler *driver) {
+    s8 id = actor->id;
+    s16 driverId = driver->id;
     s16 *countTable = D_800EB628;
     s16 *countPtr = countTable + id;
     s16 anim;
@@ -33,43 +38,43 @@ void selectTurnAnimationCDC04(void *actor, void *driver) {
     f32 position[4];
 
     *countPtr = 6;
-    if (*(u32 *)((u8 *)driver + 0x2C) & 0x400) {
+    if (driver->grappleCtx & 0x400) {
         anim = 0xE8B;
         D_800EB610[id] = func_800D35B0(D_800EB600[driverId], 0x800);
     }
-    if (*(u32 *)((u8 *)driver + 0x2C) & 0x40) {
+    if (driver->grappleCtx & 0x40) {
         D_800EB610[id] = D_800EB600[driverId];
         anim = 0xE8F;
     }
-    if (*(u32 *)((u8 *)driver + 0x2C) & 0x80) {
+    if (driver->grappleCtx & 0x80) {
         anim = 0xE93;
         D_800EB610[id] = func_800D35B0(D_800EB600[driverId], 0x800);
     }
-    if (*(u32 *)((u8 *)driver + 0x2C) & 0x100) {
+    if (driver->grappleCtx & 0x100) {
         anim = 0xE97;
         D_800EB610[id] = func_800D35B0(D_800EB600[driverId], 0x800);
         func_800A7364(actor);
     }
-    if (*(u32 *)((u8 *)driver + 0x2C) & 0x200) {
+    if (driver->grappleCtx & 0x200) {
         D_800EB610[id] = func_800D35B0(D_800EB600[driverId], 0x800);
         offset[0] = 0.0f;
         offset[2] = 82.5f;
         anim = 0xE9B;
-        func_800D3E40((u8 *)driver + 0x4C, offset, func_800D35B0(D_800EB610[id], 0x800), result);
+        func_800D3E40(&driver->x, offset, func_800D35B0(D_800EB610[id], 0x800), result);
         func_800A72FC(actor, result, *countPtr);
     }
-    if (*(u32 *)((u8 *)driver + 0x2C) & 0x40000) {
+    if (driver->grappleCtx & 0x40000) {
         anim = 0xEB5;
         D_800EB610[id] = func_800D35B0(D_800EB600[driverId], 0x800);
         *countPtr = 0xA;
     }
-    if (*(u32 *)((u8 *)driver + 0x2C) & 0x40640) {
-        func_800D36B4((u8 *)actor + 0x4C, (u8 *)actor + 0x6C, position);
+    if (driver->grappleCtx & 0x40640) {
+        func_800D36B4(&actor->x, &actor->jointA[1], position);
         translateEntityXZ(actor, position);
     }
-    if (*(u32 *)((u8 *)driver + 0x2C) & 0x100000) {
+    if (driver->grappleCtx & 0x100000) {
         anim = 0xE89;
     }
     func_800D427C(actor, anim, 2);
-    *(s32 *)((u8 *)actor + 0x348) = func_800D3684(D_800EB610[id], *(s32 *)((u8 *)actor + 0x58)) / *countPtr;
+    actor->turnPerTick = func_800D3684(D_800EB610[id], actor->heading) / *countPtr;
 }

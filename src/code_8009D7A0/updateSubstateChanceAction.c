@@ -21,11 +21,6 @@ typedef struct {
     char pad30[0x2C];
     s32 unk5C;
 } SubState;
-typedef struct {
-    char pad[0xA];
-    s16 unkA;
-} Unk9B60;
-extern Unk9B60 *D_800F9B60;
 extern SubState *D_800FABD0;
 
 void updateSubstateChanceAction(void) {
@@ -33,7 +28,7 @@ void updateSubstateChanceAction(void) {
     default:
         D_800FABD0->unk2 = 0;
         D_800FABD0->unk4 = 0;
-        D_800FABD0->unk2E = D_800F9B60->unkA;
+        D_800FABD0->unk2E = D_800F9B60->state;
         D_800FABD0->unk5C &= ~7;
         break;
     case 4:

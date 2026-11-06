@@ -6,8 +6,6 @@
 #include "common.h"
 
 extern u8 *D_800FABD0;
-extern u8 *D_800F9B60;
-extern u8 *D_800FAF58;
 s8 func_800D4198(s16);
 
 void func_800B3A08(void) {
@@ -21,13 +19,13 @@ void func_800B3A08(void) {
         (*(s16 *)(D_800FABD0 + 4))++;
         break;
     case 1:
-        if (*(s16 *)(D_800FAF58 + 0xA) == 0x5E) {
+        if (D_800FAF58->state == 0x5E) {
             *(u16 *)(D_800FABD0 + 6) = *(u16 *)(D_800FABD0 + 0xA);
         } else {
-            u8 *g = D_800F9B60;
+            Wrestler *g = D_800F9B60;
             *(s16 *)(D_800FABD0 + 2) = 0;
             *(s16 *)(D_800FABD0 + 4) = 0;
-            *(u16 *)(D_800FABD0 + 0x2E) = *(u16 *)(g + 0xA);
+            *(u16 *)(D_800FABD0 + 0x2E) = g->state;
             *(u32 *)(D_800FABD0 + 0x5C) &= ~7;
         }
         break;

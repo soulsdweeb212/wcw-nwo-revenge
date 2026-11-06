@@ -5,23 +5,24 @@
  */
 #include "common.h"
 
-s16 func_800D7690(void *, s32, s32);
+s16 func_800D7690(Wrestler *, s32, s32);
 s32 func_800D4198(s32);
 
-/* Ticks the entity's 0x18 counter down (an extra tick when the movement check
- * succeeds and a tick back when the global 0x2EE gate is set), returning 1 when
- * the counter reaches zero unless arg2 holds it at zero. */
-s32 func_800D7984(u8 *arg0, s32 arg1, s32 arg2) {
-    *(u16 *)(arg0 + 0x18) = *(u16 *)(arg0 + 0x18) - 1;
-    if (func_800D7690(arg0, arg1 & 0xFFFF, 1) == 1) {
-        *(u16 *)(arg0 + 0x18) = *(u16 *)(arg0 + 0x18) - 1;
+/* Ticks escapeTimer down by one, by one more when func_800D7690 mode 1 (button
+ * mash counter) returns 1 for the buttons arg1, and back up by one when the
+ * random test func_800D4198(0x2EE) passes. When escapeTimer is <= 0 it returns
+ * 1, unless arg2 is set, which holds escapeTimer at 0 and returns 0. */
+s32 func_800D7984(Wrestler *w, s32 arg1, s32 arg2) {
+    w->escapeTimer = w->escapeTimer - 1;
+    if (func_800D7690(w, arg1 & 0xFFFF, 1) == 1) {
+        w->escapeTimer = w->escapeTimer - 1;
     }
     if ((func_800D4198(0x2EE) << 24) != 0) {
-        *(u16 *)(arg0 + 0x18) = *(u16 *)(arg0 + 0x18) + 1;
+        w->escapeTimer = w->escapeTimer + 1;
     }
-    if ((s16)*(u16 *)(arg0 + 0x18) <= 0) {
+    if (w->escapeTimer <= 0) {
         if (arg2 << 24) {
-            *(u16 *)(arg0 + 0x18) = 0;
+            w->escapeTimer = 0;
         } else {
             return 1;
         }

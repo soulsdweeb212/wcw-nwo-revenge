@@ -5,19 +5,12 @@
  */
 #include "common.h"
 
-typedef union { f32 f; s32 i; } NwFI;
-typedef struct { NwFI e[4]; } NwV4;
-
-f32 nw2Sqrtf(f32);
-f32 func_80003A3C(f32, f32);
-
-extern f64 D_800E6BA8;
 extern f64 D_800E68D0;
 
-/* Returns 1 when arg1's +0x37 bit0 is set, arg0/arg1 share the 0x40 flag and
- * arg2 is below D_800E68D0. */
-s32 func_800C7870(u8 *arg0, u8 *arg1, f32 arg2) {
-    if ((arg1[0x37] & 1) && ((*(u64 *)(arg0 + 0x20) & *(u64 *)(arg1 + 0x20)) & 0x40) &&
+/* Returns 1 when other is rebounding off the ropes (frameStatus bit 0), both
+ * wrestlers are inside the ropes (WR_FLAG_IN_RING) and arg2 (the caller passes D_800F9B0C) is below D_800E68D0. */
+s32 func_800C7870(Wrestler *self, Wrestler *other, f32 arg2) {
+    if ((other->frameStatus & 1) && ((self->flags & other->flags) & WR_FLAG_IN_RING) &&
         ((f64)arg2 < D_800E68D0)) {
         return 1;
     }

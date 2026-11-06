@@ -5,23 +5,25 @@
  */
 #include "common.h"
 
-void func_800DECAC(void *, s32, s32, s32);
 s8 func_800D4198(s16);
-#define F(o,t) (*(t *)((u8 *)arg1+(o)))
-void func_800A7828(void *arg0, void *arg1) {
-    u64 f0 = *(u64 *)((u8 *)arg0 + 0x20);
-    u64 f1 = *(u64 *)((u8 *)arg1 + 0x20);
-    if ((f0 & f1 & 0x140) && !(f1 & 0x1000000000) && (f1 & 0x400000)) {
-        if ((*(u16 *)((u8 *)arg0 + 0xE) & 1) || func_800D4198(0x12C)) {
-            F(0xA, s16) = 0x2C;
-            F(0xC, s16) = 0;
-            F(0xE, s16) = 0;
-            F(0x360, s16) = 0;
-            *(u64 *)((u8 *)arg1 + 0x20) = (*(u64 *)((u8 *)arg1 + 0x20) & ~0x10810000000ULL) | 0x1000000000ULL;
-            func_800DECAC(arg1, 0, 0, 0);
-            F(0xC, s16) = 4;
-            *(u64 *)((u8 *)arg1 + 0x20) |= 0x10000000;
+
+/* If self and other share a zone bit (WR_FLAG_IN_RING or WR_FLAG_ON_FLOOR), other lacks flag 0x1000000000 and has
+ * flag 0x400000, and either bit 0 of self's stepFlags is set or func_800D4198(0x12C) succeeds: put other in state
+ * 0x2C (step, stepFlags and pairSignals cleared, flag bits 0x10800000000 | WR_FLAG_RERUN replaced with 0x1000000000,
+ * func_800DECAC(other, 0, 0, 0)), then set its step to 4 and raise WR_FLAG_RERUN. */
+void func_800A7828(Wrestler *self, Wrestler *other) {
+    u64 f0 = self->flags;
+    u64 f1 = other->flags;
+    if ((f0 & f1 & (WR_FLAG_IN_RING | WR_FLAG_ON_FLOOR)) && !(f1 & 0x1000000000) && (f1 & 0x400000)) {
+        if ((self->stepFlags & 1) || func_800D4198(0x12C)) {
+            other->state = 0x2C;
+            other->step = 0;
+            other->stepFlags = 0;
+            other->pairSignals = 0;
+            other->flags = (other->flags & ~0x10810000000ULL) | 0x1000000000ULL;
+            func_800DECAC(other, 0, 0, 0);
+            other->step = 4;
+            other->flags |= WR_FLAG_RERUN;
         }
     }
 }
-#undef F

@@ -15,8 +15,6 @@ extern u8 D_800E3978[], D_800EB468[], D_800FACE8;
 extern s8 D_800EB46E, D_800EB46F;
 extern u8 D_800FAF60[][6];
 extern s16 D_800EB472;
-extern u8 D_800F9D10[], D_800F9D1A[];
-extern s8 D_800FA05C[], D_800FA063[], D_800FA0A6[];
 /* Resets the four 6-byte D_800FAF60 records and the two player bytes. */
 void func_800B8D04(void) {
     s16 i;

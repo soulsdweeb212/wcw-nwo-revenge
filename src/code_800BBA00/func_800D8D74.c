@@ -7,25 +7,27 @@
 
 s16 func_800D7690(void *, s32, s32);
 s32 func_800D35B0(s32, s32);
-void translateEntityXZ(void *, void *);
+void translateEntityXZ(Wrestler *, void *);
 
 extern u8 D_8007E228[];
 extern u8 D_8007EF30[];
 extern u8 D_800F9850[];
 
-/* Advances the entity along its stored vector for the remaining +0x16 ticks,
- * turning by +0x348; returns 1 when the counter is exhausted. */
-s32 func_800D8D74(u8 *arg0, void *arg1) {
+/* Plays back the movement func_800D7E80 set up.  While w->stateTimer > 0, moves w
+ * (and `other`, when given) by w->moveDelta in XZ (root and joints, through
+ * translateEntityXZ) and turns w->heading by w->turnPerTick (wrapped).  Then
+ * decrements stateTimer; returns 1 when it has run out (new value <= 0). */
+s32 func_800D8D74(Wrestler *w, Wrestler *other) {
     u16 v;
 
-    if (*(s16 *)(arg0 + 0x16) > 0) {
-        translateEntityXZ(arg0, arg0 + 0x33C);
-        if (arg1 != 0) {
-            translateEntityXZ(arg1, arg0 + 0x33C);
+    if (w->stateTimer > 0) {
+        translateEntityXZ(w, w->moveDelta);
+        if (other != 0) {
+            translateEntityXZ(other, w->moveDelta);
         }
-        *(s32 *)(arg0 + 0x58) = func_800D35B0(*(s32 *)(arg0 + 0x58), *(s32 *)(arg0 + 0x348));
+        w->heading = func_800D35B0(w->heading, w->turnPerTick);
     }
-    v = *(u16 *)(arg0 + 0x16) - 1;
-    *(u16 *)(arg0 + 0x16) = v;
+    v = w->stateTimer - 1;
+    w->stateTimer = v;
     return (v << 16) < 1;
 }

@@ -5,15 +5,14 @@
  */
 #include "common.h"
 
-/* Clear the flag bits `mask` from each of the 4 entity records (stride 0x3B0,
- * flag word at D_800F9D30). For every record that had any of the bits set it
- * clears them, builds two {id, -1, -1, -1} buffers (source record's byte at
- * D_800FA061, and the record index) and dispatches func_800B9730: either the
+/* Clear the flag bits `mask` from the flags of each of the 4 wrestler records.
+ * For every record that had any of the bits set it clears them, builds two
+ * {id, -1, -1, -1} buffers (the record's heldById, i.e. its attacker, and the
+ * record index) and dispatches func_800B9730: either the
  * 0x10000 presentation path (with a sound and a possible func_800B8484
  * fallback) or the 0x100000/mode path, returning 1 on a hit. */
 extern s16 D_800EB474;
 extern s16 D_800EB478;
-extern u8 D_800FA061[];
 void func_800B9730(u8 *, u8 *, u32, s32);
 void playEntitySound(s32, s32);
 s32 func_800B8484(u32);
@@ -27,7 +26,6 @@ s8 func_800B955C(u64 mask) {
     U64 m;
     s32 mode;
     s16 i;
-    s32 off = 0;
     u64 flags;
     Rec r0;
     Rec r1;
@@ -45,11 +43,10 @@ s8 func_800B955C(u64 mask) {
         }
     }
     for (i = 0; i < 4; i++) {
-        off = i * 0x3B0;
-        flags = *(u64 *)(D_800F9D30 + off);
+        flags = D_800F9D10[i].flags;
         if (flags & m.v) {
-            *(u64 *)(D_800F9D30 + off) = flags & ~m.v;
-            r0.f0 = *(u8 *)(D_800FA061 + off);
+            D_800F9D10[i].flags = flags & ~m.v;
+            r0.f0 = D_800F9D10[i].heldById;
             r0.f1 = -1;
             r1.f0 = (s8)i;
             r1.f1 = -1;

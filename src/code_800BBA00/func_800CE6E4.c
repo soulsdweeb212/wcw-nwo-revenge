@@ -7,15 +7,15 @@
 
 void translateEntityXZ(void*,void*);
 s32 func_800D35B0(s32,s32);
-/* Advances the entity along its stored vector and turns it, until the +0x16
- * phase counter reaches 6 (then locks the heading to a1 and returns 1). */
-s32 func_800CE6E4(u8 *p, s32 a1) {
-    if (*(s16 *)(p + 0x16) < 6) {
-        translateEntityXZ(p, p + 0x33C);
-        *(s32 *)(p + 0x58) = func_800D35B0(*(s32 *)(p + 0x58), *(s32 *)(p + 0x348));
-        (*(s16 *)(p + 0x16))++;
+/* Moves w by moveDelta (translateEntityXZ) and turns its heading by turnPerTick
+ * each call until stateTimer reaches 6 (then sets the heading to a1 and returns 1). */
+s32 func_800CE6E4(Wrestler *w, s32 a1) {
+    if (w->stateTimer < 6) {
+        translateEntityXZ(w, w->moveDelta);
+        w->heading = func_800D35B0(w->heading, w->turnPerTick);
+        w->stateTimer++;
         return 0;
     }
-    *(s32 *)(p + 0x58) = a1;
+    w->heading = a1;
     return 1;
 }

@@ -5,12 +5,12 @@
  */
 #include "common.h"
 
-void func_800D3838(s32, s32, s16, s32);
+void func_800D3838(void *, void *, s16, void *);
 
-/* Forwards the entity's local position and the given parameters to
- * func_800D3838. */
-void func_800A72FC(s32 arg0, s32 arg1, s32 arg2) {
-    func_800D3838(arg0 + 0x6C, arg1, arg2, arg0 + 0x33C);
+/* Sets moveDelta (x and z) to the XZ distance from the wrestler's pelvis joint (jointA[1]) to target, divided by
+ * steps when steps is nonzero (func_800D3838). */
+void func_800A72FC(Wrestler *w, void *target, s32 steps) {
+    func_800D3838(&w->jointA[1], target, steps, w->moveDelta);
 }
 
 void func_800D36B4(void *, void *, void *);

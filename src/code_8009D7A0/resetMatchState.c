@@ -8,7 +8,6 @@
 extern u8 D_8007E228[];
 extern u8 D_80064AD8[];
 extern u8 D_8007BD64[];
-extern u8 D_800FA0E0[], D_800FA490[], D_800FA840[];
 extern s16 D_800FAF8C;
 extern s8 D_800FADCF, D_800FADCE, D_800EB465;
 extern s16 D_800FACEA, D_800FACEC, D_800FACEE, D_800FACF0;
@@ -20,7 +19,7 @@ void func_800BFCF0(void);
 /* Resets the match to its initial state: clears the action/animation counters,
  * snapshots the saved match settings from D_8007E228 into the D_800FACxx and
  * D_800FAF9x fields, loads five packed animation records into stack buffers,
- * clears the four 0x3B0-entity flag words, and (when D_8007E228+0x58 bit 0x100
+ * clears the four wrestler records' flags, and (when D_8007E228+0x58 bit 0x100
  * is set) re-runs the fighter setup. */
 void resetMatchState(void) {
     u8 b0[16], b1[16], b2[16], b3[16], b4[16];
@@ -39,10 +38,10 @@ void resetMatchState(void) {
     func_80003684(b3,0x129,D_80064AD8+8+0x320);
     func_80003684(b4,0x12A,D_80064AD8+8+0x4B0);
     func_800B7BC4();
-    *(u64*)D_800F9D30=0;
-    *(u64*)D_800FA0E0=0;
-    *(u64*)D_800FA490=0;
-    *(u64*)D_800FA840=0;
+    D_800F9D10[0].flags=0;
+    D_800F9D10[1].flags=0;
+    D_800F9D10[2].flags=0;
+    D_800F9D10[3].flags=0;
     if (*(u16*)(D_8007E228+0x58)&0x100) {
         func_800BFCF0();
         func_800B7BC4();

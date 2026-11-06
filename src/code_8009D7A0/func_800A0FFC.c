@@ -14,16 +14,16 @@ s16 func_800D5438(void *, s32);
 void func_800D7E80(void *, s32);
 void func_800D8D74(void *, s32);
 void func_800A0FFC(void) {
-    *(u64 *)((u8 *)D_800EB408+0x20) |= 0x1000000000ULL;
-    switch(*(s16 *)((u8 *)D_800EB408+0xC)) {
+    D_800EB408->flags |= 0x1000000000ULL;
+    switch(D_800EB408->step) {
     case 0:
-        func_800A7C40(D_800EB408, *(s8 *)D_800EB408,0xC0);
-        *(u64 *)((u8 *)D_800EB408+0x20) &= ~0x200000ULL;
+        func_800A7C40(D_800EB408, D_800EB408->id,0xC0);
+        D_800EB408->flags &= ~0x200000ULL;
         func_800D427C(D_800EB408,func_800D5438(D_800EB408,0),2);
         func_800D7E80(D_800EB408,0);
         func_800A7F6C(D_800EB408,0);
         func_800A837C(D_800EB408);
-        ++*(s16 *)((u8 *)D_800EB408+0xC);
+        ++D_800EB408->step;
     case 1:
         func_800D8D74(D_800EB408,0);
         func_800A7188(D_800EB408);

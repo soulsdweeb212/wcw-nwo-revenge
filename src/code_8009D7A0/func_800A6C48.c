@@ -6,15 +6,15 @@
 #include "common.h"
 
 extern u8 D_8007EF30[];
-void func_800DECAC(void *, s32, s32, s32);
 
-/* Like func_800A6BE0 but also raises the 0x10000000 flag. */
-void func_800A6C48(void *arg0, s32 arg1) {
-    *(s16 *)((u8 *)arg0 + 0xA) = arg1;
-    *(s16 *)((u8 *)arg0 + 0xC) = 0;
-    *(s16 *)((u8 *)arg0 + 0xE) = 0;
-    *(s16 *)((u8 *)arg0 + 0x360) = 0;
-    *(u64 *)((u8 *)arg0 + 0x20) = (*(u64 *)((u8 *)arg0 + 0x20) & ~0x10810000000ULL) | 0x1000000000ULL;
-    func_800DECAC(arg0, 0, 0, 0);
-    *(u64 *)((u8 *)arg0 + 0x20) |= 0x10000000ULL;
+/* Like func_800A6BE0 (new state, step/stepFlags/pairSignals cleared, flag bits swapped, func_800DECAC(w, 0, 0, 0))
+ * but also raises WR_FLAG_RERUN so the new state's handler runs again this tick. */
+void func_800A6C48(Wrestler *w, s32 state) {
+    w->state = state;
+    w->step = 0;
+    w->stepFlags = 0;
+    w->pairSignals = 0;
+    w->flags = (w->flags & ~0x10810000000ULL) | 0x1000000000ULL;
+    func_800DECAC(w, 0, 0, 0);
+    w->flags |= WR_FLAG_RERUN;
 }

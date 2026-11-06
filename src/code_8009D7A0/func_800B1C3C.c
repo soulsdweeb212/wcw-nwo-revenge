@@ -11,10 +11,10 @@
  * flags (+0xA) from the move id (+0x22): id 10 picks a close/far value
  * (0x8000/0x20) via func_800D4198(500), ids 6/17/23 use 0x10, anything else
  * 0x4000; otherwise 0x4000. Copies +0xA into +8 and +6 (or only +6 when out
- * of range). Finally, unless the global state (D_800FAF58+0xA) is 0x2D..0x2F,
- * resets the action record (+2/+4 cleared, +0x2E copied from D_800F9B60+0xA,
- * flags +0x5C bits 0..2 cleared). */
-extern u8 *D_800FABD0, *D_800FAF58, *D_800F9B60;
+ * of range). Finally, unless the AI wrestler's state (D_800FAF58->state) is
+ * 0x2D..0x2F, resets the action record (+2/+4 cleared, +0x2E copied from
+ * D_800F9B60->state, flags +0x5C bits 0..2 cleared). */
+extern u8 *D_800FABD0;
 extern f64 D_800E5278;
 f32 func_800B3AD8(void *);
 s8 func_800D4198(s16);
@@ -35,12 +35,13 @@ void func_800B1C3C(void) {
         C3(D_800FABD0, u16, 8) = C3(D_800FABD0, u16, 0xA);
         C3(D_800FABD0, u16, 6) = C3(D_800FABD0, u16, 0xA);
     } else C3(D_800FABD0, u16, 6) = C3(D_800FABD0, u16, 0xA);
-    state = C3(D_800FAF58, s16, 0xA);
+    state = D_800FAF58->state;
     if (state < 0x30) { if (state >= 0x2D) return; }
     {
-        u8 *p = D_800FABD0, *g = D_800F9B60;
+        u8 *p = D_800FABD0;
+        Wrestler *g = D_800F9B60;
         C3(p, s16, 2) = 0; C3(p, s16, 4) = 0;
-        C3(p, u16, 0x2E) = C3(g, u16, 0xA);
+        C3(p, u16, 0x2E) = (u16)g->state;
         C3(p, u32, 0x5C) &= ~7;
     }
 }

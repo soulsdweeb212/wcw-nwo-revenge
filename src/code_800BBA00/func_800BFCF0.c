@@ -10,8 +10,6 @@ extern s16 D_80070494[];
 extern u16 D_8007E228[];
 extern u16 D_8007E280;
 extern s32 D_80038AA8;
-extern u64 D_800FA490;
-extern u64 D_800FA840;
 extern s16 D_800FACEA[];
 extern s16 D_800FACEE;
 extern s16 D_800FACF0;
@@ -56,7 +54,7 @@ void func_800BFCF0(void)
             nx = j + 1; j = (nx < 5) ? nx : 0;
             if (j == r) break;
         }
-        fl = &D_800FA490;
+        fl = &D_800F9D10[2].flags;
         hist = &D_800FACEE;
         t = *fl;
         val = D_80070494[0xBD + j];
@@ -97,7 +95,7 @@ void func_800BFCF0(void)
             nx2 = j2 + 1; j2 = (nx2 < 5) ? nx2 : 0;
             if (j2 == r2) break;
         }
-        fl2 = &D_800FA840;
+        fl2 = &D_800F9D10[3].flags;
         dst2 = &D_800FACF0;
         t2 = *fl2;
         val = D_80070494[0x9D + j2];

@@ -5,26 +5,6 @@
  */
 #include "common.h"
 
-/* Entity record, 0x3B0 bytes (D_800F9D10[4]): +2 s16 state, +0x20 u64 flags,
- * +0x4C/+0x50/+0x54 f32 x/y/z position, +0x58 s32 heading, +0x353 s8 facing target id. */
-typedef struct {
-    u8 pad0[2];
-    s16 f2;
-    u8 pad4[0x1C];
-    u64 flags;
-    u8 pad28[0x24];
-    f32 x;
-    f32 y;
-    f32 z;
-    s32 heading;
-    u8 pad5C[0x2F7];
-    s8 f353;
-    u8 pad354;
-    u8 f355;
-    u8 pad356[0x5A];
-} EntBAC30;
-
-extern EntBAC30 D_800F9D10[];
 extern u16 D_8007E280;
 extern u16 D_8007F0A0;
 extern s16 D_800FACEA[];
@@ -67,11 +47,11 @@ void func_800BAC30(void)
         func_800BA770(i, D_800FACEA[i], 0);
         if (D_8007E280 & D_800E39A8[i])
         {
-            D_800F9D10[i].flags |= 4ULL;
+            D_800F9D10[i].flags |= WR_FLAG_CPU;
         }
         if (D_8007E280 & D_800E397C[i])
         {
-            D_800F9D10[i].flags |= 0x200000000ULL;
+            D_800F9D10[i].flags |= WR_FLAG_TEAM_B;
         }
         if (D_8007E228.f60[i][6] & 2)
         {
@@ -85,45 +65,45 @@ void func_800BAC30(void)
         {
             if (D_800F9D10[i].flags & 2ULL)
             {
-                D_800F9D10[i].flags |= 0x100ULL;
+                D_800F9D10[i].flags |= WR_FLAG_ON_FLOOR;
                 D_800F9D10[i].x = 0.0f;
                 D_800F9D10[i].y = 0.0f;
-                D_800F9D10[i].f353 = (i & 1) ^ 1;
-                D_800F9D10[i].f355 = i & 1;
+                D_800F9D10[i].opponentId = (i & 1) ^ 1;
+                D_800F9D10[i].partnerId = i & 1;
                 D_800F9D10[i].z = 1500.0f;
             }
             else if (D_800F9D10[i].flags & 1ULL)
             {
-                D_800F9D10[i].flags |= 0x100ULL;
+                D_800F9D10[i].flags |= WR_FLAG_ON_FLOOR;
                 D_800F9D10[i].x = D_800E3A50[i][0];
                 D_800F9D10[i].z = D_800E3A50[i][1];
                 D_800F9D10[i].y = 0.0f;
-                D_800F9D10[i].f353 = i & 1;
-                D_800F9D10[i].f355 = i & 1;
+                D_800F9D10[i].opponentId = i & 1;
+                D_800F9D10[i].partnerId = i & 1;
             }
             else
             {
-                D_800F9D10[i].flags |= 0x240ULL;
+                D_800F9D10[i].flags |= (WR_FLAG_LEGAL | WR_FLAG_IN_RING);
                 D_800F9D10[i].x = D_800E39B0[i][0];
                 D_800F9D10[i].z = D_800E39B0[i][1];
-                D_800F9D10[i].f353 = i ^ 1;
-                D_800F9D10[i].f355 = i | 2;
+                D_800F9D10[i].opponentId = i ^ 1;
+                D_800F9D10[i].partnerId = i | 2;
             }
         }
         if (D_8007E280 & 0x400)
         {
-            D_800F9D10[i].flags |= 0x240ULL;
+            D_800F9D10[i].flags |= (WR_FLAG_LEGAL | WR_FLAG_IN_RING);
             D_800F9D10[i].x = D_800E39D0[i][0];
             D_800F9D10[i].z = D_800E39D0[i][1];
-            D_800F9D10[i].f353 = i ^ 3;
-            D_800F9D10[i].f355 = i;
+            D_800F9D10[i].opponentId = i ^ 3;
+            D_800F9D10[i].partnerId = i;
         }
         if (D_8007E280 & 0x200)
         {
-            D_800F9D10[i].f355 = i ^ 1;
+            D_800F9D10[i].partnerId = i ^ 1;
             if ((i == 2) && (D_800FACEA[3] == (-1)))
             {
-                D_800F9D10[2].f355 = 2;
+                D_800F9D10[2].partnerId = 2;
             }
             if ((i == 2) && (D_800FACEA[3] == (-1)))
             {
@@ -137,7 +117,7 @@ void func_800BAC30(void)
             }
             else if (i & 1)
             {
-                D_800F9D10[i].flags |= 0x80ULL;
+                D_800F9D10[i].flags |= WR_FLAG_ON_APRON;
                 D_800F9D10[i].x = D_800E3A30[i][0];
                 D_800F9D10[i].z = D_800E3A30[i][1];
             }
@@ -148,34 +128,34 @@ void func_800BAC30(void)
             }
             if (D_8007F0A0 & 0x40)
             {
-                D_800F9D10[i].f353 = i ^ 2;
-                D_800F9D10[i].flags |= 0x240ULL;
+                D_800F9D10[i].opponentId = i ^ 2;
+                D_800F9D10[i].flags |= (WR_FLAG_LEGAL | WR_FLAG_IN_RING);
                 if ((i == 1) && (D_800FACEA[3] == (-1)))
                 {
-                    D_800F9D10[1].f353 = 2;
+                    D_800F9D10[1].opponentId = 2;
                 }
             }
             else
             {
                 if (!(i & 1))
                 {
-                    D_800F9D10[i].flags |= 0x240ULL;
+                    D_800F9D10[i].flags |= (WR_FLAG_LEGAL | WR_FLAG_IN_RING);
                 }
-                D_800F9D10[i].f353 = (i & 2) ^ 2;
+                D_800F9D10[i].opponentId = (i & 2) ^ 2;
             }
             if (D_8007F0A0 & 0x40)
             {
                 if ((i & 1) && (D_800FAF96[i] == D_800FAF96[i ^ 1]))
                 {
-                    D_800F9D10[i].flags |= 4ULL;
+                    D_800F9D10[i].flags |= WR_FLAG_CPU;
                 }
             }
-            else if ((!(D_800F9D10[i].flags & 0x200ULL)) && (D_800FAF96[i] == D_800FAF96[i ^ 1]))
+            else if ((!(D_800F9D10[i].flags & WR_FLAG_LEGAL)) && (D_800FAF96[i] == D_800FAF96[i ^ 1]))
             {
-                D_800F9D10[i].flags |= 4ULL;
+                D_800F9D10[i].flags |= WR_FLAG_CPU;
             }
         }
-        if (D_800F9D10[i].flags & 0x200ULL)
+        if (D_800F9D10[i].flags & WR_FLAG_LEGAL)
         {
             func_800E1920(&D_800F9D10[i], 6);
         }
@@ -183,13 +163,13 @@ void func_800BAC30(void)
 
     for (i = 0; i < 4; i++)
     {
-        if (D_800F9D10[i].flags & 0x80ULL)
+        if (D_800F9D10[i].flags & WR_FLAG_ON_APRON)
         {
             D_800F9D10[i].heading = D_800E3CA0[(s16) getXZDirectionQuadrant(&D_800F9D10[i].x)];
         }
         else
         {
-            func_800D3890(&D_800F9D10[i].x, &D_800F9D10[D_800F9D10[i].f353].x, &res);
+            func_800D3890(&D_800F9D10[i].x, &D_800F9D10[D_800F9D10[i].opponentId].x, &res);
             D_800F9D10[i].heading = res.angle;
         }
     }
@@ -200,8 +180,8 @@ void func_800BAC30(void)
         {
             if (D_800F9D10[i].flags & 2ULL)
             {
-                D_800F9D10[i].f2 = -1;
-                D_800F9D10[i & 1].f355 = i & 1;
+                D_800F9D10[i].characterId = -1;
+                D_800F9D10[i & 1].partnerId = i & 1;
                 func_8000DB90(i, 0);
             }
         }
@@ -233,7 +213,7 @@ void func_800BAC30(void)
     {
         for (i = 0; i < 4; i++)
         {
-            if (D_800F9D10[i].flags & 4ULL)
+            if (D_800F9D10[i].flags & WR_FLAG_CPU)
             {
                 D_8007E228.f628[i][0] = 0;
                 D_8007E228.f628[i][1] = 1;

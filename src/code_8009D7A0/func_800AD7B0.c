@@ -5,26 +5,20 @@
  */
 #include "common.h"
 
-typedef struct {
-    s8 f0;
-    u8 pad1[9];
-    u16 fA;
-    s16 fC;
-    u8 padE[0x1A];
-    u16 f28;
-} Nw2AD7B0;
-
-s32 func_800AD7B0(Nw2AD7B0 *entity, Nw2AD7B0 *other)
+/* Returns a category 0..0x17 of w's action state (and step), for the AI (startEntityAction stores it for the
+ * AI wrestler and for its opponent, other = the AI wrestler). States 3 and 4 depend on moveMode bit 0x20 (running);
+ * for state 3 with a different id than other's, also on bit 0x8 (rope run). 0 means none of the listed states. */
+s32 func_800AD7B0(Wrestler *w, Wrestler *other)
 {
     s32 result = 0;
-    s16 st = entity->fA - 1;
+    s16 st = w->state - 1;
     switch (st) {
     case 2:
         result = 2;
-        if (entity->f28 & 0x20) {
-            if (entity->f0 == other->f0)
+        if (w->moveMode & 0x20) {
+            if (w->id == other->id)
                 result = 5;
-            else if (entity->f28 & 0x8)
+            else if (w->moveMode & 0x8)
                 result = 0xE;
             else
                 result = 5;
@@ -34,7 +28,7 @@ s32 func_800AD7B0(Nw2AD7B0 *entity, Nw2AD7B0 *other)
         result = 0xE;
         break;
     case 69:
-        if (entity->fC == 2)
+        if (w->step == 2)
             result = 3;
         break;
     case 75:
@@ -42,7 +36,7 @@ s32 func_800AD7B0(Nw2AD7B0 *entity, Nw2AD7B0 *other)
         break;
     case 43:
         {
-            s32 fc = entity->fC;
+            s32 fc = w->step;
             if (fc < 4) {
     case 86:
                 result = 8;
@@ -60,11 +54,11 @@ s32 func_800AD7B0(Nw2AD7B0 *entity, Nw2AD7B0 *other)
         result = 4;
         break;
     case 3:
-        if (entity->f28 & 0x20)
+        if (w->moveMode & 0x20)
             result = 5;
         break;
     case 29:
-        if (entity->fC >= 2)
+        if (w->step >= 2)
             result = 6;
         break;
     case 6: case 21: case 26: case 27: case 28: case 30: case 31: case 32: case 33: case 34:
@@ -77,7 +71,7 @@ s32 func_800AD7B0(Nw2AD7B0 *entity, Nw2AD7B0 *other)
         result = 1;
         break;
     case 67:
-        switch (entity->fC) {
+        switch (w->step) {
         case 0: case 1: case 2: case 3:
             result = 1;
             break;
@@ -99,10 +93,10 @@ s32 func_800AD7B0(Nw2AD7B0 *entity, Nw2AD7B0 *other)
         result = 0x10;
         break;
     case 9:
-        if (entity->fC >= 3) {
-            if (entity->fC < 5)
+        if (w->step >= 3) {
+            if (w->step < 5)
                 result = 0x11;
-            else if (entity->fC == 7)
+            else if (w->step == 7)
                 result = 0x11;
         }
         break;

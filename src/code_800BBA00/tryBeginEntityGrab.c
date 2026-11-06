@@ -6,43 +6,45 @@
 #include "common.h"
 
 s8 func_800D7B54(void *, s32, s32, s32);
-void func_800C4610(u8 *, u8 *);
+void func_800C4610(Wrestler *, Wrestler *);
 void playEntitySound(s8, s32);
-void func_800A6C48(void *, s32);
 
-/* Attempts to start a grab: reorients arg1 toward arg0, bails if they are
- * already the same entity, then (when arg0 is flagged 0x8000000) requires a
- * clear proximity check before playing the grab sound and starting action 0x5C.
- * Otherwise, unless arg0 is in state 0x40 with a low counter, it also needs the
- * proximity check; entities already flagged 9 cannot be grabbed. On success it
- * cross-links the two ids, starts action 0x40 and sets state 3. Returns 1 when
- * a grab started. */
-s32 tryBeginEntityGrab(u8 *arg0, u8 *arg1) {
-    func_800C4610(arg1, arg0);
-    if (*(s8 *)(arg1 + 0x355) == *(s8 *)(arg0 + 0)) {
+/* Called with a candidate `target` of `attacker`'s move (func_800DB4FC, func_800DDAC8, which give up on the target
+ * when this returns 1). Returns 1 when the target starts its own action (state 0x5C or 0x40), else 0.
+ * func_800C4610(attacker, target) first sets target flag bit 0x8000000 when the attacker's steered heading is within
+ * 0x400 of the target's heading (also setting hitInfo bit 0x1000). Returns 0 when the target is the attacker's tag
+ * partner. With bit 0x8000000 set: needs func_800D7B54(target, 0, 0, 2) (target's counter roll: D_800F9830[id] bits 1
+ * and 8 set, fewer than 3 hits counted in D_800F9828[id], no flag bit 0x1 / 0x8, then a func_800B71F8 chance roll),
+ * then plays sound 0x12C and puts the target in state 0x5C. Otherwise the same check is needed unless the target is
+ * already in state 0x40 with stateTimer < 3, and the target's flags must not have bit 0x1 or 0x8; then it plays
+ * sound 0x12C, links the two (target->opponentId = attacker, attacker->heldById = attacker->opponentId = target),
+ * puts the target in state 0x40 and sets its step to 3. */
+s32 tryBeginEntityGrab(Wrestler *target, Wrestler *attacker) {
+    func_800C4610(attacker, target);
+    if (attacker->partnerId == target->id) {
         return 0;
     }
-    if (*(u64 *)(arg0 + 0x20) & 0x8000000LL) {
-        if (!func_800D7B54(arg0, 0, 0, 2)) {
+    if (target->flags & 0x8000000LL) {
+        if (!func_800D7B54(target, 0, 0, 2)) {
             return 0;
         }
-        playEntitySound(*(s8 *)(arg0 + 0), 0x12C);
-        func_800A6C48(arg0, 0x5C);
+        playEntitySound(target->id, 0x12C);
+        func_800A6C48(target, 0x5C);
         return 1;
     }
-    if (!(*(s16 *)(arg0 + 0xA) == 0x40 && *(s16 *)(arg0 + 0x16) < 3)) {
-        if (!func_800D7B54(arg0, 0, 0, 2)) {
+    if (!(target->state == 0x40 && target->stateTimer < 3)) {
+        if (!func_800D7B54(target, 0, 0, 2)) {
             return 0;
         }
     }
-    if (*(u64 *)(arg0 + 0x20) & 9) {
+    if (target->flags & 9) {
         return 0;
     }
-    playEntitySound(*(s8 *)(arg0 + 0), 0x12C);
-    *(u8 *)(arg0 + 0x353) = *(u8 *)(arg1 + 0);
-    *(u8 *)(arg1 + 0x351) = *(u8 *)(arg0 + 0);
-    *(u8 *)(arg1 + 0x353) = *(u8 *)(arg0 + 0);
-    func_800A6C48(arg0, 0x40);
-    *(s16 *)(arg0 + 0xC) = 3;
+    playEntitySound(target->id, 0x12C);
+    target->opponentId = attacker->id;
+    attacker->heldById = target->id;
+    attacker->opponentId = target->id;
+    func_800A6C48(target, 0x40);
+    target->step = 3;
     return 1;
 }

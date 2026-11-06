@@ -5,61 +5,50 @@
  */
 #include "common.h"
 
-/* Entity record touched by updateEntityBoundaryFlags.
- * +0x0A state id, +0x3E body-part/direction index, +0x4C/+0x54 X/Z offsets. */
-typedef struct {
-    u8 pad0[0xA];
-    s16 state;
-    u8 padC[0x32];
-    s16 partIndex;
-    u8 pad40[0xC];
-    f32 offsetX;
-    u8 pad50[4];
-    f32 offsetZ;
-} Nw2BoundaryEntity;
-
 extern u16 D_800E3A90[];
 extern u16 D_800E3A98[];
 
-/* Restricts the entity's direction flags (*flags) to the masks of its body
- * part, and when no cardinal-direction bit is set picks a direction from the
- * boundary mask of nearby entities (func_800BED3C) using the X/Z offsets.
- * Returns nonzero when the resulting flag is clear for state 0xD. */
-s32 updateEntityBoundaryFlags(Nw2BoundaryEntity *ent, s32 unused, u16 *flags) {
+/* Limits the direction bits *flags (0x100/0x200/0x400/0x800) to the masks D_800E3A90 / D_800E3A98 of side
+ * w->dirIndex. When none of those bits is left, it asks func_800BED3C(w, other) which of those bits are taken: for
+ * each wrestler other than w and `other` that is in the ring or on the apron with its pelvis past that side's bound,
+ * the bit for the side of w's pelvis it is on. If none or all are taken it picks one from the sign of w->x (sides
+ * 0/2) or w->z (sides 1/3), otherwise the D_800E3A90 bits unless taken, else the D_800E3A98 bits. Returns 1 when
+ * *flags has no bit of D_800E3A90[side] (state 0xD) or D_800E3A98[side] (any other state), else 0. */
+s32 updateEntityBoundaryFlags(Wrestler *w, Wrestler *other, u16 *flags) {
     u16 mask;
     s32 blockedMask;
     s32 openMask;
     s32 result;
 
-    mask = D_800E3A98[ent->partIndex] | D_800E3A90[ent->partIndex];
+    mask = D_800E3A98[w->dirIndex] | D_800E3A90[w->dirIndex];
     *flags = *flags & mask;
     if (!(*flags & 0xF00)) {
-        blockedMask = ((s32 (*)(void *))func_800BED3C)(ent);
+        blockedMask = func_800BED3C(w, other, (u32)flags);
         if (((blockedMask & 0xFFFF) == 0) | ((blockedMask & 0xFFFF) == mask)) {
-            switch (ent->partIndex) {
+            switch (w->dirIndex) {
             case 0:
-                if (ent->offsetX < 0.0f) {
+                if (w->x < 0.0f) {
                     *flags = 0x200;
                 } else {
                     *flags = 0x100;
                 }
                 break;
             case 1:
-                if (0.0f < ent->offsetZ) {
+                if (0.0f < w->z) {
                     *flags = 0x800;
                 } else {
                     *flags = 0x400;
                 }
                 break;
             case 2:
-                if (0.0f < ent->offsetX) {
+                if (0.0f < w->x) {
                     *flags = 0x100;
                 } else {
                     *flags = 0x200;
                 }
                 break;
             case 3:
-                if (ent->offsetZ < 0.0f) {
+                if (w->z < 0.0f) {
                     *flags = 0x400;
                 } else {
                     *flags = 0x800;
@@ -67,18 +56,18 @@ s32 updateEntityBoundaryFlags(Nw2BoundaryEntity *ent, s32 unused, u16 *flags) {
                 break;
             }
         } else {
-            openMask = D_800E3A90[ent->partIndex];
+            openMask = D_800E3A90[w->dirIndex];
             if (openMask & blockedMask) {
-                *flags = D_800E3A98[ent->partIndex];
+                *flags = D_800E3A98[w->dirIndex];
             } else {
                 *flags = openMask;
             }
         }
     }
-    if (ent->state == 0xD) {
-        result = *flags & D_800E3A90[ent->partIndex];
+    if (w->state == 0xD) {
+        result = *flags & D_800E3A90[w->dirIndex];
     } else {
-        result = *flags & D_800E3A98[ent->partIndex];
+        result = *flags & D_800E3A98[w->dirIndex];
     }
     return result == 0;
 }

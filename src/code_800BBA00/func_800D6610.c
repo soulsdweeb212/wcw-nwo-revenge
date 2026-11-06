@@ -16,10 +16,12 @@ extern Nw2Vec2C50 D_800E3C50[];
 
 extern void func_800D36E8(f32, f32);
 
-/* Compute the heading from the entity position toward quadrant-table entry arg1. */
-void func_800D6610(u8 *arg0, s32 arg1) {
+/* Compute the heading from the wrestler's pelvis (jointA[1] x/z) toward the X/Z
+ * point D_800E3C50[arg1] (callers pass dirIndex). Declared void, but callers
+ * use the heading func_800D36E8 leaves in v0. */
+void func_800D6610(Wrestler *w, s32 arg1) {
     s32 i = (s16)arg1;
 
-    func_800D36E8(D_800E3C50[i].x - *(f32 *)(arg0 + 0x6C),
-                  D_800E3C50[i].y - *(f32 *)(arg0 + 0x74));
+    func_800D36E8(D_800E3C50[i].x - w->jointA[1].x,
+                  D_800E3C50[i].y - w->jointA[1].z);
 }

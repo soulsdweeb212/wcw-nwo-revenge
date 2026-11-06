@@ -5,20 +5,20 @@
  */
 #include "common.h"
 
-/* Quadrant from the signs of the X (+0x6C) and Z (+0x74) components: 1 or 0 when
- * X>0 (Z<=0 / Z>0), 2 or 3 when X<=0 (Z<=0 / Z>0). */
-s32 func_800ADAE4(void *entity) {
+/* Quadrant of w's pelvis (jointA[1]) from the signs of its x and z: 0 when x > 0 and z > 0, 1 when x > 0 and
+ * z <= 0, 2 when x <= 0 and z <= 0, 3 when x <= 0 and z > 0. */
+s32 func_800ADAE4(Wrestler *w) {
     s32 q;
 
-    if (*(f32 *)((s8 *)entity + 0x6C) > 0.0f) {
+    if (w->jointA[1].x > 0.0f) {
         q = 1;
-        if (*(f32 *)((s8 *)entity + 0x74) > 0.0f) {
+        if (w->jointA[1].z > 0.0f) {
             return 0;
         }
         return q;
     }
     q = 2;
-    if (*(f32 *)((s8 *)entity + 0x74) > 0.0f) {
+    if (w->jointA[1].z > 0.0f) {
         q = 3;
     }
     return q;

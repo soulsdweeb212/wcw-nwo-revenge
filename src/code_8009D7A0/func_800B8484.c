@@ -5,25 +5,6 @@
  */
 #include "common.h"
 
-typedef struct {
-    u8 p0[2];
-    s16 f2;
-    u8 p4[6];
-    s16 fA;
-    u8 pC[4];
-    u16 f10;
-    u8 p12[2];
-    u16 f14;
-    u8 p16[0xA];
-    u64 flags;
-    u8 p28[0x329];
-    u8 f351;
-    u8 p352[0x1C];
-    u8 f36E;
-    u8 p36F[0x41];
-} Rec8484;
-
-extern Rec8484 D_800F9D10[];
 extern u16 D_8007E280;
 extern u16 D_800E397C[];
 
@@ -63,21 +44,21 @@ s32 func_800B8484(s32 mode) {
         e[i] = -1;
     }
     for (i = 0; i < 4; i++) {
-        if (D_800F9D10[i].f2 == -1) {
+        if (D_800F9D10[i].characterId == -1) {
             continue;
         }
-        if (!(D_800F9D10[i].flags & 0x200)) {
+        if (!(D_800F9D10[i].flags & WR_FLAG_LEGAL)) {
             continue;
         }
         if (D_8007E280 & 0x400) {
-            if (D_800F9D10[i].flags & 0x100) {
-                if (D_800F9D10[i].fA == 0x8F) {
+            if (D_800F9D10[i].flags & WR_FLAG_ON_FLOOR) {
+                if (D_800F9D10[i].state == 0x8F) {
                     return 0;
                 }
                 b[nb] = i;
                 nb++;
             } else {
-                if (D_800F9D10[i].f36E == 2) {
+                if (D_800F9D10[i].anim.endZone == 2) {
                     return 0;
                 }
                 a[na] = i;
@@ -87,14 +68,14 @@ s32 func_800B8484(s32 mode) {
         if (D_8007E280 & 0x100) {
             if (a[0] == -1) {
                 a[0] = i;
-                sumA = D_800F9D10[i].f10 + D_800F9D10[i].f14;
-                if (D_800F9D10[i].flags & 0x100) {
+                sumA = D_800F9D10[i].health + D_800F9D10[i].spirit;
+                if (D_800F9D10[i].flags & WR_FLAG_ON_FLOOR) {
                     na++;
                 }
             } else {
                 b[0] = i;
-                sumB = D_800F9D10[i].f10 + D_800F9D10[i].f14;
-                if (D_800F9D10[i].flags & 0x100) {
+                sumB = D_800F9D10[i].health + D_800F9D10[i].spirit;
+                if (D_800F9D10[i].flags & WR_FLAG_ON_FLOOR) {
                     nb++;
                 }
             }
@@ -102,17 +83,17 @@ s32 func_800B8484(s32 mode) {
         if (D_8007E280 & 0x200) {
             if (D_8007E280 & D_800E397C[i]) {
                 a[cntA] = i;
-                sumA += D_800F9D10[i].f10 + D_800F9D10[i].f14;
+                sumA += D_800F9D10[i].health + D_800F9D10[i].spirit;
                 cntA++;
-                if ((D_800F9D10[i].flags & 0x200) && (D_800F9D10[i].flags & 0x100)) {
+                if ((D_800F9D10[i].flags & WR_FLAG_LEGAL) && (D_800F9D10[i].flags & WR_FLAG_ON_FLOOR)) {
                     d[na] = i;
                     na++;
                 }
             } else {
                 b[cntB] = i;
-                sumB += D_800F9D10[i].f10 + D_800F9D10[i].f14;
+                sumB += D_800F9D10[i].health + D_800F9D10[i].spirit;
                 cntB++;
-                if ((D_800F9D10[i].flags & 0x200) && (D_800F9D10[i].flags & 0x100)) {
+                if ((D_800F9D10[i].flags & WR_FLAG_LEGAL) && (D_800F9D10[i].flags & WR_FLAG_ON_FLOOR)) {
                     e[nb] = i;
                     nb++;
                 }
@@ -129,7 +110,7 @@ s32 func_800B8484(s32 mode) {
             playEntitySound(0, 2);
             i = 0;
             while (b[i] != -1 && i < 4) {
-                buf1[0] = D_800F9D10[b[i]].f351;
+                buf1[0] = D_800F9D10[b[i]].heldById;
                 buf1[1] = -1;
                 buf2[0] = b[i];
                 buf2[1] = -1;

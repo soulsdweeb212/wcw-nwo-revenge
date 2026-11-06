@@ -11,7 +11,7 @@
  * id 1) and, when the opponent is beyond the action's max range, trigger action
  * 0x2E. Otherwise route to one of two scripted action chains chosen by the
  * countdown. */
-extern u8 *D_800FABD0, *D_800FAF58;
+extern u8 *D_800FABD0;
 extern s8 D_8007E8C0[], D_800FACE8;
 extern u8 D_800E33DC[], D_800E3400[];
 s8 func_800AB1B0(void);
@@ -21,7 +21,7 @@ s8 func_800D4198(s16);
 void func_800AD958(s32);
 void func_800ADA38(void *);
 #define ACTION(o, t) (*(t *)(D_800FABD0 + (o)))
-#define ENTITY_FLAGS (*(u64 *)(*(u8 **)(D_800FAF58 + 0x364) + 0x38))
+#define ENTITY_FLAGS (*(u64 *)(D_800FAF58->profile + 0x38))
 void func_800AA9A0(void) {
     f32 limit;
     if (func_800AB1B0() || func_800AB2B4() || func_800AB43C()) return;

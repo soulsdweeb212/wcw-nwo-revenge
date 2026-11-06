@@ -27,7 +27,8 @@ PD=str(TC/'decomp-permuter')
 GEN=str(Path(decompnet.__file__).parent/'permuter_gen.py')
 size=int(re.search(r'nonmatching \S+, (0x[0-9A-Fa-f]+)',open(fn['asm']).read()).group(1),16)
 rom=open(B['image'],'rb').read()[fn['rom']:fn['rom']+size]
-header=open('include/common.h').read()
+# common.h includes wrestler.h; the compile step only sees this text, so write the project headers out in place
+header=re.sub(r'^#include "([^"]+)"[ \t]*$',lambda m:open('include/'+m.group(1)).read() if os.path.exists('include/'+m.group(1)) else m.group(0),open('include/common.h').read(),flags=re.M)
 cfg=compiler_config(ROOT,{"compiler":compiler_for(B,fn['vram'])})
 
 def norm(lines):

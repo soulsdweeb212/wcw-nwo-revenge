@@ -6,23 +6,24 @@
 #include "common.h"
 
 void translateEntityXZ(void *, void *);
-s8 func_800D2758(void *, void *, void *, s8, s32);
+s8 func_800D2758(Wrestler *, f32, u16, s8, s16);
 
-/* Translate the entity by an offset (zero if arg1 is 0), run func_800D2758,
- * then translate it back. Returns func_800D2758's result. */
-s8 func_800D26A0(void *arg0, s32 arg1, s8 arg2) {
+/* Look for another wrestler close to w as if w stood moved by the XZ offset arg1 (none if arg1 is NULL): translate
+ * w by the offset, run func_800D2758(w, 0, 0, ignoreId, mode 0), which only tests and does not push, then
+ * translate w back. Returns func_800D2758's result: the first wrestler id found close, or -1. */
+s8 func_800D26A0(Wrestler *w, Nw2DirectionResult *arg1, s8 ignoreId) {
     Nw2DirectionResult offset;
     s8 result;
-    if (arg1 == 0) {
+    if (arg1 == NULL) {
         offset.x = 0.0f;
         offset.z = 0.0f;
     } else {
-        offset = *(Nw2DirectionResult *)arg1;
+        offset = *arg1;
     }
-    translateEntityXZ(arg0, &offset);
-    result = func_800D2758(arg0, NULL, NULL, arg2, 0);
+    translateEntityXZ(w, &offset);
+    result = func_800D2758(w, 0.0f, 0, ignoreId, 0);
     offset.x = -offset.x;
     offset.z = -offset.z;
-    translateEntityXZ(arg0, &offset);
+    translateEntityXZ(w, &offset);
     return result;
 }

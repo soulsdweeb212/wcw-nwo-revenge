@@ -5,39 +5,6 @@
  */
 #include "common.h"
 
-typedef struct {
-    s8 f0;
-    u8 pad1[3];
-    s16 f4;
-    s16 f6;
-    u16 f8;
-    s16 fA;
-    s16 fC;
-    s16 fE;
-    u8 pad10[6];
-    s16 f16;
-    u8 pad18[8];
-    u64 flags;
-    u8 pad28[4];
-    u32 f2C;
-    u8 pad30[0x28];
-    s32 f58;
-    u8 pad5C[0x2E0];
-    f32 vec[3];
-    s32 f348;
-    u8 pad34C[0x14];
-    u16 f360;
-    s8 f362;
-    u8 pad363[9];
-    u8 f36C;
-    u8 pad36D[4];
-    u8 f371;
-    u8 pad372[0x31];
-    u8 f3A3;
-} Nw2ActAC3A0;
-
-extern Nw2ActAC3A0 *D_800FAF5C;
-extern Nw2ActAC3A0 *D_800F9B00;
 extern s8 D_800FADB8;
 extern u16 D_800FABE6;
 extern u16 D_800FAF8A;
@@ -49,14 +16,12 @@ extern s16 D_800EB438[];
 extern s16 D_800EB448[];
 extern u16 D_800F9B78[];
 
-s32 func_800D2BAC(void *, void *, f32, s32);
 void func_800A7C40(void *, s8, s16);
 s16 func_800D5438(void *, s32);
 void func_800D427C(void *, s16, s32);
 s32 func_800AD218(void *, u16, u16, s8, s16 *);
 void func_800AD6D0(void *);
 void func_800D4AD0(void *);
-void func_800A6C48(void *, s32);
 void func_800AD2C4(void *, void *, u16, s16);
 void func_800D7E80(void *, void *);
 void func_800A7328(void *);
@@ -69,76 +34,73 @@ s32 func_800D3684(s32, s32);
 void func_800D8D74(void *, s32);
 void func_800A6BE0(void *, s32);
 
-#define O D_800FAF5C
-#define P D_800F9B00
-
 void func_800AC3A0(void) {
-    func_800D2BAC(O, P, 2.0f, 0xFFFFE);
+    func_800D2BAC(D_800FAF5C, D_800F9B00, 2.0f, 0xFFFFE);
 
-    switch (O->fC) {
+    switch (D_800FAF5C->step) {
     case 0:
-        func_800A7C40(O, D_800FADB8, 0xEC);
-        D_800EB428[D_800FADB8] = func_800D5438(O, 0);
-        D_800EB428[D_800FADB8 + 4] = func_800D5438(O, 1);
-        func_800A7C40(O, D_800FADB8, 0xED);
-        D_800EB428[D_800FADB8 + 8] = func_800D5438(O, 0);
-        D_800EB428[D_800FADB8 + 12] = func_800D5438(O, 1);
-        func_800A7C40(O, D_800FADB8, 0xEE);
-        D_800EB428[D_800FADB8 + 16] = func_800D5438(O, 0);
-        D_800EB428[D_800FADB8 + 20] = func_800D5438(O, 1);
-        func_800D427C(O, D_800EB428[D_800FADB8], 3);
+        func_800A7C40(D_800FAF5C, D_800FADB8, 0xEC);
+        D_800EB428[D_800FADB8] = func_800D5438(D_800FAF5C, 0);
+        D_800EB428[D_800FADB8 + 4] = func_800D5438(D_800FAF5C, 1);
+        func_800A7C40(D_800FAF5C, D_800FADB8, 0xED);
+        D_800EB428[D_800FADB8 + 8] = func_800D5438(D_800FAF5C, 0);
+        D_800EB428[D_800FADB8 + 12] = func_800D5438(D_800FAF5C, 1);
+        func_800A7C40(D_800FAF5C, D_800FADB8, 0xEE);
+        D_800EB428[D_800FADB8 + 16] = func_800D5438(D_800FAF5C, 0);
+        D_800EB428[D_800FADB8 + 20] = func_800D5438(D_800FAF5C, 1);
+        func_800D427C(D_800FAF5C, D_800EB428[D_800FADB8], 3);
         D_800EB420[D_800FADB8] = (s16)D_800F9B78[D_800FADB8] / 10;
-        if (O->f2C & 1) {
+        if (D_800FAF5C->grappleCtx & 1) {
             D_800EB420[D_800FADB8] = 0xA;
         } else {
             D_800EB420[D_800FADB8] = 6;
         }
         D_800FAF8E[D_800FADB8] = 0;
-        O->fC++;
+        D_800FAF5C->step++;
         break;
     case 1:
-        if (O->f4 == 1) {
-            O->fC++;
+        if (D_800FAF5C->animFramesLeft == 1) {
+            D_800FAF5C->step++;
         }
         break;
     case 2:
-        func_800D427C(O, D_800EB438[D_800FADB8], 3);
-        O->fC++;
+        func_800D427C(D_800FAF5C, D_800EB438[D_800FADB8], 3);
+        D_800FAF5C->step++;
     case 3:
-        if (O->f360 & 1) {
-            O->f360 &= ~1;
-            O->fC++;
+        if (D_800FAF5C->pairSignals & 1) {
+            D_800FAF5C->pairSignals &= ~1;
+            D_800FAF5C->step++;
             break;
         }
-        if ((s8)func_800AD218(O, D_800FABE6, D_800FAF8A, D_800FAF78, &D_800FAF8E[D_800FADB8])) {
-            O->fC++;
+        if ((s8)func_800AD218(D_800FAF5C, D_800FABE6, D_800FAF8A, D_800FAF78, &D_800FAF8E[D_800FADB8])) {
+            D_800FAF5C->step++;
         }
-        if (O->f4 > 0) {
+        if (D_800FAF5C->animFramesLeft > 0) {
             break;
         }
-        O->flags &= 0xFFFFFFFFBFFFFFFFULL;
-        O->f362 = -1;
-        P->fC = 3;
-        func_800AD6D0(O);
-        func_800D4AD0(O);
-        func_800A6C48(O, 0x2B);
+        D_800FAF5C->flags &= ~WR_FLAG_PAIR_LEADER;
+        D_800FAF5C->attached[0] = -1;
+        D_800F9B00->step = 3;
+        func_800AD6D0(D_800FAF5C);
+        func_800D4AD0(D_800FAF5C);
+        func_800A6C48(D_800FAF5C, 0x2B);
         break;
     case 4:
-        func_800AD2C4(O, P, D_800FAF8E[D_800FADB8], D_800EB420[D_800FADB8]);
-        if (O->f2C & 0x80000) {
-            func_800D7E80(O, P);
-            func_800D427C(O, D_800EB448[D_800FADB8], 2);
+        func_800AD2C4(D_800FAF5C, D_800F9B00, D_800FAF8E[D_800FADB8], D_800EB420[D_800FADB8]);
+        if (D_800FAF5C->grappleCtx & 0x80000) {
+            func_800D7E80(D_800FAF5C, D_800F9B00);
+            func_800D427C(D_800FAF5C, D_800EB448[D_800FADB8], 2);
             D_800EB420[D_800FADB8]--;
-            O->fC = 6;
-            P->fC = 7;
+            D_800FAF5C->step = 6;
+            D_800F9B00->step = 7;
         } else {
-            func_800A7328(O);
-            func_800D43B4(O, (s16)func_800D5438(O, 0), 2);
+            func_800A7328(D_800FAF5C);
+            func_800D43B4(D_800FAF5C, (s16)func_800D5438(D_800FAF5C, 0), 2);
             D_800EB420[D_800FADB8]--;
             D_800FAF8E[D_800FADB8] = 0;
-            O->fC++;
-            P->fC = 4;
-            P->f360 &= ~2;
+            D_800FAF5C->step++;
+            D_800F9B00->step = 4;
+            D_800F9B00->pairSignals &= ~2;
         }
         break;
     case 5: {
@@ -148,62 +110,62 @@ void func_800AC3A0(void) {
         s32 ang;
         s32 dd;
 
-        if (O->f371 >= O->f6) {
-            cnt = O->f371 - O->f6 + 1;
+        if (D_800FAF5C->anim.hitEnd >= D_800FAF5C->animFrame) {
+            cnt = D_800FAF5C->anim.hitEnd - D_800FAF5C->animFrame + 1;
             dir[0] = 0.0f;
             dir[2] = 130.0f;
-            func_800D3E40((u8 *)P + 0x6C, dir, P->f58, out);
-            func_800D3838((u8 *)O + 0x4C, out, cnt, O->vec);
-            translateEntityXZ(O, O->vec);
-            ang = func_800D35B0(P->f58, 0x800);
-            dd = func_800D3684(ang, O->f58) / cnt;
-            O->f58 = func_800D35B0(O->f58, dd);
+            func_800D3E40(&D_800F9B00->jointA[1], dir, D_800F9B00->heading, out);
+            func_800D3838(&D_800FAF5C->x, out, cnt, D_800FAF5C->moveDelta);
+            translateEntityXZ(D_800FAF5C, D_800FAF5C->moveDelta);
+            ang = func_800D35B0(D_800F9B00->heading, 0x800);
+            dd = func_800D3684(ang, D_800FAF5C->heading) / cnt;
+            D_800FAF5C->heading = func_800D35B0(D_800FAF5C->heading, dd);
         }
-        if (O->f6 != O->f371) {
+        if (D_800FAF5C->animFrame != D_800FAF5C->anim.hitEnd) {
             goto tail;
         }
-        P->f360 |= 4;
-        if (P->f360 & 2) {
-            if (D_800EB420[D_800FADB8] == 0 && !(O->f2C & 0x400000)) {
-                if (P->f3A3) {
-                    func_800A7328(O);
-                    func_800D427C(O, (s16)func_800D5438(P, 1), 2);
+        D_800F9B00->pairSignals |= 4;
+        if (D_800F9B00->pairSignals & 2) {
+            if (D_800EB420[D_800FADB8] == 0 && !(D_800FAF5C->grappleCtx & 0x400000)) {
+                if (D_800F9B00->move.moveCode) {
+                    func_800A7328(D_800FAF5C);
+                    func_800D427C(D_800FAF5C, (s16)func_800D5438(D_800F9B00, 1), 2);
                 } else {
-                    func_800D427C(O, (s16)func_800D5438(P, 1), 1);
+                    func_800D427C(D_800FAF5C, (s16)func_800D5438(D_800F9B00, 1), 1);
                 }
             }
         } else {
-            func_800A837C(O);
+            func_800A837C(D_800FAF5C);
         }
 tail:
-        if (O->f6 >= O->f36C - 4) {
-            if ((s8)func_800AD218(O, D_800FABE6, D_800FAF8A, D_800FAF78, &D_800FAF8E[D_800FADB8])) {
-                O->f360 |= 1;
+        if (D_800FAF5C->animFrame >= D_800FAF5C->anim.frameCount - 4) {
+            if ((s8)func_800AD218(D_800FAF5C, D_800FABE6, D_800FAF8A, D_800FAF78, &D_800FAF8E[D_800FADB8])) {
+                D_800FAF5C->pairSignals |= 1;
             }
         }
-        if (O->f4 > 0) {
+        if (D_800FAF5C->animFramesLeft > 0) {
             break;
         }
-        if (D_800EB420[D_800FADB8] == 0 || P->fA != 0x4C || (O->f2C & 0x400000)) {
-            func_800AD6D0(O);
-            func_800D4AD0(O);
-            func_800A6C48(O, 0x2B);
-            O->flags &= 0xFFFFFFFFBFFFFFFFULL;
-            O->f362 = -1;
+        if (D_800EB420[D_800FADB8] == 0 || D_800F9B00->state != 0x4C || (D_800FAF5C->grappleCtx & 0x400000)) {
+            func_800AD6D0(D_800FAF5C);
+            func_800D4AD0(D_800FAF5C);
+            func_800A6C48(D_800FAF5C, 0x2B);
+            D_800FAF5C->flags &= ~WR_FLAG_PAIR_LEADER;
+            D_800FAF5C->attached[0] = -1;
         } else {
-            O->fC = 2;
-            O->flags |= 0x10000000ULL;
+            D_800FAF5C->step = 2;
+            D_800FAF5C->flags |= WR_FLAG_RERUN;
         }
         break;
     }
     case 6:
-        func_800D8D74(O, 0);
-        if (O->f4 > 0) {
+        func_800D8D74(D_800FAF5C, 0);
+        if (D_800FAF5C->animFramesLeft > 0) {
             break;
         }
-        func_800AD6D0(O);
-        func_800D427C(O, (s16)func_800D5438(O, 0), 1);
-        func_800A6BE0(O, 0x51);
+        func_800AD6D0(D_800FAF5C);
+        func_800D427C(D_800FAF5C, (s16)func_800D5438(D_800FAF5C, 0), 1);
+        func_800A6BE0(D_800FAF5C, 0x51);
         break;
     }
 }

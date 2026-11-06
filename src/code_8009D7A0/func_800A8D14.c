@@ -7,19 +7,19 @@
 
 extern u8 D_80064AD8[];
 
-/* Returns the entity's animation id derived from its +0x386 base, the +0x38C
- * index and the packed 2-bit table entry for the attachment's group. */
-s16 func_800A8D14(void *arg0, void *arg1) {
+/* Returns w's moveId plus 1..4: a packed 2-bit entry, indexed by w->move.unk38C, from the 400-byte table of
+ * D_80064AD8 + 8 picked by byte 0x20 of other's profile. */
+s16 func_800A8D14(Wrestler *w, Wrestler *other) {
     s8 *rec;
     s16 i;
     u8 *base;
     u8 *p;
     s16 v;
 
-    rec = *(s8 **)((u8 *)arg1 + 0x364);
-    i = *(s16 *)((u8 *)arg0 + 0x38C);
+    rec = (s8 *)other->profile;
+    i = w->move.unk38C;
     base = &D_80064AD8[8];
     p = base + rec[0x20] * 400;
     v = ((p[i / 4] >> ((i & 3) * 2)) & 3) + 1;
-    return *(u16 *)((u8 *)arg0 + 0x386) + v;
+    return (u16)w->moveId + v;
 }

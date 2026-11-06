@@ -9,22 +9,19 @@ extern s8 D_8007EF30[];
 extern s16 D_800E3FA8[];
 extern u16 D_800F9840[];
 
-/* Per-entity counter that arms a flag once it passes a threshold.
- * While the entity u64 flag 0x0008000000000000 is set, bump the counter for this
- * entity (indexed by its s8 id at +0); once the count exceeds
- * D_800E3FA8[D_8007EF30[0xCFC]] set flag 0x0010000000000000. Otherwise clear that
- * flag and reset the entity's counter to zero. */
-void func_800D90E8(void *arg0)
+/* Per-wrestler counter that arms a flag once it passes a threshold.
+ * While flags bit 0x0008000000000000 is set, bump D_800F9840[w->id]; once the count
+ * exceeds D_800E3FA8[D_8007EF30[0xCFC]] set flags bit 0x0010000000000000. Otherwise
+ * clear that bit and reset the wrestler's counter to zero. */
+void func_800D90E8(Wrestler *w)
 {
-    u8 *entity = (u8 *)arg0;
-
-    if (*(u64 *)(entity + 0x20) & 0x0008000000000000ULL) {
-        D_800F9840[*(s8 *)entity]++;
-        if ((s16)D_800F9840[*(s8 *)entity] > D_800E3FA8[D_8007EF30[0xCFC]]) {
-            *(u64 *)(entity + 0x20) |= 0x0010000000000000ULL;
+    if (w->flags & 0x0008000000000000ULL) {
+        D_800F9840[w->id]++;
+        if ((s16)D_800F9840[w->id] > D_800E3FA8[D_8007EF30[0xCFC]]) {
+            w->flags |= 0x0010000000000000ULL;
         }
     } else {
-        *(u64 *)(entity + 0x20) &= ~0x0010000000000000ULL;
-        D_800F9840[*(s8 *)entity] = 0;
+        w->flags &= ~0x0010000000000000ULL;
+        D_800F9840[w->id] = 0;
     }
 }

@@ -10,27 +10,24 @@ extern u16 D_800E3262[];
 void func_800D427C(void *, s16, s32);
 s32 func_800D4D44(void *, s32, s32);
 
-#define E D_800EB408
-#define F (*(u64 *)((u8 *)E + 0x20))
-
 void func_800A1D34(void)
 {
     s8 idx;
     s32 a3;
-    s16 state;
+    s16 step;
 
-    F |= 0x1000000000ULL;
-    state = *(s16 *)((u8 *)E + 0xC);
-    switch (state) {
+    D_800EB408->flags |= 0x1000000000ULL;
+    step = D_800EB408->step;
+    switch (step) {
     case 0:
-        *(u8 *)((u8 *)E + 0x42) = *(u8 *)((u8 *)E + 0x36F);
-        idx = *(s8 *)((u8 *)E + 0x42);
+        D_800EB408->pose = D_800EB408->anim.endPose;
+        idx = (s8)D_800EB408->pose;
         switch (idx) {
         case 0:
-            if (F & 0x1000000000000ULL)
-                a3 = func_800D4D44(E, 1, 0);
-            else if (F & 0x80ULL) {
-                snapEntityToRingBoundary((u8 *)E);
+            if (D_800EB408->flags & 0x1000000000000ULL)
+                a3 = func_800D4D44(D_800EB408, 1, 0);
+            else if (D_800EB408->flags & WR_FLAG_ON_APRON) {
+                snapEntityToRingBoundary((u8 *)D_800EB408);
                 a3 = 0x1081;
             } else
                 a3 = 0x10FF;
@@ -39,11 +36,11 @@ void func_800A1D34(void)
             a3 = 0xF38;
             break;
         case 2:
-            func_800A6C48(E, 0x2E);
+            func_800A6C48(D_800EB408, 0x2E);
             return;
         case 3:
-            if (F & 0x80ULL) {
-                snapEntityToRingBoundary((u8 *)E);
+            if (D_800EB408->flags & WR_FLAG_ON_APRON) {
+                snapEntityToRingBoundary((u8 *)D_800EB408);
                 a3 = 0xF5C;
             } else
                 a3 = 0x10FF;
@@ -56,42 +53,42 @@ void func_800A1D34(void)
             break;
         case 7: case 9: case 11: case 13: case 15: case 17:
         case 19: case 21: case 23: case 25: case 27: case 29: case 31:
-            F &= ~0x200000ULL;
-            a3 = D_800E3262[*(s8 *)((u8 *)E + 0x42)];
+            D_800EB408->flags &= ~0x200000ULL;
+            a3 = D_800E3262[(s8)D_800EB408->pose];
             break;
         case 8: case 10: case 12: case 14: case 16: case 18:
         case 20: case 22: case 24: case 26: case 28: case 30: case 32:
-            F |= 0x200000ULL;
-            a3 = D_800E3262[*(s8 *)((u8 *)E + 0x42)];
+            D_800EB408->flags |= 0x200000ULL;
+            a3 = D_800E3262[(s8)D_800EB408->pose];
             break;
         default:
             break;
         }
-        if (F & 0x80ULL)
-            func_800D427C(E, a3, 0);
+        if (D_800EB408->flags & WR_FLAG_ON_APRON)
+            func_800D427C(D_800EB408, a3, 0);
         else
-            func_800D427C(E, a3, 1);
-        (*(u16 *)((u8 *)E + 0xC))++;
+            func_800D427C(D_800EB408, a3, 1);
+        D_800EB408->step++;
         break;
     case 1:
-        idx = *(s8 *)((u8 *)E + 0x42);
+        idx = (s8)D_800EB408->pose;
         switch (idx) {
         case 0:
-            func_800A6C48(E, 1);
+            func_800A6C48(D_800EB408, 1);
             break;
         case 1:
-            func_800A6C48(E, 0x42);
-            *(s16 *)((u8 *)E + 0xC) = 2;
+            func_800A6C48(D_800EB408, 0x42);
+            D_800EB408->step = 2;
             break;
         case 2:
-            func_800A6C48(E, 0x2E);
+            func_800A6C48(D_800EB408, 0x2E);
             break;
         case 3:
-            func_800A6C48(E, 0x2D);
+            func_800A6C48(D_800EB408, 0x2D);
             break;
         case 4:
         case 5:
-            func_800A6C48(E, 1);
+            func_800A6C48(D_800EB408, 1);
             break;
         case 6:
             break;
@@ -99,15 +96,15 @@ void func_800A1D34(void)
         case 15: case 16: case 17: case 18: case 19: case 20: case 21: case 22:
         case 23: case 24: case 25: case 26: case 27: case 28: case 29: case 30:
         case 31: case 32:
-            if (F & 0x80000000000000ULL)
-                func_800A6C48(E, 0x43);
+            if (D_800EB408->flags & 0x80000000000000ULL)
+                func_800A6C48(D_800EB408, 0x43);
             else
-                func_800A6C48(E, 0x42);
+                func_800A6C48(D_800EB408, 0x42);
             break;
         default:
             break;
         }
-        F &= ~0x80000000000000ULL;
+        D_800EB408->flags &= ~0x80000000000000ULL;
         break;
     }
 }

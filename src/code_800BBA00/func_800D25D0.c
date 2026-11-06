@@ -5,9 +5,10 @@
  */
 #include "common.h"
 
-s8 func_800D2758(s32, s32, s32, s32, s32);
+s8 func_800D2758(Wrestler *, f32, u16, s8, s16);
 
-/* Boundary correction with no records and direction mask -1. */
-s8 func_800D25D0(s32 arg0, s32 arg1) {
-    return func_800D2758(arg0, arg1, 0, -1, 1);
+/* Push w out of the other wrestlers in its zone: func_800D2758(w, divisor, 0 (axis mask 0xF00), no id ignored,
+ * mode 1). Returns the first wrestler id found close, or -1. */
+s8 func_800D25D0(Wrestler *w, f32 divisor) {
+    return func_800D2758(w, divisor, 0, -1, 1);
 }

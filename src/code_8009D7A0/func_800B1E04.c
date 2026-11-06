@@ -25,22 +25,7 @@ typedef struct {
     u32 f5C;
 } ActB1E04;
 
-typedef struct {
-    u8 pad0[0xA];
-    s16 fA;
-    s16 fC;
-    u8 padE[0x4A];
-    s32 f58;
-} F58B1E04;
-
-typedef struct {
-    u8 pad0[0xA];
-    s16 fA;
-} F9B60B1E04;
-
 extern ActB1E04 *D_800FABD0;
-extern F58B1E04 *D_800FAF58;
-extern F9B60B1E04 *D_800F9B60;
 extern f64 D_800E5280, D_800E5288;
 s32 func_800D3550(s32);
 s32 func_800D3684(s32, s32);
@@ -54,15 +39,15 @@ void func_800B1E04(void) {
 
     switch (state) {
     case 0:
-        if (D_800FAF58->fC == 2) {
+        if (D_800FAF58->step == 2) {
             if (!(D_800FABD0->f34 < D_800E5280) || !(D_800FABD0->f5C & 0x1110000)) {
                 goto incr;
             }
             D_800FABD0->f6 = 0x10;
-            if (func_800D3550(func_800D3684(D_800FAF58->f58, D_800FABD0->f44)) >= 0xAA) {
+            if (func_800D3550(func_800D3684(D_800FAF58->heading, D_800FABD0->f44)) >= 0xAA) {
                 goto check;
             }
-            if (D_800FABD0->f2E != D_800F9B60->fA) {
+            if (D_800FABD0->f2E != D_800F9B60->state) {
                 if (!func_800D4198(0x320)) {
                     goto check;
                 }
@@ -79,14 +64,14 @@ void func_800B1E04(void) {
                         D_800FABD0->f2 = 0;
                         D_800FABD0->f4 = 0;
                         D_800FABD0->f6 |= 0x4000;
-                        D_800FABD0->f2E = D_800F9B60->fA;
+                        D_800FABD0->f2E = D_800F9B60->state;
                         D_800FABD0->f5C &= ~7;
                         break;
                     case 18:
                         D_800FABD0->f2 = 0;
                         D_800FABD0->f4 = 0;
                         D_800FABD0->f6 |= 0x8000;
-                        D_800FABD0->f2E = D_800F9B60->fA;
+                        D_800FABD0->f2E = D_800F9B60->state;
                         D_800FABD0->f5C &= ~7;
                         break;
                     case 6:
@@ -94,7 +79,7 @@ void func_800B1E04(void) {
                         D_800FABD0->f4++;
                         break;
                     default:
-                        D_800FABD0->f2E = D_800F9B60->fA;
+                        D_800FABD0->f2E = D_800F9B60->state;
                         break;
                     }
                     goto check;
@@ -110,7 +95,7 @@ apply:
                     D_800FABD0->f2 = 0;
                     D_800FABD0->f4 = 0;
                     D_800FABD0->f6 |= flag;
-                    D_800FABD0->f2E = D_800F9B60->fA;
+                    D_800FABD0->f2E = D_800F9B60->state;
                     D_800FABD0->f5C &= ~7;
                     goto check;
                 }
@@ -137,13 +122,13 @@ inc20:
                 }
                 D_800FABD0->f2 = 0;
                 D_800FABD0->f4 = 0;
-                D_800FABD0->f2E = D_800F9B60->fA;
+                D_800FABD0->f2E = D_800F9B60->state;
                 D_800FABD0->f5C &= ~7;
             } else {
 incr:
                 D_800FABD0->f4++;
             }
-        } else if (D_800FAF58->fC < 2) {
+        } else if (D_800FAF58->step < 2) {
             if (func_800D4198(D_800FABD0->f12)) {
                 if (D_800FABD0->f34 < D_800E5288) {
                     D_800FABD0->f6 = 0x10;
@@ -153,16 +138,16 @@ incr:
             D_800FABD0->f4 = state + 1;
         }
 check:
-        if (D_800FAF58->fA == 0x43) {
+        if (D_800FAF58->state == 0x43) {
             return;
         }
         D_800FABD0->f2 = 0;
         D_800FABD0->f4 = 0;
-        D_800FABD0->f2E = D_800F9B60->fA;
+        D_800FABD0->f2E = D_800F9B60->state;
         D_800FABD0->f5C &= ~7;
         return;
     case 1:
-        switch (D_800FAF58->fA) {
+        switch (D_800FAF58->state) {
         case 0x43:
             return;
         case 1:
@@ -176,12 +161,12 @@ check:
                     if (func_800D4198(500)) {
                         D_800FABD0->f2 = 0x1D;
                         D_800FABD0->f4 = 0;
-                        D_800FABD0->f2E = D_800F9B60->fA;
+                        D_800FABD0->f2E = D_800F9B60->state;
                         D_800FABD0->f5C &= ~7;
                     } else {
                         D_800FABD0->f2 = 0x1C;
                         D_800FABD0->f4 = 0;
-                        D_800FABD0->f2E = D_800F9B60->fA;
+                        D_800FABD0->f2E = D_800F9B60->state;
                         D_800FABD0->f5C &= ~7;
                     }
                     return;
@@ -191,16 +176,16 @@ check:
         }
         D_800FABD0->f2 = 0;
         D_800FABD0->f4 = 0;
-        D_800FABD0->f2E = D_800F9B60->fA;
+        D_800FABD0->f2E = D_800F9B60->state;
         D_800FABD0->f5C &= ~7;
         return;
     case 2:
-        if (D_800FAF58->fA == 0x21) {
+        if (D_800FAF58->state == 0x21) {
             return;
         }
         D_800FABD0->f2 = 0;
         D_800FABD0->f4 = 0;
-        D_800FABD0->f2E = D_800F9B60->fA;
+        D_800FABD0->f2E = D_800F9B60->state;
         D_800FABD0->f5C &= ~7;
         return;
     }

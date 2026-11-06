@@ -5,145 +5,128 @@
  */
 #include "common.h"
 
-typedef struct {
-    u8 f0;
-    u8 pad1[9];
-    s16 fA;
-    s16 fC;
-    s16 fE;
-    u8 pad10[6];
-    s16 f16;
-    u8 pad18[8];
-    u64 flags;
-    u8 pad28[4];
-    u32 f2C;
-    u8 pad30[0xA];
-    s16 f3A;
-    u8 pad3C[8];
-    s16 f44;
-    s16 f46;
-    u8 pad48[0x318];
-    u16 f360;
-    s8 f362;
-    u8 pad363[0xC];
-    u8 f36F;
-    u8 pad370[0x14];
-    s8 f384;
-    u8 pad385;
-    s16 f386;
-    u8 pad388[4];
-    u8 f38C[2];
-    u16 f38E;
-    u8 pad390[0x13];
-    u8 f3A3;
-    u8 f3A4;
-    u8 pad3A5[7];
-    u32 f3AC;
-} E83DC;
-
 extern u8 D_80075468[];
 
-void func_800D4AD0(void *);
-void func_800D4B10(void *);
-void func_800D427C(void *, s16, s32);
-s16 func_800D5438(void *, s32);
+void func_800D4AD0(Wrestler *);
+void func_800D4B10(Wrestler *);
+void func_800D427C(Wrestler *, s16, s32);
+s16 func_800D5438(Wrestler *, s32);
 void unpackAnimationParameters(void *, void *);
 
-#define SETACT(e, act) \
-    (e)->fA = (act); \
-    (e)->fC = 0; \
-    (e)->fE = 0; \
-    (e)->f360 = 0; \
-    (e)->flags = ((e)->flags & ~0x10810000000ULL) | 0x1000000000ULL; \
-    func_800DECAC((e), 0, 0, 0);
+/* Enter state st: step, stepFlags and pairSignals cleared, flags bits 0x10810000000 cleared and 0x1000000000 set;
+ * func_800DECAC(w, 0, 0, 0) only zeroes D_800F98D0[w->id]. */
+#define SETACT(w, st) \
+    (w)->state = (st); \
+    (w)->step = 0; \
+    (w)->stepFlags = 0; \
+    (w)->pairSignals = 0; \
+    (w)->flags = ((w)->flags & ~0x10810000000ULL) | 0x1000000000ULL; \
+    func_800DECAC((w), 0, 0, 0);
 
-/* func_800A7C40 */
-static inline void load83(E83DC *a, s8 sel, s16 id)
+/* Inlined copy of func_800A7C40: make entry moveId of owner's move table the current move of w. */
+static inline void load83(Wrestler *w, s8 owner, s16 moveId)
 {
     u8 *tbl;
-    a->f384 = sel;
-    a->f386 = id;
-    tbl = &D_80075468[0x10] + a->f384 * 0x1A30;
-    unpackAnimationParameters(a->f38C, tbl + id * 0x18);
-    if (id < 0xEF) {
-        if (a->f3AC & 0x8000) {
-            a->flags |= 0x4000000000000000ULL;
+    w->moveOwnerId = owner;
+    w->moveId = moveId;
+    tbl = &D_80075468[0x10] + w->moveOwnerId * 0x1A30;
+    unpackAnimationParameters(&w->move, tbl + moveId * 0x18);
+    if (moveId < 0xEF) {
+        if (w->move.flags & 0x8000) {
+            w->flags |= 0x4000000000000000ULL;
         } else {
-            a->flags &= ~0x4000000000000000ULL;
+            w->flags &= ~0x4000000000000000ULL;
         }
     }
 }
 
-s32 func_800A83DC(E83DC *a, E83DC *b)
+/* Called for the mover a and its opponent b once a's animation has ended (the callers test animFramesLeft <= 0).
+ * Clears flags bits 0x3800000 on both, then:
+ * - anim.endPose 5 and move.moveCode 0: both finish their animation (func_800D4AD0); a enters state 0x45 step 2
+ *   (grappleCtx = (b's grappleCtx & 2) | 0x440, stateTimer 0x5A, or 0x3C without bit 2) with animation 0xE8E,
+ *   b enters state 0x46 step 2 (stateTimer and grappleCtx 0) with 0xE8F (both through func_800D427C(w, id, 1)).
+ * - move.flags & 0x1E00 (paired-move kinds): both apply anim.endZone (func_800D4B10); b's lastMoveTakenId /
+ *   lastMoveTakenParam = a's move.nameId / move.unk3A4; states 0x3E/0x3F when bit 0x200 is set, else 0x3C/0x3D.
+ * - moveCode 0x9D/0x9F (state 0x1F) or 0xA1/0xA3 (state 7): only a, which drops attached[0] and
+ *   WR_FLAG_PAIR_LEADER, finishes its animation and enters that state at step 1.
+ * - other nonzero moveCode: both finish their animation. For 0x99..0xA6, a->counterKind = 0, 1, 2, 4 ... 0x20
+ *   picked from the code (0x9A and 0xA5 have no case, so m is stored uninitialised) and the states are 0x58/0x59.
+ *   Otherwise a's current move becomes entry moveCode of its own move table (inlined func_800A7C40), func_800D427C
+ *   starts func_800D5438(a, 0) on a and func_800D5438(a, 1) on b, and the states are 0x49/0x4A (moveCode
+ *   0x5A..0x69, also grappleCtx |= 0x80) or 0x53/0x54.
+ * Every state change goes through SETACT and, except in the first case, sets WR_FLAG_RERUN. Returns 1 when one of
+ * these cases applied, 0 otherwise (anim.endPose not 5, no 0x1E00 bit, moveCode 0: only the 0x3800000 bits were
+ * cleared). */
+s32 func_800A83DC(Wrestler *a, Wrestler *b)
 {
     s32 k;
     s16 m;
 
     a->flags &= ~0x3800000ULL;
     b->flags &= ~0x3800000ULL;
-    if (a->f36F == 5 && a->f3A3 == 0) {
+    if (a->anim.endPose == 5 && a->move.moveCode == 0) {
         func_800D4AD0(a);
         func_800D4AD0(b);
         SETACT(a, 0x45);
-        a->fC = 2;
-        a->f2C = (b->f2C & 2) | 0x440;
-        if (a->f2C & 2) {
+        a->step = 2;
+        a->grappleCtx = (b->grappleCtx & 2) | 0x440;
+        if (a->grappleCtx & 2) {
             if (b) {
-                a->f16 = 0x5A;
+                a->stateTimer = 0x5A;
             } else {
-                a->f16 = 0x5A;
+                a->stateTimer = 0x5A;
             }
         } else {
-            a->f16 = 0x3C;
+            a->stateTimer = 0x3C;
         }
         func_800D427C(a, 0xE8E, 1);
         SETACT(b, 0x46);
-        b->fC = 2;
-        b->f16 = 0;
-        b->f2C = 0;
+        b->step = 2;
+        b->stateTimer = 0;
+        b->grappleCtx = 0;
         func_800D427C(b, 0xE8F, 1);
         goto done;
     }
-    if (a->f3AC & 0x1E00) {
+    if (a->move.flags & 0x1E00) {
         func_800D4B10(a);
         func_800D4B10(b);
-        b->f44 = a->f38E;
-        b->f46 = (s8)a->f3A4;
-        if (a->f3AC & 0x200) {
+        b->lastMoveTakenId = a->move.nameId;
+        b->lastMoveTakenParam = a->move.unk3A4;
+        if (a->move.flags & 0x200) {
             SETACT(a, 0x3E);
-            a->flags |= 0x10000000ULL;
+            a->flags |= WR_FLAG_RERUN;
             SETACT(b, 0x3F);
-            b->flags |= 0x10000000ULL;
+            b->flags |= WR_FLAG_RERUN;
         } else {
             SETACT(a, 0x3C);
-            a->flags |= 0x10000000ULL;
+            a->flags |= WR_FLAG_RERUN;
             SETACT(b, 0x3D);
-            b->flags |= 0x10000000ULL;
+            b->flags |= WR_FLAG_RERUN;
         }
         goto done;
     }
-    if (a->f3A3 != 0) {
-        if (a->f3A3 == 0x9F || a->f3A3 == 0x9D) {
-            a->f362 = -1;
-            a->flags &= ~0x40000000ULL;
+    if (a->move.moveCode != 0) {
+        if (a->move.moveCode == 0x9F || a->move.moveCode == 0x9D) {
+            a->attached[0] = -1;
+            a->flags &= ~WR_FLAG_PAIR_LEADER;
             func_800D4AD0(a);
             SETACT(a, 0x1F);
-            a->fC = 1;
-            a->flags |= 0x10000000ULL;
+            a->step = 1;
+            a->flags |= WR_FLAG_RERUN;
             goto done;
         }
-        if (a->f3A3 == 0xA1 || a->f3A3 == 0xA3) {
-            a->f362 = -1;
-            a->flags &= ~0x40000000ULL;
+        if (a->move.moveCode == 0xA1 || a->move.moveCode == 0xA3) {
+            a->attached[0] = -1;
+            a->flags &= ~WR_FLAG_PAIR_LEADER;
             func_800D4AD0(a);
             SETACT(a, 7);
-            a->fC = 1;
-            a->flags |= 0x10000000ULL;
+            a->step = 1;
+            a->flags |= WR_FLAG_RERUN;
             goto done;
         }
         func_800D4AD0(a);
         func_800D4AD0(b);
-        k = a->f3A3;
+        k = a->move.moveCode;
         if ((u8)(k - 0x99) < 14) {
             switch (k) {
             case 0x99: m = 0; break;
@@ -154,30 +137,30 @@ s32 func_800A83DC(E83DC *a, E83DC *b)
             case 0xA4: m = 0x10; break;
             case 0xA6: m = 0x20; break;
             }
-            a->f3A = m;
+            a->counterKind = m;
             SETACT(a, 0x58);
-            a->flags |= 0x10000000ULL;
+            a->flags |= WR_FLAG_RERUN;
             SETACT(b, 0x59);
-            b->flags |= 0x10000000ULL;
+            b->flags |= WR_FLAG_RERUN;
         } else if ((u32)(k - 0x5A) < 0x10) {
-            load83(a, a->f0, (u8)k);
+            load83(a, a->id, (u8)k);
             func_800D427C(a, func_800D5438(a, 0), 1);
             func_800D427C(b, func_800D5438(a, 1), 1);
 
-            a->f2C |= 0x80;
+            a->grappleCtx |= 0x80;
             SETACT(a, 0x49);
-            a->flags |= 0x10000000ULL;
+            a->flags |= WR_FLAG_RERUN;
             SETACT(b, 0x4A);
-            b->flags |= 0x10000000ULL;
+            b->flags |= WR_FLAG_RERUN;
         } else {
-            load83(a, a->f0, (u8)k);
+            load83(a, a->id, (u8)k);
             func_800D427C(a, func_800D5438(a, 0), 1);
             func_800D427C(b, func_800D5438(a, 1), 1);
 
             SETACT(a, 0x53);
-            a->flags |= 0x10000000ULL;
+            a->flags |= WR_FLAG_RERUN;
             SETACT(b, 0x54);
-            b->flags |= 0x10000000ULL;
+            b->flags |= WR_FLAG_RERUN;
         }
         goto done;
     }

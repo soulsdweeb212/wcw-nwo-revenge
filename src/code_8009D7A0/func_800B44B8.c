@@ -6,9 +6,9 @@
 #include "common.h"
 
 /* Action selector for self D_800FABD0:
- * phase 0: pick a direction from the opponent's position (with a random
+ * phase 0: pick a direction from the AI opponent's heading (with a random
  *          +/-2 jitter) and store the next action id;
- * phase 1: when the opponent's state matches, either start the wind-up action
+ * phase 1: when the AI self's state is 1, either start the wind-up action
  *          (with a probability check) or clear back to idle; always re-sync
  *          the stored opponent state. */
 typedef struct {
@@ -28,23 +28,12 @@ typedef struct {
     u32 flags5C;
 } Nw2B44Action;
 
-typedef struct {
-    u8 pad0[6];
-    u16 f6;
-    u8 pad8[2];
-    s16 fA;
-    u8 padC[0x4C];
-    void *f58;
-} Nw2B44State;
-
 extern Nw2B44Action *D_800FABD0;
-extern Nw2B44State *D_800F9B60;
-extern u8 *D_800FAF58;
 extern u16 D_800E3CF0[];
 extern f64 D_800E5480;
 extern f64 D_800E5488;
 
-s32 func_800D3638(void *);
+s32 func_800D3638(s32);
 s8 func_800D4198(s16);
 
 void func_800B44B8(void) {
@@ -52,7 +41,7 @@ void func_800B44B8(void) {
 
     switch (phase) {
     case 0: {
-        s32 dirIndex = func_800D3638(D_800F9B60->f58);
+        s32 dirIndex = func_800D3638(D_800F9B60->heading);
         if (func_800D4198(0x1F4) != 0) {
             dirIndex += 2;
         } else {
@@ -63,12 +52,12 @@ void func_800B44B8(void) {
         break;
     }
     case 1:
-        if (((Nw2B44State *)D_800FAF58)->fA == phase) {
+        if (D_800FAF58->state == phase) {
             if (D_800FABD0->f34 < D_800E5480
                 && func_800D4198(func_800D4198((s16)((f64)D_800FABD0->f12 * D_800E5488))) != 0) {
                 D_800FABD0->f2 = 0x20;
                 D_800FABD0->f4 = 0;
-                D_800FABD0->f2E = D_800F9B60->fA;
+                D_800FABD0->f2E = D_800F9B60->state;
                 D_800FABD0->flags5C &= ~7;
                 return;
             }
@@ -76,13 +65,13 @@ void func_800B44B8(void) {
         } else {
             D_800FABD0->f2 = 0;
             D_800FABD0->f4 = 0;
-            D_800FABD0->f2E = D_800F9B60->fA;
+            D_800FABD0->f2E = D_800F9B60->state;
             D_800FABD0->flags5C &= ~7;
         }
-        if (D_800FABD0->f2E != D_800F9B60->fA) {
+        if (D_800FABD0->f2E != D_800F9B60->state) {
             D_800FABD0->f2 = 0;
             D_800FABD0->f4 = 0;
-            D_800FABD0->f2E = D_800F9B60->fA;
+            D_800FABD0->f2E = D_800F9B60->state;
             D_800FABD0->flags5C &= ~7;
         }
         break;

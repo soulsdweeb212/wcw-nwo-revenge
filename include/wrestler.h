@@ -1,9 +1,8 @@
 /* wrestler.h: the per-wrestler match record (0x3B0 bytes) of WCW/nWo Revenge.
  *
  * D_800F9D10 holds four of these, one per player slot (0x800F9D10..0x800FABD0), in overlay 2's BSS. There is no
- * fifth record: every loop runs i < 4. docs/wrestler.md explains each field with its evidence. This header is a map
- * for reading and porting; the matched C does not use it yet (it still uses raw offsets), so a field name here
- * changes no build output.
+ * fifth record: every loop runs i < 4. docs/wrestler.md explains each field with its evidence. common.h includes this
+ * header, so every file has the types; the matched C reaches the records through them.
  *
  * Coordinates: world units, Y up. Ring centre (0,0); ropes at |x|,|z| = 230; apron standing line 265; ring platform
  * edge 280; floor out to 528; entrance aisle on +Z out to z = 1250. Y = 90 on the mat and apron, 0 on the floor.
@@ -13,8 +12,6 @@
  * Names with a "?" in the comment are only partly understood; unkXXX fields have no known meaning. */
 #ifndef WRESTLER_H
 #define WRESTLER_H
-
-#include "common.h"
 
 /* A cached world position of one skeleton joint (game coordinates, w unused). */
 typedef struct {
@@ -67,6 +64,11 @@ typedef struct {
     u8 unk3AA[2];
     u32 flags;              /* 0x3AC move properties (0x80 pin-able, 0x200/0x1E00 paired-move kinds ...) */
 } WrMove;
+
+/* The two 32-bit words of a u64 flag field (big-endian: hi first), for code that copies flags a word at a time. */
+typedef struct {
+    s32 hi, lo;
+} WrFlagWords;
 
 typedef struct Wrestler {
     s8 id;                  /* 0x000 own slot 0..3 */
@@ -126,7 +128,9 @@ typedef struct Wrestler {
     s8 moveOwnerId;         /* 0x384 whose move table the current move is from */
     u8 unk385;
     s16 moveId;             /* 0x386 index into that table */
-    u8 unk388[4];
+    s16 moveStatKind;       /* 0x388 statistics category of the current move, 0..0x56 (0x57 = not counted): row of
+                             * the per-player 87-row counter table at D_8007EF30 + 0x1B0 (func_800A7F6C) */
+    u8 unk38A[2];
     WrMove move;            /* 0x38C */
 } Wrestler;                 /* 0x3B0 */
 
@@ -146,7 +150,15 @@ typedef struct Wrestler {
 #define WR_FLAG_AUTO_FACE       0x100000000ULL          /* turn toward the opponent automatically */
 #define WR_FLAG_TEAM_B          0x200000000ULL          /* team / side bit */
 
-/* The four records, and the pointers set before each wrestler's update. */
+/* The four records, and the pointers to them that are set before each wrestler's update (docs/wrestler.md). The
+ * role pointers exist twice, at 0x800FAxxx and 0x800EB4xx, and are written together. */
 extern Wrestler D_800F9D10[4];
+extern Wrestler *D_800FAF5C, *D_800EB408;   /* the wrestler being updated (slot D_800FADB8) */
+extern Wrestler *D_800F9B00, *D_800EB40C;   /* its opponent (+0x353) */
+extern Wrestler *D_800FABE0, *D_800EB410;   /* its tag partner (+0x355); itself if none */
+extern Wrestler *D_800F9B64, *D_800EB414;   /* who holds or attacks it (+0x351) */
+extern Wrestler *D_800FAF7C, *D_800EB418;   /* the second attacker of a double team (+0x352) */
+extern Wrestler *D_800FAF58, *D_800F9B60;   /* AI: the wrestler it drives, and that one's opponent */
+extern Wrestler *D_800FAF80, *D_800FADDC;   /* AI: the partner, and the partner's opponent */
 
 #endif

@@ -26,20 +26,7 @@ typedef struct {
     u32 f5C;
 } Nw2B31Action;
 
-typedef struct {
-    u8 pad0[0xA];
-    s16 fA;
-    u8 pad1[0x14];
-    u64 flags;
-    u8 pad2[0x44];
-    f32 f6C;
-    u8 pad3[4];
-    f32 f74;
-} Nw2B31Obj;
-
 extern Nw2B31Action *D_800FABD0;
-extern Nw2B31Obj *D_800FAF58;
-extern Nw2B31Obj *D_800F9B60;
 extern u16 D_800E3CD0[];
 extern u16 D_800E3CD8[];
 s8 func_800D4198(s16);
@@ -47,14 +34,14 @@ f32 func_800D3564(f32);
 
 void func_800B31F0(void)
 {
-    Nw2B31Obj *o;
+    Wrestler *o;
     f32 d;
 
     switch (D_800FABD0->f4) {
     case 0:
         if (D_800FAF58->flags & 0xC0) {
             if (func_800D4198(D_800FABD0->f28 * 10)) {
-                if (D_800FAF58->flags & 0x80) {
+                if (D_800FAF58->flags & WR_FLAG_ON_APRON) {
                     D_800FABD0->f4 = 2;
                     return;
                 }
@@ -70,7 +57,7 @@ void func_800B31F0(void)
         break;
     case 1:
         o = D_800FAF58;
-        switch (o->fA) {
+        switch (o->state) {
         case 0x2B:
         case 0x60:
         case 0x86:
@@ -84,7 +71,7 @@ void func_800B31F0(void)
             D_800FABD0->f6 = D_800FABD0->fA;
             return;
         case 1:
-            if (o->flags & 0x80) {
+            if (o->flags & WR_FLAG_ON_APRON) {
                 D_800FABD0->f4++;
                 return;
             }
@@ -92,16 +79,16 @@ void func_800B31F0(void)
         }
         break;
     case 2:
-        if (!(D_800FAF58->flags & 0x80)) {
+        if (!(D_800FAF58->flags & WR_FLAG_ON_APRON)) {
             break;
         }
-        if (!(D_800F9B60->flags & 0x40)) {
+        if (!(D_800F9B60->flags & WR_FLAG_IN_RING)) {
             break;
         }
         switch (D_800FABD0->f1E) {
         case 0:
         case 2:
-            d = D_800F9B60->f6C - D_800FAF58->f6C;
+            d = D_800F9B60->jointA[1].x - D_800FAF58->jointA[1].x;
             if (d < 0.0) {
                 D_800FABD0->f6 = 0x200;
             } else {
@@ -110,7 +97,7 @@ void func_800B31F0(void)
             break;
         case 1:
         case 3:
-            d = D_800F9B60->f74 - D_800FAF58->f74;
+            d = D_800F9B60->jointA[1].z - D_800FAF58->jointA[1].z;
             if (d < 0.0) {
                 D_800FABD0->f6 = 0x400;
             } else {
@@ -149,16 +136,16 @@ void func_800B31F0(void)
         }
         return;
     case 4:
-        if (D_800FAF58->fA == 0x69) {
+        if (D_800FAF58->state == 0x69) {
             return;
         }
         break;
     case 5:
-        if (D_800FAF58->fA == 3) {
+        if (D_800FAF58->state == 3) {
             D_800FABD0->f8 = 0xF00;
             return;
         }
-        if (D_800FAF58->fA == 4) {
+        if (D_800FAF58->state == 4) {
             return;
         }
         break;
@@ -167,6 +154,6 @@ void func_800B31F0(void)
     }
     D_800FABD0->f2 = 0;
     D_800FABD0->f4 = 0;
-    D_800FABD0->f2E = D_800F9B60->fA;
+    D_800FABD0->f2E = D_800F9B60->state;
     D_800FABD0->f5C &= ~7;
 }

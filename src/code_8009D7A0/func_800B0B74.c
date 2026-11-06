@@ -5,7 +5,8 @@
  */
 #include "common.h"
 
-extern u8 *D_800FABD0, *D_800FAF58, *D_800F9B60;   /* action record, actor, target */
+extern u8 *D_800FABD0;                       /* action record */
+/* actor, target */
 extern f64 D_800E5248;
 #define A(o,t) (*(t *)(D_800FABD0+(o)))
 
@@ -20,7 +21,7 @@ void func_800B0B74(void) {
         A(4, s16)++;
         break;
     case 1:
-        switch (*(s16 *)(D_800FAF58 + 0xA)) {
+        switch (D_800FAF58->state) {
         case 3:
             if ((f64)A(0x34, f32) < D_800E5248) {
                 A(8, s16) = 0xF00;
@@ -35,18 +36,18 @@ void func_800B0B74(void) {
         }
         break;
     case 2:
-        switch (*(s16 *)(D_800FAF58 + 0xA)) {
+        switch (D_800FAF58->state) {
         case 3:
         case 4:
             A(8, s16) = 0xF00;
             break;
         default: {
-            u8 *target;
+            Wrestler *target;
 reset:
             target = D_800F9B60;
             A(2, s16) = 0;
             A(4, s16) = 0;
-            A(0x2E, u16) = *(u16 *)(target + 0xA);
+            A(0x2E, u16) = (u16)target->state;
             A(0x5C, u32) &= ~7;
         }
             break;

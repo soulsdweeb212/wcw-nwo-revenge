@@ -7,19 +7,6 @@
 
 typedef struct { f32 x, y, z, w; } V4_2CAC;
 
-typedef struct {
-    u8 p0[6];
-    s16 f6;
-    u8 p8[0x18];
-    u64 flags;
-    u8 p28[0x14];
-    s16 f3C;
-    u8 p3E[0xE];
-    V4_2CAC v4C;
-    V4_2CAC parts[20];
-} Ent2CAC;
-
-typedef struct { u8 p0[0x11]; u8 f11; } Att2CAC;
 typedef struct { f32 x, y, z; s32 angle; } Dir2CAC;
 
 extern f64 D_800E6B38, D_800E6B40, D_800E6B48, D_800E6B50, D_800E6B58, D_800E6B60;
@@ -30,9 +17,20 @@ extern u8 D_800E3E10[];
 void func_800D3890(void *, V4_2CAC *, Dir2CAC *);
 void translateEntityXZ(void *, f32 *);
 
-#define e ((Ent2CAC *)entity)
+/* Boundary check (and correction) of a wrestler against the box of its zone.
+ * Reference point vb and half size: on the apron (WR_FLAG_ON_APRON without WR_FLAG_IN_RING) the root x/z with no
+ * size (with flag 0x0800000000000000: the pelvis jointA[1] x/z, except that the root's z is kept on ringSide 0/2
+ * and the root's x on ringSide 1/3);
+ * otherwise the centre and half size of the XZ bounds of the pelvis (widened by D_800E6B38 / D_800E6B40 when
+ * bodyMask bit 1 is set) and of jointA[2..19] picked by bodyMask bits 2..19.
+ * Box: entry dir of D_800E3D30, shrunk by the half size; dir 0 in the ring, 7 + quadrant on the apron, 3 + quadrant
+ * elsewhere (getXZDirectionQuadrant of the pelvis), with special boxes 0xB and 0xC picked by vb for dir 3.
+ * Result: side bits 0x100/0x200 (X) and 0x400/0x800 (Z) of the box edges crossed, mostly moved to the high half.
+ * With applyFlag, the push back along the axes allowed by dirMask (0 = all, 0xF00), divided by divisor, is applied to
+ * the wrestler (translateEntityXZ), to linked1 / linked2 unless attach (a WrAnimMeta, passed only by func_800D2BEC)
+ * has a nonzero unk379 below the wrestler's animFrame, to the three 16-byte points and to pos. */
 
-s32 func_800D2CAC(void *entity, void *linked1, void *linked2, f32 divisor, void *attach, void *points, void *pos, u16 dirMask, s32 bodyMask, u16 applyFlag) {
+s32 func_800D2CAC(Wrestler *self, Wrestler *linked1, Wrestler *linked2, f32 divisor, WrAnimMeta *attach, void *points, void *pos, u16 dirMask, s32 bodyMask, u16 applyFlag) {
     f32 box[4];
     f32 lo[3];
     f32 hi[3];
@@ -48,29 +46,29 @@ s32 func_800D2CAC(void *entity, void *linked1, void *linked2, f32 divisor, void 
     f32 *dp;
     s32 *tbl;
 
-    if (!(e->flags & 0x40) && (e->flags & 0x80)) {
+    if (!(self->flags & WR_FLAG_IN_RING) && (self->flags & WR_FLAG_ON_APRON)) {
         half[0] = 0.0f;
         half[2] = 0.0f;
-        vb = e->v4C;
-        if (e->flags & 0x0800000000000000ULL) {
-            vb.x = e->parts[1].x;
-            vb.z = e->parts[1].z;
-            switch (e->f3C) {
+        vb = *(V4_2CAC *)&self->x;
+        if (self->flags & 0x0800000000000000ULL) {
+            vb.x = self->jointA[1].x;
+            vb.z = self->jointA[1].z;
+            switch (self->ringSide) {
             case 0:
             case 2:
-                vb.z = e->v4C.z;
+                vb.z = self->z;
                 break;
             case 1:
             case 3:
-                vb.x = e->v4C.x;
+                vb.x = self->x;
                 break;
             }
         }
     } else {
-        lo[0] = e->parts[1].x;
-        hi[0] = e->parts[1].x;
-        lo[2] = e->parts[1].z;
-        hi[2] = e->parts[1].z;
+        lo[0] = self->jointA[1].x;
+        hi[0] = self->jointA[1].x;
+        lo[2] = self->jointA[1].z;
+        hi[2] = self->jointA[1].z;
         if (bodyMask & 2) {
             lo[0] = lo[0] + D_800E6B38;
             hi[0] = hi[0] + D_800E6B40;
@@ -81,17 +79,17 @@ s32 func_800D2CAC(void *entity, void *linked1, void *linked2, f32 divisor, void 
         i = 2;
         do {
             if (bodyMask & bit) {
-                if (e->parts[i].x < lo[0]) {
-                    lo[0] = e->parts[i].x;
+                if (self->jointA[i].x < lo[0]) {
+                    lo[0] = self->jointA[i].x;
                 }
-                if (e->parts[i].x > hi[0]) {
-                    hi[0] = e->parts[i].x;
+                if (self->jointA[i].x > hi[0]) {
+                    hi[0] = self->jointA[i].x;
                 }
-                if (e->parts[i].z < lo[2]) {
-                    lo[2] = e->parts[i].z;
+                if (self->jointA[i].z < lo[2]) {
+                    lo[2] = self->jointA[i].z;
                 }
-                if (e->parts[i].z > hi[2]) {
-                    hi[2] = e->parts[i].z;
+                if (self->jointA[i].z > hi[2]) {
+                    hi[2] = self->jointA[i].z;
                 }
             }
             i++;
@@ -104,11 +102,11 @@ s32 func_800D2CAC(void *entity, void *linked1, void *linked2, f32 divisor, void 
     }
 
     dir = 0;
-    if (!(e->flags & 0x40)) {
-        if (e->flags & 0x80) {
-            dir = getXZDirectionQuadrant(&e->parts[1].x) + 7;
+    if (!(self->flags & WR_FLAG_IN_RING)) {
+        if (self->flags & WR_FLAG_ON_APRON) {
+            dir = getXZDirectionQuadrant(&self->jointA[1].x) + 7;
         } else {
-            dir = getXZDirectionQuadrant(&e->parts[1].x) + 3;
+            dir = getXZDirectionQuadrant(&self->jointA[1].x) + 3;
         }
     }
     if (dir == 3) {
@@ -198,8 +196,8 @@ s32 func_800D2CAC(void *entity, void *linked1, void *linked2, f32 divisor, void 
             delta[2] = 0.0f;
         }
         dp = delta;
-        translateEntityXZ(entity, dp);
-        if (attach == 0 || ((Att2CAC *)attach)->f11 == 0 || !(((Att2CAC *)attach)->f11 < e->f6)) {
+        translateEntityXZ(self, dp);
+        if (attach == NULL || attach->unk379 == 0 || !(attach->unk379 < self->animFrame)) {
             do {
                 if (linked1) {
                     translateEntityXZ(linked1, dp);

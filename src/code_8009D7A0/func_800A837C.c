@@ -6,16 +6,16 @@
 #include "common.h"
 
 extern u8 D_8007EF30[];
-void func_800DECAC(void *, s32, s32, s32);
 
-/* Bump the per-entity/per-animation usage counter unless the entity is already in
- * state 0x57 (the special "no counter" state). */
-void func_800A837C(u8 *entity) {
-    s16 t = *(s16 *)(entity + 0x388);
+/* Count the current move in the second word of its row of the per-player statistics table (D_8007EF30 + 0x1B4 +
+ * (w->id * 87 + w->moveStatKind) * 8; func_800A7F6C counts the first word), saturating at 0xFFFFFFFF. Does nothing
+ * when moveStatKind is 0x57 (not counted). */
+void func_800A837C(Wrestler *w) {
+    s16 t = w->moveStatKind;
     s32 idx;
 
     if (t != 0x57) {
-        idx = (*(s8 *)entity * 0x57 + t) * 8;
+        idx = (w->id * 0x57 + t) * 8;
         if (*(u32 *)(D_8007EF30 + 0x1B4 + idx) < 0xFFFFFFFFU) {
             *(u32 *)(D_8007EF30 + 0x1B4 + idx) += 1;
         }

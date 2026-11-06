@@ -5,17 +5,19 @@
  */
 #include "common.h"
 
-void func_800D3838(s32, s32, s16, s32);
+void func_800D3838(void *, void *, s16, void *);
 
 void func_800D36B4(void *, void *, void *);
 void translateEntityXZ(void *, void *);
 
-/* Transform the entity's local offset (+0x4C) by its position and apply it. */
-void func_800A7328(u8 *arg0) {
+/* Takes the delta from the root position (x, y, z) to the pelvis joint (jointA[1]) and passes it to
+ * translateEntityXZ, which shifts the root x/z and the joints by its XZ part: the root lands under where the
+ * pelvis was. */
+void func_800A7328(Wrestler *w) {
     u8 sp10[0x10];
 
-    func_800D36B4(arg0 + 0x4C, arg0 + 0x6C, sp10);
-    translateEntityXZ(arg0, sp10);
+    func_800D36B4(&w->x, &w->jointA[1], sp10);
+    translateEntityXZ(w, sp10);
 }
 
 s32 func_800D3550(s32);

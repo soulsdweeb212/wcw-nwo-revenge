@@ -10,21 +10,24 @@ extern struct {
     u32 stats[1][2];
 } D_8007EF30;
 
-void func_800A7F6C(u8 *e, s16 arg1) {
+/* Set w->moveStatKind, the statistics category of the current move (row of the per-player 87-row counter table at
+ * D_8007EF30 + 0x1B0), and count it. kind 0 picks the category from w->moveId (and from bit 0 of profile +0x38 and
+ * flags & 9); any other kind is used as is. 0x57 = not counted. */
+void func_800A7F6C(Wrestler *w, s16 kind) {
     s16 a2 = 0x57;
     s16 i;
 
-    if (arg1 == 0) {
-        u8 *att = *(u8 **)(e + 0x364);
+    if (kind == 0) {
+        u8 *att = w->profile;
         if (*(u64 *)(att + 0x38) & 1) {
-            i = (s16)(*(u16 *)(e + 0x386) - 0x21);
+            i = (s16)((u16)w->moveId - 0x21);
             switch (i) {
             case 0: case 2: case 5: case 7: case 10: case 12: case 15: case 17: case 20: case 22:
                 a2 = 9;
                 break;
             }
         } else {
-            i = (s16)(*(u16 *)(e + 0x386) - 0x21);
+            i = (s16)((u16)w->moveId - 0x21);
             switch (i) {
             case 0: case 5: case 10:
                 a2 = 0xB;
@@ -34,8 +37,8 @@ void func_800A7F6C(u8 *e, s16 arg1) {
                 break;
             }
         }
-        if (*(u64 *)(e + 0x20) & 9) {
-            switch (*(s16 *)(e + 0x386)) {
+        if (w->flags & 9) {
+            switch (w->moveId) {
             case 0x93: case 0x94: case 0x95: case 0x96:
                 a2 = 0;
                 break;
@@ -50,7 +53,7 @@ void func_800A7F6C(u8 *e, s16 arg1) {
                 break;
             }
         } else {
-            switch (*(s16 *)(e + 0x386)) {
+            switch (w->moveId) {
             case 0x93: case 0x94:
                 a2 = 0;
                 break;
@@ -65,7 +68,7 @@ void func_800A7F6C(u8 *e, s16 arg1) {
                 break;
             }
         }
-        i = (s16)(*(u16 *)(e + 0x386) - 8);
+        i = (s16)((u16)w->moveId - 8);
         switch (i) {
         case 173: case 174: case 175: case 176: a2 = 1; break;
         case 143: case 144: a2 = 2; break;
@@ -110,9 +113,9 @@ void func_800A7F6C(u8 *e, s16 arg1) {
         case 167: case 168: a2 = 0x2C; break;
         case 169: a2 = 0x2D; break;
         case 188: case 190:
-            a2 = ((s8)e[0x384] != (s8)e[0]) ? 0x2F : 0x2E; break;
+            a2 = (w->moveOwnerId != w->id) ? 0x2F : 0x2E; break;
         case 192: case 194:
-            a2 = ((s8)e[0x384] != (s8)e[0]) ? 0x31 : 0x30; break;
+            a2 = (w->moveOwnerId != w->id) ? 0x31 : 0x30; break;
         case 201: case 205: case 208: case 209: a2 = 0x32; break;
         case 202: a2 = 0x33; break;
         case 206: a2 = 0x34; break;
@@ -134,12 +137,12 @@ void func_800A7F6C(u8 *e, s16 arg1) {
         case 177: case 178: a2 = 0x46; break;
         }
     } else {
-        a2 = arg1;
+        a2 = kind;
     }
-    *(s16 *)(e + 0x388) = a2;
+    w->moveStatKind = a2;
     if (a2 != 0x57) {
-        if (D_8007EF30.stats[(s8)e[0] * 87 + a2][0] < 0xFFFFFFFFu) {
-            D_8007EF30.stats[(s8)e[0] * 87 + a2][0]++;
+        if (D_8007EF30.stats[w->id * 87 + a2][0] < 0xFFFFFFFFu) {
+            D_8007EF30.stats[w->id * 87 + a2][0]++;
         }
     }
 }

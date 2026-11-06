@@ -5,12 +5,11 @@
  */
 #include "common.h"
 
-extern s8 D_800F98E0[][0x30];    /* per-player state, [0] = id (-1 = empty) */
-extern s16 D_800F9D12[][0x1D8];  /* per-player entry, [0] = occupant (-1 = free) */
+extern s8 D_800F98E0[][0x30];    /* 4 slots (stride 0x30), [0] = type set by func_800E1920 (-1 = free) */
 
-/* Slot availability check: scan the four players, count how many entries are
- * occupied and how many state slots are empty. Returns the index of the last
- * empty state slot when more slots are empty than are in use, else -1. */
+/* Slot availability check: count the occupied wrestler records (D_800F9D10[i].characterId != -1) and the free
+ * D_800F98E0 slots. Returns the index of the first free slot when there are more free slots than empty records
+ * (4 - occupied), else -1. */
 s8 func_800E2A18(void) {
     s16 emptyCount;
     s16 i;
@@ -20,7 +19,7 @@ s8 func_800E2A18(void) {
 
     usedCount = 0;
     for (i = 0; i < 4; i++) {
-        if (-1 != D_800F9D12[i][0]) {
+        if (-1 != D_800F9D10[i].characterId) {
             usedCount++;
         }
     }

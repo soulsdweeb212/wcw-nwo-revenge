@@ -5,9 +5,10 @@
  */
 #include "common.h"
 
-s8 func_800D2758(s32, s32, s32, s32, s32);
+s8 func_800D2758(Wrestler *, f32, u16, s8, s16);
 
-/* Boundary correction with a body-part mask from arg1. */
-s8 func_800D2638(s32 arg0, s32 arg1, s32 arg2) {
-    return func_800D2758(arg0, arg2, arg1 & 0xFFFF, -1, 1);
+/* func_800D25D0 with an axis mask: func_800D2758(w, divisor, axisMask (0x300 X, 0xC00 Z; 0 = both), no id
+ * ignored, mode 1). */
+s8 func_800D2638(Wrestler *w, s32 axisMask, f32 divisor) {
+    return func_800D2758(w, divisor, axisMask & 0xFFFF, -1, 1);
 }

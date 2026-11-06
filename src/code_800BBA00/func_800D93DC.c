@@ -5,60 +5,45 @@
  */
 #include "common.h"
 
-/* Sets action/state bits (e->f38) for an entity based on its animation/state id
- * (e->fA) and substate (e->fC), unless the "present" bit 0x200 or the inhibit
- * bit 0x40 in the global flag words is set, or the entity is already tagged
- * (e->f355 == e->id). Values 1/2 encode the two conditions. */
-typedef struct {
-    s8 id;
-    u8 pad1[0x9];
-    s16 fA;
-    s16 fC;
-    u8 pad2[0x12];
-    u64 flags;
-    u8 pad3[0x10];
-    u8 f38;
-    u8 pad4[0x31C];
-    s8 f355;
-} Entity;
-
 extern u8 D_8007E228[];
 extern u8 D_8007EF30[];
 
-void func_800D93DC(void *arg0) {
-    Entity *e;
+/* Sets bits in frameBits from the wrestler's state and step, unless the global gate D_8007E228+0x58 bit 0x200 is
+ * clear, D_8007EF30+0x170 bit 0x40 is set, or the wrestler has no tag partner (partnerId == id). Bit 1 is set in
+ * state 1 on the apron, state 0x81 step < 2, state 0x17 step 1 on the apron, state 3 step < 4 on the apron and
+ * state 9; bit 2 in state 0x81 step >= 2 and state 10 step 4 or 7. The meaning of the two bits is not known. */
+void func_800D93DC(Wrestler *w) {
     s32 bits;
-    e = arg0;
     if (!(*(u16 *)(D_8007E228 + 0x58) & 0x200)) {
         return;
     }
     if (*(u16 *)(D_8007EF30 + 0x170) & 0x40) {
         return;
     }
-    if (e->f355 == e->id) {
+    if (w->partnerId == w->id) {
         return;
     }
     bits = 0;
-    switch (e->fA) {
+    switch (w->state) {
     case 1:
-        if (e->flags & 0x80) {
+        if (w->flags & WR_FLAG_ON_APRON) {
             bits = 1;
         }
         break;
     case 129:
         bits = 2;
-        if (e->fC < 2) {
+        if (w->step < 2) {
             bits = 1;
         }
         break;
     case 23:
-        if (e->fC == 1 && (e->flags & 0x80)) {
+        if (w->step == 1 && (w->flags & WR_FLAG_ON_APRON)) {
             bits = 1;
         }
         break;
     case 3:
-        if (e->flags & 0x80) {
-            if (e->fC < 4) {
+        if (w->flags & WR_FLAG_ON_APRON) {
+            if (w->step < 4) {
                 bits = 1;
             }
         }
@@ -67,10 +52,10 @@ void func_800D93DC(void *arg0) {
         bits = 1;
         break;
     case 10:
-        if (e->fC == 4 || e->fC == 7) {
+        if (w->step == 4 || w->step == 7) {
             bits = 2;
         }
         break;
     }
-    e->f38 |= bits;
+    w->frameBits |= bits;
 }

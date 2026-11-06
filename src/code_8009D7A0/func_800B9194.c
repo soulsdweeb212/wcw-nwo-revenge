@@ -11,9 +11,6 @@ extern u8 D_800E3978[];
 extern u8 D_800EB468[];
 extern u8 D_800EB46F;
 extern s16 D_800EB46A;
-extern s16 D_800F9D12[];
-extern u8 D_800F9D30[];
-extern u8 D_800F9D34[];
 extern s8 D_800FACE8;
 extern s32 func_8009678C(void);
 extern s32 func_800DA8B4(void *, s32, s32);
@@ -23,7 +20,8 @@ extern s8 func_80096854(s8);
 extern s8 func_800B8484(s32);
 /* Gate for a multi-stage "finish" sequence: only runs while the enable byte is
  * set, the inhibit flag is clear and no attachment is active. It scans the four
- * entity slots for one carrying flags 0x100|0x200; if none, it resets the run.
+ * wrestler slots for one carrying flags ON_FLOOR|LEGAL (0x100|0x200); if none,
+ * it resets the run.
  * Otherwise it steps a countdown D_800FACE8 (mapped from a table to a required
  * tag at D_800EB46A) and advances the stage until the countdown clears, at
  * which point it fires func_800B8484(0x10000). Returns a nonzero object/status
@@ -31,7 +29,6 @@ extern s8 func_800B8484(s32);
 s8 func_800B9194(void)
 {
     s16 idx;
-    s32 entityOff;
     u64 entFlags;
     s8 required;
     s16 *counter;
@@ -49,15 +46,14 @@ s8 func_800B9194(void)
     }
     for (idx = 0; idx < 4; idx++)
     {
-        entityOff = idx * 0x3B0;
-        if ((*((s16 *) (((u8 *) D_800F9D12) + entityOff))) == (-1))
+        if (D_800F9D10[idx].characterId == (-1))
         {
             continue;
         }
-        entFlags = *((u64 *) (D_800F9D30 + entityOff));
-        if (entFlags & 0x100)
+        entFlags = D_800F9D10[idx].flags;
+        if (entFlags & WR_FLAG_ON_FLOOR)
         {
-            if (entFlags & 0x200)
+            if (entFlags & WR_FLAG_LEGAL)
             {
                 break;
             }

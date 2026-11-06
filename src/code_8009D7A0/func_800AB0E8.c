@@ -5,14 +5,13 @@
  */
 #include "common.h"
 
-extern void *D_800FAF58;
 extern s8 D_8007E8C0[], D_800FACE8;
 s8 func_800D4198(s32);
 void func_800AD958(s32);
 s32 func_800AB0E8(void) {
     s32 chance;
-    u64 flags=*(u64 *)((u8 *)D_800FAF58+0x20);
-    if ((flags&0x100) && !(flags&0x8000)) {
+    u64 flags=D_800FAF58->flags;
+    if ((flags&WR_FLAG_ON_FLOOR) && !(flags&0x8000)) {
         chance=20;
         if (D_8007E8C0[0x66C]) {
             s8 lvl = D_800FACE8;

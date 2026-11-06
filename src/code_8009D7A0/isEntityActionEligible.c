@@ -5,49 +5,50 @@
  */
 #include "common.h"
 
-/* Whether `actor` may start the given action toward `other`: each action checks a
- * combination of the actor's state flags (+0x2C), the actor's attachment flags
- * (+0x364 -> +0x38), its own flags (+0x20) and the other's flags/attachment. */
-s32 isEntityActionEligible(u8 *actor, u8 *other, s16 action) {
+/* Whether `actor` may start the given action toward `other`: each action checks a combination of actor->grappleCtx
+ * bits, the u64 at actor->profile + 0x38, WR_FLAG_SPECIAL in actor->flags and other's flags (0x100000 walking, 0x400000
+ * down) and moveMode; actions 0x56/0x57 also need both in the ring or both on the floor. Only 0x56/0x57 and 0xE4 read
+ * other; callers pass 0 for it with 0x7E, 0x6E and 0xD2. */
+s32 isEntityActionEligible(Wrestler *actor, Wrestler *other, s16 action) {
     switch (action) {
     case 0x7E:
     case 0x82:
-        if ((*(u32 *)(actor + 0x2C) & 0x300)
-            && (*(u64 *)(*(u8 **)(actor + 0x364) + 0x38) & 0x800000000000ULL)
-            && ((*(u32 *)(actor + 0x2C) & 3) == 3))
+        if ((actor->grappleCtx & 0x300)
+            && (*(u64 *)(actor->profile + 0x38) & 0x800000000000ULL)
+            && ((actor->grappleCtx & 3) == 3))
             return 1;
         break;
     case 0x6E:
     case 0x77:
-        if ((*(u32 *)(actor + 0x2C) & 0x80)
-            && (*(u64 *)(*(u8 **)(actor + 0x364) + 0x38) & 0x400000000000ULL)
-            && ((*(u32 *)(actor + 0x2C) & 3) == 3))
+        if ((actor->grappleCtx & 0x80)
+            && (*(u64 *)(actor->profile + 0x38) & 0x400000000000ULL)
+            && ((actor->grappleCtx & 3) == 3))
             return 1;
         break;
     case 0x56:
     case 0x57:
-        if ((*(u64 *)(*(u8 **)(actor + 0x364) + 0x38) & 0x100000000000ULL)
-            && (*(u64 *)(actor + 0x20) & 0x80000)
-            && (*(u64 *)(other + 0x20) & 0x100000)
-            && (*(u16 *)(other + 0x28) & 0x420)
-            && (*(u64 *)(actor + 0x20) & *(u64 *)(other + 0x20) & 0x140))
+        if ((*(u64 *)(actor->profile + 0x38) & 0x100000000000ULL)
+            && (actor->flags & WR_FLAG_SPECIAL)
+            && (other->flags & 0x100000)
+            && (other->moveMode & 0x420)
+            && (actor->flags & other->flags & (WR_FLAG_IN_RING | WR_FLAG_ON_FLOOR)))
             return 1;
         break;
     case 0x58:
     case 0x59:
-        if ((*(u64 *)(*(u8 **)(actor + 0x364) + 0x38) & 0x200000000000ULL)
-            && (*(u64 *)(actor + 0x20) & 0x80000))
+        if ((*(u64 *)(actor->profile + 0x38) & 0x200000000000ULL)
+            && (actor->flags & WR_FLAG_SPECIAL))
             return 1;
         break;
     case 0xE4:
-        if ((*(u64 *)(*(u8 **)(actor + 0x364) + 0x38) & 0x8000000000000ULL)
-            && (*(u64 *)(actor + 0x20) & 0x80000)
-            && !(*(u64 *)(other + 0x20) & 0x400000))
+        if ((*(u64 *)(actor->profile + 0x38) & 0x8000000000000ULL)
+            && (actor->flags & WR_FLAG_SPECIAL)
+            && !(other->flags & 0x400000))
             return 1;
         break;
     case 0xD2:
-        if ((*(u64 *)(*(u8 **)(actor + 0x364) + 0x38) & 0x4000000000000ULL)
-            && (*(u64 *)(actor + 0x20) & 0x80000))
+        if ((*(u64 *)(actor->profile + 0x38) & 0x4000000000000ULL)
+            && (actor->flags & WR_FLAG_SPECIAL))
             return 1;
         break;
     }

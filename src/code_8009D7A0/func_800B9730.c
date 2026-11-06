@@ -6,15 +6,6 @@
 #include "common.h"
 
 typedef struct {
-    u16 f0;
-    u8 pad2[0xE];
-    u64 flags;
-    u8 pad18[0x1C];
-    u16 f34;
-    u8 pad36[0x37A];
-} Rec9730;
-
-typedef struct {
     s32 v;
     u8 pad[8];
 } Slot9730;
@@ -30,7 +21,6 @@ typedef struct {
     s16 f6C;
 } Blk9730;
 
-extern Rec9730 D_800F9D20[];
 extern u8 D_8007E228[];
 extern Blk9730 D_8007E8C0;
 extern u16 D_8007E92C;
@@ -64,30 +54,30 @@ void func_800B9730(s8 *arg0, s8 *arg1, s32 arg2, s32 arg3) {
     if (*arg1 == -1) {
         D_8007E8C0.f1C = -1;
     } else {
-        D_8007E8C0.f1C = D_800F9D20[*arg1].f34;
+        D_8007E8C0.f1C = D_800F9D10[*arg1].lastMoveTakenId;
     }
     D_800FABDC = *arg0;
     D_8007E848 = arg2;
     if ((D_8007E280 & 0x200) && *arg0 != -1 && *arg1 != -1) {
-        if (D_800F9D20[*arg0].flags & 0x200000000ULL) {
+        if (D_800F9D10[*arg0].flags & WR_FLAG_TEAM_B) {
             D_8007E848 = arg2 | 0x100;
         } else {
             D_8007E848 = arg2 | 0x200;
         }
     }
-    D_800F9D20[0].flags &= ~0x4000ULL;
-    D_800F9D20[1].flags &= ~0x4000ULL;
-    D_800F9D20[2].flags &= ~0x4000ULL;
-    D_800F9D20[3].flags &= ~0x4000ULL;
+    D_800F9D10[0].flags &= ~0x4000ULL;
+    D_800F9D10[1].flags &= ~0x4000ULL;
+    D_800F9D10[2].flags &= ~0x4000ULL;
+    D_800F9D10[3].flags &= ~0x4000ULL;
 
     cnt0 = 0;
     sum0 = 0;
     for (i = 0; i < 2; i++) {
         if (*arg0 != -1) {
             D_8007E848 |= D_800E3984[*arg0];
-            D_800F9D20[*arg0].flags |= 0x4000ULL;
+            D_800F9D10[*arg0].flags |= 0x4000ULL;
             cnt0++;
-            sum0 += D_800F9D20[*arg0].f0;
+            sum0 += D_800F9D10[*arg0].health;
             arg0++;
         }
     }
@@ -100,14 +90,14 @@ void func_800B9730(s8 *arg0, s8 *arg1, s32 arg2, s32 arg3) {
     for (i = 0; i < 3; i++) {
         if (*arg1 != -1) {
             D_8007E848 |= D_800E398C[*arg1];
-            D_800F9D20[*arg1].flags |= 0x8000ULL;
+            D_800F9D10[*arg1].flags |= 0x8000ULL;
             if ((func_800BA6A8(*arg1) << 24) == 0) {
-                D_800F9D20[*arg1].flags &= ~0x200ULL;
+                D_800F9D10[*arg1].flags &= ~WR_FLAG_LEGAL;
             } else if (D_8007E280 & 0x400) {
-                D_800F9D20[*arg1].flags |= 0x10ULL;
+                D_800F9D10[*arg1].flags |= 0x10ULL;
             }
             cnt1++;
-            sum1 += D_800F9D20[*arg1].f0;
+            sum1 += D_800F9D10[*arg1].health;
             arg1++;
         }
     }
@@ -124,7 +114,7 @@ void func_800B9730(s8 *arg0, s8 *arg1, s32 arg2, s32 arg3) {
     D_800EB470 = (s16)(s32)((f64)D_800EB470 * D_800E5698);
     if (arg2 & 0x100000) {
         D_8007E228[0x8C] = 0;
-        if ((arg2 & 0xB000) && (D_800F9D20[D_800FABDC].flags & 0x4000000000000000ULL)) {
+        if ((arg2 & 0xB000) && (D_800F9D10[D_800FABDC].flags & 0x4000000000000000ULL)) {
             D_8007E228[0x8C] = D_800E39A4[D_800FABDC];
         }
     }

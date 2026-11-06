@@ -20,15 +20,18 @@ static inline void facingDirection(f32 *a,f32 *b,FacingVec *out) {
 }
 static inline s32 facingAbs(s32 d) {s32 a; if(d<0) a=-d; else a=d; return a;}
 static inline s32 facingWrap(s32 a) {s32 t=a; a&=0xFFF; if(t&0x800) a|=~0xFFF; return a;}
-u16 getEntityPairFacingFlags(u8 *a,u8 *b) {
+/* Facing test between wrestlers a and b, using the XZ heading from a's pelvis (jointA[1]) to b's.
+ * Bit 1: a's heading is within 0x400 (90 degrees) of the direction to b; else bit 2.
+ * Bit 4: b's heading is within 0x400 of the direction back to a; else bit 8. */
+u16 getEntityPairFacingFlags(Wrestler *a,Wrestler *b) {
     FacingVec v; s32 diff,ang,t; u16 flags=0;
-    facingDirection((f32 *)(a+0x6C),(f32 *)(b+0x6C),&v);
-    diff=*(s32 *)(a+0x58)-v.e[3].i;
+    facingDirection(&a->jointA[1].x,&b->jointA[1].x,&v);
+    diff=a->heading-v.e[3].i;
     if(diff>=0) t=diff; else t=-diff;
     if(t>0x800) {if(diff<0) diff+=0x1000; else diff-=0x1000;}
     if(facingAbs(diff)<=0x400) flags|=1; else flags|=2;
     ang=facingWrap(v.e[3].i+0x800);
-    diff=*(s32 *)(b+0x58)-ang;
+    diff=b->heading-ang;
     if(facingAbs(diff)>0x800) {if(diff<0) diff+=0x1000; else diff-=0x1000;}
     if(diff>=0) t=diff; else t=-diff;
     if(t<=0x400) flags|=4; else flags|=8;

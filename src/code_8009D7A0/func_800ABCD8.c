@@ -6,7 +6,6 @@
 #include "common.h"
 
 extern u8 *D_800FABD0;
-extern u8 *D_800FAF58;
 extern s16 D_800E3658[];
 extern f64 D_800E4E68;
 extern f64 D_800E4E70;

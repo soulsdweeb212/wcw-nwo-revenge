@@ -6,15 +6,13 @@
 #include "common.h"
 
 /* Predicate deciding whether `entity` may start or continue a special action. Depends
- * on the global mode word (D_8007E228+0x58), the entity's u64 +0x20 flags, its +0x358
- * flags, how many of the four 0x3B0-stride records carry the matching flag pairs, and
+ * on the global mode word (D_8007E228+0x58), the entity's flags, its partnerFlags, how
+ * many of the four records carry the matching flag pairs, and
  * func_800DA6DC. Returns 1 to allow, 0 otherwise. */
 extern u8 D_8007E228[];
-extern u8 D_800F9D12[];
-extern u8 D_800F9D30[];
 s8 func_800DA6DC(void *);
 
-s32 isEntityActionAllowedC2870(u8 *entity) {
+s32 isEntityActionAllowedC2870(Wrestler *entity) {
     u16 mode;
     u64 flags, flags2;
     s16 count;
@@ -23,39 +21,38 @@ s32 isEntityActionAllowedC2870(u8 *entity) {
     mode = *(u16 *)(D_8007E228 + 0x58);
     if (!(mode & 0x400)) goto not400;
 reload:
-    flags = *(u64 *)(entity + 0x20);
+    flags = entity->flags;
 common:
-    flags = flags & 0x200ULL;
+    flags = flags & WR_FLAG_LEGAL;
     if (flags) return 1;
     return 0;
 not400:
     if (mode & 0x100) {
         count = 0;
         for (i = 0; i < 4; i++) {
-            s32 off = i * 0x3B0;
-            if (*(s16 *)(D_800F9D12 + off) != -1) {
-                u64 recordFlags = *(u64 *)(D_800F9D30 + off);
-                if (recordFlags & 0x200ULL) { if (recordFlags & 0x100ULL) count++; }
+            if (D_800F9D10[i].characterId != -1) {
+                u64 recordFlags = D_800F9D10[i].flags;
+                if (recordFlags & WR_FLAG_LEGAL) { if (recordFlags & WR_FLAG_ON_FLOOR) count++; }
                 else if (recordFlags & 0x2ULL) { if (recordFlags & 0x20ULL) count++; }
             }
         }
-        flags2 = *(u64 *)(entity + 0x20);
+        flags2 = entity->flags;
         if (flags2 & 1ULL) {
-            if ((*(u64 *)(entity + 0x358) & 0x600000000000ULL) || count) return 1;
+            if ((entity->partnerFlags & 0x600000000000ULL) || count) return 1;
         }
-        flags = *(u64 *)(entity + 0x20);
+        flags = entity->flags;
         if (flags & 2ULL) {
-            flags = *(u64 *)(entity + 0x20);
+            flags = entity->flags;
             if (flags & 0x20ULL) return 1;
-            if ((*(u64 *)(entity + 0x358) & 0x600000000000ULL) || count) goto ret1;
+            if ((entity->partnerFlags & 0x600000000000ULL) || count) goto ret1;
             goto reload;
         }
         goto common;
     }
     if (mode & 0x200) {
-        flags = *(u64 *)(entity + 0x20);
-        if (flags & 0x200ULL) return 1;
-        if (flags & 0x100ULL) { if (*(s16 *)(entity + 0xA) != 3) return 1; }
+        flags = entity->flags;
+        if (flags & WR_FLAG_LEGAL) return 1;
+        if (flags & WR_FLAG_ON_FLOOR) { if (entity->state != 3) return 1; }
         if ((s8)func_800DA6DC(entity)) return 1;
     }
     return 0;

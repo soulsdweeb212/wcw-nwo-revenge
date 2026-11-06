@@ -5,38 +5,6 @@
  */
 #include "common.h"
 
-typedef struct {
-    u8 f0;
-    u8 p1[7];
-    s16 f8;
-    u8 pA[0x39];
-    u8 f43;
-    u8 p44[0x311];
-    s8 f355;
-    u8 p356[0x45];
-    s8 f39B;
-} Src3A78;
-
-typedef struct {
-    s8 f0;
-    u8 p1[9];
-    s16 fA;
-    u8 pC[0xA];
-    s16 f16;
-    u8 p18[8];
-    u64 flags;
-    u8 p28[8];
-    u32 f30;
-    u8 p34[3];
-    u8 f37;
-    u8 p38[0xB];
-    s8 f43;
-    u8 p44[0x30D];
-    u8 f351;
-    u8 p352;
-    u8 f353;
-} Tgt3A78;
-
 extern s16 D_800E3B14[][8];
 extern s16 D_800E3B1C[];
 extern s16 D_800E3B64[];
@@ -69,7 +37,19 @@ s8 func_800D4198(s16);
 s8 func_800D7B54(void *, s32, s32, s32);
 void func_800E212C(void *);
 
-void func_800C3A78(Src3A78 *src, Tgt3A78 *tgt, u32 arg2) {
+/* src's hit (descriptor arg2) lands on tgt. Nothing happens when tgt has flags 0x600000000000 without
+ * 0x0400000000000000. Otherwise src->comboHits is cleared, tgt->heldById = src->id (and tgt->opponentId = src->id
+ * unless tgt is src's tag partner), tgt->hitInfo = arg2, func_800E212C(tgt) and func_800C4610(src, tgt) run, and a
+ * class bit 0x10000000 / 0x20000000 / 0x40000000 picked by src->move.unk39B is or-ed into hitInfo. Some tgt states
+ * are special-cased: 23 takes 10 spirit (addEntityHealthDelta), 64 / 65 / 45..47 may counter through func_800C41F0
+ * or ignore the hit, 64 may go to state 0x41, 20 adds hitInfo 0x2000 when frameStatus bit 0 is set. On the apron
+ * (WR_FLAG_ON_APRON) a reaction bit is chosen and tgt goes to state 0x28. Otherwise, unless
+ * func_800C472C(src, tgt, 0) stuns or knocks it out, tgt->comboHits counts up (at most 4; read signed here),
+ * updateEntityStatus43Timer(tgt, 0) reloads its 60-tick timer, more hitInfo bits are derived, and the reaction is
+ * either set directly or drawn at random from a table chosen by the hitInfo bits, the health level (func_800BF2FC
+ * against D_800E3B1C), flag 0x100000 and tgt->state 0x2D / 0x2E: hitInfo 0x8000, 0x10000 (state 0x2F) or
+ * 0x80000 / 0x20000. Every other path ends in state 0x28. */
+void func_800C3A78(Wrestler *src, Wrestler *tgt, u32 arg2) {
     u32 bits;
     s16 v;
     s16 i;
@@ -80,48 +60,48 @@ void func_800C3A78(Src3A78 *src, Tgt3A78 *tgt, u32 arg2) {
     if ((tgt->flags & 0x600000000000ULL) && !(tgt->flags & 0x0400000000000000ULL)) {
         return;
     }
-    src->f43 = 0;
-    tgt->f351 = src->f0;
-    if (src->f355 != tgt->f0) {
-        tgt->f353 = src->f0;
+    src->comboHits = 0;
+    tgt->heldById = src->id;
+    if (src->partnerId != tgt->id) {
+        tgt->opponentId = src->id;
     }
-    tgt->f30 = arg2;
+    tgt->hitInfo = arg2;
     func_800E212C(tgt);
     func_800C4610(src, tgt);
-    switch (src->f39B) {
+    switch ((s8)src->move.unk39B) {
     case 0: case 1:
-        tgt->f30 |= 0x10000000;
+        tgt->hitInfo |= 0x10000000;
         break;
     case 2: case 5:
-        tgt->f30 |= 0x20000000;
+        tgt->hitInfo |= 0x20000000;
         break;
     case 3: case 4:
-        tgt->f30 |= 0x40000000;
+        tgt->hitInfo |= 0x40000000;
         break;
     }
-    switch (tgt->fA) {
+    switch (tgt->state) {
     case 23:
         addEntityHealthDelta(tgt, -10);
         break;
     case 64:
         if (!(tgt->flags & 9)) {
-            if (tgt->f16 < 3 && func_800C41F0(tgt, src)) {
+            if (tgt->stateTimer < 3 && func_800C41F0(tgt, src)) {
                 return;
             }
-            if (!(tgt->f30 & 0x600) && !(tgt->flags & 0x8000000)) {
+            if (!(tgt->hitInfo & 0x600) && !(tgt->flags & 0x8000000)) {
                 func_800A6C48(tgt, 0x41);
                 return;
             }
         }
         break;
     case 65:
-        if (!(tgt->flags & 9) && !(tgt->f30 & 0x600) && !(tgt->flags & 0x8000000)) {
+        if (!(tgt->flags & 9) && !(tgt->hitInfo & 0x600) && !(tgt->flags & 0x8000000)) {
             return;
         }
         break;
     case 20:
-        if (tgt->f37 & 1) {
-            tgt->f30 |= 0x2000;
+        if (tgt->frameStatus & 1) {
+            tgt->hitInfo |= 0x2000;
         }
         break;
     case 45: case 46: case 47:
@@ -131,16 +111,16 @@ void func_800C3A78(Src3A78 *src, Tgt3A78 *tgt, u32 arg2) {
         break;
     }
     func_800A837C(src);
-    if (tgt->flags & 0x80) {
+    if (tgt->flags & WR_FLAG_ON_APRON) {
         u32 f;
         bits = 0;
-        if (tgt->f30 & 1) {
+        if (tgt->hitInfo & 1) {
             bits = func_800D4198(700) ? 0x400000 : 0x800000;
         }
-        if (tgt->f30 & 0xE0) {
+        if (tgt->hitInfo & 0xE0) {
             bits = func_800D4198(800) ? 0x400000 : 0x800000;
         }
-        f = tgt->f30;
+        f = tgt->hitInfo;
         if (f & 0x606) {
             bits = 0x800000;
         }
@@ -153,42 +133,42 @@ void func_800C3A78(Src3A78 *src, Tgt3A78 *tgt, u32 arg2) {
         if (bits == 0) {
             bits = 0x800000;
         }
-        tgt->f30 = f | bits;
+        tgt->hitInfo = f | bits;
         func_800A6D80(tgt, 0x28);
         return;
     }
     if (func_800C472C(src, tgt, 0)) {
         return;
     }
-    tgt->f43++;
-    if (tgt->f43 >= 5) {
-        tgt->f43 = 4;
+    tgt->comboHits++;
+    if ((s8)tgt->comboHits >= 5) {
+        tgt->comboHits = 4;
     }
     updateEntityStatus43Timer(tgt, 0);
-    if ((tgt->f30 & 0x2010) == 0x2010) {
-        tgt->f30 |= 0x100000;
+    if ((tgt->hitInfo & 0x2010) == 0x2010) {
+        tgt->hitInfo |= 0x100000;
     }
-    if ((tgt->f30 & 0x1008) == 8) {
-        tgt->f30 |= 0x40000;
+    if ((tgt->hitInfo & 0x1008) == 8) {
+        tgt->hitInfo |= 0x40000;
     }
-    if (tgt->f30 & 0x4000) {
-        if (tgt->f37 & 1) {
-            tgt->f30 |= 0x4000000;
+    if (tgt->hitInfo & 0x4000) {
+        if (tgt->frameStatus & 1) {
+            tgt->hitInfo |= 0x4000000;
         } else {
-            tgt->f30 = (tgt->f30 & ~0x4000) | 1;
+            tgt->hitInfo = (tgt->hitInfo & ~0x4000) | 1;
         }
     }
-    if ((tgt->f30 & 0x3400) == 0x400) {
-        tgt->f30 |= 0x8000000;
+    if ((tgt->hitInfo & 0x3400) == 0x400) {
+        tgt->hitInfo |= 0x8000000;
     }
     {
-        u32 f = tgt->f30;
+        u32 f = tgt->hitInfo;
         if (f & 0x4100000) {
             func_800A6D80(tgt, 0x28);
             return;
         }
         if (f & 0x2000) {
-            tgt->f30 = f | 0x200000;
+            tgt->hitInfo = f | 0x200000;
             func_800A6D80(tgt, 0x28);
             return;
         }
@@ -197,10 +177,10 @@ void func_800C3A78(Src3A78 *src, Tgt3A78 *tgt, u32 arg2) {
             return;
         }
         if (f & 0x518) {
-            if ((f & 0x100) && src->f8 == 0x1985) {
-                tgt->f30 = f | 0x8000;
+            if ((f & 0x100) && src->animId == 0x1985) {
+                tgt->hitInfo = f | 0x8000;
             } else {
-                tgt->f30 |= 0x20000;
+                tgt->hitInfo |= 0x20000;
             }
             func_800A6D80(tgt, 0x28);
             return;
@@ -213,7 +193,7 @@ void func_800C3A78(Src3A78 *src, Tgt3A78 *tgt, u32 arg2) {
         }
     }
     {
-        u32 f = tgt->f30;
+        u32 f = tgt->hitInfo;
         if (f & 0x40) {
             tbl = &D_800E3BFC[i * 2];
         } else if (tgt->flags & 0x100000) {
@@ -226,7 +206,7 @@ void func_800C3A78(Src3A78 *src, Tgt3A78 *tgt, u32 arg2) {
             } else {
                 tbl = D_800E3BA0;
             }
-        } else if (tgt->fA == 0x2E) {
+        } else if (tgt->state == 0x2E) {
             if (f & 0x202) {
                 tbl = &D_800E3BB4[i * 2];
             } else if (f & 4) {
@@ -236,7 +216,7 @@ void func_800C3A78(Src3A78 *src, Tgt3A78 *tgt, u32 arg2) {
             } else {
                 tbl = D_800E3BC8;
             }
-        } else if (tgt->fA == 0x2D) {
+        } else if (tgt->state == 0x2D) {
             if (f & 0x202) {
                 tbl = &D_800E3BE4[i * 2];
             } else if (f & 4) {
@@ -252,7 +232,7 @@ void func_800C3A78(Src3A78 *src, Tgt3A78 *tgt, u32 arg2) {
             } else if (f & 4) {
                 tbl = D_800E3B74;
             } else if (f & 1) {
-                tbl = &D_800E3B14[tgt->f43][i * 2];
+                tbl = &D_800E3B14[(s8)tgt->comboHits][i * 2];
             } else {
                 tbl = D_800E3B78;
             }
@@ -266,23 +246,23 @@ void func_800C3A78(Src3A78 *src, Tgt3A78 *tgt, u32 arg2) {
         r -= tbl[j];
     }
     {
-        u32 f = tgt->f30;
+        u32 f = tgt->hitInfo;
         if (f & 0x206) {
             j++;
         }
         switch (j) {
         case 0:
-            tgt->f30 = f | 0x8000;
+            tgt->hitInfo = f | 0x8000;
             break;
         case 1:
-            tgt->f30 = f | 0x10000;
+            tgt->hitInfo = f | 0x10000;
             func_800A6D80(tgt, 0x2F);
             return;
         case 2:
             if ((f & 0x1002) == 2) {
-                tgt->f30 = f | 0x80000;
+                tgt->hitInfo = f | 0x80000;
             } else {
-                tgt->f30 = f | 0x20000;
+                tgt->hitInfo = f | 0x20000;
             }
             break;
         }

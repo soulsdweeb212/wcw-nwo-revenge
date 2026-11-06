@@ -7,35 +7,37 @@
 
 extern u16 D_800FAF50[];
 extern s16 D_800F98D8[];
-s32 func_800BF2FC(void *);
-static inline u16 getCount(u8 *p) { if (*(s16 *)(p+10)==0x42) return 0; return D_800FAF50[*(s8 *)p]; }
-static inline s16 getValue(u8 *p) { if (*(s16 *)(p+10)==0x42) return 255; return func_800BF2FC(p); }
-/* Computes entity p's health/status level code, stores it into D_800F98D8[its
- * id] and returns it. Entities with the 0x80000 flag use the 0xF3D/0xF3E
- * "downed" codes; others derive 1..3 from their item count (or 0..2 from the
- * remaining health), then offset by 0xF2D and +6 when the 0x200000 flag is set. */
-s16 updateEntityHealthLevel(u8 *p) {
+s32 func_800BF2FC(Wrestler *);
+static inline u16 getCount(Wrestler *w) { if (w->state==0x42) return 0; return D_800FAF50[w->id]; }
+static inline s16 getValue(Wrestler *w) { if (w->state==0x42) return 255; return func_800BF2FC(w); }
+/* Computes the wrestler's health/status level code, stores it into D_800F98D8[w->id] and returns it. A wrestler
+ * with WR_FLAG_SPECIAL uses the 0xF3E code (0xF3D without flag bit 0x200000; 2 less when profile+0x38 has bit
+ * 0x800000). Otherwise the level is 1..2 from D_800FAF50[id] (the last hit's size, docs/wrestler.md; >= 15,
+ * >= 22), else 0..2 from health (func_800BF2FC, which gives health here as SPECIAL is clear; >= 128 -> 0,
+ * >= 64 -> 1, else 2), then offset by 0xF2D and +6 with flag bit 0x200000. In state 0x42 the D_800FAF50 value
+ * counts as 0 and health as 255. */
+s16 updateEntityHealthLevel(Wrestler *w) {
     s16 result, base;
     s16 value;
     u16 count;
-    if (*(u64 *)(p+0x20) & 0x80000ULL) {
+    if (w->flags & WR_FLAG_SPECIAL) {
         result = 0xF3E;
-        if (!(*(u64 *)(p+0x20) & 0x200000ULL)) result=0xF3D;
-        if (*(u64 *)(*(u8 **)(p+0x364)+0x38) & 0x800000ULL) result-=2;
+        if (!(w->flags & 0x200000ULL)) result=0xF3D;
+        if (*(u64 *)(w->profile+0x38) & 0x800000ULL) result-=2;
     } else {
-        count=getCount(p);
+        count=getCount(w);
         if ((s16)count>=15) {
             result=1;
             if ((s16)count>=22) result=2;
         } else {
-            value=getValue(p);
+            value=getValue(w);
             if (value>=128) result=0;
             else { result=2; if(value>=64) result=1; }
         }
         base=result+0xF2D;
         result=base;
-        if (*(u64 *)(p+0x20)&0x200000ULL) result=base+6;
+        if (w->flags&0x200000ULL) result=base+6;
     }
-    D_800F98D8[*(s8 *)p]=result;
+    D_800F98D8[w->id]=result;
     return result;
 }

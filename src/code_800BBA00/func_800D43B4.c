@@ -10,10 +10,11 @@ extern s32 D_800EB634;
 extern u16 D_800EB638[];
 
 s32 guRandom(void);
-void func_800D427C(void *, s32);
+/* Declared with two arguments here: the mode argument of func_800D427C is left as whatever a2 holds. */
+void func_800D427C(Wrestler *, s32);
 
-/* Reset the entity's s16 +8 state to -1, then invoke func_800D427C. */
-void func_800D43B4(void *entity, s16 action) {
-    *(s16 *)((u8 *)entity + 8) = -1;
-    func_800D427C(entity, action);
+/* Restart an animation: set animId to -1 so func_800D427C sees a change, then start animation action. */
+void func_800D43B4(Wrestler *w, s16 action) {
+    w->animId = -1;
+    func_800D427C(w, action);
 }

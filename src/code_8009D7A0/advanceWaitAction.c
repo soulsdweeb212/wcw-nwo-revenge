@@ -6,7 +6,7 @@
 #include "common.h"
 
 s16 func_800B1634(void);
-extern u8 *D_800FABD0, *D_800F9B60, *D_800FAF58;
+extern u8 *D_800FABD0;
 
 /* Wait-action phases on the action record D_800FABD0 (state at +4). State 0
  * samples the delay from func_800B1634 into +0xE; if it is zero the record is
@@ -15,7 +15,7 @@ extern u8 *D_800FABD0, *D_800F9B60, *D_800FAF58;
  * actor's sub-state is 0x40. */
 void advanceWaitAction(void) {
     u8 *act = D_800FABD0;
-    u8 *target;
+    Wrestler *target;
     u16 delay;
     switch (*(s16 *)(act + 4)) {
     case 0:
@@ -26,7 +26,7 @@ void advanceWaitAction(void) {
             target = D_800F9B60;
             *(s16 *)(act + 2) = 0x1F;
             *(s16 *)(act + 4) = 0;
-            *(u16 *)(act + 0x2E) = *(u16 *)(target + 0xA);
+            *(u16 *)(act + 0x2E) = (u16)target->state;
             *(u32 *)(act + 0x5C) &= ~7;
         } else {
             (*(s16 *)(act + 4))++;
@@ -40,11 +40,11 @@ void advanceWaitAction(void) {
         }
         break;
     case 2:
-        if (*(s16 *)(D_800FAF58 + 0xA) != 0x40) {
+        if (D_800FAF58->state != 0x40) {
             target = D_800F9B60;
             *(s16 *)(act + 2) = 0;
             *(s16 *)(act + 4) = 0;
-            *(u16 *)(act + 0x2E) = *(u16 *)(target + 0xA);
+            *(u16 *)(act + 0x2E) = (u16)target->state;
             *(u32 *)(act + 0x5C) &= ~7;
         }
         break;

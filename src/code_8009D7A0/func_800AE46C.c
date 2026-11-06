@@ -5,8 +5,6 @@
  */
 #include "common.h"
 
-extern u8 *D_800F9B60;
-extern u8 *D_800FAF58;
 extern f64 D_800E51C8;
 s8 func_800D4198(s16);
 
@@ -40,22 +38,22 @@ void func_800AE46C(void) {
         D_800FABD0->f4 = D_800FABD0->f4 + 1;
         break;
     case 1:
-        if (*(s16 *)(D_800FAF58 + 0xA) == 0x1E) {
+        if (D_800FAF58->state == 0x1E) {
             D_800FABD0->f4 = state + 1;
         } else {
-            u8 *g = D_800F9B60;
+            Wrestler *g = D_800F9B60;
             u32 flags = D_800FABD0->f5C;
             D_800FABD0->f2 = 0;
             D_800FABD0->f4 = 0;
             {
-                u16 value = *(u16 *)(g + 0xA);
+                u16 value = g->state;
                 D_800FABD0->f5C = flags & ~7;
                 D_800FABD0->f2E = value;
             }
         }
         break;
     case 2: {
-        s16 mode = *(s16 *)(D_800FAF58 + 0xA);
+        s16 mode = D_800FAF58->state;
         u16 value;
         Nw2ActionABD0 *p;
         if (mode == 0x1E) break;
@@ -67,20 +65,20 @@ void func_800AE46C(void) {
                 break;
             }
             if (func_800D4198(D_800FABD0->f12) != 0) {
-                u8 *g = D_800F9B60;
-                s16 mode2 = *(s16 *)(g + 0xA);
+                Wrestler *g = D_800F9B60;
+                s16 mode2 = g->state;
                 if (mode2 == 1) {
                     p = D_800FABD0;
                     p->f2 = 1;
                     p->f4 = 0;
-                    value = *(u16 *)(g + 0xA);
+                    value = g->state;
                     goto update;
                 }
                 if (mode2 == 0x40) {
                     p = D_800FABD0;
                     p->f2 = 1;
                     p->f4 = 0;
-                    value = *(u16 *)(g + 0xA);
+                    value = g->state;
                     goto update;
                 }
                 switch (D_800FABD0->f22) {
@@ -100,7 +98,7 @@ void func_800AE46C(void) {
         p = D_800FABD0;
         p->f2 = 0;
         p->f4 = 0;
-        value = *(u16 *)(D_800F9B60 + 0xA);
+        value = D_800F9B60->state;
 update:
         p->f2E = value;
         p->f5C &= ~7;

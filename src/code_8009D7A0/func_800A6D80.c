@@ -5,21 +5,19 @@
  */
 #include "common.h"
 
-void func_800DECAC(void *, s32, s32, s32);
 
-/* Reset an entity's animation/action state to animation arg1: store arg1 at +0xA, zero the
- * +0xC/+0xE substate fields and the +0x360 input-bits word, clear u64 flag mask
- * 0x10810000000 and set 0x1000000000, run the standard action teardown func_800DECAC,
- * clear flag 0x40000000, set the signed bytes +0x362/+0x363 to -1 and set flag 0x10000000. */
-void func_800A6D80(void *arg0, s16 arg1) {
-    *(s16 *)((u8 *)arg0 + 0xA) = arg1;
-    *(s16 *)((u8 *)arg0 + 0xC) = 0;
-    *(s16 *)((u8 *)arg0 + 0xE) = 0;
-    *(s16 *)((u8 *)arg0 + 0x360) = 0;
-    *(u64 *)((u8 *)arg0 + 0x20) = (*(u64 *)((u8 *)arg0 + 0x20) & ~0x10810000000ULL) | 0x1000000000ULL;
-    func_800DECAC(arg0, 0, 0, 0);
-    *(u64 *)((u8 *)arg0 + 0x20) &= ~0x40000000ULL;
-    *(s8 *)((u8 *)arg0 + 0x362) = -1;
-    *(s8 *)((u8 *)arg0 + 0x363) = -1;
-    *(u64 *)((u8 *)arg0 + 0x20) |= 0x10000000ULL;
+/* Put the wrestler in state `state`: clear step, stepFlags and pairSignals, clear flag mask 0x10800000000 |
+ * WR_FLAG_RERUN and set 0x1000000000, call func_800DECAC(w, 0, 0, 0) (zeroes the slot's D_800F98D0 counter),
+ * clear WR_FLAG_PAIR_LEADER, empty both attached[] slots (-1) and set WR_FLAG_RERUN. */
+void func_800A6D80(Wrestler *w, s16 state) {
+    w->state = state;
+    w->step = 0;
+    w->stepFlags = 0;
+    w->pairSignals = 0;
+    w->flags = (w->flags & ~0x10810000000ULL) | 0x1000000000ULL;
+    func_800DECAC(w, 0, 0, 0);
+    w->flags &= ~WR_FLAG_PAIR_LEADER;
+    w->attached[0] = -1;
+    w->attached[1] = -1;
+    w->flags |= WR_FLAG_RERUN;
 }

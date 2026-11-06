@@ -5,15 +5,15 @@
  */
 #include "common.h"
 
-/* Return arg0's per-part byte at +0x34C+arg1, or the constant 0x32 when flag 0x80000
- * is set. */
-s32 func_800BF1E0(void *arg0, s16 arg1) {
+/* Return w->bodyPart[part], or the constant 0x32 (50, the starting value) when
+ * WR_FLAG_SPECIAL is set. */
+s32 func_800BF1E0(Wrestler *w, s16 part) {
     s32 v;
 
-    if (*(u64 *)((u8 *)arg0 + 0x20) & 0x80000) {
+    if (w->flags & WR_FLAG_SPECIAL) {
         v = 0x32;
     } else {
-        v = *(s8 *)((u8 *)arg0 + arg1 + 0x34C);
+        v = w->bodyPart[part];
     }
     return v;
 }

@@ -5,14 +5,14 @@
  */
 #include "common.h"
 
-/* Moves a paired entity: a directional XZ step selected by `flags` bits 0x100/0x200/
- * 0x400/0x800 (magnitude from func_800D63F0) is applied to `source` and its limb
- * parts; the resulting displacement is then carried to `target` and its parts, and
- * both headings are turned by the 0x4000/0x8000 offset. */
-typedef struct {
-    f32 x, y, z, pad;
-} Nw2Part;
+/* Moves the two sides of a paired move together. A directional XZ step selected by `flags` bits 0x800 (+Z), 0x100 (+X),
+ * 0x400 (-Z), 0x200 (-X) (magnitude from func_800D63F0, scaled by D_800E6D78 = 0.7071 unless func_800D7A68(flags)
+ * returns an odd direction code, i.e. for diagonals) is added to source's x/z and to jointA[1..19] / jointB[1..19].
+ * After func_800D2600(source, target->id) and func_800D2B64(source) run, source's total x/z change is carried to target
+ * and its joints (then func_800D2BAC(target, source)), and both headings are turned by +0x22 (flag 0x8000), -0x22
+ * (0x4000) or 0 when both or neither are set. */
 
+/* x, y, z, heading of a record, copied as one 16-byte block */
 typedef struct {
     f32 x, y, z;
     s32 heading;
@@ -22,32 +22,22 @@ typedef struct {
     f32 x, y, z;
 } Nw2Vec3f;
 
-typedef struct {
-    s8 id;
-    u8 pad1[0x4B];
-    Nw2Quad q;
-    Nw2Part partA[20];
-    u8 pad2[0x30];
-    Nw2Part partB[20];
-} Nw2Entity;
-
 extern f64 D_800E6D78;
 
 f32 func_800D63F0(void *, void *, s16);
 s32 func_800D7A68(s32);
 void func_800D2600(void *, s32, f32);
 s32 func_800D2B64(void *, f32, u16, s32);
-s32 func_800D2BAC(void *, void *, f32, s32);
 s32 func_800D35B0(s32, s32);
 
-void applyMovementToEntityPair(Nw2Entity *source, Nw2Entity *target, u16 flags) {
+void applyMovementToEntityPair(Wrestler *source, Wrestler *target, u16 flags) {
     Nw2Vec3f delta;
     Nw2Quad q;
     s16 i;
     f32 *dp;
     f32 v;
 
-    q = source->q;
+    q = *(Nw2Quad *)&source->x;
 
     if (flags & 0xF00) {
         delta.x = 0.0f;
@@ -69,28 +59,28 @@ void applyMovementToEntityPair(Nw2Entity *source, Nw2Entity *target, u16 flags) 
             delta.x *= D_800E6D78;
             delta.z *= D_800E6D78;
         }
-        source->q.x += delta.x;
-        source->q.z += delta.z;
+        source->x += delta.x;
+        source->z += delta.z;
         dp = &delta.x;
         for (i = 1; i < 0x14; i++) {
-            source->partA[i].x += dp[0];
-            source->partA[i].z += dp[2];
-            source->partB[i].x += dp[0];
-            source->partB[i].z += dp[2];
+            source->jointA[i].x += dp[0];
+            source->jointA[i].z += dp[2];
+            source->jointB[i].x += dp[0];
+            source->jointB[i].z += dp[2];
         }
     }
     func_800D2600(source, target->id, 4.0f);
     func_800D2B64(source, 1.0f, 0, 2);
-    delta.x = source->q.x - q.x;
-    delta.z = source->q.z - q.z;
-    target->q.x += delta.x;
-    target->q.z += delta.z;
+    delta.x = source->x - q.x;
+    delta.z = source->z - q.z;
+    target->x += delta.x;
+    target->z += delta.z;
     dp = &delta.x;
     for (i = 1; i < 0x14; i++) {
-        target->partA[i].x += dp[0];
-        target->partA[i].z += dp[2];
-        target->partB[i].x += dp[0];
-        target->partB[i].z += dp[2];
+        target->jointA[i].x += dp[0];
+        target->jointA[i].z += dp[2];
+        target->jointB[i].x += dp[0];
+        target->jointB[i].z += dp[2];
     }
     func_800D2BAC(target, source, 1.0f, 2);
     {
@@ -98,7 +88,7 @@ void applyMovementToEntityPair(Nw2Entity *source, Nw2Entity *target, u16 flags) 
         if (flags & 0x4000) {
             d -= 0x22;
         }
-        source->q.heading = func_800D35B0(source->q.heading, d);
-        target->q.heading = func_800D35B0(target->q.heading, d);
+        source->heading = func_800D35B0(source->heading, d);
+        target->heading = func_800D35B0(target->heading, d);
     }
 }

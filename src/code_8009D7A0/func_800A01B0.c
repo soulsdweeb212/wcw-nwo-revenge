@@ -5,32 +5,6 @@
  */
 #include "common.h"
 
-typedef struct {
-    s8 id;              /* 0x00 */
-    u8 pad1[3];
-    s16 f4;             /* 0x04 */
-    s16 f6;             /* 0x06 */
-    u8 pad8[2];
-    s16 fA;             /* 0x0A */
-    s16 state;          /* 0x0C */
-    u16 flagsE;         /* 0x0E */
-    u8 pad10[6];
-    s16 f16;            /* 0x16 */
-    u8 pad18[8];
-    u64 flags;          /* 0x20 */
-    u8 pad28[0x353 - 0x28];
-    s8 f353;            /* 0x353 */
-    u8 pad354;
-    s8 f355;            /* 0x355 */
-    u8 pad356[0x36C - 0x356];
-    u8 f36C;            /* 0x36C */
-    u8 pad36D[0x386 - 0x36D];
-    s16 f386;           /* 0x386 */
-} Wrestler;
-
-#define P ((Wrestler *)D_800EB408)
-extern Wrestler *D_800EB40C;
-extern Wrestler *D_800EB410;
 extern s32 D_800EB3F0[];
 extern s32 D_800F9B0C[];
 extern s16 D_800FABD4;
@@ -73,226 +47,226 @@ void func_800A01B0(void) {
     s32 anim;
 
     func_800D93DC(D_800EB408);
-    switch (P->state) {
+    switch (D_800EB408->step) {
     case 0:
         if (D_800FADCF & 0x40) {
             func_800E212C(D_800EB408);
             D_800FADCF |= 0x20;
-            P->state = 4;
+            D_800EB408->step = 4;
             break;
         }
-        if (!(P->flags & 0x80)) {
+        if (!(D_800EB408->flags & 0x80)) {
             if (func_800D3550(func_800D3684(0x800, func_800D36E8(D_800FABD4, D_800FAF9E))) < 0xAA) {
-                P->state = 7;
+                D_800EB408->step = 7;
                 break;
             }
         }
-        if (P->flags & 0x40000) {
-            P->flags = (P->flags & ~0x40000) | 0x80000;
-            P->flagsE |= 1;
-            if (P->flags & 0x80) {
-                func_800A7C40(P, D_800FADB8, 0xC2);
-                s0 = func_800D5438(P, 0);
+        if (D_800EB408->flags & 0x40000) {
+            D_800EB408->flags = (D_800EB408->flags & ~0x40000) | 0x80000;
+            D_800EB408->stepFlags |= 1;
+            if (D_800EB408->flags & 0x80) {
+                func_800A7C40(D_800EB408, D_800FADB8, 0xC2);
+                s0 = func_800D5438(D_800EB408, 0);
             } else {
-                func_800A7C40(P, D_800FADB8, 0xBE);
-                s0 = func_800D5438(P, 0);
-                func_800A7828(P, D_800EB40C);
+                func_800A7C40(D_800EB408, D_800FADB8, 0xBE);
+                s0 = func_800D5438(D_800EB408, 0);
+                func_800A7828(D_800EB408, D_800EB40C);
             }
-            func_800D427C(P, s0, 3);
-            func_800A7F6C(P, 0x3F);
-            func_800A9488(P, D_800EB40C);
-            P->state++;
+            func_800D427C(D_800EB408, s0, 3);
+            func_800A7F6C(D_800EB408, 0x3F);
+            func_800A9488(D_800EB408, D_800EB40C);
+            D_800EB408->step++;
             break;
         }
-        if (P->flags & 0x80000) {
-            if (P->flags & 0x80) {
+        if (D_800EB408->flags & 0x80000) {
+            if (D_800EB408->flags & 0x80) {
                 s1 = 0xC2;
             } else {
                 s1 = 0xBE;
             }
-            func_800A7C40(P, D_800FADB8, s1);
-            s0 = func_800D5438(P, 0);
-        } else if (P->flags & 1) {
-            if (P->flags & 0x80) {
+            func_800A7C40(D_800EB408, D_800FADB8, s1);
+            s0 = func_800D5438(D_800EB408, 0);
+        } else if (D_800EB408->flags & 1) {
+            if (D_800EB408->flags & 0x80) {
                 s1 = 0xC2;
             } else {
                 s1 = 0xBD;
                 if (D_800EB410->flags & 0x1000000000000000ULL) {
                     s1 = 0xBE;
                 }
-                if (*(u64 *)&D_800F9D30[D_800EB410->f353 * 0x3B0] & 0x1000000000000000ULL) {
+                if (D_800F9D10[D_800EB410->opponentId].flags & 0x1000000000000000ULL) {
                     s1 = 0xBD;
                 }
             }
-            func_800A7C40(P, D_800FADB8, s1);
-            s0 = func_800D5438(P, 0);
+            func_800A7C40(D_800EB408, D_800FADB8, s1);
+            s0 = func_800D5438(D_800EB408, 0);
         } else {
-            if (P->flags & 0x80) {
+            if (D_800EB408->flags & 0x80) {
                 s1 = 0xC2;
             } else {
                 s1 = 0xBD;
             }
-            func_800A7C40(P, D_800FADB8, s1);
-            s0 = func_800D5438(P, 0);
+            func_800A7C40(D_800EB408, D_800FADB8, s1);
+            s0 = func_800D5438(D_800EB408, 0);
         }
-        if (!(P->flags & 0x80)) {
+        if (!(D_800EB408->flags & 0x80)) {
             o2 = D_800EB410;
-            if (P->id != o2->id && !(o2->flags & 1) && o2->fA == 0x17 && o2->f6 < 10) {
-                if (P->flags & 1) {
-                    func_800A7C40(P, P->id, 0xC1);
-                    s0 = func_800D5438(P, 0);
+            if (D_800EB408->id != o2->id && !(o2->flags & 1) && o2->state == 0x17 && o2->animFrame < 10) {
+                if (D_800EB408->flags & 1) {
+                    func_800A7C40(D_800EB408, D_800EB408->id, 0xC1);
+                    s0 = func_800D5438(D_800EB408, 0);
                 } else {
-                    anim = o2->f386;
+                    anim = o2->moveId;
                     if (anim == s1) {
-                        func_800A7C40(P, P->f355, anim);
-                        s0 = func_800D5438(P, 0);
+                        func_800A7C40(D_800EB408, D_800EB408->partnerId, anim);
+                        s0 = func_800D5438(D_800EB408, 0);
                     }
                 }
             }
         }
-        func_800D427C(P, s0, 3);
+        func_800D427C(D_800EB408, s0, 3);
         D_800EB3F0[D_800FADB8] = func_800D36E8(D_800FABD4, D_800FAF9E);
-        func_800A7F6C(P, 0);
-        P->state++;
+        func_800A7F6C(D_800EB408, 0);
+        D_800EB408->step++;
         break;
     case 1:
-        if (P->flags & 0x80) {
-            P->flags |= 0x0800000000000000ULL;
+        if (D_800EB408->flags & 0x80) {
+            D_800EB408->flags |= 0x0800000000000000ULL;
         }
-        if (!(D_800EB40C->flags & 1) && !(P->flagsE & 1) && !(P->flags & 0x80) && P->f6 < 7 && D_800FAF78 != 0
+        if (!(D_800EB40C->flags & 1) && !(D_800EB408->stepFlags & 1) && !(D_800EB408->flags & 0x80) && D_800EB408->animFrame < 7 && D_800FAF78 != 0
             && func_800D3550(func_800D3684(D_800EB3F0[D_800FADB8], func_800D36E8(D_800FABD4, D_800FAF9E))) > 0x600) {
             if (D_800EB40C->flags & 0x80000) {
                 s1 = 0xBE;
             } else {
                 s1 = 0xBD;
             }
-            func_800A7C40(P, D_800EB40C->id, s1);
-            func_800D427C(P, func_800D5438(P, 0), 3);
-            P->flagsE |= 1;
+            func_800A7C40(D_800EB408, D_800EB40C->id, s1);
+            func_800D427C(D_800EB408, func_800D5438(D_800EB408, 0), 3);
+            D_800EB408->stepFlags |= 1;
         }
-        if (func_800DF214(P, D_800FABE6) || func_800DF3E4(P, D_800EB40C, D_800FABE6, D_800F9B0C[0])) {
+        if (func_800DF214(D_800EB408, D_800FABE6) || func_800DF3E4(D_800EB408, D_800EB40C, D_800FABE6, D_800F9B0C[0])) {
             goto block;
         }
         s0 = (s32)(D_800F9B0C - 1);
-        if (func_800DFDD4(P, D_800EB40C, D_800FABE6, (s32 *)s0)) {
+        if (func_800DFDD4(D_800EB408, D_800EB40C, D_800FABE6, (s32 *)s0)) {
             break;
         }
-        if (func_800DF99C(P, D_800EB40C, D_800FABE6, (s32 *)s0) || func_800E022C(P, D_800EB40C, D_800FABE6, (s32 *)s0)) {
+        if (func_800DF99C(D_800EB408, D_800EB40C, D_800FABE6, (s32 *)s0) || func_800E022C(D_800EB408, D_800EB40C, D_800FABE6, (s32 *)s0)) {
 block:
-            func_800A9128(P);
+            func_800A9128(D_800EB408);
             break;
         }
-        func_800D25D0(P, 4.0f);
-        func_800D2B64(P, 4.0f, 0, 0xFFFFE);
-        if (P->f4 > 0) {
+        func_800D25D0(D_800EB408, 4.0f);
+        func_800D2B64(D_800EB408, 4.0f, 0, 0xFFFFE);
+        if (D_800EB408->animFramesLeft > 0) {
             break;
         }
-        if (!(P->flags & 0x100) || (D_800EB40C->flags & 0x100)) {
-            func_800B68A0(P, P, D_800EB40C);
+        if (!(D_800EB408->flags & 0x100) || (D_800EB40C->flags & 0x100)) {
+            func_800B68A0(D_800EB408, D_800EB408, D_800EB40C);
         }
-        func_800A7828(P, D_800EB40C);
-        func_800D4AD0(P);
-        if (func_800A9128(P)) {
-            func_800A6BE0(P, 1);
-            func_800D427C(P, 0x108D, 2);
+        func_800A7828(D_800EB408, D_800EB40C);
+        func_800D4AD0(D_800EB408);
+        if (func_800A9128(D_800EB408)) {
+            func_800A6BE0(D_800EB408, 1);
+            func_800D427C(D_800EB408, 0x108D, 2);
         } else {
-            func_800A6C48(P, 1);
+            func_800A6C48(D_800EB408, 1);
         }
-        func_800A837C(P);
+        func_800A837C(D_800EB408);
         break;
     case 2:
         anim = 0xBF;
-        func_800A7C40(P, D_800FADB8, anim);
-        func_800D427C(P, func_800D5438(P, 0), 1);
-        func_800A7F6C(P, 0);
-        if (P->flags & 0x40000) {
-            P->flags = (P->flags & ~0x40000) | 0x80000;
-            func_800A9488(P, D_800EB40C);
+        func_800A7C40(D_800EB408, D_800FADB8, anim);
+        func_800D427C(D_800EB408, func_800D5438(D_800EB408, 0), 1);
+        func_800A7F6C(D_800EB408, 0);
+        if (D_800EB408->flags & 0x40000) {
+            D_800EB408->flags = (D_800EB408->flags & ~0x40000) | 0x80000;
+            func_800A9488(D_800EB408, D_800EB40C);
         }
-        P->state++;
+        D_800EB408->step++;
         break;
     case 3:
-        if (func_800DF214(P, D_800FABE6)) {
+        if (func_800DF214(D_800EB408, D_800FABE6)) {
             break;
         }
-        if (func_800DF3E4(P, D_800EB40C, D_800FAF8A, D_800F9B0C[0])) {
+        if (func_800DF3E4(D_800EB408, D_800EB40C, D_800FAF8A, D_800F9B0C[0])) {
             break;
         }
         s0 = (s32)(D_800F9B0C - 1);
-        if (func_800DFDD4(P, D_800EB40C, D_800FABE6, (s32 *)s0)) {
+        if (func_800DFDD4(D_800EB408, D_800EB40C, D_800FABE6, (s32 *)s0)) {
             break;
         }
-        if (func_800DF99C(P, D_800EB40C, D_800FABE6, (s32 *)s0)) {
+        if (func_800DF99C(D_800EB408, D_800EB40C, D_800FABE6, (s32 *)s0)) {
             break;
         }
-        if (func_800E022C(P, D_800EB40C, D_800FABE6, (s32 *)s0)) {
+        if (func_800E022C(D_800EB408, D_800EB40C, D_800FABE6, (s32 *)s0)) {
             break;
         }
-        func_800D25D0(P, 4.0f);
-        func_800D2B64(P, 4.0f, 0, 0xFFFFE);
-        if (P->f4 > 0) {
+        func_800D25D0(D_800EB408, 4.0f);
+        func_800D2B64(D_800EB408, 4.0f, 0, 0xFFFFE);
+        if (D_800EB408->animFramesLeft > 0) {
             break;
         }
-        if (!(P->flags & 0x100) || (D_800EB40C->flags & 0x100)) {
-            func_800B68A0(P, P, D_800EB40C);
+        if (!(D_800EB408->flags & 0x100) || (D_800EB40C->flags & 0x100)) {
+            func_800B68A0(D_800EB408, D_800EB408, D_800EB40C);
         }
-        func_800D4AD0(P);
-        func_800A6C48(P, 0x2B);
-        func_800A7828(P, D_800EB40C);
-        func_800A837C(P);
+        func_800D4AD0(D_800EB408);
+        func_800A6C48(D_800EB408, 0x2B);
+        func_800A7828(D_800EB408, D_800EB40C);
+        func_800A837C(D_800EB408);
         break;
     case 4:
-        func_800A7C40(P, P->id, 0xC3);
-        func_800D427C(P, func_800D5438(P, 0), 3);
-        P->f16 = 0;
-        P->state++;
+        func_800A7C40(D_800EB408, D_800EB408->id, 0xC3);
+        func_800D427C(D_800EB408, func_800D5438(D_800EB408, 0), 3);
+        D_800EB408->stateTimer = 0;
+        D_800EB408->step++;
         break;
     case 5:
-        if (++P->f16 == 30 && P->id == D_800FABDC) {
+        if (++D_800EB408->stateTimer == 30 && D_800EB408->id == D_800FABDC) {
             D_800FABD8 |= 4;
         }
-        func_800D25D0(P, 4.0f);
-        func_800D2B64(P, 4.0f, 0, 0xFFFFE);
-        if (P->f4 > 0) {
+        func_800D25D0(D_800EB408, 4.0f);
+        func_800D2B64(D_800EB408, 4.0f, 0, 0xFFFFE);
+        if (D_800EB408->animFramesLeft > 0) {
             break;
         }
-        v = P->f36C;
+        v = D_800EB408->anim.frameCount;
         if (v > 0xB4) {
             v = 0xF;
         } else {
             v = 0xC3 - v;
         }
-        P->f16 = v;
-        if (P->id == D_800FABDC) {
+        D_800EB408->stateTimer = v;
+        if (D_800EB408->id == D_800FABDC) {
             D_800FABD8 |= 4;
         }
-        func_800D4AD0(P);
-        func_800D427C(P, func_800D4D44(P, 0xC, 0), 3);
-        P->state++;
+        func_800D4AD0(D_800EB408);
+        func_800D427C(D_800EB408, func_800D4D44(D_800EB408, 0xC, 0), 3);
+        D_800EB408->step++;
         break;
     case 6:
-        if (--P->f16 == 0 && P->id == D_800FABDC && (D_800FABD8 & 0x100)) {
+        if (--D_800EB408->stateTimer == 0 && D_800EB408->id == D_800FABDC && (D_800FABD8 & 0x100)) {
             D_800FABD8 |= 1;
             D_800FADCF &= ~0x20;
         }
-        if (P->f16 < -29) {
-            P->f16 = -30;
+        if (D_800EB408->stateTimer < -29) {
+            D_800EB408->stateTimer = -30;
         }
         break;
     case 7:
-        P->flags |= 0x1000000000ULL;
-        func_800D427C(P, 0xFB9, 3);
-        P->state++;
+        D_800EB408->flags |= 0x1000000000ULL;
+        func_800D427C(D_800EB408, 0xFB9, 3);
+        D_800EB408->step++;
         break;
     case 8:
-        P->flags |= 0x1000000000ULL;
-        func_800D25D0(P, 4.0f);
-        func_800D2B64(P, 4.0f, 0, 0xFFFFE);
-        if (P->f4 > 0) {
+        D_800EB408->flags |= 0x1000000000ULL;
+        func_800D25D0(D_800EB408, 4.0f);
+        func_800D2B64(D_800EB408, 4.0f, 0, 0xFFFFE);
+        if (D_800EB408->animFramesLeft > 0) {
             break;
         }
-        func_800D4AD0(P);
-        P->state = 2;
+        func_800D4AD0(D_800EB408);
+        D_800EB408->step = 2;
         break;
     }
 }

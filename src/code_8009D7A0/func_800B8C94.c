@@ -15,8 +15,6 @@ extern u8 D_800E3978[], D_800EB468[], D_800FACE8;
 extern s8 D_800EB46E, D_800EB46F;
 extern u8 D_800FAF60[][6];
 extern s16 D_800EB472;
-extern u8 D_800F9D10[], D_800F9D1A[];
-extern s8 D_800FA05C[], D_800FA063[], D_800FA0A6[];
 /* Resets all four entities to the -1 id with the 0x100800 mode flags. */
 void func_800B8C94(void) {
     s8 entries[4];

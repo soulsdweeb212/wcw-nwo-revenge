@@ -21,10 +21,7 @@ f32 func_800D3EEC(void *, void *, s32);
 void translateEntityXZ(void *, void *);
 extern const f64 D_800E6B28;
 extern const f64 D_800E6B30;
-extern u8 D_800F9D30[];
-extern u8 D_800F9D5C[];
-extern u8 D_800F9D68[];
-s8 func_800D2758(u8 *arg0, f32 arg1, u16 arg2, s8 arg3, s16 arg4)
+s8 func_800D2758(Wrestler *arg0, f32 arg1, u16 arg2, s8 arg3, s16 arg4)
 {
     f32 vec[4];
     TgtCandidate buf[4];
@@ -37,7 +34,7 @@ s8 func_800D2758(u8 *arg0, f32 arg1, u16 arg2, s8 arg3, s16 arg4)
     {
         arg2 = 0xF00;
     }
-    collectLinkedTargets(arg0, arg0 + 0x6C, buf, (*((u64 *) (arg0 + 0x20))) & 0x1C0ULL);
+    collectLinkedTargets(arg0, &arg0->jointA[1], buf, arg0->flags & WR_FLAG_ZONE_MASK);
     s5 = -1;
     for (s1 = 0; s1 < 4; s1++)
     {
@@ -50,11 +47,10 @@ s8 func_800D2758(u8 *arg0, f32 arg1, u16 arg2, s8 arg3, s16 arg4)
         {
             continue;
         }
-        off = id * 0x3B0;
         fs0 = -1.0f;
-        if ((*((u64 *) (D_800F9D30 + off))) & 0x400000ULL)
+        if (D_800F9D10[id].flags & 0x400000ULL)
         {
-            f32 r = func_800D3EEC(D_800F9D5C + off, arg0 + 0x6C, *((s32 *) (D_800F9D68 + off)));
+            f32 r = func_800D3EEC(&D_800F9D10[id].x, &arg0->jointA[1], D_800F9D10[id].heading);
             f64 k = D_800E6B28;
             f32 t = buf[s1].f4;
             f64 d = r + k;
@@ -66,9 +62,9 @@ s8 func_800D2758(u8 *arg0, f32 arg1, u16 arg2, s8 arg3, s16 arg4)
         else
         {
             off = s1;
-            if (((f64) buf[off].f4) <= 100.0)
+            if (((f64) buf[off].f4) <= 66.0)
             {
-                fs0 = (f32) (100.0 - ((f64) buf[s1].f4));
+                fs0 = (f32) (66.0 - ((f64) buf[s1].f4));
             }
         }
         if (((f64) fs0) == D_800E6B30)
@@ -78,9 +74,9 @@ s8 func_800D2758(u8 *arg0, f32 arg1, u16 arg2, s8 arg3, s16 arg4)
         if (arg4 != 0)
         {
             s32 a0;
-            if (func_800D3550(func_800D3684(*((s32 *) (arg0 + 0x58)), buf[s1].f8)) < 0x200)
+            if (func_800D3550(func_800D3684(arg0->heading, buf[s1].f8)) < 0x200)
             {
-                a0 = *((s32 *) (arg0 + 0x58));
+                a0 = arg0->heading;
             }
             else
             {
@@ -88,8 +84,7 @@ s8 func_800D2758(u8 *arg0, f32 arg1, u16 arg2, s8 arg3, s16 arg4)
             }
             if (arg4 == 2)
             {
-                s32 off2 = buf[s1].id * 0x3B0;
-                if ((*((u64 *) (D_800F9D30 + off2))) & 0x200ULL)
+                if (D_800F9D10[buf[s1].id].flags & WR_FLAG_LEGAL)
                 {
                     a0 = buf[s1].f8;
                 }

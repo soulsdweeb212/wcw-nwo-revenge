@@ -12,74 +12,61 @@ s16 func_800D65D0(void *, u16);
 s32 func_800DF924(void *, void *);
 s32 func_800E07DC(void *);
 void func_800E212C(void *);
-void func_800A6C48(void *, s32);
 
-typedef struct {
-    u8 pad0[0xC];
-    s16 fC;
-    u8 padE[0x20 - 0xE];
-    u64 flags;
-    u8 pad28[0x3C - 0x28];
-    s16 f3C;
-    s16 f3E;
-    u8 pad40[0x364 - 0x40];
-    u8 *f364;
-} Nw2EntDF5C4;
-
-typedef struct {
-    u8 pad0[0x38];
-    u64 flags;
-} Nw2AttDF5C4;
-
-#define E ((Nw2EntDF5C4 *)e)
-#define OTHER ((Nw2EntDF5C4 *)other)
-#define ATT ((Nw2AttDF5C4 *)E->f364)
-
-s8 func_800DF5C4(u8 *e, u8 *other, u16 mask, u16 val, u8 a4, u16 a5) {
+/* Boundary reactions of w (returns 1 when an action is started). In the ring, dirIndex =
+ * findBoundaryQuadrant(w, NULL, 1); when it is not -1: mask bit 4 with D_800E4000[dirIndex] in val and
+ * func_800E07DC(w) (no wrestler with the same dirIndex is in state 0x14 before step 4, 0x0A or 0x18) starts
+ * state 0x0A at step 1 if func_800DF924(w, other), else state 0x18 unless flags bit 0x1; mask bit 0x8000 with
+ * val & 0xF00 == D_800E4000[dirIndex], other WR_FLAG_IN_RING with flag 0x400000 and profile bit 0x400000 starts
+ * 0x66; a4 with the same val test, func_800E07DC and no flags bit 0x1 starts 0x18.
+ * On the apron: mask bit 4, func_800DF924(w, other) and val & a5 & D_800E4008[ringSide] clear flag
+ * 0x8000000000 (set again when func_800D65D0(w, a5) == 1, with dirIndex = (ringSide - 1) & 3 instead of
+ * ringSide) and, when func_800E07DC(w), start state 0x0A at step 1. */
+s8 func_800DF5C4(Wrestler *w, Wrestler *other, u16 mask, u16 val, u8 a4, u16 a5) {
     s16 idx;
 
-    if (E->flags & 0x40) {
-        idx = findBoundaryQuadrant(e, 0, 1);
-        E->f3E = idx;
+    if (w->flags & WR_FLAG_IN_RING) {
+        idx = findBoundaryQuadrant(w, 0, 1);
+        w->dirIndex = idx;
         if ((s16)idx == -1) {
             goto L7F4;
         }
-        if ((mask & 4) && (D_800E4000[idx] & val) && (s8)func_800E07DC(e)) {
-            if ((s8)func_800DF924(e, other)) {
+        if ((mask & 4) && (D_800E4000[idx] & val) && (s8)func_800E07DC(w)) {
+            if ((s8)func_800DF924(w, other)) {
                 goto L8DC;
             }
-            if (!(E->flags & 1)) {
-                func_800A6C48(e, 0x18);
+            if (!(w->flags & 1)) {
+                func_800A6C48(w, 0x18);
                 return 1;
             }
         }
-        if ((mask & 0x8000) && (val & 0xF00) == D_800E4000[E->f3E] && (OTHER->flags & 0x40) &&
-            (OTHER->flags & 0x400000) && (ATT->flags & 0x400000)) {
-            func_800E212C(e);
-            func_800A6C48(e, 0x66);
+        if ((mask & 0x8000) && (val & 0xF00) == D_800E4000[w->dirIndex] && (other->flags & WR_FLAG_IN_RING) &&
+            (other->flags & 0x400000) && (*(u64 *)(w->profile + 0x38) & 0x400000)) {
+            func_800E212C(w);
+            func_800A6C48(w, 0x66);
             return 1;
         }
-        if (a4 && (val & 0xF00) == D_800E4000[E->f3E] && (s8)func_800E07DC(e) && !(E->flags & 1)) {
-            func_800E212C(e);
-            func_800A6C48(e, 0x18);
+        if (a4 && (val & 0xF00) == D_800E4000[w->dirIndex] && (s8)func_800E07DC(w) && !(w->flags & 1)) {
+            func_800E212C(w);
+            func_800A6C48(w, 0x18);
             return 1;
         }
     }
 L7F4:
-    if ((mask & 4) && (E->flags & 0x80) && (s8)func_800DF924(e, other)) {
-        if (val & (a5 & D_800E4008[E->f3C])) {
+    if ((mask & 4) && (w->flags & WR_FLAG_ON_APRON) && (s8)func_800DF924(w, other)) {
+        if (val & (a5 & D_800E4008[w->ringSide])) {
             u16 s1v;
-            E->flags &= 0xFFFFFF7FFFFFFFFFULL;
-            s1v = E->f3C;
-            if ((s16)func_800D65D0(e, a5) == 1) {
-                E->flags |= 0x8000000000ULL;
+            w->flags &= ~0x8000000000ULL;
+            s1v = w->ringSide;
+            if ((s16)func_800D65D0(w, a5) == 1) {
+                w->flags |= 0x8000000000ULL;
                 s1v = (s1v - 1) & 3;
             }
-            E->f3E = s1v;
-            if ((s8)func_800E07DC(e)) {
+            w->dirIndex = s1v;
+            if ((s8)func_800E07DC(w)) {
 L8DC:
-                func_800A6C48(e, 0xA);
-                E->fC = 1;
+                func_800A6C48(w, 0xA);
+                w->step = 1;
                 return 1;
             }
         }

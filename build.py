@@ -3,6 +3,7 @@
 
     python3 build.py             extract what's needed from your copy (first run), build, compare
     python3 build.py check NAME  check one function's C (src/<segment>/NAME.c) against the original
+    python3 build.py verify NAME...  the same check for each NAME, without recording anything (safe to run in parallel)
     python3 build.py status      how many functions are C so far, by area, and the smallest ones left
     python3 build.py targets     each function's assembly as an object of its own: the targets objdiff.json names
 
@@ -371,8 +372,25 @@ def build() -> bool:
     return False
 
 
-def check(name: str) -> bool:
-    """Compile one function and link it at its address with decompdecomp's matcher; record where its data goes."""
+def expand_includes(text: str, seen: set[str] | None = None) -> str:
+    """A header with the project headers it includes (#include "x.h" from include/) written out in place, once each."""
+    seen = set() if seen is None else seen
+
+    def one(m: re.Match) -> str:
+        path = ROOT / "include" / m.group(1)
+        if not path.exists():
+            return m.group(0)
+        if m.group(1) in seen:
+            return ""
+        seen.add(m.group(1))
+        return expand_includes(path.read_text(encoding="utf-8"), seen)
+
+    return re.sub(r'^#include "([^"]+)"[ \t]*$', one, text, flags=re.M)
+
+
+def check(name: str, record: bool = True) -> bool:
+    """Compile one function and link it at its address with decompdecomp's matcher; record where its data goes
+    (unless `record` is False)."""
     from decompnet.compiler import compile_source
     from decompnet.rom import match, split
     from decompnet.rom.symbols import Symbol, SymbolTable
@@ -410,7 +428,7 @@ def check(name: str) -> bool:
     cfg = compiler_config(ROOT, {"compiler": compiler_for(B, fn["vram"])})
     text = (ROOT / src).read_text(encoding="utf-8")
     m = re.match(r'\s*(?:/\* @header\n(?: \*.*\n)*? \*/\n)*#include "([^"]+)"\s*\n', text)
-    header = (ROOT / "include" / m.group(1)).read_text(encoding="utf-8") if m else ""
+    header = expand_includes(f'#include "{m.group(1)}"', set()) if m else ""
     res = compile_source(cfg, header, text[m.end():] if m else text, trusted=True)
     if not res.ok:
         print(res.log)
@@ -421,6 +439,9 @@ def check(name: str) -> bool:
         for p in linked.problems:
             print(f"  - {p}")
         return False
+    if not record:
+        print(f"{name}: identical to the original")
+        return True
     fn["c"] = src
     fn["own"] = {sec: min(a - o for o, a in offs.items()) for sec, offs in linked.placements.items()}
     (ROOT / "build.json").write_text(json.dumps(B, indent=1), encoding="utf-8")
@@ -480,6 +501,8 @@ if __name__ == "__main__":
     args = sys.argv[1:]
     if args[:1] == ["check"] and len(args) == 2:
         sys.exit(0 if check(args[1]) else 1)
+    if args[:1] == ["verify"] and len(args) > 1:
+        sys.exit(0 if all([check(name, record=False) for name in args[1:]]) else 1)
     if args[:1] == ["status"]:
         status()
         sys.exit(0)

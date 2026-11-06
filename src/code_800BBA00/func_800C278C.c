@@ -11,17 +11,19 @@ extern s16 D_800EB4D0[];
 void func_800D2638(void *, u16, f32);
 s32 func_800D2B64(void *, f32, u16, s32);
 
-/* Begin an action on `entity`: choose a channel mask (0x300, or 0xC00 when the
- * entity's +0x3E bit0 is set), open it at position 4.0 via func_800D2638 with
- * the "active" flag 0x40 set on the +0x20 u64, then run func_800D2B64 with
- * `pitch` and volume 0xFFFFE and restore the previous flags. */
-void func_800C278C(void *entity, f32 pitch) {
+/* Pushes w along one axis: axis mask 0x300 (X), or 0xC00 (Z) when w->dirIndex
+ * bit 0 is set. First func_800D2638(w, mask, 4.0f) pushes it out of the other
+ * wrestlers along that axis; then, with WR_FLAG_IN_RING temporarily set in
+ * w->flags (so the ring box is used), func_800D2B64(w, divisor, mask, 0xFFFFE)
+ * corrects it against the boundary using the pelvis and jointA[2..19]. The
+ * previous flags are restored. */
+void func_800C278C(Wrestler *w, f32 divisor) {
     u16 mask = 0x300;
     u64 flags;
-    if (*(u16 *)((u8 *)entity + 0x3E) & 1) mask = 0xC00;
-    func_800D2638(entity, mask, 4.0f);
-    flags = *(u64 *)((u8 *)entity + 0x20);
-    *(u64 *)((u8 *)entity + 0x20) = flags | 0x40;
-    func_800D2B64(entity, pitch, mask, 0xFFFFE);
-    *(u64 *)((u8 *)entity + 0x20) = flags;
+    if (w->dirIndex & 1) mask = 0xC00;
+    func_800D2638(w, mask, 4.0f);
+    flags = w->flags;
+    w->flags = flags | WR_FLAG_IN_RING;
+    func_800D2B64(w, divisor, mask, 0xFFFFE);
+    w->flags = flags;
 }

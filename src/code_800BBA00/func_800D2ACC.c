@@ -6,19 +6,16 @@
 #include "common.h"
 
 void translateEntityXZ(void *, void *);
-s8 func_800D2758(void *, void *, void *, s8, s32);
-f32 func_800D63F0(void *, void *, s32);
-void *func_800D6610(void *, s16);
-void func_800D37C0(void *, f32, void *);
-extern void *D_800E3C90[];
-/* Moves the entity by arg2, runs boundary correction, then moves it back. */
-s32 func_800D2ACC(void *arg0, s32 arg1, f32 *arg2) {
+/* Test w's boundary as if it stood moved by the XZ offset delta (called with w->moveDelta): translate w by it, run
+ * func_800D2CAC(w, ..., divisor 1.0, bodyMask) without applying a correction, then translate w back.
+ * Returns func_800D2CAC's side bits. */
+s32 func_800D2ACC(Wrestler *w, s32 bodyMask, f32 *delta) {
     f32 offset[4];
     s32 result;
-    translateEntityXZ(arg0, arg2);
-    result = func_800D2CAC(arg0, NULL, NULL, 1.0f, NULL, NULL, NULL, 0, arg1, 0);
-    offset[0] = -arg2[0];
-    offset[2] = -arg2[2];
-    translateEntityXZ(arg0, offset);
+    translateEntityXZ(w, delta);
+    result = func_800D2CAC(w, NULL, NULL, 1.0f, NULL, NULL, NULL, 0, bodyMask, 0);
+    offset[0] = -delta[0];
+    offset[2] = -delta[2];
+    translateEntityXZ(w, offset);
     return result;
 }

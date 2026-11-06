@@ -8,9 +8,9 @@
 extern u8 D_8007EF30[];
 extern u8 D_800FABE8[], D_800FABEC[], D_800FABEE[];
 
-/* Report whether entity arg0 should be skipped: true when its u64 flags have bits
- * 0/1, or when the global status has neither bit 0x400 nor bit 4. */
-s32 func_800C2830(void *arg0) {
-    if (*(u64 *)((u8 *)arg0 + 0x20) & 3) return 1;
+/* Returns 1 when w->flags has bit 0 or 1 set, or when the u16 at
+ * D_8007EF30 + 0x170 has neither bit 0x400 nor bit 4; otherwise 0. */
+s32 func_800C2830(Wrestler *w) {
+    if (w->flags & 3) return 1;
     return (*(u16 *)(D_8007EF30 + 0x170) & 0x404) == 0;
 }

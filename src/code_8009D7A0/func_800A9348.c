@@ -16,9 +16,9 @@ void func_800D4AD0(void *);
 s32 func_800D4CC4(void *);
 void func_800D427C(void *, s16, s32);
 
-/* Returns 0 only when the global 0x400 gates and the entity's 0x200 flag are
- * all set and its 0x100 flag is clear. */
-s32 func_800A9348(void *arg0) {
+/* Returns 0 only when both global 0x400 gates (D_8007E228 +0x58, D_8007EF30 +0x170) are set and w is
+ * WR_FLAG_LEGAL and WR_FLAG_ON_FLOOR; otherwise 1. */
+s32 func_800A9348(Wrestler *w) {
     u64 f;
 
     if (!(*(u16 *)(D_8007E228 + 0x58) & 0x400)) {
@@ -27,11 +27,11 @@ s32 func_800A9348(void *arg0) {
     if (!(*(u16 *)(D_8007EF30 + 0x170) & 0x400)) {
         return 1;
     }
-    f = *(u64 *)((u8 *)arg0 + 0x20);
-    if (!(f & 0x200)) {
+    f = w->flags;
+    if (!(f & WR_FLAG_LEGAL)) {
         return 1;
     }
-    if (f & 0x100) {
+    if (f & WR_FLAG_ON_FLOOR) {
         return 0;
     }
     return 1;

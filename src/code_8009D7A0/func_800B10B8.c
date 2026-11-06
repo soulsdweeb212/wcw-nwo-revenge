@@ -6,16 +6,16 @@
 #include "common.h"
 
 extern u8 *D_800FABD0;
-extern u8 *D_800F9B60;
 s8 func_800D4198(s16);
 f32 func_800B3AD8(void *);
-/* Returns the remaining countdown for the entity when it is in state 0x44 (and
- * the chance roll passes): the entity limit minus the elapsed counter. */
+/* Returns the frames left until the opponent's hit window opens when it is in
+ * state 0x44 (and the chance roll passes): anim.hitStart - animFrame - 1,
+ * clamped at 0. */
 s16 func_800B10B8(void) {
     s16 result = 0;
-    if (*(s16 *)(D_800F9B60 + 0xA) == 0x44) {
+    if (D_800F9B60->state == 0x44) {
         if (func_800D4198(*(s16 *)(D_800FABD0 + 0x12))) {
-            result = D_800F9B60[0x370] - *(u16 *)(D_800F9B60 + 6) - 1;
+            result = D_800F9B60->anim.hitStart - (u16)D_800F9B60->animFrame - 1;
             if (result < 0) result = 0;
         }
     }

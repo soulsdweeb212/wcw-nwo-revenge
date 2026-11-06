@@ -5,27 +5,27 @@
  */
 #include "common.h"
 
-/* Copies the entity's X/Z (from +0x6C/+0x74) to +0x4C/+0x54, then clamps the
- * facing-quadrant (+0x3C) axis to the ring edge (+/-265). */
-void func_800A7364(u8 *arg0) {
-    f32 a = *(f32 *)(arg0 + 0x6C);
-    f32 b = *(f32 *)(arg0 + 0x74);
-    s32 t = *(s16 *)(arg0 + 0x3C);
+/* Copies the pelvis joint's X/Z (jointA[1]) to the root x/z, then puts the
+ * coordinate of the ringSide axis on the apron standing line (+/-265). */
+void func_800A7364(Wrestler *w) {
+    f32 px = w->jointA[1].x;
+    f32 pz = w->jointA[1].z;
+    s32 side = w->ringSide;
 
-    *(f32 *)(arg0 + 0x4C) = a;
-    *(f32 *)(arg0 + 0x54) = b;
-    switch (t) {
+    w->x = px;
+    w->z = pz;
+    switch (side) {
     case 0:
-        *(f32 *)(arg0 + 0x54) = 265.0f;
+        w->z = 265.0f;
         break;
     case 1:
-        *(f32 *)(arg0 + 0x4C) = 265.0f;
+        w->x = 265.0f;
         break;
     case 2:
-        *(f32 *)(arg0 + 0x54) = -265.0f;
+        w->z = -265.0f;
         break;
     case 3:
-        *(f32 *)(arg0 + 0x4C) = -265.0f;
+        w->x = -265.0f;
         break;
     }
 }

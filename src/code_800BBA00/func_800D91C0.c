@@ -11,12 +11,12 @@ extern u8 D_8007E228[];
 extern u8 D_8007EF30[];
 extern u8 D_800F9850[];
 
-/* Increments the entity's D_800F9850 counter when the global and per-entity
- * gates are set. */
-void func_800D91C0(u8 *arg0) {
+/* Increments the wrestler's D_800F9850 counter when the global gates (D_8007E228+0x58 bit 0x200 set,
+ * D_8007EF30+0x170 bit 0x40 clear) pass and the wrestler is the legal man (WR_FLAG_LEGAL). */
+void func_800D91C0(Wrestler *w) {
     if ((*(u16 *)(D_8007E228 + 0x58) & 0x200) &&
         !(*(u16 *)(D_8007EF30 + 0x170) & 0x40) &&
-        (*(u64 *)(arg0 + 0x20) & 0x200)) {
-        *(u16 *)(D_800F9850 + (*(s8 *)arg0) * 2) += 1;
+        (w->flags & WR_FLAG_LEGAL)) {
+        *(u16 *)(D_800F9850 + w->id * 2) += 1;
     }
 }

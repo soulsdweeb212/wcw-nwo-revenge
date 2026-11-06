@@ -5,32 +5,29 @@
  */
 #include "common.h"
 
-/* Builds and applies an entity's horizontal movement vector from a set of
- * direction bits, then moves the other entity away and keeps the two
- * entities' +0x58 value in sync.
- * When bit 0x10 of ent+0x2C is set the direction comes from a pair of
- * tables (D_800E3C10/D_800E3C12) selected by (ent+0x3C & 1): the entity
+/* Builds and applies a wrestler's horizontal movement vector from a set of
+ * direction bits, then moves the other wrestler by the same amount and keeps
+ * self's and the opponent's heading in sync.
+ * When bit 0x10 of ent->grappleCtx is set the direction comes from a pair of
+ * tables (D_800E3C10/D_800E3C12) selected by (ent->ringSide & 1): the wrestler
  * walks forward (t) along X or Z and opposes a matching flag with -t.
  * Otherwise the 0xF00 flags pick the axis/sign directly (0x800/0x400 Z+/-,
  * 0x100/0x200 X+/-), scaled by D_800E6940 unless func_800D7A68 is odd.
- * After moving both entities it re-derives a +/-0x22 delta from the 0x8000/
- * 0x4000 flags and reapplies the shared +0x58 value to both, finally
- * orienting the other entity's +0x4C vector toward ent+0x4C. */
+ * After moving both it re-derives a +/-0x22 turn from the 0x8000/0x4000
+ * flags and writes the shared heading to self and opponent, finally
+ * placing the opponent's position relative to self's position. */
 typedef struct { f32 a, b, c, d; } Nw2Snapshot;
 
 extern u8 D_800E3C10[];
 extern u8 D_800E3C12[];
 extern f64 D_800E6940;
-extern void *D_800F9B00;
-extern void *D_800FAF5C;
 f32 func_800D63F0(void *, void *, s32);
 void func_800D2600(void *, s32, f32);
-s32 func_800D2BAC(void *, void *, f32, s32);
 s32 func_800D7A68(s32);
 s32 func_800D35B0(s32, s32);
 void func_800D3E40(void *, f32 *, s32, void *);
 
-void applyEntityMovementC8D84(u8 *ent, u8 *other, u16 flags, f32 scale) {
+void applyEntityMovementC8D84(Wrestler *ent, Wrestler *other, u16 flags, f32 scale) {
     f32 posRot[4];
     f32 move[3];
     Nw2Snapshot startPos;
@@ -42,11 +39,11 @@ void applyEntityMovementC8D84(u8 *ent, u8 *other, u16 flags, f32 scale) {
     s32 *partnerMode;
 
     flagCopy = flags;
-    startPos = *(Nw2Snapshot *)(ent + 0x4C);
+    startPos = *(Nw2Snapshot *)&ent->x;
     move[0] = 0.0f;
     move[2] = 0.0f;
-    if (*(u32 *)(ent + 0x2C) & 0x10) {
-        side = *(u16 *)(ent + 0x3C) & 1;
+    if (ent->grappleCtx & 0x10) {
+        side = ent->ringSide & 1;
         if (flags & (*(u16 *)(D_800E3C10 + side * 4) | *(u16 *)(D_800E3C12 + side * 4))) {
             speed = func_800D63F0(ent, 0, 4);
             if (side != 0) {
@@ -85,22 +82,22 @@ void applyEntityMovementC8D84(u8 *ent, u8 *other, u16 flags, f32 scale) {
         }
     }
     translateEntityXZ(ent, move);
-    func_800D2600(ent, *(s8 *)other, 4.0f);
-    move[0] = *(f32 *)(ent + 0x4C) - startPos.a;
-    move[2] = *(f32 *)(ent + 0x54) - startPos.c;
+    func_800D2600(ent, other->id, 4.0f);
+    move[0] = ent->x - startPos.a;
+    move[2] = ent->z - startPos.c;
     translateEntityXZ(other, move);
     func_800D2BAC(ent, other, 2.0f, 2);
-    if (!(*(u32 *)(ent + 0x2C) & 0x10)) {
+    if (!(ent->grappleCtx & 0x10)) {
         delta = -((flagCopy & 0x8000) != 0) & 0x22;
         if (flagCopy & 0x4000) {
             delta = -0x22;
         }
-        newMode = func_800D35B0(*(s32 *)((u8 *)D_800FAF5C + 0x58), delta);
-        partnerMode = (s32 *)((u8 *)D_800F9B00 + 0x58);
-        *(s32 *)((u8 *)D_800FAF5C + 0x58) = newMode;
+        newMode = func_800D35B0(D_800FAF5C->heading, delta);
+        partnerMode = &D_800F9B00->heading;
+        D_800FAF5C->heading = newMode;
         *partnerMode = newMode;
         posRot[0] = 0.0f;
         posRot[2] = scale;
-        func_800D3E40((u8 *)D_800F9B00 + 0x4C, posRot, func_800D35B0(*(s32 *)((u8 *)D_800F9B00 + 0x58), 0x800), (u8 *)D_800FAF5C + 0x4C);
+        func_800D3E40(&D_800F9B00->x, posRot, func_800D35B0(D_800F9B00->heading, 0x800), &D_800FAF5C->x);
     }
 }

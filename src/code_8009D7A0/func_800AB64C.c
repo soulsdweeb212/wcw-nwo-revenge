@@ -10,7 +10,7 @@ void func_800ADA38(void *);
 s8 func_800D4198(s16);
 extern u8 D_800E3548[];
 extern f64 D_800E4E00,D_800E4E08,D_800E4E10,D_800E4E18;
-extern u8 *D_800F9B60,*D_800FABD0;
+extern u8 *D_800FABD0;
 #define F(p,o,t) (*(t *)((p)+(o)))
 void func_800AB64C(void) {
     s32 action;
@@ -20,7 +20,7 @@ void func_800AB64C(void) {
         func_800ADA38(D_800E3548); return;
     }
     base=(s32)((f64)F(D_800FABD0,0x12,s16)*D_800E4E08)+F(D_800FABD0,0x18,s16)*3;
-    state=F(D_800F9B60,0xA,s16);
+    state=D_800F9B60->state;
     chance=base;
     if(state==0x1F) chance=(s32)((f64)base*D_800E4E10);
     if(state==7) chance=(s32)((f64)chance*D_800E4E18);

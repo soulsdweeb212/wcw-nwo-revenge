@@ -22,30 +22,7 @@ typedef int s32_bool;
 #define FALSE 0
 #define ARRAY_COUNT(arr) (s32)(sizeof(arr) / sizeof(arr[0]))
 
-/* 0x3B0-stride entity/action record selected by s8 index into D_800F9D10
- * (see matched func_8009D8D0). Use a typed pointer for this record; raw u8*+offset
- * access changes register allocation/scheduling. Fields are at the named offsets. */
-typedef struct {
-    u8 pad0[0xA];
-    s16 fA;
-    u8 padC[0x14];
-    u64 flags;
-    u8 pad28[0xF];
-    u8 f37;
-    u8 f38;
-    u8 pad39[3];
-    s16 f3C;
-    u8 pad3E[0xE];
-    f32 f4C;
-    u8 pad50[0x301];
-    s8 f351;
-    s8 f352;
-    u8 pad353[2];
-    s8 f355;
-    u8 pad356[2];
-    s32 f358;
-    s32 f35C;
-} Nw2Entity3B0;
+#include "wrestler.h"
 
 /* s32 global at 0x800D6D30; linkable by this name (func_8009001C polls it) */
 extern s32 D_800D6D30;
@@ -89,21 +66,7 @@ typedef struct {
     s32 f4;
 } Nw2Obj80038830;
 
-/* object behind the global pointer D_800EB408 (func_8009F774/8009FC0C/800A3E54/800A5D64...):
- * f4 compared as s16 (lh), fC read/incremented as s16 (lh/lhu -> addiu -> sh).
- * NOTE: matched sources define this locally as `T_F408`, so use the Nw2F408 name in new code. */
-typedef struct {
-    s32 f0;
-    s16 f4;
-    s16 f6;
-    s32 f8;
-    s16 fC;
-    s16 fE;
-} Nw2F408;
-
-/* globals of that group; all matched uses agree on these types (unlike D_800EB40C,
- * which is s32 in some and void* in others -- do NOT add it here). */
-extern void *D_800EB408;
+/* Globals whose type every matched use agrees on. */
 extern s16 D_800EB37A;
 extern s32 D_800F99C0;
 extern s32 *D_800F99D4;
@@ -122,8 +85,8 @@ typedef struct {
 void guMtxIdentF(void *);
 /* guTranslateF(void *, f32, f32, f32) -- declared locally in the saved 0x800014xx file,
  * which uses (void *, s32, s32, f32); declare it yourself in new files. */
-void func_800A6C48(void *, s32);
-void func_800D93DC(void *);
+void func_800A6C48(Wrestler *, s32);
+void func_800D93DC(Wrestler *);
 /* func_800A83DC returns s8 (callers test `sll 24; bnez`, no sign-extension — like func_800B4C60). */
 /* func_800D2B64 takes (void *, f32, u16, s32) and returns the boundary-core s32 result.
  * Declare locally because legacy callers use raw float bits. */
@@ -182,10 +145,10 @@ s32 func_80029C40(void *, u16, s32);
 /* Boundary correction core: entity and two optional linked entities, float divisor,
  * optional attachment record, optional three-point buffer, optional position,
  * direction mask, body-part mask, and apply-correction flag. */
-s32 func_800D2CAC(void *, void *, void *, f32, void *, void *, void *, u16, s32, u16);
-s32 func_800D2C2C(void *, void *, void *, f32, void *, s32);
-s32 func_800D2C68(void *, void *, f32, void *, s32);
-s32 func_800D2BAC(void *, void *, f32, s32);
+s32 func_800D2CAC(Wrestler *, Wrestler *, Wrestler *, f32, WrAnimMeta *, void *, void *, u16, s32, u16);
+s32 func_800D2C2C(Wrestler *, Wrestler *, Wrestler *, f32, void *, s32);
+s32 func_800D2C68(Wrestler *, Wrestler *, f32, void *, s32);
+s32 func_800D2BAC(Wrestler *, Wrestler *, f32, s32);
 /* Recovered func_800D2BEC signature (local declarations for legacy callers):
  * s32 func_800D2BEC(void *, void *, void *, f32, u16, s32); */
 
@@ -604,7 +567,7 @@ typedef struct {
 extern f64 D_800E5868;
 extern f64 D_800E5870;
 extern f64 D_800E5878;
-s32 func_800BED3C(u8 *, s32, u32);
+s32 func_800BED3C(Wrestler *, Wrestler *, u32);
 
 /* Matched B46C: u16 func_8000B46C(s16 index) scans 23 buffers.
  * D_8007C438 is u16 *[][23], D_8007C318 is u16[][23] (buffer counts).
@@ -753,7 +716,7 @@ typedef struct Nw2TimerQueueEntry {
  * stores getXZDirectionQuadrant(position+6C) to s16+3C, copies X/Z
  * to +4C/+54 and table D_800E3CA0[quadrant] to s32+58, then snaps
  * quadrant-selected X/Z to +/-265. D_800E3CA0 is s32[4]. */
-void snapEntityToRingBoundary(u8 *);
+void snapEntityToRingBoundary(Wrestler *);
 
 /* Matched 9903C/99148/99254/99364: 64 resource-cache entries at D_800E7CE0,
  * stride 20, key at +8, s16 parameters +C/+E, secondary key +10.
@@ -1174,26 +1137,6 @@ typedef struct {
     u32 w0, w1;
 } Nw2GfxCommand;
 
-/* Matched 800DA158 (sibling of 800A627C/800A63D8): the action object at
- * D_800FAF5C. +0 s32, +4 s16 phase timer (tested `<= 0` -> bgtz skip),
- * +0xC s16 switch state, +0x16 s16, +0x3C s16 index into s32 D_800E3CA0,
- * +0x3E s16 index into s32 D_800E3CC0, +0x58 s32 heading.
- * `o->fC++` on the s16 field is emitted as lhu/addiu/sh (KMC quirk). */
-typedef struct {
-    s32 f0;
-    s16 f4, f6;
-    s32 f8;
-    s16 fC, fE;
-    u8 pad10[4];
-    s16 f14;
-    s16 f16;
-    u8 pad18[0x24];
-    s16 f3C;
-    s16 f3E;
-    u8 pad40[0x18];
-    s32 f58;
-} Nw2F5CAction;
-
 /* Matched osPfsIsPlug (216D0): s32 (void *queue,u8 *connectedMask).
  * Status records are {u16 type;u8 status,error;}[4], stack +10, followed
  * by s32 message at +20 and u8 temporary mask at +24.
@@ -1256,30 +1199,6 @@ typedef struct { s32 f0; Nw2CentroidMesh *mesh; s32 f8; f32 x,y,z; } Nw2Centroid
  * Local prototypes retain compatibility with legacy callers.
  */
 
-/* The 0x800A34xx/0x800A36xx/0x800A3Axx action-handler family
- * (800A3428/800A3610/800A3A74): A = D_800EB408 is the action object,
- * B = D_800EB40C the entity.  Layout shared by both pointers:
- * s32 f0; s16 f4; s16 f6; s16 f8; u64 flags at +0x20 (big-endian: +0x20 is the
- * HIGH word, +0x24 the low word, so KMC emits `and hi,0` + `and lo,mask` for a
- * u64 literal with zero high half); s32 f2C; s8 f362.
- * The first statement of these handlers is the guard
- *   if (!(B->f2C & 0x380)) func_800D2BEC(A, B, 0, 4.0f, 0, 0xFFFFE);
- * (D2BEC signature: s32(void*,void*,void*,f32,u16,s32); 0xFFFFE, not -2).
- * Flags clear uses `flags &= ~0x40000000ULL`, set uses `flags |= 0x40000000ULL`.
- * Keep this typedef local in a file if a same-named type appears there. */
-typedef struct {
-    s32 f0;
-    s16 f4;
-    s16 f6;
-    s16 f8;
-    u8 padA[0x16];
-    u64 flags;
-    u8 pad28[4];
-    s32 f2C;
-    u8 pad30[0x332];
-    s8 f362;
-} Nw2ActionEB408;
-
 /* Matched D5B74: void func_800D5B74(s8 entityId,s8 otherId,u32 mode).
  * D_800F97D8 is an s16 wrapping coordinate/angle with period600;
  * D_800F97DC receives its normalized copy. D_800F9D14 is u16 per-entity
@@ -1325,8 +1244,8 @@ typedef struct { s32 reserved0; u32 vertices; u16 count; } Nw2VertexDescriptor92
  * Resets states +C/+E/+360, bytes +362/+363 to signed -1; establishes
  * reciprocal IDs at +353 and target +351. Flag reset uses u64 mask
  * ~0x10810000000ULL then OR 0x1000000000ULL. */
-void func_800DECAC(void *, s32, s32, s32);
-void func_800A700C(void *);
+void func_800DECAC(Wrestler *, s32, s32, s32);
+void func_800A700C(Wrestler *);
 /* void beginPairedEntityActions(void *,s16,void *,s16); local for legacy callers. */
 
 /* Matched DCFBC: both DB4FC and D4CC4 return low-byte booleans;

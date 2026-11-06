@@ -5,31 +5,31 @@
  */
 #include "common.h"
 
-/* Start a matched pair of actions: reset both entities' action/anim/timer
- * fields, set the "paired" flag bits, run their action setup, then cross-link
- * each entity to the other (facing, source id and partner pointers). */
-void func_800DECAC(void *,s32,s32,s32);
-void func_800A700C(void *);
-#define P6(p,t,o) (*(t*)((u8*)(p)+(o)))
-void beginPairedEntityActions(void *self,s16 selfAction,void *other,s16 otherAction) {
-    P6(self,s16,0xA)=selfAction;
-    P6(self,s16,0xC)=0; P6(self,s16,0xE)=0; P6(self,s16,0x360)=0;
-    P6(self,u64,0x20)=(P6(self,u64,0x20)&~0x10810000000ULL)|0x1000000000ULL;
-    func_800DECAC(self,0,0,0);
-    P6(self,s8,0x362)=-1; P6(self,s8,0x363)=-1;
-    P6(self,u64,0x20)&=~0x40000000ULL;
-    P6(other,s16,0xA)=otherAction;
-    P6(other,s16,0xC)=0; P6(other,s16,0xE)=0; P6(other,s16,0x360)=0;
-    P6(other,u64,0x20)=(P6(other,u64,0x20)&~0x10810000000ULL)|0x1000000000ULL;
-    func_800DECAC(other,0,0,0);
-    P6(other,s8,0x362)=-1; P6(other,s8,0x363)=-1;
-    P6(other,u64,0x20)&=~0x40000000ULL;
-    func_800A700C(self);func_800A700C(other);
-    P6(self,u64,0x20)|=0x1060000000ULL;
-    P6(other,u64,0x20)|=0x1020000000ULL;
-    P6(self,u8,0x362)=P6(other,u8,0);
-    P6(self,s8,0x351)=-1;
-    P6(self,u8,0x353)=P6(other,u8,0);
-    P6(other,u8,0x353)=P6(self,u8,0);
-    P6(other,u8,0x351)=P6(self,u8,0);
+/* Start a matched pair of states: put each wrestler in its new state (step, stepFlags and pairSignals cleared, flag
+ * bits 0x10800000000 and WR_FLAG_RERUN cleared, 0x1000000000 set, func_800DECAC(w, 0, 0, 0) which only zeroes the
+ * slot's D_800F98D0 counter), clear its attached[] slots and WR_FLAG_PAIR_LEADER, and unlink it from every record's
+ * attached[] (func_800A700C). Then self leads the pair: self gets WR_FLAG_PAIR_LEADER | WR_FLAG_UPDATED, other
+ * WR_FLAG_UPDATED (both also 0x1000000000); self->attached[0] = other, self->heldById = -1, each becomes the other's
+ * opponentId, and other->heldById = self. */
+void beginPairedEntityActions(Wrestler *self, s16 selfAction, Wrestler *other, s16 otherAction) {
+    self->state = selfAction;
+    self->step = 0; self->stepFlags = 0; self->pairSignals = 0;
+    self->flags = (self->flags & ~0x10810000000ULL) | 0x1000000000ULL;
+    func_800DECAC(self, 0, 0, 0);
+    self->attached[0] = -1; self->attached[1] = -1;
+    self->flags &= ~WR_FLAG_PAIR_LEADER;
+    other->state = otherAction;
+    other->step = 0; other->stepFlags = 0; other->pairSignals = 0;
+    other->flags = (other->flags & ~0x10810000000ULL) | 0x1000000000ULL;
+    func_800DECAC(other, 0, 0, 0);
+    other->attached[0] = -1; other->attached[1] = -1;
+    other->flags &= ~WR_FLAG_PAIR_LEADER;
+    func_800A700C(self); func_800A700C(other);
+    self->flags |= 0x1000000000ULL | WR_FLAG_PAIR_LEADER | WR_FLAG_UPDATED;
+    other->flags |= 0x1000000000ULL | WR_FLAG_UPDATED;
+    self->attached[0] = other->id;
+    self->heldById = -1;
+    self->opponentId = other->id;
+    other->opponentId = self->id;
+    other->heldById = self->id;
 }

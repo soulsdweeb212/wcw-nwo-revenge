@@ -7,68 +7,58 @@
 
 extern s32 D_800E3C90[];
 extern s32 D_800E3CB0[];
-extern u8 D_800F9D12[];
-extern u8 D_800F9D1A[];
-extern u8 D_800F9D30[];
-extern u8 D_800F9D34[];
-extern u8 D_800F9D38[];
-extern u8 D_800F9D4E[];
 s32 func_800D3550(s32);
 s32 func_800D35B0(s32, s32);
 s32 func_800D3684(s32, s32);
 void *func_800D6610(void *, s16);
 s16 getRingBoundaryPointAlongHeading(void *, s32, void *);
 
-s32 func_800D1B5C(u8 *arg0, s8 *arg1) {
+s32 func_800D1B5C(Wrestler *self, Wrestler *other) {
     s16 i;
     s32 mask;
     s32 best;
     s16 bestIdx;
     s32 t;
 
-    if (*(u32 *)(arg0 + 0x3AC) & 0x1000) {
-        s8 *other = arg1;
+    if (self->move.flags & 0x1000) {
         mask = 0;
         for (i = 0; i < 4; i++) {
-            s32 off;
             s16 a1;
-            if (i == (s8)arg0[0] || i == other[0]) {
+            if (i == self->id || i == other->id) {
                 continue;
             }
-            off = i * 0x3B0;
-            if (*(s16 *)(D_800F9D12 + off) == -1) {
+            if (D_800F9D10[i].characterId == -1) {
                 continue;
             }
-            a1 = *(s16 *)(D_800F9D1A + off);
+            a1 = D_800F9D10[i].state;
             if (a1 == 0x14) {
-                mask |= 1 << *(s16 *)(D_800F9D4E + off);
+                mask |= 1 << D_800F9D10[i].dirIndex;
             }
-            if (!(*(u64 *)(D_800F9D30 + off) & 0x40ULL)) {
+            if (!(D_800F9D10[i].flags & WR_FLAG_IN_RING)) {
                 continue;
             }
-            if (a1 == 0xC && (*(u16 *)(D_800F9D38 + off) & 8)) {
-                mask |= 1 << *(s16 *)(D_800F9D4E + off);
+            if (a1 == 0xC && (D_800F9D10[i].moveMode & 8)) {
+                mask |= 1 << D_800F9D10[i].dirIndex;
             }
-            off = i * 0x3B0;
-            if (!(*(u64 *)(D_800F9D30 + off) & 0x100000ULL)) {
+            if (!(D_800F9D10[i].flags & 0x100000ULL)) {
                 continue;
             }
-            if (*(u16 *)(D_800F9D38 + off) & 0x20) {
-                if (*(u16 *)(D_800F9D38 + off) & 8) {
-                    mask |= 1 << *(s16 *)(D_800F9D4E + off);
+            if (D_800F9D10[i].moveMode & 0x20) {
+                if (D_800F9D10[i].moveMode & 8) {
+                    mask |= 1 << D_800F9D10[i].dirIndex;
                 }
             }
         }
         best = 0x800;
         for (i = 0; i < 4; i++) {
-            t = func_800D3684(D_800E3CB0[i], *(s32 *)(arg0 + 0x58));
+            t = func_800D3684(D_800E3CB0[i], self->heading);
             t = func_800D3550(t);
             if (best >= t) {
                 best = t;
                 bestIdx = i;
             }
         }
-        if (*(u32 *)(arg0 + 0x3AC) & 0x20000) {
+        if (self->move.flags & 0x20000) {
             bestIdx = (bestIdx + 2) & 3;
         }
         if (((mask & 0xFF) >> bestIdx) & 1) {
@@ -80,22 +70,22 @@ s32 func_800D1B5C(u8 *arg0, s8 *arg1) {
                 }
             }
         }
-        *(s16 *)(arg0 + 0x3E) = bestIdx;
-        *(s16 *)(other + 0x3E) = bestIdx;
-        t = (s32)func_800D6610(arg0, bestIdx);
-        if (*(u32 *)(arg0 + 0x3AC) & 0x20000) {
+        self->dirIndex = bestIdx;
+        other->dirIndex = bestIdx;
+        t = (s32)func_800D6610(self, bestIdx);
+        if (self->move.flags & 0x20000) {
             t = func_800D35B0(t, 0x800);
         }
         return t;
     }
     {
         s32 sp10[4];
-        bestIdx = getRingBoundaryPointAlongHeading(arg0 + 0x4C, *(s32 *)(arg0 + 0x58), sp10);
+        bestIdx = getRingBoundaryPointAlongHeading(&self->x, self->heading, sp10);
     }
-    if (*(u32 *)(arg0 + 0x3AC) & 0x20000) {
-        *(s16 *)(arg0 + 0x3E) = (bestIdx + 2) & 3;
+    if (self->move.flags & 0x20000) {
+        self->dirIndex = (bestIdx + 2) & 3;
     } else {
-        *(s16 *)(arg0 + 0x3E) = bestIdx;
+        self->dirIndex = bestIdx;
     }
     return D_800E3C90[bestIdx];
 }
