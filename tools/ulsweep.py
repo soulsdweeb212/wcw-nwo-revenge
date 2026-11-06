@@ -1,6 +1,7 @@
-"""ulsweep.py OUT.json [VERSIONS] : compile every ultralib C file (ULTRALIB env var) for each libgultra_rom version
-(default "I J K"), split the objects into functions and score each against every main-segment ROM function of a
-similar size (same normalisation as dh.py). Writes, per ROM function, the best candidates. Run from source/."""
+"""ulsweep.py OUT.json [VERSIONS] [SEGMENTS] : compile every ultralib C file (ULTRALIB env var) for each libgultra_rom
+version (default "I J K"), split the objects into functions and score each against every ROM function of a similar
+size in the given segments (default "main"; "all" for every segment), with the same normalisation as dh.py. Writes,
+per ROM function, the best candidates. Run from source/."""
 import sys,os,re,json,subprocess,tempfile,difflib,glob
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
@@ -18,7 +19,8 @@ def strip_pad(l):
 OUT=sys.argv[1]; VERS=(sys.argv[2] if len(sys.argv)>2 else 'I J K').split()
 U=os.environ['ULTRALIB']; ROOT=Path('.').resolve()
 B=json.load(open('build.json'))
-main=sorted([f for f in B['functions'] if f['seg']=='main'],key=lambda f:f['vram'])
+SEGS=(sys.argv[3] if len(sys.argv)>3 else 'main').split()
+main=sorted([f for f in B['functions'] if 'all' in SEGS or f['seg'] in SEGS],key=lambda f:(f['rom'],f['vram']))
 rom=open(B['image'],'rb').read()
 tmp=tempfile.mkdtemp()
 roms={}
@@ -26,7 +28,7 @@ for f in main:
     size=int(re.search(r'nonmatching \S+, (0x[0-9A-Fa-f]+)',open(f['asm']).read()).group(1),16)
     p=f'{tmp}/r.bin'; open(p,'wb').write(rom[f['rom']:f['rom']+size])
     roms[f['name']]=strip_pad(norm(dis(p,True)))
-cfg=compiler_config(ROOT,{"compiler":compiler_for(B,main[0]['vram'])})
+cfg=compiler_config(ROOT,{"compiler":compiler_for(B,0x80020000)})
 cfgs={'-O2':cfg}
 import copy
 c3=copy.deepcopy(cfg)
@@ -68,4 +70,4 @@ def best(name):
         out.append((sc,round(sc/max(len(r),len(ins)),3),n,rel,vs))
     out.sort(); return out[:4]
 with ThreadPoolExecutor(5) as ex: res=dict(zip(roms,ex.map(best,roms)))
-json.dump({n:{'vram':f"{f['vram']:08X}",'len':len(roms[n]),'cands':res[n]} for n,f in zip(roms,main)},open(OUT,'w'),indent=1)
+json.dump({n:{'seg':f['seg'],'vram':f"{f['vram']:08X}",'len':len(roms[n]),'cands':res[n]} for n,f in zip(roms,main)},open(OUT,'w'),indent=1)

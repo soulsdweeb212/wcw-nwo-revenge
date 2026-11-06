@@ -3,7 +3,8 @@
 The main segment (`src/main/`, 0x80000450..0x8002CA30, 676 functions) holds the game engine and, linked in after it, the
 Nintendo 64 SDK libraries the game was built with. This page lists every SDK function identified there (2026-11-05):
 380 of them are named now, 4 are SDK-looking but unnamed. The rest of the segment is game code. The SDK's data globals that
-these functions use (103 of them) are named too: see [Data](#data) at the end.
+these functions use (103 of them) are named too: see [Data](#data) at the end. The two overlays hold no SDK code at all;
+they only call into main's (see [The overlays](#the-overlays)).
 
 Each renamed file starts (after its `@header`) with a one-line `/* SDK: ... */` comment saying where it comes from; the 35
 hand-written assembly routines carry a longer explanation instead. The table below has the evidence for each one.
@@ -72,6 +73,46 @@ like SDK code, no name found.
 - Game code that only resembles SDK code keeps its name: `func_80007F70` is a transposed copy of `guMtxXFMF`
   (the real one is 0x8001B3EC), and the sweep's other score-0 hits in the game area are game stubs and getters.
 
+## The overlays
+
+The overlays (overlay 1: `code_80090000`, 367 functions; overlay 2: `ovl2_80090000`, `code_8009D7A0`, `code_800BBA00`,
+`code_800DE9C0`, 653 functions) contain no Nintendo SDK, libc, libgcc or KMC-runtime code, unmodified or modified (checked
+2026-11-05). All the SDK is linked once, into main, and the overlays call it there. How that was established:
+
+- `tools/ulsweep.py` with the overlay segments scored all 1020 overlay functions against all of ultralib (I/J/K, -O2/-O3), and
+  a second sweep scored them against the 384 SDK functions of main (which also catches copies and modified versions) and
+  against every function of the archived libnaudio, libmus 3.14 and the demo audio manager. No overlay function longer than
+  12 instructions comes near any of them; the score-0 hits are 1 to 7 instruction game stubs (empty functions, getters of
+  game globals, one-call forwarders) that look like any small SDK function.
+- No overlay function touches hardware: none uses mtc0/mfc0/cache/eret/syscall or a 0xA4xxxxxx register address (40 main
+  functions do), none calls `__osDisableInt`/`__osRestoreInt`, and the overlays' raw data blobs (ROM 0x72240..0x837A0 and
+  0xD5FB0..0xDAC50) contain no code.
+- Three independent reviews then tried to find SDK code the sweeps could miss, by idiom (SDK structure offsets, gu
+  fixed-point constants, ALHeap/ALLink code, assert line numbers), by other libraries (libgcc 64-bit helpers, KMC libc,
+  libm-style math, NuSystem, the Controller Pak / SRAM samples, libleo, HVQM) and by re-reading every near miss and the end
+  of each segment. They found none.
+
+What the overlays call in main's SDK (34 functions, all from `code_80090000` unless noted):
+
+- gu and math: `guRandom`, `nw2Sqrtf`, `sinf` and `cosf` (these four also from `ovl2_80090000` and `code_800BBA00`),
+  `guPositionF`, `guMtxXFMF`, `guOrthoF` and `guLookAtF` (these two only from `ovl2_80090000`), `__udivdi3`.
+- memory and display lists: `bcopy`, `bzero`, `osVirtualToPhysical` (also `ovl2_80090000`), `osInvalDCache`,
+  `osWritebackDCache`.
+- the save module, 0x800B88E0..0x800BB440: `osPfsInitPak`, `osPfsAllocateFile`, `osPfsFindFile`, `osPfsDeleteFile`,
+  `osPfsFreeBlocks`, `osPfsNumFiles`, `osPfsFileState`, `osPfsRepairId`, `osMotorInit`, `osEPiStartDma`, `osRecvMesg`,
+  `osCreateMesgQueue`, `osCreateThread`, `osStartThread`, `func_80000A40` (main's SRAM handle setup, see its row below), and the
+  internal `__osContRamRead`/`__osContRamWrite` (from `func_800B8994`, which rewrites the first 256 bytes of the pak, a
+  test or debug routine). It is game code: it uses the game's company and game codes (0x4538, 0x4E56504A), its own save
+  magic (19 97 10 21) and checksum, and the game's heap and lock functions. Its SRAM transfers fill an `OSIoMesg` by hand the
+  way Nintendo's SRAM sample does.
+- libmus: `MusStop`, `MusHandleSetReverb` (`ovl2_80090000`), `MusHandleSetVolume`.
+
+Not SDK, but not original game code either: `func_800B5AE0`, `func_800B5D20` and `func_800B5E18` in `code_80090000` look
+like textbook routines retyped into the game's types: a natural cubic spline (second-derivative table, then binary-search
+evaluation) and a continued-fraction arctangent (20 terms) turned into a 4096-unit atan2. The reviewers recognised them as
+the spline and atan routines of Haruhiko Okumura's algorithm dictionary (1991). That comparison was made from memory of
+the book, not against its source, so the names are left as they are.
+
 ## Reproducing the sweep
 
 ```
@@ -79,6 +120,7 @@ export ULTRALIB=<a decompals/ultralib checkout>; PY=~/.local/share/uv/tools/deco
 bash tools/ulpp.sh io/pimgr.c I > x.c       # preprocess one file for 2.0I
 $PY tools/ul.py osCreatePiManager x.c osCreatePiManager   # diff it against the ROM (OPT=-O3 for -O3)
 $PY tools/ulsweep.py sweep.json "I J K"     # everything against every main function
+$PY tools/ulsweep.py ovl.json "I J K" all   # ... or against the given segments ("all" = every segment)
 ```
 
 `tools/rename_func.py` did the renames (it updates `symbol_addrs.txt`, `build.json`, file names, every mention in `src/`,

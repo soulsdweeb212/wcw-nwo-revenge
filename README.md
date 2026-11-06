@@ -5,7 +5,7 @@ All 1696 functions build as C objects (100% of the code by size): the main progr
 those are hand-written assembly routines wrapped in a top-level `asm()` block (see below), so 1661 are real C that compiles to
 exactly the original code. The Nintendo SDK code linked into the main program (libultra 2.0I, libaudio, n_audio,
 libmus, the KMC GCC runtime) carries its SDK names, functions and data: [docs/sdk_functions.md](docs/sdk_functions.md) lists the 380
-functions and 103 globals and how each was identified.
+functions and 103 globals and how each was identified. The overlays contain no SDK code; they call main's.
 `build.py` rebuilds the game from this tree and checks it against your original, byte for byte.
 <!-- Working with this project's owner: read notes/MasterIndex.md first and keep it updated (local only, gitignored). -->
 
@@ -85,7 +85,7 @@ share it.
   `docs/sdk_functions.md`, `nw2Sqrtf` and `unusedMuldi3`).
 - `tools/ulpp.sh`, `tools/ul.py`, `tools/ulsweep.py` compare [decompals/ultralib](https://github.com/decompals/ultralib) source
   with the ROM (`ULTRALIB=` a checkout): preprocess one file for a libultra version, diff one function against a ROM function,
-  or score all of ultralib against every main function. `tools/uldata.py MAP.tsv OUT.json` finds the SDK's data globals:
+  or score all of ultralib against every function of the chosen segments (main by default). `tools/uldata.py MAP.tsv OUT.json` finds the SDK's data globals:
   it lines identified functions up with their SDK source and collects which SDK variable each data reference is.
 - `nonmatching/` is where near-miss drafts go (`build.py` does not compile it). It is empty now that every function matches; its
   README keeps the matching findings collected along the way.
