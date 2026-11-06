@@ -39,7 +39,9 @@ If `build.py` can't find decompdecomp's Python, run it with that interpreter dir
 | `asm/nonmatchings/` | Assembly of every function (the target for the decompiled ones). |
 | `asm/data/`, `asm/*.s`, `assets/` | Data, start-up code and binary parts, still as assembly or binary. |
 | `include/common.h` | Types, structs and prototypes worked out so far. |
+| `include/wrestler.h` | The per-wrestler match record (`D_800F9D10[4]`, 0x3B0 bytes each) as a struct; not used by the build yet. |
 | `docs/sdk_functions.md` | The Nintendo SDK functions in the main program, with the evidence for each name. |
+| `docs/wrestler.md` | The wrestler record explained: coordinates, ring zones and boundaries, states and grapples, health and spirit. |
 | `game.ld` | Places every function and data block at its original address. |
 | `build.json`, `build.py` | How each file is built, and the build. |
 | `objdiff.json` | Per-function units for [objdiff](https://github.com/encounter/objdiff) (`python3 build.py targets` makes their targets). |
