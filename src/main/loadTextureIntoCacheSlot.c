@@ -17,8 +17,10 @@ typedef struct {
 
 void *allocateHeap(u32 bytes);
 void releaseHeapBlock(s32);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void lookupResourceDescriptor(Nw2SectionInfo *, s32);
 void func_80003684(Nw2SectionInfo *, s32, void *);
+#endif
 void func_80004F80(void *, s16, s16);
 void func_8000B884(s32, s16, s16);
 

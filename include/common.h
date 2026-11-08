@@ -1881,4 +1881,10 @@ typedef struct {
  * action updates are `void f(void){ switch(D_800FAF5C->[0x0C]) { ... } }` and
  * rely on case fallthrough (case 0 into case 1): keep case order intact. */
 
+/* What the PC port needs (port.h). On N64 it expands to the original code. It comes after the types above, which it
+ * uses. On PC its renames reach only text after this line, so this file must not declare a renamed SDK function (sinf,
+ * cosf, bzero, bcopy, the osCont*, queue and DMA functions) or a loader function (readRomSynchronousChunks,
+ * lookupResourceDescriptor, func_80003684): port.h has their PC declarations, and game files keep their own behind
+ * #ifndef TARGET_PC. */
+#include "port.h"
 

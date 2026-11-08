@@ -18,8 +18,10 @@ typedef struct {
     void *resource2;
 } LoadObj;
 
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void lookupResourceDescriptor(void *, u16);
 void func_80003684(void *, u16, void *);
+#endif
 void func_80004C90(void *, u16);
 void *allocateHeap(u32);
 void releaseHeapBlock(void *);

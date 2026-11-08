@@ -13,8 +13,10 @@
  * Buffers come from an existing arena when p->f28 is set, otherwise from the
  * heap.  The temporary resource buffer is freed at the end.
  */
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void lookupResourceDescriptor(void *, u16);
 void func_80003684(void *, u16, void *);
+#endif
 void *allocateHeap(u32);
 void releaseHeapBlock(void *);
 void *func_80007B50(s32, u8);

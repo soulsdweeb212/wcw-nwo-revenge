@@ -13,7 +13,9 @@ extern s8 D_800FADCF, D_800FADCE, D_800EB465;
 extern s16 D_800FACEA, D_800FACEC, D_800FACEE, D_800FACF0;
 extern s16 D_800FAF96, D_800FAF98, D_800FAF9A, D_800FAF9C;
 void func_800D4088(s32);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void func_80003684(void *, s32, void *);
+#endif
 void func_800B7BC4(void);
 void func_800BFCF0(void);
 /* Resets the match to its initial state: clears the action/animation counters,

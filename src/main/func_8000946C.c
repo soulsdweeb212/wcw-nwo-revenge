@@ -37,7 +37,9 @@ extern s32 D_8004859C;
 extern A2B2Rec D_8006A2B2[];
 
 void func_8000B2B8(s32);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void lookupResourceDescriptor(void *, u16);
+#endif
 void osInvalDCache(void *, s32);
 s32 osEPiStartDma(s32, void *, s32);
 s32 osRecvMesg(void *, void *, s32);

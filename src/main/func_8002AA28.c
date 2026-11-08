@@ -11,21 +11,31 @@ extern void *D_8007FC34;
 extern s32 D_8007FC38;
 extern void *D_8007FC3C;
 
+#ifdef TARGET_PC
+/* PC: the loader writes the 16-byte ResDesc of port.h. With two pointers, the N64 layout below would be 24 bytes on a
+ * 64-bit PC, and .size would be read from the wrong place. */
+typedef ResDesc Nw2ResDesc;
+#else
 typedef struct {
     void *p0;
     void *p1;
     s32 size;
     s32 len;
 } Nw2ResDesc;
+#endif
 
 typedef struct {
     s32 f0;
     u8 pad[0x14];
 } Nw2Rec18;
 
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void lookupResourceDescriptor(void *, s32);
+#endif
 void *allocateHeap(s32);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void *func_80003684(void *, s32, void *);
+#endif
 
 void func_8002AA28(void)
 {

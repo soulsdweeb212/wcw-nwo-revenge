@@ -1,0 +1,173 @@
+/* port.h: what the game's C needs to build both for the N64 and for the PC port (Turnbuckle Dive).
+ *
+ * common.h includes this file at its end, after the types it uses, so every game file sees it. The PC build compiles
+ * the game files with TARGET_PC defined; build.py, the N64 build, never defines it.
+ * - On N64 every macro here stands for the original code (READ_BE32(p) is *(u32 *)(p), and so on) and the only other
+ *   item is one typedef, so the compiler produces the same code and the ROM stays byte-identical.
+ * - Under TARGET_PC the same names do the 64-bit, little-endian equivalent, and the PC-only part at the end declares
+ *   the ROM loader's PC interface and renames the SDK functions that the port replaces.
+ * docs/port.md explains how the two builds fit together. */
+#ifndef PORT_H
+#define PORT_H
+
+#ifdef TARGET_PC
+/* System headers go before the renames at the end of this file, which would otherwise rename their declarations too
+ * (bzero in <strings.h>, for example). A game file that needs a system header includes it before common.h. */
+#include <stdint.h>
+
+/* Prints a printf-style message and stops the program. The port implements it; the PC code calls it where the N64
+ * would hang or crash, for example on a resource id that does not exist. */
+_Noreturn void port_fatal(const char *fmt, ...);
+#endif
+
+/* uptr: an unsigned integer as wide as a pointer, for code that does arithmetic on addresses. The N64 code casts
+ * pointers to u32; on a 64-bit PC that would cut the address in half. */
+#ifdef TARGET_PC
+typedef uintptr_t uptr;
+#else
+typedef u32 uptr;
+#endif
+
+/* READ_BE16, READ_BE32, READ_BE64: read a big-endian value, such as a field of a resource loaded from ROM. The N64 is
+ * big-endian, so the game reads such a value with a plain *(u32 *)p; a PC is little-endian and would see its bytes
+ * reversed. The PC versions assemble the value one byte at a time, which also works at any alignment. */
+#ifdef TARGET_PC
+static inline u16 port_be16(const void *p) {
+    const u8 *b = (const u8 *)p;
+    return (u16)((b[0] << 8) | b[1]);
+}
+static inline u32 port_be32(const void *p) {
+    const u8 *b = (const u8 *)p;
+    return ((u32)b[0] << 24) | ((u32)b[1] << 16) | ((u32)b[2] << 8) | (u32)b[3];
+}
+static inline u64 port_be64(const void *p) {
+    return ((u64)port_be32(p) << 32) | port_be32((const u8 *)p + 4);
+}
+#define READ_BE16(p) port_be16((const void *)(p))
+#define READ_BE32(p) port_be32((const void *)(p))
+#define READ_BE64(p) port_be64((const void *)(p))
+#else
+#define READ_BE16(p) (*(u16 *)(p))
+#define READ_BE32(p) (*(u32 *)(p))
+#define READ_BE64(p) (*(u64 *)(p))
+#endif
+
+/* DL_ADDR(p): the address of display-list data (another display list, vertices, a texture) as it is written into a
+ * display-list word. The N64 code writes the physical address: a link constant such as D_C95B8 is the address of the
+ * data (D_800C95B8) minus 0x80000000. The N64 form computes the same, and the compiler folds the subtraction into the
+ * address it loads, so DL_ADDR(D_800C95B8) gives the same instructions as (u32)D_C95B8. On PC the word holds the
+ * pointer itself. LUS reads a word with bit 0 set as a segment number plus offset, so an odd pointer would be misread;
+ * the PC version stops the program instead. */
+#ifdef TARGET_PC
+static inline uintptr_t port_dl_addr(const void *p) {
+    if ((uintptr_t)p & 1) {
+        port_fatal("DL_ADDR: odd address %p", p);
+    }
+    return (uintptr_t)p;
+}
+#define DL_ADDR(p) port_dl_addr((const void *)(p))
+#else
+#define DL_ADDR(p) ((u32)(p) - 0x80000000)
+#endif
+
+/* PTR_TO_SLOT(p) and SLOT_TO_PTR(s): a pointer kept in a 4-byte field of a record whose layout other code depends on,
+ * such as the 12-byte pad records D_8006E178 (filled in func_80003D20, read in func_800C5718). A 64-bit pointer does
+ * not fit there, so on PC the field holds a 32-bit handle, and the port's handle table turns pointers into handles
+ * and back. On N64 both macros give back their argument. */
+#ifdef TARGET_PC
+u32 port_ptr_to_slot(void *p);
+void *port_slot_to_ptr(u32 slot);
+#define PTR_TO_SLOT(p) port_ptr_to_slot((void *)(p))
+#define SLOT_TO_PTR(s) port_slot_to_ptr((u32)(s))
+#else
+#define PTR_TO_SLOT(p) (p)
+#define SLOT_TO_PTR(s) (s)
+#endif
+
+#ifdef TARGET_PC
+/* ---- PC only: the ROM loader ---- */
+
+/* A ROM address: an offset into the cartridge image, which the N64 code hands to the PI DMA. On PC the port keeps the
+ * checked ROM in memory and port_rom_read copies from it. A RomAddr is never a host pointer. */
+typedef u32 RomAddr;
+
+/* The resource descriptor that lookupResourceDescriptor and func_80003684 write. On N64 it is {u8 *, u8 *, s32, s32},
+ * and the two "pointers" hold ROM addresses. On PC those two fields are RomAddr, so the record stays 16 bytes: the
+ * callers keep it in s32[4], u8[16] and other 16-byte buffers, which a layout with 64-bit pointers (24 bytes) would
+ * overflow. */
+typedef struct {
+    RomAddr start; /* ROM address of the resource's data */
+    RomAddr end;   /* ROM address where the next resource starts */
+    s32 size;      /* size in RAM once loaded (decompressed) */
+    s32 packed;    /* end - start if the resource is LZSS-compressed, else 0 */
+} ResDesc;
+_Static_assert(sizeof(ResDesc) == 16, "ResDesc must stay 16 bytes, like the N64 descriptor");
+
+/* ROM addresses the PC code uses in place of the decomp's ROM symbols (build.json), which the PC build does not
+ * link: on PC, ROM data is reached only by offset, through port_rom_read. */
+#define ROM_RES_BASE      0x000DAC50u /* D_000DAC50: the resource archive; the table's offsets count from here */
+#define ROM_RES_TABLE     0x00CE2752u /* D_00CE2752: resource offset table, a big-endian u32 per id plus one */
+#define ROM_RES_TABLE_SZ  0x77A8u     /* its size in bytes */
+#define RES_COUNT         0x1DE9u     /* resource ids run from 1 to RES_COUNT */
+#define ROM_SEG1_INIT     0x0003C6D0u /* D_3C6D0: the block func_80001260 copies to segment 1 (viewport, setup list) */
+#define ROM_SEG1_INIT_END 0x0003C770u /* D_3C770: its end */
+#define ROM_MUS_BANK      0x00CE9F00u /* D_00CE9F00: libmus pointer bank for songs, up to ROM_MUS_WAVES */
+#define ROM_MUS_WAVES     0x00CEC610u /* D_00CEC610: the wave bank libmus plays those songs' samples from */
+#define ROM_SFX_BANK      0x00E35070u /* D_00E35070: libmus pointer bank for sound effects, up to ROM_SFX_WAVES */
+#define ROM_SFX_WAVES     0x00E3B300u /* D_00E3B300: the wave bank of the sound effects */
+
+/* The loader functions, declared once with ROM addresses typed as RomAddr. Game files keep their own declarations of
+ * these behind #ifndef TARGET_PC: those take pointers where the PC takes a RomAddr, and the matched N64 code depends
+ * on their exact types. */
+void readRomSynchronousChunks(RomAddr src, void *dst, s32 size);
+void lookupResourceDescriptor(void *out, u32 id);
+void *func_80003684(void *out, s32 id, void *buf);
+
+/* Implemented by the port. port_rom_read copies size bytes of the checked ROM image, starting at src, to dst; a range
+ * outside the image stops the program. func_80003684 calls port_res_loaded once a whole resource is in RAM: the one
+ * place where a whole resource loaded by func_80003684 can be tracked and its byte order converted. (Code that reads
+ * ROM bytes with readRomSynchronousChunks directly, such as func_80008810, gets them unconverted.) */
+void port_rom_read(void *dst, RomAddr src, u32 size);
+void port_res_loaded(u32 id, void *buf, s32 size);
+
+/* ---- PC only: SDK functions the port replaces ----
+ * Each name is renamed in every game file: calls, declarations and the game's own definitions alike (src/main/sinf.c
+ * then defines n64_sinf). That keeps them from clashing with, or standing in for, a library's function of the same
+ * name.
+ * - sinf, cosf: the game's own (libultra's) versions are compiled for the PC so the results equal the N64's. Under
+ *   their own names they would also replace the C library's sinf and cosf for LUS.
+ * - bzero, bcopy: the game's own versions (src/main/bzero.c, bcopy.c) become port_bzero and port_bcopy. A compiler can
+ *   turn memset(p, 0, n) into a call to bzero, so a PC bzero written with memset could otherwise call itself.
+ * - __floatdisf, __udivdi3: routines of the N64 compiler's runtime (s64 to float, unsigned 64-bit divide) that game
+ *   code calls by name. PC runtimes do not provide them (64-bit hosts) or have their own (32-bit hosts).
+ * - Controller, rumble and PI DMA functions: LUS defines most of them, but with its own record layouts, which are larger
+ *   than the N64's (its OSContPad adds gyro and right-stick fields, 20 bytes per pad on any PC, so its
+ *   osContGetReadData clears 80 bytes where the game's pad buffer is 24; its OSPfs keeps channel at +0x10 on a 64-bit
+ *   PC), or as stubs (its osEPiStartDma copies nothing). Defining a second function of the same name would clash with
+ *   LUS at link time. osContStartQuery,
+ *   osContGetQuery and osContSetCh are not in LUS; they are renamed with the rest so all controller access goes
+ *   through the port.
+ * - Message queues: LUS's OSMesgQueue is 40 bytes on a 64-bit PC, but the game gives each queue 0x18 bytes of storage
+ *   (s32 queue[6] in func_80003D20, for example). The port's versions keep the N64 size. */
+#define sinf n64_sinf
+#define cosf n64_cosf
+#define bzero port_bzero
+#define bcopy port_bcopy
+#define __floatdisf port_floatdisf
+#define __udivdi3 port_udivdi3
+#define osContInit port_osContInit
+#define osContStartReadData port_osContStartReadData
+#define osContGetReadData port_osContGetReadData
+#define osContStartQuery port_osContStartQuery
+#define osContGetQuery port_osContGetQuery
+#define osContSetCh port_osContSetCh
+#define osMotorInit port_osMotorInit
+#define __osMotorAccess port_osMotorAccess
+#define osEPiStartDma port_osEPiStartDma
+#define osCreateMesgQueue port_osCreateMesgQueue
+#define osSendMesg port_osSendMesg
+#define osRecvMesg port_osRecvMesg
+#define osSetEventMesg port_osSetEventMesg
+#endif /* TARGET_PC */
+
+#endif /* PORT_H */

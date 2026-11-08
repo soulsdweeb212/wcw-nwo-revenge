@@ -40,8 +40,10 @@ If `build.py` can't find decompdecomp's Python, run it with that interpreter dir
 | `asm/data/`, `asm/*.s`, `assets/` | Data, start-up code and binary parts, still as assembly or binary. |
 | `include/common.h` | Types, structs and prototypes worked out so far. |
 | `include/wrestler.h` | The per-wrestler match record (`D_800F9D10[4]`, 0x3B0 bytes each) as a struct, with the role pointers; every matched access to the records uses it. |
+| `include/port.h` | What the PC port needs from the game's C (`TARGET_PC`); on N64 it expands to the original code. |
 | `docs/sdk_functions.md` | The Nintendo SDK functions in the main program, with the evidence for each name. |
 | `docs/wrestler.md` | The wrestler record explained: coordinates, ring zones and boundaries, states and grapples, health and spirit. |
+| `docs/port.md` | How the same C builds the N64 ROM and the PC port: `TARGET_PC`, `port.h`, the ROM loader on PC. |
 | `game.ld` | Places every function and data block at its original address. |
 | `build.json`, `build.py` | How each file is built, and the build. |
 | `objdiff.json` | Per-function units for [objdiff](https://github.com/encounter/objdiff) (`python3 build.py targets` makes their targets). |

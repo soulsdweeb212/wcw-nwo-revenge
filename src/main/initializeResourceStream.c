@@ -8,7 +8,10 @@
 typedef struct {s16 id,state;u8 *buffer,*source,*destination;s32 remaining;u8 pad14[0x44];u8 queue[24];u16 type;u8 priority,status;void *returnQueue;u8 *dram,*cart;s32 size;u8 tail[0x78];} StreamSlot;
 extern StreamSlot D_800706AC[];
 extern u8 *D_800485A0[];extern s32 D_8004859C;
-void lookupResourceDescriptor(void *,u16);void osInvalDCache(void *,s32);s32 osEPiStartDma(s32,void *,s32);s32 osRecvMesg(void *,void *,s32);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
+void lookupResourceDescriptor(void *,u16);
+#endif
+void osInvalDCache(void *,s32);s32 osEPiStartDma(s32,void *,s32);s32 osRecvMesg(void *,void *,s32);
 /* Begin streaming resource `resId` into slot `slot`: look up its descriptor,
  * point the slot at the payload (descriptor + 4 bytes), prime the first chunk,
  * hook up the ring queue and reset the slot state, then wait for the DMA engine

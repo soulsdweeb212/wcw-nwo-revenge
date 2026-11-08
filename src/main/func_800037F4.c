@@ -5,6 +5,10 @@
  */
 #include "common.h"
 
+/* LZSS decompressor for compressed resources (4 KiB window, matches of 3 to 18 bytes): arg0 is the packed data, a
+ * big-endian u32 size followed by the compressed stream, and arg1 receives that many bytes. READ_BE32 and uptr come
+ * from port.h: on N64 they are the original *(u32 *) read and u32 casts; on PC they read the size big-endian and keep
+ * 64-bit addresses whole. */
 void func_800037F4(u8 *arg0, u8 *arg1)
 {
     u8 tmp[8];
@@ -19,7 +23,7 @@ void func_800037F4(u8 *arg0, u8 *arg1)
     u8 *p;
     u8 *q;
     u8 *src;
-    size = *((u32 *) arg0);
+    size = READ_BE32(arg0);
     src = arg0 + 4;
     pos = 0x1000;
     if (size < 0x1000)
@@ -29,7 +33,7 @@ void func_800037F4(u8 *arg0, u8 *arg1)
     if (pos != 0)
     {
         q = arg1;
-        p = (u8 *) (((u32) pos) + ((u32) arg1));
+        p = (u8 *) (((uptr) pos) + ((uptr) arg1));
         do
         {
             *q = 0;
@@ -68,7 +72,7 @@ void func_800037F4(u8 *arg0, u8 *arg1)
                     off = off - 0x1000;
                 }
                 i = 0;
-                p = (u8 *) (((u32) pos) + ((u32) arg1));
+                p = (u8 *) (((uptr) pos) + ((uptr) arg1));
                 do
                 {
                     if ((pos + off) >= 0)

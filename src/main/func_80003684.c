@@ -19,7 +19,9 @@ typedef struct {
 } Nw2ResourceDesc;
 
 void *allocateHeap(u32);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void readRomSynchronousChunks(void *, void *, s32);
+#endif
 void func_800037F4(void *, void *);
 void releaseHeapBlock(void *);
 
@@ -27,6 +29,26 @@ extern s32 *D_800482E0;
 extern s32 *D_800482E4;
 extern u8 D_000DAC50[];
 
+#ifdef TARGET_PC
+/* PC: the same reads and the same heap traffic, with the descriptor as the 16-byte ResDesc of port.h (filled by
+ * lookupResourceDescriptor, which computes exactly what the N64 code does inline). After the load it tells the port
+ * through port_res_loaded, the one place where a whole resource reaches RAM. */
+void *func_80003684(void *out, s32 id, void *buf) {
+    ResDesc res;
+    lookupResourceDescriptor(&res, (u16)id);
+    if (res.packed > 0) {
+        u8 *b = allocateHeap(res.packed);
+        readRomSynchronousChunks(res.start, b, res.packed);
+        func_800037F4(b, buf);
+        releaseHeapBlock(b);
+    } else {
+        readRomSynchronousChunks(res.start, buf, res.size);
+    }
+    port_res_loaded((u16)id, buf, res.size);
+    *(ResDesc *)out = res;
+    return out;
+}
+#else
 void *func_80003684(void *out, s32 id, void *buf) {
     Nw2ResourceDesc res;
     Nw2ResourceDesc rec;
@@ -69,3 +91,4 @@ void *func_80003684(void *out, s32 id, void *buf) {
     *(Nw2ResourceDesc *)out = res;
     return out;
 }
+#endif

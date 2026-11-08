@@ -12,7 +12,9 @@ extern u8 *D_80038A64[];
 extern f64 D_800E58C8,D_800E58D0,D_800E58D8;
 void func_8000DB90(s32,s32);
 s32 func_8000DC50(s32,s32);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void func_80003684(void*,s32,void*);
+#endif
 void func_800BA770(s32,s32,s32);
 void func_800C2B8C(void*);
 void func_800E1920(void*,s32);

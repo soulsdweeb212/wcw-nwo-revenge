@@ -18,7 +18,9 @@ typedef struct {
 extern Rec0C D_800E9D40[];
 extern Ptr8 D_800EA0E0[];
 extern Ptr8 D_800EA100[];
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void lookupResourceDescriptor(u32 *, u32);
+#endif
 
 void func_80094804(s32 arg0) {
     u32 desc[4];

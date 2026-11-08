@@ -9,10 +9,14 @@ extern u8 D_8006A2B0[];
 extern u8 D_8006A2B2[];
 extern s32 D_80030830;
 
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void readRomSynchronousChunks(s32, void *, s32);
+#endif
 void *allocateHeap(s32);
 void releaseHeapBlock(void *);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void lookupResourceDescriptor(s32 *, s32);
+#endif
 s16 func_80008574(s32);
 
 void func_800084AC(void)

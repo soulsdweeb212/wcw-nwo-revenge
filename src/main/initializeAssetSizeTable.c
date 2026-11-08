@@ -6,7 +6,9 @@
 #include "common.h"
 
 void *allocateHeap(u32);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void readRomSynchronousChunks(void *, void *, u32);
+#endif
 void releaseHeapBlock(void *);
 extern u32 *D_800482E0, *D_800482E4;
 extern u8 D_00CE2752[], D_000DAC50[];
@@ -14,6 +16,34 @@ extern u8 D_00CE2752[], D_000DAC50[];
  * 0x1DE9 entries: each entry's end is the next entry's start, and entries whose
  * low bit is set hold an explicit size loaded from ROM. Fills D_800482E4 with
  * each asset's size and frees the scratch word. */
+#ifdef TARGET_PC
+/* PC: the same steps and the same heap allocations. The ROM symbols become the ROM addresses of port.h, and the table
+ * words and the size word at the start of a compressed resource are big-endian, so they are read with READ_BE32.
+ * D_800482E0 keeps the table as it is in ROM; D_800482E4 gets the sizes in the PC's byte order. */
+void initializeAssetSizeTable(void) {
+    u32 *p, *tmp; u32 i; u32 start, end, flag;
+    D_800482E0 = allocateHeap(0x77A8);
+    readRomSynchronousChunks(ROM_RES_TABLE, D_800482E0, 0x77A8);
+    D_800482E4 = allocateHeap(0x77A4);
+    tmp = allocateHeap(4);
+    p = D_800482E0;
+    for(i=0; i<0x1DE9; i++) {
+        start = READ_BE32(p);
+        p++;
+        end = READ_BE32(p);
+        flag = start;
+        start &= ~1;
+        end &= ~1;
+        start += ROM_RES_BASE;
+        end += ROM_RES_BASE;
+        if(flag & 1) {
+            readRomSynchronousChunks(start,tmp,4);
+            D_800482E4[i] = READ_BE32(tmp);
+        } else D_800482E4[i] = end-start;
+    }
+    releaseHeapBlock(tmp);
+}
+#else
 void initializeAssetSizeTable(void) {
     u32 *p, *tmp; u32 i; u32 start, end, flag;
     D_800482E0 = allocateHeap(0x77A8);
@@ -36,3 +66,4 @@ void initializeAssetSizeTable(void) {
     }
     releaseHeapBlock(tmp);
 }
+#endif

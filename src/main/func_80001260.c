@@ -18,7 +18,9 @@ extern s32 D_80046810,D_80046828,D_80046830,D_80046844;
 extern void *D_80046858;
 extern s16 D_80047060,D_80047062,D_80047064,D_80047066;
 extern u8 D_3C6D0[],D_3C770[];
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 extern s32 readRomSynchronousChunks(void *, void *, s32);
+#endif
 extern s32 func_80000580(void *, void *);
 extern void *allocateHeap(u32);
 extern s32 osSetIntMask(s32);
@@ -37,7 +39,12 @@ void func_80001260(void) {
     if(D_8002EEC4) {
         D_8002EEC4=0;
         D_8007E228=(s32)(((u32)&D_8007FC4F>>4)<<4);
+#ifdef TARGET_PC
+        /* PC: the ROM symbols D_3C6D0/D_3C770 are not linked; the same block is read by its ROM address. */
+        readRomSynchronousChunks(ROM_SEG1_INIT,(void *)D_8007E228,ROM_SEG1_INIT_END-ROM_SEG1_INIT);
+#else
         readRomSynchronousChunks(D_3C6D0,(void *)D_8007E228,D_3C770-D_3C6D0);
+#endif
         q=D_80046768;
         initRenderQueue(q);
         q=D_800445B0;

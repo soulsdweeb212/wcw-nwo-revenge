@@ -8,7 +8,9 @@
 void func_8000337C(void *);
 void func_800033C0(s16);
 s16 func_800033F8(void);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void func_80003684(void *, s32, void *);
+#endif
 extern s16 D_80030D0C[];
 extern s16 D_80036748;
 extern u8 D_800487F0[];

@@ -41,8 +41,10 @@ void guOrthoF(void *, f32, f32, f32, f32, f32, f32, f32);
 void guLookAtF(void *, f32, f32, f32, f32, f32, f32, f32, f32, f32);
 void multiplyMatrix4x4(void *, void *, void *);
 void *allocateHeap(u32);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void lookupResourceDescriptor(void *, u16);
 void func_80003684(void *, u16, void *);
+#endif
 
 void func_80099628(void) {
     s32 desc[4];

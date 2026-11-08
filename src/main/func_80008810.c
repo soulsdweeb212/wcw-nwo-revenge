@@ -32,10 +32,14 @@ extern s32 D_8004859C;
 extern s16 D_8006E440;
 extern void *D_8007BD38;
 void *allocateHeap(u32);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void lookupResourceDescriptor(void *, u16);
 void readRomSynchronousChunks(s32, void *, s32);
+#endif
 void releaseHeapBlock(void *);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void func_80003684(void *, s32, void *);
+#endif
 void func_80008574(s32);
 void guTranslateF(void *, f32, f32, f32);
 void osCreateMesgQueue(void *, void *, s32);

@@ -9,8 +9,10 @@ typedef struct { s32 w0, w1, w2, w3; } IdInfo;
 typedef struct { void *f0; void *f4; } Nw2TwoBuf;
 void *allocateHeap(u32);
 void releaseHeapBlock(void *);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void lookupResourceDescriptor(IdInfo *, u16);
 void func_80003684(IdInfo *, u16, void *);
+#endif
 /* Loads the two resources arg1/arg2 into arg0's two buffers. For each id: if the
  * existing buffer is too small for the decoded resource it is freed and a new
  * one (at least 0x808 / 0x20 bytes) is allocated; the resource is then decoded

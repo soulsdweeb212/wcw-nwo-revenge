@@ -8,7 +8,9 @@
 extern u16 *D_80038A64[];    /* per-bank base table of resource ids */
 extern u8 D_80070494[], D_80075468[], D_8007C438[];
 extern s16 D_800FACEA[];     /* per-player character id (0xFXX: bank in bits 8-11) */
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void func_80003684(void *, u16, void *);
+#endif
 
 /* For each of the four players, look up the character id, resolve its base
  * resource from the bank table, and load the base and the two following

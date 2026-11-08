@@ -21,13 +21,26 @@ typedef struct {
     s32 f38; s32 f3C; s32 f40; s32 f44;
 } Nw2AudioInit;
 void *allocateHeap(u32);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void readRomSynchronousChunks(void *, void *, s32);
+#endif
 void *func_80000610(void);
 void func_80003418(s32);
 void MusInitialize(Nw2AudioInit *);
 void MusSetMasterVolume(s32, s16);
 void MusBankInitialize(s32, void *);
 
+#ifdef TARGET_PC
+/* PC: until the port has audio, the libmus functions are empty stand-ins that play nothing. So the two sound banks are
+ * not read from ROM and libmus is not set up with them; their ROM symbols are not linked on PC (port.h has their
+ * addresses as ROM_MUS_BANK and the others). The volume words the game reads back are set as on N64: D_800482D8
+ * through func_80003418, and D_800482DA. */
+void func_80003120(void) {
+    func_80003418(0x7F);
+    D_800482DA = 0x7FFF;
+    MusSetMasterVolume(1, 0x7FFF);
+}
+#else
 void func_80003120(void) {
     s32 size, start;
     void *buf;
@@ -70,3 +83,4 @@ void func_80003120(void) {
     MusSetMasterVolume(1, 0x7FFF);
     MusBankInitialize(D_800482D4, &D_00E3B300);
 }
+#endif

@@ -9,7 +9,9 @@ void loadTextureIntoCacheSlot(void *, s16, s16, s16, s16);
 void func_80004F80(void *, s16, s16);
 void func_80004FC0(void *);
 void func_8000670C(void *, s16, s16);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void lookupResourceDescriptor(void *, u16);
+#endif
 extern u16 D_8006A2A4[];
 extern s8 D_80031088[];
 extern u16 *D_80031998[];

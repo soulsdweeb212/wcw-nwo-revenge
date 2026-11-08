@@ -31,8 +31,10 @@ extern Cache74A4 *nw2ResourceCacheHead;
 
 void *allocateHeap(u32);
 void releaseHeapBlock(void *);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void lookupResourceDescriptor(s32 *, u32);
 void func_80003684(s32 *, u32, void *);
+#endif
 void func_80004E08(void *, s32, s16);
 void buildCiTextureDisplayList(void *, s32);
 u32 osVirtualToPhysical(void *);

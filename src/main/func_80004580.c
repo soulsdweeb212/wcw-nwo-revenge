@@ -5,12 +5,18 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: the loader writes the 16-byte ResDesc of port.h. With two pointers, the N64 layout below would be 24 bytes on a
+ * 64-bit PC, and .size would be read from the wrong place. */
+typedef ResDesc Nw2ResourceDesc;
+#else
 typedef struct Nw2ResourceDesc {
     void *p0;
     void *p1;
     s32 size;
     s32 len;
 } Nw2ResourceDesc;
+#endif
 
 typedef struct Nw2ResNode {
     struct Nw2ResNode *next;
@@ -21,8 +27,10 @@ typedef struct Nw2ResNode {
 
 extern Nw2ResNode *nw2ResourceCacheHead;
 void *allocateHeap(s32);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void lookupResourceDescriptor(void *, s32);
 void func_80003684(void *, s32, void *);
+#endif
 
 /* Returns the cached data buffer for resource arg0, creating (and decoding) a
  * cache node for it on first use and bumping its reference count. */

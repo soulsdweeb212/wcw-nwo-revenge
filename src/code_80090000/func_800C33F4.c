@@ -34,7 +34,9 @@ extern u8 *D_800E79B8;
 extern s32 D_800D5E84;
 extern s32 D_800E74D8;
 extern u16 *D_80038A64[];
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void func_80003684(void *, u16, void *);
+#endif
 void func_8000D210(s16, s16);
 u8 *func_8002B7E0(s32, s32);
 void func_8000D238(s16, u16);

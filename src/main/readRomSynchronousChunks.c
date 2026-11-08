@@ -5,6 +5,16 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: the port holds the checked ROM image in memory, so a ROM read is one bounds-checked copy (port_rom_read). The
+ * N64 body below cannot run there: it keeps the destination pointer in an s32 and fills the DMA request block
+ * D_8003DDA0 at N64 offsets for the PI hardware. */
+void readRomSynchronousChunks(RomAddr src, void *dst, s32 size) {
+    if (size > 0) {
+        port_rom_read(dst, src, (u32)size);
+    }
+}
+#else
 void osInvalDCache(s32, s32); void osCreateMesgQueue(void *, void *, s32); s32 osRecvMesg(void *, void *, s32); s32 osEPiStartDma(s32, void *, s32);
 extern s32 D_8003DD98; extern u8 D_8003DDA0[], D_8003DDA4[];
 
@@ -38,3 +48,4 @@ void readRomSynchronousChunks(s32 arg0, s32 arg1, s32 arg2) {
         }
     }
 }
+#endif

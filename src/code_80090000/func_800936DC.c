@@ -105,9 +105,13 @@ extern u32 D_800C5C50[];
 typedef struct { u32 a, b, size, d; } Desc936;
 
 void func_80002C0C(void);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void lookupResourceDescriptor(Desc936 *, u16);
+#endif
 void *allocateHeap(u32);
+#ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void func_80003684(void *, u16, void *);
+#endif
 Vtx936 *func_800B64EC(void *, u16);
 void func_80090908(Part936 *, Vtx936 *);
 s32 guRandom(void);
