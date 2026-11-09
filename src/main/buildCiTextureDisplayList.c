@@ -13,6 +13,23 @@
 
 #define EMIT(a, b) { Nw2RdpCmd *g = dl++; g->w0 = (u32)(a); g->w1 = (u32)(b); }
 #define TILE_CMD(tile) ((((u32)clampT & 3) << 18) | (tile) | (((u32)maskT & 15) << 14) | (((u32)clampS & 3) << 8) | (((u32)maskS & 15) << 4))
+#ifdef TARGET_PC
+/* On PC the palette and texel addresses go into their commands as whole pointers (port.h's DL_ADDR), through
+ * EMIT_ADDR: EMIT would cut them to 32 bits. The texels start 8 bytes into the texture, after its header
+ * (Nw2TextureFormat). Otherwise LOAD_TEXTURE is the N64 macro below; the parentheses around the last term of the 0xF3
+ * command only spell out how C already groups its "& 0xFFF". */
+#define EMIT_ADDR(a, p) { Nw2RdpCmd *g = dl++; g->w0 = (u32)(a); g->w1 = DL_ADDR(p); }
+#define LOAD_TEXTURE(pal, divisor, add, shift, fmt, line) \
+    EMIT_ADDR(0xFD100000, obj->palette); \
+    EMIT(0xE8000000, 0); EMIT(0xF5000100, 0x07000000); EMIT(0xE6000000, 0); EMIT(0xF0000000, pal); EMIT(0xE7000000, 0); \
+    EMIT_ADDR(0xFD500000, (u8 *)obj->tex + 8); EMIT(0xF5500000, TILE_CMD(0x07000000)); EMIT(0xE6000000, 0); \
+    { Nw2RdpCmd *g = dl++; s32 numerator; s32 count; g->w0 = 0xF3000000; \
+      if ((s16)obj->width / divisor > 0) numerator = (s16)obj->width / divisor + 0x7FF; else numerator = 0x800; \
+      count = ((((s16)obj->width) * ((s16)obj->height) + add) >> shift) - 1; if (count >= 0x800) count = 0x7FF; \
+      g->w1 = ((count & 0xFFF) << 12) | 0x07000000 | (((((s16)obj->width / divisor) > 0) ? numerator / ((s16)obj->width / divisor) : numerator) & 0xFFF); } \
+    EMIT(0xE7000000, 0); EMIT(fmt | (((((line) + 7) >> 3) & 0x1FF) << 9), TILE_CMD(0)); \
+    EMIT(0xF2000000, ((((((s16)obj->width - 1) * 4) & 0xFFF) << 12) | ((((s16)obj->height - 1) * 4) & 0xFFF)));
+#else
 #define LOAD_TEXTURE(pal, divisor, add, shift, fmt, line) \
     EMIT(0xFD100000, obj->palette - 0x80000000); \
     EMIT(0xE8000000, 0); EMIT(0xF5000100, 0x07000000); EMIT(0xE6000000, 0); EMIT(0xF0000000, pal); EMIT(0xE7000000, 0); \
@@ -23,6 +40,7 @@
       g->w1 = ((count & 0xFFF) << 12) | 0x07000000 | ((((s16)obj->width / divisor) > 0) ? numerator / ((s16)obj->width / divisor) : numerator) & 0xFFF; } \
     EMIT(0xE7000000, 0); EMIT(fmt | (((((line) + 7) >> 3) & 0x1FF) << 9), TILE_CMD(0)); \
     EMIT(0xF2000000, ((((((s16)obj->width - 1) * 4) & 0xFFF) << 12) | ((((s16)obj->height - 1) * 4) & 0xFFF)));
+#endif
 
 Nw2RdpCmd *buildCiTextureDisplayList(Nw2TextureDisplayObj *obj, s16 mode) {
     u8 clampS, clampT, maskS, maskT;
@@ -50,7 +68,12 @@ Nw2RdpCmd *buildCiTextureDisplayList(Nw2TextureDisplayObj *obj, s16 mode) {
     }
     if (obj->next) {
         dl->w0 = 0xDE010000;
+#ifdef TARGET_PC
+        /* The branch target goes into the command as the whole pointer. */
+        dl->w1 = DL_ADDR(obj->next);
+#else
         dl->w1 = (u32)obj->next - 0x80000000;
+#endif
     } else {
         dl->w0 = 0xDF000000;
         dl->w1 = 0;

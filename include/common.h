@@ -1851,7 +1851,12 @@ typedef struct { f32 x, y, z; s32 a, b, c, d; } Nw2PlaybackOut;
 /* buildCiTextureDisplayList (matched 0x80005704): emits the RDP display list
  * for a color-index (CI) texture object.  colorPtr nonzero enables an optional
  * 0x03 cull command when count<9; dl is the write pointer, next ends the list. */
+#ifdef TARGET_PC
+/* On PC a command is port.h's 16-byte Gfx. port.h, which this file includes at its end, defines struct Gfx. */
+typedef struct Gfx Nw2RdpCmd;
+#else
 typedef struct { u32 w0, w1; } Nw2RdpCmd;
+#endif
 typedef struct {
     u8 pad[2];
     u8 mode;          /* 1 = 8-bit CI, otherwise 4-bit */
@@ -1867,7 +1872,16 @@ typedef struct {
     Nw2RdpCmd *dl;
     void *next;
     Nw2TextureFormat *tex;
+#ifdef TARGET_PC
+    /* On PC a pointer: the palette resource's address, which a u32 would cut in half. With 8-byte pointers, each at a
+     * multiple of 8, the fields from colorPtr on sit at +0x10, +0x18, +0x20, +0x28 and +0x30 (N64: +0xC to +0x1C),
+     * and the object is 0x38 bytes. The object is the game's 0x2C-byte display record of a mesh or a picture
+     * (func_8000498C fills one per mesh). buildVertexDisplayList, buildObjectDisplayListTail and func_80004E08 read
+     * the same record through structs of their own, which follow this layout on PC. */
+    void *palette;
+#else
     u32 palette;
+#endif
 } Nw2TextureDisplayObj;
 
 /* Entity records shared by the 0x800A/0x800C action code:

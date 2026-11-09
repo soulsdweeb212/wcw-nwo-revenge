@@ -12,17 +12,37 @@
  * minimum size is clamped (0x808 / 0x20) before allocating, then the data is
  * copied in.  When the grayscale flag is set the second resource is converted.
  */
+#ifdef TARGET_PC
+/* obj is the display record, whose PC layout is that of Nw2TextureDisplayObj (common.h): its pointers are 8 bytes, so
+ * the texture and the palette, +0x18 and +0x1C on N64, are that struct's tex and palette fields. pad0 runs up to them,
+ * and the assert checks that it does. */
+typedef struct {
+    u8 pad0[offsetof(Nw2TextureDisplayObj, tex)];
+    void *resource1;
+    void *resource2;
+} LoadObj;
+_Static_assert(offsetof(LoadObj, resource1) == offsetof(Nw2TextureDisplayObj, tex) &&
+                   offsetof(LoadObj, resource2) == offsetof(Nw2TextureDisplayObj, palette),
+               "LoadObj must follow the display record's PC layout");
+#else
 typedef struct {
     u8 pad0[0x18];
     void *resource1;
     void *resource2;
 } LoadObj;
+#endif
 
 #ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void lookupResourceDescriptor(void *, u16);
 void func_80003684(void *, u16, void *);
 #endif
+#ifdef TARGET_PC
+/* func_80004C90 is the old name of convertRgba16ToGrayscale. The N64 link gets that name's address from build.json's
+ * symbol list; the PC link finds a function only under the name it is defined with. */
+void convertRgba16ToGrayscale(u16 *, u16);
+#else
 void func_80004C90(void *, u16);
+#endif
 void *allocateHeap(u32);
 void releaseHeapBlock(void *);
 extern u16 D_800307A0;
@@ -65,7 +85,11 @@ alloc2:
         }
         func_80003684(scratch, id2, obj->resource2);
         if (D_800307A0 == 1) {
+#ifdef TARGET_PC
+            convertRgba16ToGrayscale(obj->resource2, (u16)(u32)(desc2[2] * D_8003B110));
+#else
             func_80004C90(obj->resource2, (u16)(u32)(desc2[2] * D_8003B110));
+#endif
         }
     }
 }

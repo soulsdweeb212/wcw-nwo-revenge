@@ -8,11 +8,24 @@
 /* Builds the RDP display list for a CI4 (4-bit colour-index) texture: sets the
  * color-combiner/other-mode, loads the TLUT palette and tile, sizes the tile with
  * the line/texel count, and closes the list. Returns the end of the list. */
+#ifdef TARGET_PC
+/* On PC a command is port.h's 16-byte Gfx, and palette is a pointer: it holds the palette's address, which a u32 would
+ * cut in half. That makes Nw2Ci4Object 16 bytes on PC (8 on N64). */
+typedef Gfx Nw2Gfx;
+typedef struct { u32 f0; u8 cms, cmt, masks, maskt; } Nw2Ci4Texture;
+typedef struct { Nw2Ci4Texture *tex; void *palette; } Nw2Ci4Object;
+#else
 typedef struct { u32 w0, w1; } Nw2Gfx;
 typedef struct { u32 f0; u8 cms, cmt, masks, maskt; } Nw2Ci4Texture;
 typedef struct { Nw2Ci4Texture *tex; u32 palette; } Nw2Ci4Object;
+#endif
 
 #define EmitCommand(a, b) { Nw2Gfx *g = dl++; g->w0 = (u32)(a); g->w1 = (u32)(b); }
+#ifdef TARGET_PC
+/* On PC an address goes into its command as the whole pointer (port.h's DL_ADDR); EmitCommand would cut it to 32
+ * bits. */
+#define EmitAddress(a, p) { Nw2Gfx *g = dl++; g->w0 = (u32)(a); g->w1 = DL_ADDR(p); }
+#endif
 
 Nw2Gfx *buildCi4TextureDisplayList(Nw2Ci4Object *obj, Nw2Gfx *out, u16 mode)
 {
@@ -27,13 +40,22 @@ Nw2Gfx *buildCi4TextureDisplayList(Nw2Ci4Object *obj, Nw2Gfx *out, u16 mode)
     EmitCommand(0xE200001C, 0x504340);
     if (mode != 6) { EmitCommand(0xE2001E01, 3); }
     EmitCommand(0xFC119623, 0xFF2FFFFF);
+#ifdef TARGET_PC
+    EmitAddress(0xFD100000, obj->palette);
+#else
     EmitCommand(0xFD100000, obj->palette - 0x80000000);
+#endif
     EmitCommand(0xE8000000, 0);
     EmitCommand(0xF5000100, 0x07000000);
     EmitCommand(0xE6000000, 0);
     EmitCommand(0xF0000000, 0x0703C000);
     EmitCommand(0xE7000000, 0);
+#ifdef TARGET_PC
+    /* The texels start 8 bytes into the texture, after its header (Nw2Ci4Texture). */
+    EmitAddress(0xFD500000, (u8 *)obj->tex + 8);
+#else
     EmitCommand(0xFD500000, (u32)obj->tex + 0x80000008);
+#endif
     { u32 tile = (((maskt & 15) << 14) | 0x07000000);
         EmitCommand(0xF5500000, ((cmt & 3) << 18) | tile | ((cms & 3) << 8) | ((masks & 15) << 4)); }
     EmitCommand(0xE6000000, 0);

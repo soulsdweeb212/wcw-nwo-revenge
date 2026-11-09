@@ -5,7 +5,11 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Gfx GfxD8C; /* on PC a command is port.h's 16-byte Gfx */
+#else
 typedef struct { u32 w0, w1; } GfxD8C;
+#endif
 extern f64 D_800D6070;
 void func_80096A6C(GfxD8C **, void *, s32, s32, s32, s32, s32, s32, s32);
 

@@ -5,7 +5,9 @@
  */
 #include "common.h"
 
+#ifndef TARGET_PC /* on PC, port.h defines Gfx, the 16-byte command */
 typedef struct { u32 w0, w1; } Gfx;
+#endif
 
 #define _SHIFTL(v, s, w) ((unsigned int)(((unsigned int)(v) & ((0x01 << (w)) - 1)) << (s)))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))

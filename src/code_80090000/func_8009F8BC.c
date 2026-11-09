@@ -5,7 +5,9 @@
  */
 #include "common.h"
 
+#ifndef TARGET_PC /* on PC, port.h defines Gfx, the 16-byte command */
 typedef struct { u32 w0; u32 w1; } Gfx;
+#endif
 extern Gfx *D_800DC580;
 extern u8 D_800DC58C[], D_800E7558[], D_C9538[], D_800C9C70[];
 void func_800B830C(void *);

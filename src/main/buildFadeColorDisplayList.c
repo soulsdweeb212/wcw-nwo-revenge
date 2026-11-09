@@ -5,7 +5,9 @@
  */
 #include "common.h"
 
+#ifndef TARGET_PC /* on PC, port.h defines Gfx, the 16-byte command */
 typedef struct {u32 w0,w1;} Gfx;
+#endif
 #define CMD(p,a,b) do { Gfx *_g=(p); _g->w0=(a); _g->w1=(b); } while(0)
 /* Emits a 9-command display list at arg0: two render-mode setups and a combine
  * mode, a three-entry moving colour gradient (opcode 0x06), then render mode

@@ -10,6 +10,22 @@
  * starting at `obj->vertexOffset`.  Each Gfx word pair packs two vertices;
  * RGB components are doubled (5-bit -> 6-bit shift) on the way.
  */
+#ifdef TARGET_PC
+/* obj is the display record, whose PC layout is that of Nw2TextureDisplayObj (common.h): its pointers are 8 bytes, so
+ * the list buffer, +0x14 on N64, is that struct's next field at +0x20. pad3 runs up to it, and the assert checks that
+ * it does. On PC a command is port.h's 16-byte Gfx. */
+typedef struct {
+    u8 pad0;
+    s8 vertexCount;
+    s8 vertexOffset;
+    u8 pad3[offsetof(Nw2TextureDisplayObj, next) - 3];
+    void *displayList;
+} Nw2VertexBatch;
+_Static_assert(offsetof(Nw2VertexBatch, displayList) == offsetof(Nw2TextureDisplayObj, next),
+               "displayList must be the display record's next field");
+
+typedef Gfx Nw2Gfx;
+#else
 typedef struct {
     u8 pad0;
     s8 vertexCount;
@@ -21,6 +37,7 @@ typedef struct {
 typedef struct {
     u32 w0, w1;
 } Nw2Gfx;
+#endif
 
 void buildVertexDisplayList(Nw2VertexBatch *obj, u8 *vertices) {
     Nw2Gfx *g;

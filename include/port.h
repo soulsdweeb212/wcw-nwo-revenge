@@ -4,15 +4,19 @@
  * the game files with TARGET_PC defined; build.py, the N64 build, never defines it.
  * - On N64 every macro here stands for the original code (READ_BE32(p) is *(u32 *)(p), and so on) and the only other
  *   item is one typedef, so the compiler produces the same code and the ROM stays byte-identical.
- * - Under TARGET_PC the same names do the 64-bit, little-endian equivalent, and the PC-only part at the end declares
- *   the ROM loader's PC interface and renames the SDK functions that the port replaces.
+ * - Under TARGET_PC the same names do the 64-bit, little-endian equivalent. Gfx, the display-list command, is defined
+ *   only there, and the PC-only part at the end declares the ROM loader's PC interface and renames the SDK functions
+ *   that the port replaces.
  * docs/port.md explains how the two builds fit together. */
 #ifndef PORT_H
 #define PORT_H
 
 #ifdef TARGET_PC
 /* System headers go before the renames at the end of this file, which would otherwise rename their declarations too
- * (bzero in <strings.h>, for example). A game file that needs a system header includes it before common.h. */
+ * (bzero in <strings.h>, for example). A game file that needs a system header includes it before common.h.
+ * <stddef.h> gives game files offsetof, which their PC layout checks use. It comes after common.h's NULL and replaces
+ * it with its own, which is the same. */
+#include <stddef.h>
 #include <stdint.h>
 
 /* Prints a printf-style message and stops the program. The port implements it; the PC code calls it where the N64
@@ -52,12 +56,32 @@ static inline u64 port_be64(const void *p) {
 #define READ_BE64(p) (*(u64 *)(p))
 #endif
 
+/* Gfx: one display-list command, PC only.
+ * - On N64 a command is two u32 words, 8 bytes. Each game file that builds display lists defines its own type for it,
+ *   as libultra's gbi.h would: Gfx in some files, Nw2Gfx, Gfx96, Nw2RdpCmd and other names elsewhere.
+ * - On PC a command is two pointer-wide words, 16 bytes, laid out like LUS's Gfx. The second word can then hold a whole
+ *   pointer, and a list that the game builds can be handed to Fast3D (LUS's renderer) as it is.
+ * - Game files never include LUS's headers, whose Gfx would clash with their own. On PC, the game files that define a
+ *   type named Gfx keep it behind #ifndef TARGET_PC, and the files whose lists the port draws make their command type
+ *   this Gfx.
+ * - common.h refers to it as struct Gfx (its Nw2RdpCmd) before this file defines it. C allows that for a type that is
+ *   only used through pointers until its definition. */
+#ifdef TARGET_PC
+typedef struct Gfx {
+    uintptr_t w0;
+    uintptr_t w1;
+} Gfx;
+_Static_assert(sizeof(Gfx) == 16, "Gfx must be 16 bytes, like LUS's Gfx on a 64-bit PC");
+#endif
+
 /* DL_ADDR(p): the address of display-list data (another display list, vertices, a texture) as it is written into a
  * display-list word. The N64 code writes the physical address: a link constant such as D_C95B8 is the address of the
  * data (D_800C95B8) minus 0x80000000. The N64 form computes the same, and the compiler folds the subtraction into the
  * address it loads, so DL_ADDR(D_800C95B8) gives the same instructions as (u32)D_C95B8. On PC the word holds the
- * pointer itself. LUS reads a word with bit 0 set as a segment number plus offset, so an odd pointer would be misread;
- * the PC version stops the program instead. */
+ * pointer itself, so it must be even: Fast3D reads a word with bit 0 set as a segmented address, takes its bits 24 and
+ * up as a segment number and looks that up in its table of 16 segments (Interpreter::SegAddr in LUS's
+ * src/fast/interpreter.cpp). For a pointer at 0x10000000 or above that number is past the end of the table, and a lower
+ * pointer would be read as an offset into a segment. The PC version stops the program on an odd address instead. */
 #ifdef TARGET_PC
 static inline uintptr_t port_dl_addr(const void *p) {
     if ((uintptr_t)p & 1) {

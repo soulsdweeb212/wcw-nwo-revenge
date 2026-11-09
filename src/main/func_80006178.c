@@ -7,7 +7,9 @@
 
 /* libultra gbi.h (only what this function uses) */
 typedef struct { u32 w0, w1; } Gwords;
+#ifndef TARGET_PC /* on PC, port.h defines Gfx, the 16-byte command */
 typedef union { Gwords words; long long force_structure_alignment; } Gfx;
+#endif
 
 #define _SHIFTL(v, s, w) ((u32)(((u32)(v) & ((0x01 << (w)) - 1)) << (s)))
 #define OS_K0_TO_PHYSICAL(x) (u32)(((char *)(x)-0x80000000))
