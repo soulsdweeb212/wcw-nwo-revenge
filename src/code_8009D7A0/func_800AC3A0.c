@@ -28,6 +28,11 @@ void func_800AD2C4(void *, void *, u16, s16);
 void func_800D7E80(void *, void *);
 void func_800A7328(void *);
 void func_800D43B4(void *, s16, s32);
+#ifdef TARGET_PC
+/* The N64 code calls func_800A837C undeclared (C89 takes it as returning int); the PC compiler needs a declaration.
+ * These are the definition's types (func_800A837C.c); the result is not used. */
+void func_800A837C(Wrestler *w);
+#endif
 s32 func_800D3E40(void *, f32 *, s32, f32 *);
 void func_800D3838(void *, f32 *, s16, f32 *);
 void translateEntityXZ(void *, void *);

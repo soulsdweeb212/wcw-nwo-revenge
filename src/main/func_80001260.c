@@ -21,7 +21,9 @@ extern u8 D_3C6D0[],D_3C770[];
 #ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 extern s32 readRomSynchronousChunks(void *, void *, s32);
 #endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_80000580 (it returns nothing) */
 extern s32 func_80000580(void *, void *);
+#endif
 extern void *allocateHeap(u32);
 extern s32 osSetIntMask(s32);
 extern s32 osCreateMesgQueue(void *, void *, s32);
@@ -72,7 +74,19 @@ void func_80001260(void) {
         setVideoModeFromWidth(width);
         osViSetSpecialFeatures(0x6A);osViBlack(1);
         two=2;p=D_80044590;
+#ifdef TARGET_PC
+        /* PC: not ported yet; the program stops here. Each of the four render-list records (0x4078 bytes) holds a
+         * display list of 8-byte N64 commands up to +0x4000, the task at +0x4000/+0x4010 (pointer fields in
+         * submitGraphicsTask's Nw2OSTask), the queue's address at +0x4050 and the address of +0x4058 at +0x4054; and
+         * D_80044590, declared u32[] here and a table of pointers in submitGraphicsTask.c and
+         * buildSceneSetupDisplayList.c, holds their addresses. On PC the commands are 16 bytes and the addresses 8, so
+         * the record needs one PC layout, which the port's renderTaskThread must also read; until it is decided
+         * (docs/port.md, "Shared records on PC"), storing the addresses here would cut them in half. */
+        (void)v; (void)p; (void)two; (void)i;
+        port_fatal("func_80001260: the render-list record (D_80044590) has no PC layout yet");
+#else
         do {v=allocateHeap(0x4078);p[i]=(u32)v;*(s16 *)(v+0x4058)=two;*(u8 **)(v+0x4050)=D_80046768;*(u32 *)(v+0x4054)=p[i]+(unsigned)0x4058;i += 1;}while(i<4);
+#endif
         D_80046858=allocateHeap(0x17000);
     }
     D_80047060=0;D_80047062=0;D_80047064=0;D_80047066=0;

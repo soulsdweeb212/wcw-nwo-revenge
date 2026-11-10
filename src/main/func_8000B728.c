@@ -15,7 +15,12 @@ extern CopyB728 *D_80070458[][2], *D_8007045C[][2];
 extern CopyB728 *D_80073FA4[][253], *D_80073FA8[][253];
 extern s16 D_80073E90[];
 extern u16 D_800307A0;
+#ifdef TARGET_PC
+/* PC: the types of convertRgba16ToGrayscale's definition: the palette's entries are u16. */
+void convertRgba16ToGrayscale(u16 *pixels, u16 pixelCount);
+#else
 void convertRgba16ToGrayscale(void *, u16);
+#endif
 
 void func_8000B728(s16 arg0) {
     CopyB728 *src, *dst;
@@ -33,7 +38,13 @@ void func_8000B728(s16 arg0) {
             dst[i] = src[i];
         }
         if (D_800307A0 == 1) {
+#ifdef TARGET_PC
+            /* PC: the buffer just copied holds u16 colours, as the definition takes them; this file's view of it,
+             * CopyB728, is only the 8-byte unit the copy loops move. */
+            convertRgba16ToGrayscale((u16 *)D_80073FA8[arg0][0], D_80073E90[arg0]);
+#else
             convertRgba16ToGrayscale(D_80073FA8[arg0][0], D_80073E90[arg0]);
+#endif
         }
     }
 }

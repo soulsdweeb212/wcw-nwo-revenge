@@ -28,7 +28,12 @@ typedef struct {
     Node5014 *na;
 } Desc5014;
 
+#ifdef TARGET_PC
+/* PC: the types of func_8000160C's definition: it takes the object whose work-block chain gets the new node. */
+void *func_8000160C(void *arg0);
+#else
 extern Node5014 *func_8000160C();
+#endif
 
 static inline void func_80005014_set(Node5014 *n, s16 w, s16 h, u8 *base)
 {
@@ -48,7 +53,14 @@ void func_80005014(u8 *arg0, Desc5014 *arg1, s32 arg2, s32 arg3)
     Node5014 *cur;
 
     if (arg1->na == NULL) {
+#ifdef TARGET_PC
+        /* PC: func_8000160C reads its argument (the object whose work-block chain gets the new node). The N64 call
+         * passes none, but a0 still holds arg0 there (asm: a0 is first changed by the second call's delay slot, which
+         * sets it to arg0 again), so func_8000160C gets arg0, as in the call below; on PC it is passed explicitly. */
+        arg1->na = func_8000160C(arg0);
+#else
         arg1->na = func_8000160C();
+#endif
     }
     if (arg1->nb == NULL) {
         arg1->nb = func_8000160C(arg0);

@@ -16,7 +16,13 @@ extern u8 D_800E59D0[];
  * the list it is swapped to the front. */
 void func_800C357C(Wrestler *entity, s16 mode, s8 *outTargets) {
     s64 matchMask; u64 skipMask; s32 v; s8 i; s8 foundCount; s16 target;
+#ifdef TARGET_PC
+    /* matchMask + ~matchMask is -1 whatever matchMask holds, so the N64 line stores -1; it reads the variable before
+     * it is set only to give the original instructions. The PC stores the same -1 without that read. */
+    i = 0; do { outTargets[i] = -1; i++; } while (i < 4);
+#else
     i = 0; do { outTargets[i] = -1 - (matchMask + ~matchMask) - 1; i++; } while (i < 4);
+#endif
     switch (mode) {
     case 0:
         if (entity->grappleCtx & 4) { skipMask = 0x603000000080ULL; matchMask = 0x100000ULL; v = -1; }

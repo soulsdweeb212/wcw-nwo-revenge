@@ -66,7 +66,13 @@ loop:
         entryTimer += 4;
         entry += 4;
         reloadIdx += 4;
+#ifdef TARGET_PC
+        /* PC: the two addresses compared as integers as wide as a pointer (uptr); a u32 would compare only their low
+         * halves. */
+        if ((uptr)entryTimer < (uptr)tableEnd) goto loop;
+#else
         if ((u32)entryTimer < (u32)tableEnd) goto loop;
+#endif
         if (!D_80036738) {
             D_80036738 = func_8000327C(0x34);
             n = 0x96;

@@ -11,6 +11,16 @@ extern u8 D_80070C40[];
 s32 func_8000AA70(void *, void *, void *);
 void func_80009990(s16);
 
+#ifdef TARGET_PC
+/* PC: this function reads the stream's read cursor, an address, from the stream record's 4-byte field at +0x8
+ * (D_800706B0), passes it to func_8000AA70 and stores the advanced cursor back there. A 64-bit address does not fit
+ * in that field, and the record (D_800706A8, 0xFC bytes per stream) has no PC layout yet, so the PC stops here until
+ * it has one (docs/port.md, "Shared records on PC"). */
+void func_8000A310(s16 arg0)
+{
+    port_fatal("func_8000A310 (stream %d): the stream record D_800706A8 has no PC layout yet", arg0);
+}
+#else
 void func_8000A310(s16 arg0)
 {
     s32 off;
@@ -34,3 +44,4 @@ loop:
         goto loop;
     }
 }
+#endif

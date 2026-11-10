@@ -41,7 +41,7 @@ void initializeAssetSizeTable(void) {
             D_800482E4[i] = READ_BE32(tmp);
         } else D_800482E4[i] = end-start;
     }
-    releaseHeapBlock(tmp);
+    releaseHeapBlock((u8 *)tmp); /* releaseHeapBlock's definition takes a u8 * */
 }
 #else
 void initializeAssetSizeTable(void) {

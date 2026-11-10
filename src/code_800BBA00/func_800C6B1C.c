@@ -40,6 +40,11 @@ void func_800C6B1C(void)
             anim = 0x29;
         } else {
             id = 0x1029;
+#ifdef TARGET_PC
+            /* Never runs: flags & 0 is always 0, so the branch above is always taken. The N64 code leaves anim unset
+             * on this path; the PC sets it as the first branch does, so no read of an unset variable remains. */
+            anim = 0x2A;
+#endif
         }
         func_800D427C(D_800FAF5C, id, 1);
         func_800A7D1C(D_800FAF5C, anim);

@@ -24,8 +24,18 @@ void func_800D37C0(s32, f32, void *);
 void translateEntityXZ(void *, void *);
 
 void updateActionStateE1634(void) {
+#ifdef TARGET_PC
+    /* PC: step 1 sets anim and s1 only when animId is 0xF1D to 0xF20, and reads them after. Step 0 always starts one
+     * of those four (0xF1D, 0xF1E, 0xF1F or 0xF20, through func_800D427C, which stores it in animId), and a state
+     * starts at step 0 (func_800A6C48, func_800A6BE0, func_800A6CDC), so step 1 always finds animId in that range and
+     * both are set when read. On the N64 they live in s0 and s1, which would otherwise hold the caller's values; the
+     * PC starts them at 0 so that its behaviour is defined on every path. */
+    s16 anim = 0;
+    s32 s1 = 0;
+#else
     s16 anim;
     s32 s1;
+#endif
 
     switch (D_800FAF5C->step) {
     case 0:

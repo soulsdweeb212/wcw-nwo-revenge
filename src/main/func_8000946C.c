@@ -32,8 +32,10 @@ typedef struct {
 } A2B2Rec;
 
 extern StreamSlot D_800706AC[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800485A0 and D_8004859C */
 extern u8 *D_800485A0[];
 extern s32 D_8004859C;
+#endif
 extern A2B2Rec D_8006A2B2[];
 
 void func_8000B2B8(s32);
@@ -41,7 +43,13 @@ void func_8000B2B8(s32);
 void lookupResourceDescriptor(void *, u16);
 #endif
 void osInvalDCache(void *, s32);
+#ifdef TARGET_PC
+/* PC: the first argument is the PI handle, a pointer (D_8004859C); the N64 declaration takes it as s32, which on PC
+ * would cut it in half. */
+s32 osEPiStartDma(void *, void *, s32);
+#else
 s32 osEPiStartDma(s32, void *, s32);
+#endif
 s32 osRecvMesg(void *, void *, s32);
 
 /* Loads/advances a streamed resource for slot D_800706AC[slot].  If the requested
@@ -63,7 +71,13 @@ void func_8000946C(s16 slot, s16 resourceId, s16 frame) {
         func_8000B2B8(slot);
         lookupResourceDescriptor(desc, (u16)resourceId);
         offset = (((frame << 16) >> 17) * 0x62) & ~0x1F;
+#ifdef TARGET_PC
+        /* PC: desc[0] is the resource's ROM address (a RomAddr in port.h's ResDesc), which the stream keeps as the
+         * cartridge address of its DMA; it is widened to the pointer's width without changing its value. */
+        src = (u8 *)((uptr)(u32)desc[0] + 4);
+#else
         src = (u8 *)desc[0] + 4;
+#endif
         D_800706AC[slot].source = src + offset;
         D_800706AC[slot].destination = D_800485A0[slot] + offset;
         headerBytes = offset + 4;

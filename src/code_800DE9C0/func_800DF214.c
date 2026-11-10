@@ -13,11 +13,22 @@
  * the chosen angle; on a hit it stores the target in steppedOverId and queues action
  * 0x89 with func_800E212C, else it queues action 3. Always returns 1 when the
  * bit was set (0 otherwise). */
+#ifdef TARGET_PC
+/* PC: func_800D26A0 with its definition's types (the offset as a Nw2DirectionResult *, the id to skip as an s8). */
+s8 func_800D26A0(Wrestler *w, Nw2DirectionResult *arg1, s8 ignoreId);
+#else
 s8 func_800D26A0(void *, void *, s32);
+#endif
 extern s32 D_800E3CFC[]; 
 s16 func_800D7A68(u16, s32); void func_800D37C0(s32, f32, void *); f32 func_800D3890(void *, void *, void *); void func_800E212C(void *);
 s32 func_800DF214(Wrestler *p, s32 flags) {
+#ifdef TARGET_PC
+    /* PC: vec has room for a whole Nw2DirectionResult, because func_800D26A0 copies 16 bytes from it (it uses only x
+     * and z); on the N64 the last 4 bytes are the stack word after vec[2]. */
+    f32 vec[4]; Nw2DirectionResult dir; s16 i; s16 index; s32 angle; Wrestler *q; s32 input;
+#else
     f32 vec[3]; Nw2DirectionResult dir; s16 i; s16 index; s32 angle; Wrestler *q; s32 input;
+#endif
     input = flags; flags &= 4;
     if (flags) {
         index = func_800D7A68(input, flags);
@@ -31,7 +42,12 @@ s32 func_800DF214(Wrestler *p, s32 flags) {
             if (!(p->flags & q->flags & 0x140ULL)) continue;
             if (!(q->flags & 0x400000ULL)) continue;
             if (q->flags & 0x1000000000ULL) continue;
+#ifdef TARGET_PC
+            /* PC: the N64 passes vec's address as an s32, which would cut a PC address; the PC passes the pointer. */
+            if (func_800D26A0(p, (Nw2DirectionResult *)vec, -1) != q->id) continue;
+#else
             if (func_800D26A0(p, (s32)vec, -1) != q->id) continue;
+#endif
             func_800D3890(&p->jointA[1], &q->jointA[1], &dir);
             if (func_800D3550(func_800D3684(dir.angle, p->heading)) < 0x200) {
                 p->steppedOverId = q->id; func_800A6C48(p, 0x89); func_800E212C(p); return 1;

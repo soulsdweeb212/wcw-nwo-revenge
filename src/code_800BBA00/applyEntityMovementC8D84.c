@@ -26,6 +26,11 @@ void func_800D2600(void *, s32, f32);
 s32 func_800D7A68(s32);
 s32 func_800D35B0(s32, s32);
 void func_800D3E40(void *, f32 *, s32, void *);
+#ifdef TARGET_PC
+/* The N64 code calls translateEntityXZ without a declaration, which C89 allows; the PC compiler (C99 and later)
+ * refuses that. Declared here with its definition's types (translateEntityXZ.c). */
+void translateEntityXZ(Wrestler *w, f32 *d);
+#endif
 
 void applyEntityMovementC8D84(Wrestler *ent, Wrestler *other, u16 flags, f32 scale) {
     f32 posRot[4];

@@ -66,13 +66,24 @@ void func_800A52CC(void) {
             u64 *fp = &D_800EB408->flags;
             u64 flags2 = *fp;
             Wrestler *q;
+#ifdef TARGET_PC
+            /* attached[] is s8: the N64 code stores the low byte of (u8 *)-1 through an s32 cast, that is -1 (none).
+             * On PC that cast would cut a 64-bit pointer, so the PC stores -1 itself. */
+            D_800EB408->attached[0] = -1;
+#else
             m = (u8 *)-1;
             D_800EB408->attached[0] = (s32)m;
+#endif
             q = D_800EB408;
             flags2 &= 0xFFFFFFFFBFFFFFFFULL;
             flags2 |= (flags2 & ~flags2);
             *fp = flags2;
+#ifdef TARGET_PC
+            /* as above: -1, no record */
+            q->attached[1] = -1;
+#else
             q->attached[1] = (s32)m;
+#endif
             func_800D4AD0(D_800EB408);
             func_800A6C48(D_800EB408, 0x2B);
         }

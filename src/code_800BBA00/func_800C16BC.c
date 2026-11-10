@@ -6,9 +6,17 @@
 #include "common.h"
 
 extern u16 D_800E3CF0[];
+#ifdef TARGET_PC
+/* PC: port_decls.h declares D_800F9B14 (an s32: the heading), and func_800A7240 is declared with its definition's
+ * types. The N64 lines declare the heading void * and pass it as a void *, 4 bytes there; on PC a void * is 8 bytes,
+ * so the call would read 4 bytes past the heading, where the function takes the heading as an s32. */
+extern f32 D_800F9B0C;
+s32 func_800A7240(Wrestler *w, s32 target, s32 step, u64 setFlags);
+#else
 extern void *D_800F9B14;
 extern f32 D_800F9B0C;
 void func_800A7240(void *, void *, s32, u64);
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800D6658 */
 s32 func_800D6658(void *, void *, u16, s32, f32);
 #endif

@@ -147,7 +147,13 @@ s32 func_800D2CAC(Wrestler *self, Wrestler *linked1, Wrestler *linked2, f32 divi
             delta[2] = box[2] - vb.z;
         }
         if ((u16)(dir - 3) < 4) {
+#ifdef TARGET_PC
+            /* The N64 code adds the byte offset dir * 4 to the table's address in 32 bits, which would cut a 64-bit
+             * pointer; the PC adds it to the pointer: the same entry, D_800E3D14[dir]. */
+            mp = (s32 *)((u8 *)tbl + (dir << 2));
+#else
             mp = (s32 *)((s32)(dir << 2) + (s32)tbl);
+#endif
             if (result & *mp) {
                 s16 nd;
                 result = (result & ~*mp) << 16;

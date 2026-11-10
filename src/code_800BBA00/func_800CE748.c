@@ -61,7 +61,12 @@ s32 func_800CE748(Wrestler *ent)
                 b = ent->jointA[18];
                 fs = 35.0f;
             } else {
+#ifdef TARGET_PC
+                /* C89 reads "register s0" as an int; C99 and later need the type written out. Same type: int. */
+                register int s0 = (s8)c;
+#else
                 register s0 = (s8)c;
+#endif
                 if (func_800CEAE0(ent, &D_800F9D10[s0], c)) {
                     return s0;
                 }

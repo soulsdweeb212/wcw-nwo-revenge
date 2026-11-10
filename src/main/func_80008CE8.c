@@ -35,7 +35,9 @@ typedef struct {
 
 extern f64 D_8003B138;
 extern f64 D_8003B140;
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800485A0 */
 extern s32 D_800485A0[];
+#endif
 extern Node8CE8 D_800651A0[][23];
 extern s16 D_800669CE[][2];
 extern Rec8CE8 D_800706A8[];
@@ -55,7 +57,13 @@ void func_80007E04(f32 *, f32, f32, f32);
 void guMtxXFMF(f32 *, f32, f32, f32, f32 *, f32 *, f32 *);
 void func_80001DC4(void *);
 void guMtxCatF(f32 *, f32 *, f32 *);
+#ifdef TARGET_PC
+/* PC: the types of multiplyMatrix4x4's definition, 4x4 matrices; the calls below pass this file's f32[16] matrices
+ * as such. */
+void multiplyMatrix4x4(f32 arg0[4][4], f32 arg1[4][4], f32 arg2[4][4]);
+#else
 void multiplyMatrix4x4(f32 *, f32 *, f32 *);
+#endif
 
 void func_80008CE8(s16 entity, s16 anim, s16 frame, f32 *pos, f32 *vec, u8 flags) {
     f32 scratch[16];
@@ -84,7 +92,14 @@ void func_80008CE8(s16 entity, s16 anim, s16 frame, f32 *pos, f32 *vec, u8 flags
     if (anim != D_800706A8[entity].C0) {
         if (D_800706A8[entity].AA != 0 && D_800706A8[entity].AE == 0) {
             D_800706A8[entity].AC = anim;
+#ifdef TARGET_PC
+            /* PC: B0 is the stream's read cursor, an address that the stream record keeps in 4 bytes; the record
+             * (D_800706A8, 0xFC bytes per stream) has no PC layout yet, so the PC stops here (docs/port.md, "Shared
+             * records on PC"). */
+            port_fatal("func_80008CE8: the stream record D_800706A8 has no PC layout yet");
+#else
             D_800706A8[entity].B0 = D_800485A0[entity];
+#endif
         } else {
             initializeResourceStream(entity, anim);
         }
@@ -130,7 +145,12 @@ void func_80008CE8(s16 entity, s16 anim, s16 frame, f32 *pos, f32 *vec, u8 flags
         func_80007E14(o->m, f0);
         func_80007E04(nd->obj->m, D_80070C40[entity][0].fC, D_80070C40[entity][0].f10, D_80070C40[entity][0].f14);
         guMtxCatF(D_800706A8[entity].mtx, nd->obj->m, nd->obj->m);
+#ifdef TARGET_PC
+        /* PC: as the declaration above. */
+        multiplyMatrix4x4((f32 (*)[4])nd->m1C, (f32 (*)[4])nd->obj->m, (f32 (*)[4])nd->m5C);
+#else
         multiplyMatrix4x4(nd->m1C, nd->obj->m, nd->m5C);
+#endif
         guMtxXFMF(nd->m5C, b->f48, b->f4C, b->f50, &t[0], &t[1], &t[2]);
         t[0] = -t[0];
         pos[0] += old[0] - t[0];
@@ -141,7 +161,12 @@ void func_80008CE8(s16 entity, s16 anim, s16 frame, f32 *pos, f32 *vec, u8 flags
     D_80070C40[entity][0].f14 = pos[2];
     func_80007E14(scratch, f0);
     func_80007E04(scratch, D_80070C40[entity][0].fC, D_80070C40[entity][0].f10, D_80070C40[entity][0].f14);
+#ifdef TARGET_PC
+    /* PC: as the declaration above. */
+    multiplyMatrix4x4((f32 (*)[4])D_800706A8[entity].mtx, (f32 (*)[4])scratch, (f32 (*)[4])D_800651A0[entity][0].m1C);
+#else
     multiplyMatrix4x4(D_800706A8[entity].mtx, scratch, D_800651A0[entity][0].m1C);
+#endif
     func_80001DC4(D_800651A0[entity]);
     D_80070C40[entity][0].f78 = f0;
     for (i = 1; i < 23; i++) {
@@ -149,7 +174,13 @@ void func_80008CE8(s16 entity, s16 anim, s16 frame, f32 *pos, f32 *vec, u8 flags
             Node8CE8 *n0 = D_800651A0[0] + i;
             D_80070C40[entity][i].f78 = D_80070C40[entity][i].f4 + f0;
             b2 = (Bone8CE8 *)((u8 *)D_80070C40[entity] + i * sizeof(Bone8CE8));
+#ifdef TARGET_PC
+            /* PC: the N64 adds the byte offset of the entity's row to node i's address in 32 bits, which would cut a
+             * 64-bit address; the PC adds it to the pointer, which gives the same node, D_800651A0[entity][i]. */
+            nd = (Node8CE8 *)((u8 *)n0 + entity * (s32)sizeof(D_800651A0[0]));
+#else
             nd = (Node8CE8 *)((u32)(entity * sizeof(D_800651A0[0])) + (u32)n0);
+#endif
             t = &b2->f54;
             guMtxXFMF(nd->m5C, b2->f48, b2->f4C, b2->f50, t, &b2->f58, &b2->f5C);
             *t = -*t;

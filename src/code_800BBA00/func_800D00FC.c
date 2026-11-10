@@ -8,7 +8,15 @@
 void beginPairedEntityActions(Wrestler *self, s32 selfAction, Wrestler *other, s32 otherAction);
 void func_800A7C40(Wrestler *, s8, s16);
 void func_800A7F6C(void *, s32);
+#ifdef TARGET_PC
+/* On PC, port_decls.h declares func_800D05E4 with its third parameter, arg2, which the calls below leave out (on the
+ * N64 its register held a leftover). func_800D05E4 reads arg2 only when self->grappleCtx has none of the bits 0x400,
+ * 0x80, 0x100 and 0x200; each call here sits inside a test that one of them is set (0x300 for the first, 0x80 for
+ * the second, 0x400 for the last two), and func_800A7C40 and func_800A7F6C, called in between, do not change
+ * grappleCtx. So arg2 is never read on these paths, and the PC passes 0. */
+#else
 s8 func_800D05E4(Wrestler *, Wrestler *);
+#endif
 extern u16 D_800E3C20[2][2][3];
 extern u16 D_800E3C38[2][2][2];
 
@@ -45,7 +53,12 @@ s32 func_800D00FC(Wrestler *self, Wrestler *opponent, u16 arg2) {
             }
             func_800A7C40(self, self->id, (s16)s0);
             func_800A7F6C(self, 0);
+#ifdef TARGET_PC
+            /* arg2 is never read here: see the declaration above */
+            if (func_800D05E4(self, opponent, 0)) {
+#else
             if (func_800D05E4(self, opponent)) {
+#endif
                 return 3;
             }
             if (self->move.flags & 0x1800) {
@@ -80,7 +93,12 @@ ret0:
             }
             func_800A7C40(self, self->id, (s16)s0);
             func_800A7F6C(self, 0);
+#ifdef TARGET_PC
+            /* arg2 is never read here: see the declaration above */
+            return func_800D05E4(self, opponent, 0) ? 3 : 0;
+#else
             return func_800D05E4(self, opponent) ? 3 : 0;
+#endif
         }
     }
     if (arg2 & 4) {
@@ -144,7 +162,12 @@ ret0:
         }
         if (self->flags & WR_FLAG_IN_RING) {
             func_800A7F6C(self, 0);
+#ifdef TARGET_PC
+            /* arg2 is never read here: see the declaration above */
+            if (func_800D05E4(self, opponent, 0)) {
+#else
             if (func_800D05E4(self, opponent)) {
+#endif
                 return 3;
             }
             beginPairedEntityActions(self, 0x4D, opponent, 0x4E);
@@ -153,7 +176,12 @@ ret0:
         func_800A7C40(self, self->id, (s16)(s0 + 5));
 L5A0:
         func_800A7F6C(self, 0);
+#ifdef TARGET_PC
+        /* arg2 is never read here: see the declaration above */
+        if (!func_800D05E4(self, opponent, 0)) {
+#else
         if (!func_800D05E4(self, opponent)) {
+#endif
             goto ret0;
         }
         return 3;

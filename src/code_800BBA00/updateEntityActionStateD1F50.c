@@ -32,6 +32,11 @@ void func_800B68A0(void *, void *, void *);
 void func_800D4AD0(void *);
 void translateEntityXZ(void *, void *);
 s32 func_800D2BEC(void *, void *, void *, f32, u16, s32);
+#ifdef TARGET_PC
+/* The N64 code calls func_800D35B0 without a declaration, which C89 allows; the PC compiler (C99 and later) refuses
+ * that. Declared here with its definition's types (func_800D35B0.c), which are the int types C89 assumes. */
+s32 func_800D35B0(s32, s32);
+#endif
 
 void updateEntityActionStateD1F50(void) {
     switch (D_800FAF5C->step) {

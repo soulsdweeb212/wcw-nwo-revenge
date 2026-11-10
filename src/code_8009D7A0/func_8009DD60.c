@@ -10,7 +10,9 @@ extern s8 D_800FADB8;
 extern s8 D_800FAF78;
 extern u16 D_800FABE6;
 extern u16 D_800FAF8A;
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800F9B14 (an s32: the heading) */
 extern u32 D_800F9B14;
+#endif
 extern f32 D_800F9B0C[];
 extern s16 D_800F9D08[];
 extern u8 D_8007EF30[];
@@ -173,7 +175,23 @@ void func_8009DD60(void) {
         if (func_800DF3E4(D_800EB408, D_800EB40C, D_800FABE6, D_800F9B0C[0])) {
             return;
         }
+#ifdef TARGET_PC
+        /* PC: the N64 passes D_800F9B0C - 1, the address of the match-distance block (Nw2DirectionResult): x, then y =
+         * the distance D_800F9B0C, z, then angle = the heading D_800F9B14. On PC these data names are separate
+         * variables that nothing keeps at those offsets, so the PC passes a block of its own with the same y and
+         * angle. The four functions below, and func_800D23B4 and chooseDodgeAction that they hand it to, only read
+         * its y and angle and write nothing into it; x and z are never read (0 here). Only func_800A712C writes
+         * D_800F9B0C and D_800F9B14, called from func_8009D8D0 before this handler runs, so the copy holds what the
+         * N64 block holds through these calls. */
+        Nw2DirectionResult distBlock;
+        distBlock.x = 0.0f;
+        distBlock.y = D_800F9B0C[0];
+        distBlock.z = 0.0f;
+        distBlock.angle = D_800F9B14;
+        p = &distBlock;
+#else
         p = D_800F9B0C - 1;
+#endif
         if (func_800DFDD4(D_800EB408, D_800EB40C, D_800FABE6, p)) {
             return;
         }

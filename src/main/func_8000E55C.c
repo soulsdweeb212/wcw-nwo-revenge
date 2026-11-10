@@ -5,7 +5,9 @@
  */
 #include "common.h"
 
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_8000337C (it returns the current track id, s32) */
 void func_8000337C(void *);
+#endif
 void func_800033C0(s16);
 s16 func_800033F8(void);
 #ifndef TARGET_PC /* on PC, port.h declares the loader functions */

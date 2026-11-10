@@ -12,7 +12,12 @@ s16 func_800D4D44(void *,s32,f32);
 #endif
 void func_8000B728(s8);
 void func_8000C784(s8);
+#ifdef TARGET_PC
+/* On PC, the definition's types (func_800C2B8C.c): it reads w->id. See the call for what the PC passes. */
+void func_800C2B8C(Wrestler *w);
+#else
 void func_800C2B8C(void);
+#endif
 void func_800A6BE0(void *,s32);
 extern u8 D_800FADCE;
 /* Two-step entity setup action (step). Step 0: reset the animation
@@ -30,7 +35,13 @@ void updateEntitySetupAction(void) {
         D_800EB408->step++;
         break;
     case 1:
+#ifdef TARGET_PC
+        /* The N64 call passes no argument, but $a0 still holds D_800EB408, loaded at the top of the function to read
+         * step; func_800C2B8C reads it as w. The PC passes D_800EB408 itself. */
+        if (D_800FADCE&1) {func_800C2B8C(D_800EB408);func_800A6BE0(D_800EB408,1);}
+#else
         if (D_800FADCE&1) {func_800C2B8C();func_800A6BE0(D_800EB408,1);}
+#endif
         break;
     }
 }

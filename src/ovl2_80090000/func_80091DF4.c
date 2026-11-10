@@ -32,7 +32,9 @@ extern s16 D_800F9AFA;
 
 void func_80091DF4(void) {
     u32 x;
+#ifndef TARGET_PC /* n exists only for the N64 placeholder below, which the PC leaves out */
     s32 n;
+#endif
 
     if (D_800E9870 < 0) {
         return;
@@ -66,10 +68,17 @@ void func_80091DF4(void) {
         /* placeholder: a condition only cse1 folds; it keeps a label inside this arm
            through jump1 so "if (foo) bar; else break;" does not swap it with the
            else arm below (the ROM keeps this arm first and all arms jump to the ++) */
+#ifdef TARGET_PC
+        /* PC: x is set here directly. The placeholder (n is always 0, so its if always runs) only steers the N64
+         * compiler's block order, and the ROM sets x unconditionally in this arm (x = (D_800E9870 - 0x14) * 63 at
+         * 0x80092160 to 0x80092168); the compilers here cannot see that and warn that x might be read unset. */
+        x = (D_800E9870 - 0x14) * 63;
+#else
         n = 0;
         if (n == 0) {
             x = (D_800E9870 - 0x14) * 63;
         }
+#endif
         func_800907A0(&D_800E9450[1], &D_800E97C0[1], 0xF0, 0x64, 0.5f, 0.5f, 2.0f, 1.5f, 0xFF, 0xFF, 0xFF, 0xFF - x);
         func_800907A0(&D_800E9450[0], &D_800E97C0[0], 0xF0, 0x64, 0.5f, 0.5f, 2.0f, 1.5f, 0xFF, 0xFF, 0xFF, 0);
     } else {

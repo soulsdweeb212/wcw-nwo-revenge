@@ -23,7 +23,13 @@ s32 updateEntityBoundaryFlags(Wrestler *w, Wrestler *other, u16 *flags) {
     mask = D_800E3A98[w->dirIndex] | D_800E3A90[w->dirIndex];
     *flags = *flags & mask;
     if (!(*flags & 0xF00)) {
+#ifdef TARGET_PC
+        /* The N64 code passes the address flags as func_800BED3C's u32 third parameter, which would cut a 64-bit
+         * pointer. func_800BED3C never reads that parameter, so the PC passes 0. */
+        blockedMask = func_800BED3C(w, other, 0);
+#else
         blockedMask = func_800BED3C(w, other, (u32)flags);
+#endif
         if (((blockedMask & 0xFFFF) == 0) | ((blockedMask & 0xFFFF) == mask)) {
             switch (w->dirIndex) {
             case 0:

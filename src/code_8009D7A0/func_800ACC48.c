@@ -29,7 +29,13 @@ void beginEntityActionA8D8C(void *);
 void func_800D7E80(void *, void *);
 s8 func_800D8D74(void *, s32);
 s32 func_800C472C(void *, void *, s32);
+#ifdef TARGET_PC
+/* On PC, the definition's types (func_800B68A0.c), so that every call passes all three records; the N64 declaration
+ * has no parameter list, and one call below passes two (see there). */
+s16 func_800B68A0(Wrestler *source, Wrestler *attacker, Wrestler *target);
+#else
 void func_800B68A0();
+#endif
 
 void func_800ACC48(void) {
     register s16 r;
@@ -84,7 +90,13 @@ void func_800ACC48(void) {
         } else {
             break;
         }
+#ifdef TARGET_PC
+        /* The N64 call passes two records and func_800B68A0 reads a third, target, from $a2. There $a2 still holds
+         * D_800FAF5C, loaded after tryApplyHitReaction to test its pairSignals (o here), so the PC passes o. */
+        func_800B68A0(D_800F9B00, D_800F9B00, o);
+#else
         func_800B68A0(D_800F9B00, D_800F9B00);
+#endif
         if ((func_800C472C(D_800F9B00, D_800FAF5C, 0) << 24) != 0) {
             D_800FAF5C->flags &= ~0x08000000ULL;
             break;

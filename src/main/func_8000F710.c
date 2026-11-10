@@ -16,6 +16,13 @@ typedef struct
     f32 *e[6];
     s16 v[8];
 } Tab;
+#ifdef TARGET_PC
+/* PC: an entry is six 8-byte addresses and then the eight heights; func_8000FAF8's ElemTab checks the same offsets,
+ * so the two views of D_8005A100 place e[] at +0 and v[] at +48 and step by 64. */
+_Static_assert(offsetof(Tab, e) == 0 && offsetof(Tab, v) == 6 * sizeof(void *) &&
+                   sizeof(Tab) == 6 * sizeof(void *) + 8 * sizeof(s16),
+               "Tab: e[6] at +0, v[8] after it, as func_8000FAF8's ElemTab");
+#endif
 extern Tab D_8005A100[];
 void func_8000F710(u8 *arg0, s32 side)
 {
@@ -36,12 +43,18 @@ void func_8000F710(u8 *arg0, s32 side)
     f32 w;
     u16 h;
     s16 h2;
+#ifdef TARGET_PC
+    /* PC: the second pass reads D_8005A100[side] by its fields (below), so it needs none of the N64's address
+     * variables. */
+    f32 *ep;
+#else
     u16 *p;
     s32 *r;
     f32 *ep;
     u8 *tb;
     s32 q;
     s32 c;
+#endif
     base = side * 120;
     lo = -224.0f;
     hi = 224.0f;
@@ -94,6 +107,22 @@ loop:
             goto loop;
         }
     }
+#ifdef TARGET_PC
+    /* PC: the N64 code walks D_8005A100[side] by byte offsets, the addresses e[] at +0 and the heights v[] at +24 (40
+     * bytes per entry), and keeps an address in an s32 (q) and reads each e[j] through an s32 (r), which would cut a
+     * 64-bit pointer. On PC e[] holds 8-byte addresses, so v[] starts at +48; the pass reads both by name. It does the
+     * same: element j's float at index 5 gets the higher of the heights v[j] and v[j + 1], compared as s16. */
+    for (j = 0; j < 6; j++) {
+        h = D_8005A100[side].v[j];
+        h2 = D_8005A100[side].v[j + 1];
+        if ((s16) h < h2) {
+            h = h2;
+        }
+        ep = D_8005A100[side].e[j];
+        ep += 5;
+        *ep = (f32) ((s16) h);
+    }
+#else
     j = 0;
     base = (20 * side) * 2;
     tb = (u8 *) D_8005A100;
@@ -120,4 +149,5 @@ loop2:
     {
         goto loop2;
     }
+#endif
 }

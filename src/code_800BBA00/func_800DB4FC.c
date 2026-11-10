@@ -38,7 +38,12 @@ s32 func_800DB4FC(Wrestler *self, Wrestler *opponent) {
     if (action == 0xB) {
         if (opponent->flags & 0x600000000000ULL) {
             u64 search = 0x400000ULL;
+#ifdef TARGET_PC
+            /* C89 reads "register sel" as an int; C99 and later need the type written out. Same type: int. */
+            register int sel = opponent->opponentId;
+#else
             register sel = opponent->opponentId;
+#endif
             opponent->flags |= search;
             D_800F9D10[sel].flags |= search;
             target = func_800C2CDC(self, action);

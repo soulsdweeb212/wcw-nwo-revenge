@@ -56,7 +56,13 @@ void func_8000C1B8(s16 arg0, s16 arg1) {
     w = D_8006A2A4[arg0];
     bank = (w >> 8) & 0x1F;
     idx = (w & 0x1F) - 1;
+#ifdef TARGET_PC
+    /* PC: the same address arithmetic in an integer as wide as a pointer (uptr); a u32 would cut the table's
+     * 64-bit address in half. idx can be -1, which steps back 2 bytes on both. */
+    a3 = (u16 *)(idx * 2 + (uptr)D_80031998[bank]);
+#else
     a3 = (u16 *)(idx * 2 + (u32)D_80031998[bank]);
+#endif
     s3 = (Nw2C1B8Rec *)D_80032B44[bank][idx][D_8007DFB0[arg0]];
     s4 = (s16 (*)[2])D_800360F0[*a3 & 0x7F][D_8007DFBC[arg0]][s3->f16];
     s5 = (Slot2C1B8 *)(D_80073EB0 + arg0 * 0x3F4);

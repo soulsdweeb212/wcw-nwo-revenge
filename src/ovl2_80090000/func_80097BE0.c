@@ -5,10 +5,16 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* On PC a command is port.h's 16-byte Gfx, as in func_800982AC.c, which allocates these lists (D_800EB18C), and
+ * func_800986DC.c, which writes into them. */
+typedef Gfx G;
+#else
 typedef struct {
     u32 w0;
     u32 w1;
 } G;
+#endif
 
 extern s16 D_800E2E98;
 extern s16 D_800EB19C;

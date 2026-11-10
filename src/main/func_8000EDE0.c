@@ -12,9 +12,16 @@ typedef struct {u8 data[0x2C];} EDE0Res;
 extern EDE0Obj D_80057030[];
 extern EDE0Res D_800583F8[];
 extern u8 D_800587F0[], D_80058900[], D_80058988[];
+#ifdef TARGET_PC
+/* PC: D_800587EC, D_800588F8 and D_80058984 hold the display lists that func_8000E920 got from func_80007020, so
+ * they are pointers (port_decls.h). freeResourceDescriptorArray takes the list as a pointer, as its definition does. */
+void func_8000520C(void *,void *);
+void freeResourceDescriptorArray(void *,void *,s16);
+#else
 extern s32 D_800587EC,D_800588F8,D_80058984;
 void func_8000520C(void *,void *);
 void freeResourceDescriptorArray(void *,s32,s16);
+#endif
 void func_8000F408(void);
 /* Tears down the arena: releases each object's paired resource, frees the
  * descriptor arrays (conditionally the first, always the other two) and runs

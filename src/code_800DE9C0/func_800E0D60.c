@@ -22,7 +22,12 @@ void func_800D427C(Wrestler *, s16, s32);
 void func_800D4AD0(Wrestler *);
 s8 func_800D8DF0(Wrestler *);
 s16 updateEntityHealthLevel(Wrestler *);
+#ifdef TARGET_PC
+/* PC: func_800E1560 with its definition's types: a third parameter, the animation to start (see step 3). */
+void func_800E1560(Wrestler *w, s32 targetHeading, s32 a2);
+#else
 void func_800E1560(Wrestler *, s32);
+#endif
 s8 func_800A93C0(void);
 s32 func_800D35B0(s32, s32);
 s8 selectNewLinkedTarget(void *, s32);
@@ -105,7 +110,17 @@ void func_800E0D60(void) {
         }
     }
     case 3:
+#ifdef TARGET_PC
+        /* PC: the N64 call passes no third argument, so func_800E1560 gets whatever a2 holds (left over from
+         * func_800D2B64, before the switch). It reads a2 only when D_800F98D8[w->id] is not one of the values
+         * updateEntityHealthLevel stores there (0xF2D-0xF2F, 0xF33-0xF35, 0xF3B-0xF3E): for those it picks the
+         * animation 0xF30, 0xF31 or 0xF32 itself. Only updateEntityHealthLevel writes D_800F98D8, and this state (0x43)
+         * calls it for this wrestler in step 0, before step 3 is reached (func_800A6C48 starts a state at step 0), so
+         * a2 is never read here: the PC passes 0. */
+        func_800E1560(D_800FAF5C, D_800F9B14, 0);
+#else
         func_800E1560(D_800FAF5C, D_800F9B14);
+#endif
         D_800FAF5C->step++;
         break;
     case 4:

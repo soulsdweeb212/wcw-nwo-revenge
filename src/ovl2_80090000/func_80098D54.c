@@ -5,9 +5,15 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* On PC a command is port.h's 16-byte Gfx, which keeps a whole pointer in w1: func_80099E2C, which adds each picture
+ * to the same list, writes Gfx commands there. */
+typedef Gfx G;
+#else
 typedef struct {
     u32 w0, w1;
 } G;
+#endif
 
 /* Resource-indexed tables: entry k belongs to resource id 0x2CA + k. */
 #define RES_BASE 0x2CA

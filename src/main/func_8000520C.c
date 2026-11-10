@@ -5,7 +5,13 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: releaseHeapBlock takes the block's address (u8 *arg0, releaseHeapBlock.c); the N64 declaration passes it as an
+ * s32, which would cut a 64-bit address in half. */
+void releaseHeapBlock(u8 *);
+#else
 s32 releaseHeapBlock(s32);
+#endif
 s32 func_800015AC(void *, s32);
 
 typedef struct {
@@ -29,6 +35,58 @@ typedef struct {
  * +0x10 and clear it, run func_800015AC(arg0, 0), then free each of arg1's
  * buffer pointers (+0xC/+0x10/+0x14/+0x18/+0x1C) and clear it. Pointers whose
  * block has the shared-ownership flag +0x28 set are left alone. */
+#ifdef TARGET_PC
+/* PC: arg1 is a display record (the record func_8000498C fills; the callers func_8000CD84, func_8000D718 and
+ * func_8000EDE0 pair the 0xDC-byte objects with the records of D_80073EB0, D_80050800 and D_800583F8). Its PC layout is
+ * Nw2Descr4BA8 (common.h): the five buffers are 8-byte pointers from +0x10 on, and +0x28 is the arena pointer f28
+ * rather than an s32 flag. So this version reads arg1 through that struct (rec) by name and frees whole addresses. arg0
+ * is the 0xDC-byte object, whose buffer at +0x10 is a 4-byte field with no PC layout yet (docs/port.md, "Shared records
+ * on PC"): no address can be read back from it, so a set field stops the program rather than free half an address. An
+ * empty field needs nothing freed, as on the N64. */
+void func_8000520C(Holder520C *arg0, ResBlock520C *arg1) {
+    Nw2Descr4BA8 *rec = (Nw2Descr4BA8 *)arg1;
+    void *temp;
+
+    if (rec->pad0[0] != 0) {
+        rec->pad0[0] = 0;
+        if (arg0->f10 != 0) {
+            port_fatal("func_8000520C: the 0xDC-byte object's buffer at +0x10 has no PC layout yet");
+        }
+        func_800015AC(arg0, 0);
+        temp = rec->fC;
+        if (temp != NULL) {
+            if (rec->f28 == NULL) {
+                releaseHeapBlock(temp);
+            }
+            rec->fC = NULL;
+        }
+        temp = rec->f10;
+        if (temp != NULL) {
+            if (rec->f28 == NULL) {
+                releaseHeapBlock(temp);
+            }
+            rec->f10 = NULL;
+        }
+        temp = rec->f14;
+        if (temp != NULL) {
+            if (rec->f28 == NULL) {
+                releaseHeapBlock(temp);
+            }
+            rec->f14 = NULL;
+        }
+        temp = rec->f18;
+        if (temp != NULL) {
+            releaseHeapBlock(temp);
+            rec->f18 = NULL;
+        }
+        temp = rec->f1C;
+        if (temp != NULL) {
+            releaseHeapBlock(temp);
+            rec->f1C = NULL;
+        }
+    }
+}
+#else
 void func_8000520C(Holder520C *arg0, ResBlock520C *arg1) {
     s32 temp;
 
@@ -73,3 +131,4 @@ void func_8000520C(Holder520C *arg0, ResBlock520C *arg1) {
         }
     }
 }
+#endif

@@ -30,7 +30,8 @@ HEAD is git's last commit, the state that build.py last proved identical. Every 
    block differently (a quote that does not close on its line stops it, for example). A header is preprocessed after
    common.h, as game files include it. A new file fails, because HEAD has nothing to compare it with, and so does a
    deleted file, because the N64 build would lose it: only build.py can prove those. For a header this is the only
-   N64 check.
+   N64 check. include/port_decls.h is PC-only (port.h includes it inside TARGET_PC), so its N64 view is empty; for it
+   the check proves instead that no file under src/ or include/ includes it outside a TARGET_PC block.
 2. N64 object (C files). The file and HEAD's version, each with its own include/, are compiled by KMC GCC 2.7.2 the way
    build.py compiles them: decompdecomp's toolchain and command, build.json's flags and compiler_ranges. Both objects
    must hold the same code, relocations, data and symbols (sections the link throws away, such as .comment, aside).
@@ -428,10 +429,39 @@ def line_changes(old: bytes, new: bytes) -> tuple[int, int]:
     return added, removed
 
 
+# Headers that only the PC build reads: port.h includes port_decls.h inside its TARGET_PC block. The N64 never reads
+# such a header, so its N64 view is empty, whatever it holds; check 1 proves instead that no file's N64 view includes
+# it.
+PC_ONLY_HEADERS = ("include/port_decls.h",)
+
+
+def check_pc_only_header(rel: str) -> Result:
+    """Check 1 for a PC-only header: no file under src/ or include/ includes it outside a TARGET_PC block."""
+    name = rel.rsplit("/", 1)[-1].encode()
+    pattern = re.compile(rb'^[ \t]*#[ \t]*include[ \t]*["<]([^">]*/)?' + re.escape(name) + rb'[">]', re.M)
+    for path in sorted(list((ROOT / "src").rglob("*.[ch]")) + list((ROOT / "include").rglob("*.h"))):
+        data = path.read_bytes()
+        if name not in data:
+            continue
+        try:
+            view, kept = n64_view(data)
+        except ViewError as e:
+            return Result(1, FAIL, f"{path.relative_to(ROOT)}, line {e.line}: {e.message}")
+        m = pattern.search(view)
+        if m:
+            line = kept[view[:m.start()].count(b"\n")]
+            return Result(1, FAIL, f"a PC-only header, but {path.relative_to(ROOT)}:{line} includes it outside "
+                                   "TARGET_PC: the N64 build would read it")
+    return Result(1, PASS, "a PC-only header (port.h includes it inside TARGET_PC): its N64 view is empty, and no "
+                           "file includes it outside TARGET_PC")
+
+
 def check_view(ctx: Context | None, rel: str, head: bytes | None, work: bytes | None) -> Result:
     """Check 1: the N64 view, then (with ctx, for a C file or a header) KMC GCC's own preprocessed text."""
     if work is None:
         return Result(1, FAIL, "the file is deleted, but HEAD has it: the N64 build would lose it")
+    if rel in PC_ONLY_HEADERS:
+        return check_pc_only_header(rel)
     try:
         view, kept = n64_view(work)
     except ViewError as e:

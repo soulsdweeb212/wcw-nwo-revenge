@@ -92,6 +92,13 @@ s32 func_800DACE4(Wrestler *self, Wrestler *other) {
         floor = 50.0f;
         break;
     default:
+#ifdef TARGET_PC
+        /* Never runs: func_800DACE4's callers are the handlers of states 0x65 to 0x6F (func_800DCB54, func_800DCFBC,
+         * func_800DD370, func_800DD188 and func_800DDAC8, which D_800E2FF0 calls only for those states), and they
+         * pass the wrestler whose state chose them, so state - 0x65 is one of the cases above. The N64 code leaves
+         * floor unset here; the PC sets it to 0 (no minimum distance), so no read of an unset variable remains. */
+        floor = 0.0f;
+#endif
         break;
     }
 

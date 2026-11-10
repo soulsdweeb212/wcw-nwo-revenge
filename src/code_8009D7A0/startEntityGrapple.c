@@ -12,8 +12,11 @@
  * (both action 5, slot indices swapped) or a one-sided lockup, or runs the
  * grapple check func_800B678C. Returns 1 if a grapple/lockup started. */
 #ifdef TARGET_PC
-/* PC: port_decls.h declares getEntityPairFacingFlags, so the PC copy of this line leaves it out. */
-s32 func_800D26A0(void*,s32,s32);
+/* PC: port_decls.h declares getEntityPairFacingFlags, so the PC copy of this line leaves it out. func_800D26A0 is
+ * declared with its definition's types: it returns an s8 (a wrestler id or -1), which the N64 callee sign-extends
+ * into the whole register and the N64 line reads as an s32; on the PC only the low byte of the result is defined, so
+ * the PC reads it as the s8 and widens it itself. The literal 0 is then a NULL offset, and -1 an s8. */
+s8 func_800D26A0(Wrestler *w, Nw2DirectionResult *arg1, s8 ignoreId);
 #else
 s32 func_800D26A0(void*,s32,s32);s32 getEntityPairFacingFlags(void*,void*);
 #endif

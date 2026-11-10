@@ -26,9 +26,17 @@ extern f32 D_80070CB8[][713],D_8007147C[][713],D_80071480[][713],D_80071484[][71
 extern u8 D_80036E1C[];
 extern s16 D_80070B14[];
 extern f64 D_8003B308;
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_8005AAE0 to D_8005B06C */
 extern s32 D_8005AAE0,D_8005AB40,D_8005ABA0,D_8005AC2C,D_8005ACB4,D_8005AD3C,D_8005ADC4,D_8005AE4C,D_8005AEA8,D_8005AFE4,D_8005B06C;
+#endif
 extern u8 D_8005AAE8[],D_8005AB48[],D_8005ABA8[],D_8005AC30[],D_8005ACB8[],D_8005AD40[],D_8005ADC8[],D_8005AE50[],D_8005AEB0[],D_8005AFE8[],D_8005B070[];
+#ifdef TARGET_PC
+/* PC: the third argument is a display list's address (D_8005AAE0 and the others, pointers on PC), as in
+ * initializeMatchResources.c. */
+void func_80007874(void *, void *, void *, s32);
+#else
 void func_80007874(void *,void *,s32,s32);
+#endif
 s32 guRandom(void);
 s16 func_80011B24(s16);
 static inline void setCol(s32 v, s16 i) { D_8005AAA0[i].d = v; D_8005AAA0[i].e = 0; D_8005AAA0[i].f = 0; }

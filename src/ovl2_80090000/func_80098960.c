@@ -5,9 +5,15 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* On PC a command is port.h's 16-byte Gfx, as in func_80099628.c, which allocates these lists (D_800EB29C), and
+ * func_80098D54.c and func_80099E2C.c, which write into them. */
+typedef Gfx G;
+#else
 typedef struct {
     u32 w0, w1;
 } G;
+#endif
 
 #define _SHIFTL(v, s, w) ((unsigned int)(((unsigned int)(v) & ((0x01 << (w)) - 1)) << (s)))
 #define EMIT(a, b) { G *_g = g++; _g->w0 = (a); _g->w1 = (b); }

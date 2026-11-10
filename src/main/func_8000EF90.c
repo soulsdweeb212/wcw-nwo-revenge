@@ -10,17 +10,29 @@ extern void *D_80036CB4[];
 extern void *D_80036CCC[];
 extern void *D_80036CE4[];
 extern s8 D_80036CAC[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80058A0C */
 extern s32 D_80058A0C;
+#endif
 extern u8 D_80058A10[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80058F90 */
 extern s32 D_80058F90;
+#endif
 extern u8 D_80058FA0[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80059520 */
 extern s32 D_80059520;
+#endif
 extern u8 D_80059528[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80059898 */
 extern s32 D_80059898;
+#endif
 extern u8 D_800598A0[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80059C10 */
 extern s32 D_80059C10;
+#endif
 extern u8 D_80059C18[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80059CC8 */
 extern s32 D_80059CC8;
+#endif
 extern u8 D_80059CD0[];
 extern u8 D_80056950[];
 extern u8 *D_80056954;
@@ -33,9 +45,19 @@ extern u8 D_800367B8[];
 extern const f64 D_8003B230;
 extern const f64 D_8003B238;
 extern const f64 D_8003B240;
+#ifdef TARGET_PC
+/* PC: func_80007020 returns the display list it built, a pointer (Gfx7020 *, a type of its own file), and takes the
+ * record count as an s16; its pointer parameters stay void * here. func_80007818 gets that display list as a pointer:
+ * its definition still takes an s32 there, and its PC version stops the program until the 0xDC-byte object record has
+ * a PC layout (docs/port.md, "Shared records on PC"). */
+void *func_80007020(void *, void *, void *, s16);
+void initializeTransformNode(void *, s32, f32, f32, f32);
+void func_80007818(void *, void *, void *, s32);
+#else
 s32 func_80007020(void *, void *, void *, s8);
 void initializeTransformNode(void *, s32, f32, f32, f32);
 void func_80007818(void *, void *, s32, s32);
+#endif
 void func_80001544(void *);
 void func_80007E14(void *, f32);
 void func_80001DC4(void *);
@@ -58,7 +80,12 @@ void func_8000EF90(void)
     u8 *new_var3;
     u8 *p;
     int new_var2;
+#ifdef TARGET_PC
+    /* PC: r holds the display list from func_80007020 until it goes to D_80059CC8, so it is a pointer. */
+    void *r;
+#else
     s32 r;
+#endif
     idx = D_80059D82;
     s1 = 1;
     D_80058A0C = func_80007020(D_80058A10, D_80036CB4[idx], D_80036CCC[idx], D_80036CAC[idx]);

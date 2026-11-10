@@ -9,6 +9,20 @@ void func_800015AC(void *, s8);
 
 /* Initializes the object and its sub-record from descriptor arg3, copying the
  * packed descriptor bytes into the sub-record's size/offset fields. */
+#ifdef TARGET_PC
+/* PC: not ported yet. The display record side is ready (arg1 is an array of Nw2Descr4BA8, common.h), but this
+ * function stores the record's vertices (fC) into the 0xDC-byte object's 4-byte field +0xC, and the vertices and arg2,
+ * a display list, into its work block's 4-byte fields +0x30 and +0x34. That object and its work block have no PC
+ * layout yet (docs/port.md, "Shared records on PC"), and a 64-bit address does not fit a 4-byte field, so
+ * the PC stops the program here instead of storing half an address. */
+void func_80007874(u8 *arg0, s32 arg1, s32 arg2, s16 arg3) {
+    (void)arg0;
+    (void)arg1;
+    (void)arg2;
+    (void)arg3;
+    port_fatal("func_80007874: the 0xDC-byte object record has no PC layout yet");
+}
+#else
 void func_80007874(u8 *arg0, s32 arg1, s32 arg2, s16 arg3) {
     u8 *t = (u8 *)(arg3 * 0x2C + arg1);
     s32 *p;
@@ -27,3 +41,4 @@ void func_80007874(u8 *arg0, s32 arg1, s32 arg2, s16 arg3) {
     *(s32 *)((u8 *)p + 0x34) = arg2;
     *(s32 *)((u8 *)p + 0x30) = v;
 }
+#endif

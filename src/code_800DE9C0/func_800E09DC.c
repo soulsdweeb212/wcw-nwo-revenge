@@ -5,16 +5,23 @@
  */
 #include "common.h"
 
-extern f32 D_800F9B0C;extern void *D_800F9B14;extern u16 D_800FABE6;extern s8 D_800FAF78;extern f64 D_800E76F8;
 #ifdef TARGET_PC
-/* PC: port_decls.h declares func_800D2B64, so the PC copy of this line leaves it out. */
+/* PC: port_decls.h declares D_800F9B14 (an s32: the heading), which the N64 line declares void *, so the PC copy of
+ * this line leaves it out. */
+extern f32 D_800F9B0C;extern u16 D_800FABE6;extern s8 D_800FAF78;extern f64 D_800E76F8;
+#else
+extern f32 D_800F9B0C;extern void *D_800F9B14;extern u16 D_800FABE6;extern s8 D_800FAF78;extern f64 D_800E76F8;
+#endif
+#ifdef TARGET_PC
+/* PC: port_decls.h declares func_800D2B64, so the PC copy of this line leaves it out. func_800E1560 is declared with
+ * its definition's types: it takes the heading as an s32 and a third parameter, the animation to start (see step 3). */
 void func_800D25D0(void *,f32);
 s32 func_800D35B0(s32,s32);
 f32 func_800D3EEC(void *,void *,s32);
 void func_800D427C(void *,s32,s32);
 void func_800D4AD0(void *);
 s32 updateEntityHealthLevel(void *);
-void func_800E1560(void *,void *);
+void func_800E1560(Wrestler *w, s32 targetHeading, s32 a2);
 s8 func_800A93C0(void);
 void beginPairedEntityActions(void *,s32,void *,s32);
 #else
@@ -63,7 +70,17 @@ void func_800E09DC(void) {
             }
             if(D_800FAF78) {func_800A6C48(D_800FAF5C,0x17);D_800FAF5C->step=2;break;}
         }
+#ifdef TARGET_PC
+        /* PC: the N64 call passes no third argument, so func_800E1560 gets whatever a2 holds (left over from
+         * func_800A93C0, func_800D3EEC or tryE09's flag test, by path). It reads a2 only when D_800F98D8[w->id] is not
+         * one of the values updateEntityHealthLevel stores there (0xF2D-0xF2F, 0xF33-0xF35, 0xF3B-0xF3E): for those it
+         * picks the animation 0xF30, 0xF31 or 0xF32 itself. Only updateEntityHealthLevel writes D_800F98D8, and this
+         * state (0x42) calls it for this wrestler in step 0 or 2, before step 3 is reached (func_800A6C48 starts a
+         * state at step 0, and func_800A1D34 starts this one at step 2), so a2 is never read here: the PC passes 0. */
+        func_800E1560(D_800FAF5C,D_800F9B14,0);D_800FAF5C->step++;break;
+#else
         func_800E1560(D_800FAF5C,D_800F9B14);D_800FAF5C->step++;break;
+#endif
     case 4:
         D_800FAF5C->heading=func_800D35B0(D_800FAF5C->heading,D_800FAF5C->turnPerTick);
         if(D_800FAF5C->animFramesLeft<=0) {func_800D4AD0(D_800FAF5C);func_800A6C48(D_800FAF5C,0x2B);}break;

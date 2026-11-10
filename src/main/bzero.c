@@ -15,6 +15,20 @@
  * the C compiler never emits a lone swl. The C below writes those head bytes one at a time, which
  * leaves memory in the same state. Checked in a MIPS emulator against the ROM bytes: offsets 0..7,
  * lengths -2..69, 100, 129, 160. Same final memory every time. */
+#ifdef TARGET_PC
+/* PC: the C version below cannot run on a PC: it finds the next word boundary and the end of each loop by casting the
+ * address to a 32-bit integer, which cuts a 64-bit pointer in half. What the N64 routine leaves in memory is simple:
+ * len bytes from dst are zero, and a len of 0 or less writes nothing (every path ends at the blez on the remaining
+ * length). So the PC zeroes the same bytes in one call. port.h renames bzero to port_bzero. __builtin_memset is the
+ * compiler's memset; it needs no system header, which would have to come before common.h (port.h). */
+#include "common.h"
+void bzero(void *dst, s32 len)
+{
+    if (len > 0) {
+        __builtin_memset(dst, 0, (size_t)len);
+    }
+}
+#else
 #ifdef NON_MATCHING
 #include "common.h"
 void bzero(void *dst, s32 len)
@@ -122,4 +136,5 @@ asm(
     ".set at\n"
     ".set reorder\n"
     );
+#endif
 #endif

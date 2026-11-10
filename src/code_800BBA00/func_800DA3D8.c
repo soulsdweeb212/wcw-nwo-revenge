@@ -12,7 +12,11 @@ extern u16 D_800F9848[]; extern u16 D_800F9850[];
  * two differ, and arg0 picks an opponent on the other team (id^2, else id^3 when
  * that slot is empty or not legal), which in turn faces arg0. */
 void func_800DA3D8(Wrestler *arg0){Wrestler *p=arg0;Wrestler *partner;u8 id;s32 t;s8 slot;s8 other;
+#ifdef TARGET_PC
+    /* p | (p & ~p) is p; the N64 code computes it in 32 bits, which would cut a 64-bit pointer. The PC keeps p. */
+#else
     p=(Wrestler*)((u32)p|((u32)p&~(u32)p));
+#endif
     p->flags|=WR_FLAG_LEGAL; partner=&D_800F9D10[p->partnerId];
     partner->flags=(partner->flags&~WR_FLAG_LEGAL)|0x20000000000000ULL;
     D_800F9848[p->id]=p->health; D_800F9850[p->id]=0;

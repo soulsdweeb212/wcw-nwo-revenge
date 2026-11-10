@@ -114,5 +114,15 @@ loop:
     } else {
         D_800FABD0->f30 = 0;
     }
+#ifdef TARGET_PC
+    /* Of the 58 functions in D_800E3660, func_800B3B90 alone takes parameters (o, g, dir); the N64 jump hands it
+     * whatever $a0-$a2 hold. It overwrites o with D_800FAF58 and g with D_800FABD0 before reading them, and sets dir
+     * on every path when D_800FABD0's f1E is 0 to 3, which it always is here: getXZDirectionQuadrant above returns
+     * its result & 3, and func_800AD958/func_800AD9E8 do not touch f1E. So the PC calls through the table with
+     * func_800B3B90's own type and passes those same values (0 for dir, never read), and no function reads an
+     * argument the call does not pass; the other 57 take none and ignore them. */
+    ((void (*)(Wrestler *, u8 *, s16))D_800E3660[D_800FABD0->f2])(D_800FAF58, (u8 *)D_800FABD0, 0);
+#else
     ((void (*)(void))D_800E3660[D_800FABD0->f2])();
+#endif
 }

@@ -11,7 +11,9 @@ void func_8000F4FC(s16);
 void func_800074A4(s32, void *, void *, s32);
 extern void *D_80036C74[], *D_80036C94[];
 extern u8 D_80036D04[], D_800587F0[], D_80058900[], D_80058988[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800587EC, D_800588F8 and D_80058984 */
 extern s32 D_800587EC, D_800588F8, D_80058984;
+#endif
 extern s16 D_80059D82;
 extern u8 D_800706A0[], D_80075458[], D_80075459[], D_8007545A[], D_8007545B[];
 /* Writes the four per-entity bytes for arg0: the descriptor index (adjusted by

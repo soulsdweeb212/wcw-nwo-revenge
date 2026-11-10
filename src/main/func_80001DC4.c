@@ -21,6 +21,18 @@ typedef struct {
  * copy the local matrix verbatim (bcopy); with a parent, multiply the
  * local matrix by the parent's matrix at +0x5C. Then recurse into the child and
  * continue along the sibling list. */
+#ifdef TARGET_PC
+/* PC: not ported yet; the program stops here. The nodes are the 0xDC-byte transform nodes (objects), whose first word
+ * holds the parent's address as an s32 and whose next two hold the child's and the next sibling's; the matrices
+ * follow at +0x1C and +0x5C. On PC those addresses are 8 bytes, so the node needs one PC layout that every file that
+ * reads it follows, and it has none yet (docs/port.md, "Shared records on PC"). This view would cut the
+ * parent's address in half and place the other fields where no writer puts them. */
+void func_80001DC4(void *arg0)
+{
+    (void)arg0;
+    port_fatal("func_80001DC4: the 0xDC-byte transform node has no PC layout yet");
+}
+#else
 void func_80001DC4(void *arg0)
 {
     Nw2Node1DC4 *node = arg0;
@@ -59,3 +71,4 @@ void func_80001DC4(void *arg0)
         node = node->next;
     }
 }
+#endif

@@ -11,7 +11,14 @@
  * free the descriptor block itself. */
 typedef struct Cache72 {struct Cache72 *next; void *data; u16 key, refs;} Cache72;
 extern Cache72 *nw2ResourceCacheHead;
+#ifdef TARGET_PC
+/* PC: releaseHeapBlock declared with its definition's type (u8 *arg0, releaseHeapBlock.c), the declaration that
+ * port_decls.h is to carry once every file of the developer program passes what it takes. release72 below passes its
+ * cache node and the node's data as u8 *; the other calls pass void *, which converts without a cast. */
+void releaseHeapBlock(u8 *);
+#else
 void releaseHeapBlock(void *);
+#endif
 #define F72(p,t,o) (*(t *)((u8 *)(p)+(o)))
 static __inline__ void release72(void *data) {
     Cache72 *node=nw2ResourceCacheHead,*prev=0;
@@ -21,7 +28,12 @@ static __inline__ void release72(void *data) {
     }
     if(node && --node->refs==0) {
         if(!prev) nw2ResourceCacheHead=node->next; else prev->next=node->next;
+#ifdef TARGET_PC
+        /* PC: as above, the definition takes u8 *: the same two addresses, as u8 *. */
+        releaseHeapBlock((u8 *)node->data);releaseHeapBlock((u8 *)node);
+#else
         releaseHeapBlock(node->data);releaseHeapBlock(node);
+#endif
     }
 }
 #ifdef TARGET_PC

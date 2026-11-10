@@ -32,7 +32,12 @@ extern s8 D_800307C0[];
 extern s8 D_800307E8[];
 extern s8 D_800307FC[];
 void func_80007E04(void *, f32, f32, f32);
+#ifdef TARGET_PC
+/* PC: the types of multiplyMatrix4x4's definition, as func_800014AC.c declares it. */
+void multiplyMatrix4x4(f32 arg0[4][4], f32 arg1[4][4], f32 arg2[4][4]);
+#else
 void multiplyMatrix4x4(void *, void *, void *);
+#endif
 void guMtxXFMF(void *, f32, f32, f32, f32 *, f32 *, f32 *);
 
 /* For each body part of entity arg0: derive its local rotation from its Euler
@@ -57,7 +62,13 @@ void updateBodyPartTransforms(s16 arg0) {
             f32 *matrix = (f32 *)(D_800738D0 + off);
             buildEulerRotationMatrixDegrees((f32 (*)[4])matrix, partTf->rotX, partTf->rotY, partTf->rotZ);
             func_80007E04(matrix, partTf->posX, partTf->posY, partTf->posZ);
+#ifdef TARGET_PC
+            /* PC: the three are 4x4 float matrices, kept here as float pointers; the definition takes them as
+             * matrices. */
+            multiplyMatrix4x4((f32 (*)[4])(D_80074E80 + off), (f32 (*)[4])matrix, (f32 (*)[4])&renderRec->matrix[0]);
+#else
             multiplyMatrix4x4((f32 *)(D_80074E80 + off), matrix, &renderRec->matrix[0]);
+#endif
         }
         partTf->prevPosX = partTf->posX;
         partTf->prevPosY = partTf->posY;

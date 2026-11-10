@@ -19,6 +19,29 @@ typedef s32 M2C_UNK32;
 #define M2C_OVERFLOW(a) (0)
 #endif
 
+#ifdef TARGET_PC
+/* PC: arg0 is a display record (func_80090380 passes its node), which is Nw2Descr4BA8 on PC, 0x48 bytes with 8-byte
+ * address fields. The N64 code clears bytes 0-5 and the words at +0xC to +0x24; at those N64 offsets the PC would
+ * clear halves of the addresses. So the PC clears the same fields by name: bytes 0-5, then fC to f24. f6 and f28 stay,
+ * as on the N64. */
+void func_80004AFC(void *arg0) {
+    Nw2Descr4BA8 *d = arg0;
+
+    d->pad0[0] = 0;
+    d->pad0[1] = 0;
+    d->f2 = 0;
+    d->f3 = 0;
+    d->pad4[0] = 0;
+    d->pad4[1] = 0;
+    d->fC = NULL;
+    d->f10 = NULL;
+    d->f14 = NULL;
+    d->f18 = NULL;
+    d->f1C = NULL;
+    d->f20 = 0;
+    d->f24 = 0;
+}
+#else
 void func_80004AFC(void *arg0) {
     M2C_FIELD(arg0, s8 *, 0) = 0;
     M2C_FIELD(arg0, s8 *, 1) = 0;
@@ -34,3 +57,4 @@ void func_80004AFC(void *arg0) {
     M2C_FIELD(arg0, s32 *, 0x20) = 0;
     M2C_FIELD(arg0, s32 *, 0x24) = 0;
 }
+#endif

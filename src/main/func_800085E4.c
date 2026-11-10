@@ -8,10 +8,20 @@
 typedef struct { s16 f0; u8 pad[250]; } S85E;
 
 extern S85E D_800706AC[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_8007BD38 */
 extern u8 *D_8007BD38;
+#endif
 
 /* Return the high nibble of entity arg0's record byte in the table at D_8007BD38. */
 u32 func_800085E4(s32 arg0) {
     u32 off = D_800706AC[(s16)arg0].f0 * 0x24 + 0xFFFDFFFC;
+#ifdef TARGET_PC
+    /* PC: off is (id - 0xE39) * 0x24 in 32 bits. The N64 adds it to the table's address in 32 bits, so an id below
+     * 0xE39 (a slot with no animation yet holds -1) reaches back before the table; added to a 64-bit pointer as a u32
+     * it would reach 4 GB forward instead. As an s32 it is the same offset from the table as on the N64: the same
+     * record for a valid id, and the same distance before the table (not the same bytes) for an id below 0xE39. */
+    return D_8007BD38[(s32)off] >> 4;
+#else
     return D_8007BD38[off] >> 4;
+#endif
 }

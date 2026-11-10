@@ -35,7 +35,8 @@ void releaseResourcePool(void) {
         }
     }
     releaseHeapBlock(D_80064AD0); releaseHeapBlock(D_80064AD4);
-    releaseHeapBlock(D_8007FC3C); releaseHeapBlock(D_8007FC34);
+    /* releaseHeapBlock's definition takes a u8 * */
+    releaseHeapBlock((u8 *)D_8007FC3C); releaseHeapBlock((u8 *)D_8007FC34);
 }
 #else
 extern u32 D_80064AD0, D_80064AD4, D_8007FC34, D_8007FC3C;

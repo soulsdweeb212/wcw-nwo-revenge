@@ -27,7 +27,12 @@ extern s8 D_80036D30[];
 extern s8 D_80036D38[];
 extern f64 D_8003B310;
 
+#ifdef TARGET_PC
+/* PC: the types of multiplyMatrix4x4's definition, as func_800014AC.c declares it. */
+void multiplyMatrix4x4(f32 arg0[4][4], f32 arg1[4][4], f32 arg2[4][4]);
+#else
 void multiplyMatrix4x4(void *, void *, void *);
+#endif
 void func_80001DC4(void *);
 void func_800056CC(f32 *, f32 *, f32 *);
 void func_80007E04(void *, f32, f32, f32);
@@ -54,7 +59,13 @@ void func_80012CD0(void) {
                 buildEulerRotationMatrixDegrees(mtx, D_8007E010[i].rx * scale, D_8007E010[i].ry * scale, D_8007E010[i].rz * scale);
                 m = obj + 0x1C;
                 func_80007E14(rot, D_8007E010[i].rw * scale);
+#ifdef TARGET_PC
+                /* PC: m is the object's 4x4 float matrix at +0x1C, kept here as a byte pointer; the definition takes
+                 * it as a matrix. */
+                multiplyMatrix4x4(mtx, rot, (f32 (*)[4])m);
+#else
                 multiplyMatrix4x4(mtx, rot, m);
+#endif
                 func_80007E04(m, D_8007E010[i].x, D_8007E010[i].y, D_8007E010[i].z);
             } else {
                 /* own matrix pointer: set once, so sched1 treats it as a reg birth; the two

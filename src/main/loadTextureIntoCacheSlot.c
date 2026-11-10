@@ -28,6 +28,23 @@ void func_8000B884(s32, s16, s16);
  * existing buffer in that slot, allocates at least 0x20 bytes for the decoded
  * resource, decodes it into the new buffer and records its halfword length in
  * D_8007C318. Then refreshes the palette cache for the entity. */
+#ifdef TARGET_PC
+/* PC: not ported yet. The function keeps the loaded buffer's address in the texture-cache table D_8007C438, which
+ * this file and func_8000C91C view as s32 and func_8000B884, func_8000CD84 and func_8000CFD4 as void *. Its PC storage
+ * would be 0x2E0 bytes and so run 0x160 bytes into the animation rows that overlay 2 reaches at +0x180. That table has
+ * no PC layout yet (docs/port.md, "Shared records on PC"). Even without a resource to load (arg2 == 0),
+ * func_8000B884 then reads the slot's buffer from the table for most slots (those with a palette id in D_8003086C),
+ * and on PC no address could have been kept there. So the PC stops the program here instead of keeping or reading half
+ * an address. (arg0 is a display record, Nw2Descr4BA8 in common.h; its palette is the pointer field f1C on PC.) */
+void loadTextureIntoCacheSlot(void *arg0, s16 arg1, s16 arg2, s16 arg3, s16 arg4) {
+    (void)arg0;
+    (void)arg1;
+    (void)arg2;
+    (void)arg3;
+    (void)arg4;
+    port_fatal("loadTextureIntoCacheSlot: the texture-cache table D_8007C438 has no PC layout yet");
+}
+#else
 void loadTextureIntoCacheSlot(void *arg0, s16 arg1, s16 arg2, s16 arg3, s16 arg4) {
     Nw2SectionInfo info;
     Nw2SectionInfo out;
@@ -62,3 +79,4 @@ void loadTextureIntoCacheSlot(void *arg0, s16 arg1, s16 arg2, s16 arg3, s16 arg4
     }
     func_8000B884(*(s32 *)((u8 *)arg0 + 0x1C), arg3, arg4);
 }
+#endif

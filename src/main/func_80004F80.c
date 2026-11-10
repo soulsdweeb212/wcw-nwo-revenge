@@ -17,7 +17,9 @@ void func_80004F80(void *arg0, s16 arg1, s16 arg2) {
 void initializeTransformNode(void *, s8, s32, f32, f32);
 
 s32 MusBankStartEffect2(s32, s16, s16, s16, s16, s16);
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800482D4 */
 extern s32 D_800482D4;
+#endif
 
 extern s32 D_80147000;
 extern s32 D_8017F400;

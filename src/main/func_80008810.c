@@ -22,15 +22,21 @@ typedef struct {
 
 extern s32 D_80030830;
 extern u16 D_8006A2B0[][2];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800485A0 */
 extern void *D_800485A0[];
+#endif
 extern s8 D_800485B0[][8];
 extern s8 D_800485D0[][8];
 extern Ctl D_800706A8[];
 extern s8 D_800307C0[];
 extern u8 D_80074EC0[][0x40];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_8004859C and D_8007BD38 */
 extern s32 D_8004859C;
+#endif
 extern s16 D_8006E440;
+#ifndef TARGET_PC /* as above */
 extern void *D_8007BD38;
+#endif
 void *allocateHeap(u32);
 #ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void lookupResourceDescriptor(void *, u16);
@@ -43,7 +49,14 @@ void func_80003684(void *, s32, void *);
 void func_80008574(s32);
 void guTranslateF(void *, f32, f32, f32);
 void osCreateMesgQueue(void *, void *, s32);
+#ifdef TARGET_PC
+/* PC: osCartRomInit takes nothing and returns the cartridge's PI handle, a pointer (SDK cartrominit.c). The N64
+ * declaration takes one argument (the call leaves dst in $a0, which the function never reads) and returns s32, which
+ * on PC would cut the handle in half. */
+void *osCartRomInit(void);
+#else
 s32 osCartRomInit(void *);
+#endif
 
 void func_80008810(void) {
     s32 sp10[4];
@@ -77,7 +90,12 @@ void func_80008810(void) {
 #endif
             func_80008574((s16)(n + 0xE39));
         }
+#ifdef TARGET_PC
+        /* PC: releaseHeapBlock's definition takes a u8 *. */
+        releaseHeapBlock((u8 *)buf);
+#else
         releaseHeapBlock(buf);
+#endif
         D_80030830 = 0;
     }
     lookupResourceDescriptor(sp20, 0x20F);
@@ -117,6 +135,11 @@ void func_80008810(void) {
         guTranslateF(cur, -x, -y, 0);
         cur = dst;
     } while (i < 20);
+#ifdef TARGET_PC
+    /* PC: the handle is kept whole, without the extra argument (see the declaration above). */
+    D_8004859C = osCartRomInit();
+#else
     D_8004859C = osCartRomInit(dst);
+#endif
     D_8006E440 = 1;
 }

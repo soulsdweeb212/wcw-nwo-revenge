@@ -5,8 +5,10 @@
  */
 #include "common.h"
 
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_8007BD38 and D_800485A0 */
 extern u8 *D_8007BD38;
 extern void *D_800485A0[];
+#endif
 extern u8 D_800706C4[];
 
 u8 *allocateHeap(s32);

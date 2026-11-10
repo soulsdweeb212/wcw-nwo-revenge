@@ -8,7 +8,9 @@
 typedef struct { f32 v; u8 pad[0x78]; } Part;
 typedef struct { Part p[23]; } Ent;
 extern s16 D_800706AC[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_8007BD38 */
 extern s32 D_8007BD38;
+#endif
 extern s16 D_8006E440;
 extern u8 D_80030810[];
 extern s8 D_80030828[];
@@ -50,7 +52,12 @@ void func_8000AD00(s32 arg0, u16 arg1)
     entity = sh >> 16;
     idx = D_800706AC[entity * 126];
     off = (idx * 0x24) + bias;
+#ifdef TARGET_PC
+    /* PC: D_8007BD38 is a pointer (port_decls.h); off is an s32, as on the N64. */
+    s4 = (D_8007BD38 + off) + 0x14;
+#else
     s4 = (((u8 *) D_8007BD38) + off) + 0x14;
+#endif
     for (count = 0; count < 8; s4 += 2, count++)
     {
         a1 = s4[1];
@@ -154,10 +161,19 @@ void func_8000AD00(s32 arg0, u16 arg1)
                     func_8000B248(entity, s0);
                     D_800485B0[entity][s0] = s2;
                     D_800485D0[entity][s0] = s1;
+#ifdef TARGET_PC
+                    /* PC: the low bits of s4's address, taken through a pointer-wide integer. (Each bit is shifted
+                     * out below, so the test is always false, on both.) */
+                    tq = (uptr)s4 & 1;
+                    tr = (uptr)s4 & 2;
+                    tu = (uptr)s4 & 4;
+                    tv = (uptr)s4 & 8;
+#else
                     tq = (u32)s4 & 1;
                     tr = (u32)s4 & 2;
                     tu = (u32)s4 & 4;
                     tv = (u32)s4 & 8;
+#endif
                     if ((tq >> 1) | (tr >> 2) | (tu >> 3) | (tv >> 4)) D_8006E440 = 0;
                 }
             }

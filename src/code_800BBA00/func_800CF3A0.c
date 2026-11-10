@@ -81,7 +81,13 @@ void func_800CF3A0(void) {
                 s16 anim;
                 if (((Nw2Attach38 *)D_800FAF5C->profile)->flags & 0x1000000000ULL) anim = 0xEC1;
                 else anim = 0xEC1;
+#ifdef TARGET_PC
+                /* The N64 code reads the pointer D_800FAF5C through a u32 view, which on PC would take half of the
+                 * 8-byte pointer; the PC reads the pointer itself, the same value. */
+                func_800D427C(D_800FAF5C, anim, 1);
+#else
                 func_800D427C((Wrestler *)(*(u32 *)&D_800FAF5C), anim, 1);
+#endif
                 D_800FAF5C->step++;
                 break;
             }

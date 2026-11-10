@@ -21,7 +21,9 @@ extern u16 D_800FABE6;
 extern u16 D_800FAF8A;
 extern s8 D_800FAF78;
 extern s8 D_800FADB8;
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800F9B14 (an s32: the heading) */
 extern u8 D_800F9B14[];
+#endif
 s32 func_800A93C0(void);
 void func_800A712C(void *, void *, void *, void *);
 void func_800BF26C(void *);
@@ -92,8 +94,10 @@ void func_8009D8D0(void) {
         D_800EB408->flags |= 0x1000000000ULL;
     }
 #ifdef TARGET_PC
-    /* PC: D_800F9B0C by name, as the note at the top says. */
-    func_800A712C(D_800EB408, D_800EB40C, D_800F9B14, &D_800F9B0C);
+    /* PC: D_800F9B0C by name, as the note at the top says. D_800F9B14 is an s32 on PC (port_decls.h), where the N64
+     * declares it as a byte array, whose name is its address; func_800A712C writes the heading there, so the PC
+     * passes &D_800F9B14. */
+    func_800A712C(D_800EB408, D_800EB40C, &D_800F9B14, &D_800F9B0C);
 #else
     func_800A712C(D_800EB408, D_800EB40C, D_800F9B14, D_800F9B14 - 8);
 #endif

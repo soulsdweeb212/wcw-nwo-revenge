@@ -5,10 +5,14 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Gfx G; /* on PC a command is port.h's 16-byte Gfx, which keeps a whole pointer in w1 */
+#else
 typedef struct {
     u32 w0;
     u32 w1;
 } G;
+#endif
 
 typedef struct {
     s32 flags;
@@ -49,7 +53,13 @@ void func_800015AC(void *, s32);
 void func_80001544(void *);
 void guOrthoF(void *, f32, f32, f32, f32, f32, f32, f32);
 void guLookAtF(void *, f32, f32, f32, f32, f32, f32, f32, f32, f32);
+#ifdef TARGET_PC
+/* PC: the definition's types (multiplyMatrix4x4.c), so that the compiler checks the call below. port_decls.h cannot
+ * declare it yet, because other files still pass a flat f32[16] or a byte array. */
+void multiplyMatrix4x4(f32 arg0[4][4], f32 arg1[4][4], f32 arg2[4][4]);
+#else
 void multiplyMatrix4x4(void *, void *, void *);
+#endif
 void *allocateHeap(s32);
 
 void func_800982AC(void) {
@@ -64,14 +74,24 @@ void func_800982AC(void) {
     func_80001544(&D_800EB0B0);
     guOrthoF(proj, 0.0f, 480.0f, 0.0f, 240.0f, -1.0f, 10.0f, 1.0f);
     guLookAtF(view, 0.0f, 240.0f, -1.0f, 0.0f, 240.0f, 0.0f, 0.0f, -1.0f, 0.0f);
+#ifdef TARGET_PC
+    /* PC: view, proj and mtx each hold the 16 floats of a 4x4 matrix, which the function takes as f32[4][4]. */
+    multiplyMatrix4x4((f32(*)[4])view, (f32(*)[4])proj, (f32(*)[4])D_800EB0B0.mtx);
+#else
     multiplyMatrix4x4(view, proj, D_800EB0B0.mtx);
+#endif
     D_800EB0B0.f19 = 1;
     /* struct fields: the node stores must reload the pointer, and f19 must stay before them */
     D_800EB0B0.node->flags |= 0x80;
     D_800EB0B0.node->f24 = -5000.0f;
     D_800EB0B0.node->f20 = 100.0f;
     for (i = 0; i < 3; i++) {
+#ifdef TARGET_PC
+        /* PC: room for the same 1024 commands at 16 bytes each instead of 8. */
+        g = D_800EB18C[i] = allocateHeap(0x2000 / 8 * sizeof(G));
+#else
         g = D_800EB18C[i] = allocateHeap(0x2000);
+#endif
         g->w0 = 0xDF000000;
         g->w1 = 0;
     }

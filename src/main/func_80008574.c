@@ -12,7 +12,9 @@ typedef struct { s16 f0; u8 pad[250]; } S85E;
 extern S85S D_800669CE[];
 extern S85U D_800669CC[];
 extern S85E D_800706AC[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_8007BD38 */
 extern s32 D_8007BD38;
+#endif
 extern f64 D_8003B130;
 
 s16 func_80008574(s32 arg0) {

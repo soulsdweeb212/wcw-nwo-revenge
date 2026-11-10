@@ -6,7 +6,9 @@
 #include "common.h"
 
 extern f32 D_800F9B0C;
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800F9B14 (an s32: the heading) */
 extern volatile s32 D_800F9B14;
+#endif
 extern s8 D_800FADB8;
 extern u8 D_800FACF8[];
 extern s32 D_800EB520[];

@@ -5,7 +5,9 @@
  */
 #include "common.h"
 
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_80004AFC, which takes the record to clear */
 void func_80004AFC(void);
+#endif
 void *allocateHeap(u32 bytes);
 u32 osVirtualToPhysical(void *);
 
@@ -45,7 +47,14 @@ void func_80090380(Node *n, u16 mode) {
     Gfx2 *g;
     Gfx2 *h;
 
+#ifdef TARGET_PC
+    /* PC: func_80004AFC clears the record it is given. The N64 call passes no argument, but $a0 still holds n there
+     * (the original asm copies n to $s2 and leaves $a0 untouched up to the jal), so the function clears n; the PC
+     * passes n itself. */
+    func_80004AFC(n);
+#else
     func_80004AFC();
+#endif
     n->f0 = 1;
     n->f2 = 4;
     n->f1 = 2;

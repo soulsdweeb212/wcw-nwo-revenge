@@ -11,8 +11,7 @@ extern s32 D_800EB3F0[];
  * definition: s32 func_800DF3E4(Wrestler *, Wrestler *, s32, f32)). The N64 code reads the float's bits as an s32
  * (D_800F9B0C[0]) and passes them in a3, an integer register, where the N64 callee reads them as a float. On the PC an
  * s32 argument would be converted to a float of another value, so the PC declares the elements f32 and D_800F9B0C[0]
- * reads the float. f32 and s32 are both 4 bytes, so D_800F9B0C - 1 below names the same address as with the N64
- * type. */
+ * reads the float. */
 extern f32 D_800F9B0C[];
 #else
 extern s32 D_800F9B0C[];
@@ -50,9 +49,17 @@ s8 func_800DF214(void *, u16);
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800DF3E4 */
 s8 func_800DF3E4(void *, void *, u16, s32);
 #endif
+#ifdef TARGET_PC
+/* PC: these three take the match-distance block as a Nw2DirectionResult * (their definitions' types); the N64 lines
+ * pass its address as an s32 cast to s32 * (see steps 1 and 3). */
+s8 func_800DF99C(Wrestler *self, Wrestler *target, u16 mask, Nw2DirectionResult *info);
+s32 func_800DFDD4(Wrestler *self, Wrestler *other, s32 arg2, Nw2DirectionResult *dir);
+s32 func_800E022C(Wrestler *actor, Wrestler *other, s32 mask, Nw2DirectionResult *d);
+#else
 s8 func_800DF99C(void *, void *, u16, s32 *);
 s8 func_800DFDD4(void *, void *, u16, s32 *);
 s8 func_800E022C(void *, void *, u16, s32 *);
+#endif
 void func_800E212C(void *);
 
 void func_800A01B0(void) {
@@ -61,6 +68,10 @@ void func_800A01B0(void) {
     Wrestler *o2;
     s32 v;
     s32 anim;
+#ifdef TARGET_PC
+    /* PC: the match-distance block that steps 1 and 3 pass; see step 1. */
+    Nw2DirectionResult distBlock;
+#endif
 
     func_800D93DC(D_800EB408);
     switch (D_800EB408->step) {
@@ -163,11 +174,30 @@ void func_800A01B0(void) {
         if (func_800DF214(D_800EB408, D_800FABE6) || func_800DF3E4(D_800EB408, D_800EB40C, D_800FABE6, D_800F9B0C[0])) {
             goto block;
         }
+#ifdef TARGET_PC
+        /* PC: the N64 keeps D_800F9B0C - 1 in the s32 s0 and passes it: the address of the match-distance block
+         * (Nw2DirectionResult): x, then y = the distance D_800F9B0C, z, then angle = the heading D_800F9B14. On PC an
+         * s32 cannot hold an address, and these data names are separate variables that nothing keeps at those
+         * offsets, so the PC passes distBlock, a block of its own with the same y and angle. The three functions, and
+         * func_800D23B4 and chooseDodgeAction that they hand it to, only read its y and angle and write nothing into
+         * it; x and z are never read (0 here). Only func_800A712C writes D_800F9B0C and D_800F9B14, called from
+         * func_8009D8D0 before this handler runs, so the copy holds what the N64 block holds through these calls.
+         * s0 is not read again in this step. */
+        distBlock.x = 0.0f;
+        distBlock.y = D_800F9B0C[0];
+        distBlock.z = 0.0f;
+        distBlock.angle = D_800F9B14;
+        if (func_800DFDD4(D_800EB408, D_800EB40C, D_800FABE6, &distBlock)) {
+            break;
+        }
+        if (func_800DF99C(D_800EB408, D_800EB40C, D_800FABE6, &distBlock) || func_800E022C(D_800EB408, D_800EB40C, D_800FABE6, &distBlock)) {
+#else
         s0 = (s32)(D_800F9B0C - 1);
         if (func_800DFDD4(D_800EB408, D_800EB40C, D_800FABE6, (s32 *)s0)) {
             break;
         }
         if (func_800DF99C(D_800EB408, D_800EB40C, D_800FABE6, (s32 *)s0) || func_800E022C(D_800EB408, D_800EB40C, D_800FABE6, (s32 *)s0)) {
+#endif
 block:
             func_800A9128(D_800EB408);
             break;
@@ -208,6 +238,22 @@ block:
         if (func_800DF3E4(D_800EB408, D_800EB40C, D_800FAF8A, D_800F9B0C[0])) {
             break;
         }
+#ifdef TARGET_PC
+        /* PC: the match-distance block as a block of its own, as in step 1. */
+        distBlock.x = 0.0f;
+        distBlock.y = D_800F9B0C[0];
+        distBlock.z = 0.0f;
+        distBlock.angle = D_800F9B14;
+        if (func_800DFDD4(D_800EB408, D_800EB40C, D_800FABE6, &distBlock)) {
+            break;
+        }
+        if (func_800DF99C(D_800EB408, D_800EB40C, D_800FABE6, &distBlock)) {
+            break;
+        }
+        if (func_800E022C(D_800EB408, D_800EB40C, D_800FABE6, &distBlock)) {
+            break;
+        }
+#else
         s0 = (s32)(D_800F9B0C - 1);
         if (func_800DFDD4(D_800EB408, D_800EB40C, D_800FABE6, (s32 *)s0)) {
             break;
@@ -218,6 +264,7 @@ block:
         if (func_800E022C(D_800EB408, D_800EB40C, D_800FABE6, (s32 *)s0)) {
             break;
         }
+#endif
         func_800D25D0(D_800EB408, 4.0f);
         func_800D2B64(D_800EB408, 4.0f, 0, 0xFFFFE);
         if (D_800EB408->animFramesLeft > 0) {

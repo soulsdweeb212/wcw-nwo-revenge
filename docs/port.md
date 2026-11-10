@@ -138,10 +138,11 @@ To add a name:
    Then each changed file goes through `port_check.py` as usual ("Checking a change for the port" below).
 
 Not in `port_decls.h` yet: the variables that the developer program's files read both as a pointer and as an integer,
-which `port_calls.py --externs` lists as "pointer and integer views" (`D_800F9B14`, `D_8007C438` and `D_80070458`, for
-example). Each of them needs its readers fixed before its PC type can be settled. A variable that a few files read with
-the wrong type can instead get the right type in those files, under `TARGET_PC`: `D_800F9B0C` is declared `f32` that
-way in each file that reads it as an `s32`.
+which `port_calls.py --externs` lists as "pointer and integer views": `D_8007C438`, `D_80070458`, `D_80046860`,
+`D_8005AAA0` and `D_80044590`. Each holds addresses in 4-byte fields and is among the records whose PC layout is not
+decided yet ("Shared records on PC" below), and its readers are fixed when that layout is. A variable that a few files
+read with the wrong type can instead get the right type in those files, under `TARGET_PC`: `D_800F9B0C` is declared
+`f32` that way in each file that reads it as an `s32`.
 
 ## The ROM loader on PC
 
@@ -241,16 +242,17 @@ that has no PC layout yet (see "Shared records on PC").
 ## Shared records on PC
 
 Some records that many files read hold addresses. Each gets one PC layout, decided once, which every file that reads
-the record follows; until a record's layout is decided, the files that need it keep their N64 code. Decided so far:
+the record follows; until a record's layout is decided, the files that need it keep their N64 code, or, where that code
+would not compile on PC, stop the program there with `port_fatal`, which names the record. Decided so far:
 
 1. **The display record of a mesh or a picture** (0x2C bytes on the N64): `Nw2Descr4BA8`, at the end of `common.h`.
    Its first 0x20 bytes follow `Nw2TextureDisplayObj`, as an assert checks. `fC` to `f1C` (the vertices, the material
    list, the list of vertices and triangles, the texture and the palette) and `f28` (the arena its buffers come from,
    or NULL) are pointers, and the record is 0x48 bytes. Code that steps through an array of records steps by
    `sizeof(Nw2Descr4BA8)`, not 0x2C, and reads the fields by name or by `offsetof` (`func_8000498C`,
-   `freeResourceDescriptorArray`). Not decided yet: the arena that `f28` points to (`func_80007B50`, `func_80007B84`),
-   and the 0xDC-byte object record into which `func_80007818` and `func_80007874` copy the display record's
-   addresses, so those two keep their N64 code for now. Other files still step through these records by 0x2C or
+   `freeResourceDescriptorArray`, `func_8000520C`, `releaseObjectHeapBlocks`, `func_80004AFC`). Not decided yet: the
+   arena that `f28` points to, and the 0xDC-byte object record into which `func_80007818` and `func_80007874` copy
+   the display record's addresses (both are in the list below). Other files still step through these records by 0x2C or
    reach their fields at N64 offsets (`func_80007020`, `buildObjectChain`, `initializeMatchResources`,
    `func_8000C1B8`, `func_8000EDE0`, `func_8000E920`, `func_8000BDD0`, `func_8000CD84`, `func_8000D718`,
    `releaseAllResources1211C`), and the arrays of these records in the game's `.bss` reserve 0x2C bytes for each.
@@ -279,6 +281,32 @@ the record follows; until a record's layout is decided, the files that need it k
    takes `SLOT_TO_PTR(D_8007E228)` (`buildSceneSetupDisplayList`). `func_80001260` finds the buffer as `D_8007FC4F`'s
    address rounded down to a multiple of 16, on PC as on the N64, so the port must place that data as the N64 does: a
    0xA0-byte buffer that starts at a multiple of 16, with `D_8007FC4F` 0xF bytes into it.
+4. **The scheduler's queue and the graphics task.** `func_80000580` registers a client with the scheduler, which keeps
+   the client's message queue in a 4-byte field (+4 of the client record), and `func_800005D0` sends the address of a
+   graphics task as a 4-byte message. On PC both go as handles, `PTR_TO_SLOT(queue)` and `PTR_TO_SLOT(task)`, so the
+   port's stand-ins for the scheduler (`osScAddClient` and `__scMain`, which send the retrace messages to the queue,
+   and `renderTaskThread`, which receives the task) turn them back with `SLOT_TO_PTR`.
+
+Not decided yet. These records keep addresses in 4-byte fields, and each needs one PC layout that every file reading it
+follows. Until it has one, a file that needs it keeps its N64 code, and where that code would not compile on PC, the
+function stops the program with `port_fatal` and a message that names the record:
+
+- **The render-list records** (`D_80044590` holds the addresses of four 0x4078-byte records: a display list, the
+  graphics task, its queue and message). `func_80001260` stops at its allocation loop. It is the boot function that the
+  developer program starts from, so on PC the game's code stops there until this layout is decided.
+- **The 0xDC-byte object** (a transform node: links, matrices, the vertices and display list it draws, and a 0x38-byte
+  work block at +0x14). `func_80007818`, `func_80007874`, `func_80001DC4`, `func_80010E6C` and `func_80011764` stop,
+  and so does `func_8000520C` when the object's buffer at +0x10 is set.
+- **The arena** (`D_8007C3D0`, 16 bytes each: the bases of two pools of records that display records take their
+  buffers from). `func_80007B50` and `func_80007B84` stop.
+- **The stream records** (`D_800706A8`, four of 0xFC bytes, one per wrestler's animation stream: a read cursor, the
+  destination buffer, the cartridge request and its queue). `func_8000A310` stops, and so does `func_80008CE8` where
+  it reads the cursor.
+- **The texture-cache table** (`D_8007C438`: per player, 23 addresses of heap blocks). `loadTextureIntoCacheSlot`
+  stops.
+- **The pairs of heap buffers of a 2D picture** (the image and its palette, which `func_8000670C` fills:
+  `D_80070458`, `D_8005B220`, and overlay 2's picture arrays such as `D_800E78A8`), **the draw table** `D_80046860`,
+  and **the animation records** `D_8005AAA0`.
 
 ## Checking a change for the port
 
@@ -468,6 +496,10 @@ name other compilers than the `gcc` and `clang` on the path.
    A new file fails, because HEAD has nothing to compare it with, and so does a deleted file, because the N64 build
    would lose it; `build.py` proves those. For a header this is the only N64 check, and `build.py` proves the files
    that include it.
+
+   `include/port_decls.h` is a PC-only header: `port.h` includes it inside its `TARGET_PC` block, so the N64 never
+   reads it and its N64 view is empty, whatever it holds. Lines are added to it without `TARGET_PC` tests. For it,
+   check 1 proves instead that no file under `src/` or `include/` includes it outside a `TARGET_PC` block.
 2. **N64 object**, for C files. The file and HEAD's version are compiled with KMC GCC 2.7.2, each with its own
    `include/`, in two temporary copies of the tree. The command is the one `build.py` uses: the tool asks decompdecomp
    for it, with `build.json`'s flags and its `compiler_ranges`, which give `nw2Sqrtf` `-ffast-math`. The two objects

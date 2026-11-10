@@ -5,7 +5,12 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: port_decls.h declares func_8000F710, so the PC copy of this line leaves it out. */
+f32 func_80003CF0(f32);void func_8000FDCC(void);
+#else
 f32 func_80003CF0(f32);void func_8000FDCC(void);void func_8000F710(s32,u32);
+#endif
 extern const f64 D_8003B2A8,D_8003B2B0,D_8003B2B8,D_8003B2C0,D_8003B2C8;
 typedef struct {
     s16 state;
@@ -90,6 +95,14 @@ void func_80010E6C(void) {
                 }
             }
         }
+#ifdef TARGET_PC
+        /* PC: not ported yet. D_80059D9C is D_80059D90 + 0xC: the vertices' address in the 4-byte field +0xC of side
+         * i's 0xDC-byte object, which func_8000FAF8 allocates. That object has no PC layout yet (docs/port.md, "Shared
+         * records on PC"), and its s32 view here holds only half of a 64-bit address, so the PC stops the program
+         * instead of handing func_8000F710 a cut pointer to write through. */
+        port_fatal("func_80010E6C: the 0xDC-byte object record has no PC layout yet");
+#else
         func_8000F710(D_80059D9C[i].p, i);
+#endif
     }
 }

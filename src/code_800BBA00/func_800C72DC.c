@@ -19,7 +19,23 @@ s32 func_800D2B64(void *, f32, u16, s32);
 s8 func_800C2634(void *, u16);
 s8 func_800B71F8(void *, s32, s32);
 s16 func_800B6DEC(void *, s32, s32);
+#ifdef TARGET_PC
+/* func_800C778C takes a second argument, the id it returns when hitInfo has none of the hit class bits 0x10000000,
+ * 0x20000000 and 0x40000000; the two calls below leave it out. On the N64, $a1 held a leftover there: the address
+ * D_800F9B78 that func_800B68A0 last put in it (when hitInfo bit 31 is clear and step 0 called it), or else whatever
+ * the state dispatcher's last call (func_800D7B54) left. Neither is an animation id. The calls run only with hitInfo
+ * 0x20000 or 0x80000 set, which func_800C3A78 sets after it has or-ed in a class bit (from move.unk39B, 0 to 5), and
+ * which this function's step 0 sets together with one. So the PC passes PC_NO_HIT_CLASS_ID (-1), which is never
+ * returned while a class bit is set. If none is set, the N64's leftover only mattered when no later test in step 0
+ * replaced it; the check before the animation starts (see below) stops the program in exactly that case. */
+#define PC_NO_HIT_CLASS_ID (-1)
+s16 func_800C778C(Wrestler *w, s32 arg1);
+static s16 pc_hitReactionId(Wrestler *w) {
+    return func_800C778C(w, PC_NO_HIT_CLASS_ID);
+}
+#else
 s16 func_800C778C(void *);
+#endif
 
 void func_800C72DC(void) {
     s16 s0;
@@ -102,13 +118,23 @@ void func_800C72DC(void) {
             }
         }
         if (D_800FAF5C->hitInfo & 0x20000) {
+#ifdef TARGET_PC
+            /* the missing second argument: see pc_hitReactionId above */
+            s0 = pc_hitReactionId(D_800FAF5C);
+#else
             s0 = func_800C778C(D_800FAF5C);
+#endif
         }
         if (D_800FAF5C->hitInfo & 0x80000) {
             b = (s8)D_800F9B64->move.unk3A1;
             s0 = b + 0x106D;
             if (b == 0) {
+#ifdef TARGET_PC
+                /* as above */
+                s0 = pc_hitReactionId(D_800FAF5C);
+#else
                 s0 = func_800C778C(D_800FAF5C);
+#endif
             }
         }
         flags = D_800FAF5C->hitInfo;
@@ -147,6 +173,14 @@ void func_800C72DC(void) {
                 func_800A6C48(D_800FAF5C, 0x62);
                 return;
             }
+#ifdef TARGET_PC
+            /* s0 is final here (apart from the +1 below, which the 0x20000/0x80000 bits rule out). If it still holds
+             * func_800C778C's no-class answer, the N64 would have used its leftover $a1 as the id: stop instead. */
+            if (s0 == PC_NO_HIT_CLASS_ID) {
+                port_fatal("func_800C72DC: hitInfo 0x%08X has no hit class bit; the N64 used a leftover $a1 as the animation id",
+                           (unsigned)D_800FAF5C->hitInfo);
+            }
+#endif
             if (!(flags & 0xE7E0000)) {
                 if (flags & 0x1000) {
                     s0++;

@@ -16,7 +16,9 @@ extern s32 D_800E3C90[];
 
 s8 updateEntityBoundaryFlags(void *, void *, u16 *);
 s16 func_800BF018(void *, void *, u16);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800BF150 */
 s8 func_800BF150(void *, void *);
+#endif
 void func_800D8D74(void *, void *);
 s16 func_800D7A2C(u16);
 void func_800D7E80(void *, s32);
@@ -76,7 +78,15 @@ void updateEntityThrownState(void)
                 }
             }
         }
+#ifdef TARGET_PC
+        /* func_800BF150 reads the id byte that its second argument points to; the N64 code passes the opponent's
+         * record, whose id is at offset 0. On PC the call passes &D_800F9B00->id, the same address, with the s8 *
+         * type of port_decls.h's declaration. The N64 code shifts the result left by 24 to test its low byte; the PC
+         * tests the same byte as an s8 (the result is 0 or 1). */
+        if ((s8)func_800BF150(D_800FAF5C, &D_800F9B00->id)) {
+#else
         if (func_800BF150(D_800FAF5C, D_800F9B00) << 24) {
+#endif
             D_800FAF5C->pairSignals |= 4;
         }
         if (D_800FAF5C->pairSignals & 2) {

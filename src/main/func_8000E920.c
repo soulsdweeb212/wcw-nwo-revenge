@@ -31,16 +31,27 @@ extern void *D_80036C94[];
 extern s16 D_80036C50[];
 extern u16 D_80036C58[];
 extern s16 D_80036C60[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares these three pointers (the display lists func_80007020 returns) */
 extern s32 D_800587EC;
 extern s32 D_800588F8;
 extern s32 D_80058984;
+#endif
 extern s16 D_80059D80;
 extern s16 D_80059D82;
 extern f64 D_8003B220;
 extern f64 D_8003B228;
 
+#ifdef TARGET_PC
+/* PC: func_80007020 returns the display list it built, a pointer (Gfx7020 *, a type of its own file), and takes the
+ * record count as an s16; its pointer parameters stay void * here. func_80007818 gets that display list as a pointer:
+ * its definition still takes an s32 there, and its PC version stops the program until the 0xDC-byte object record has
+ * a PC layout (docs/port.md, "Shared records on PC"). */
+void *func_80007020(void *, void *, void *, s16);
+void func_80007818(void *, void *, void *, s32);
+#else
 s32 func_80007020(void *, void *, void *, s32);
 void func_80007818(void *, void *, s32, s32);
+#endif
 void func_80001544(void *);
 void func_80001DC4(void *);
 void func_80004B34(void *, void *, s32, f32, f32, f32);

@@ -26,19 +26,35 @@ void updatePairedEntityActionState(void){s32 animId;s16 actionId;
         }else{if(B->grappleCtx&0x80)animId=0xEEA;else animId=0xEDA;A->step++;}
         func_800D427C(A,animId,2);break;
     case 1:
+#ifdef TARGET_PC
+        /* The N64 code passes B, the partner's address, cast to s32, which would cut a 64-bit pointer; the PC passes
+         * the pointer, which func_800D2BAC takes (common.h declares it with Wrestler *). */
+        if(!(B->grappleCtx&0x80))func_800D2BAC(A,B,1.0f,2);
+#else
         if(!(B->grappleCtx&0x80))func_800D2BAC(A,(s32)B,1.0f,2);
+#endif
         if(A->animFramesLeft<=0){
             if(A->flags&0x2000000){func_800D427C(A,0xEDD,0);beginPairedEntityActions(A,0xB,B,0xC);A->step=3;B->step=3;A->grappleCtx=B->grappleCtx&0x80;B->moveMode=A->moveMode;B->dirIndex=A->dirIndex;
             }else{if(B->grappleCtx&0x800000)animId=0xEE0;else animId=0xEDC;func_800D427C(A,animId,0);A->step++;}
         }break;
     case 2:
+#ifdef TARGET_PC
+        /* as above: the partner's pointer, not an s32 */
+        if(!(B->grappleCtx&0x80))func_800D2BAC(A,B,1.0f,2);
+#else
         if(!(B->grappleCtx&0x80))func_800D2BAC(A,(s32)B,1.0f,2);
+#endif
         if(A->animFramesLeft<=0){A->flags&=~0x1000000ULL;
             if(A->animId==0xEE0){func_800A7D1C(A,5);func_800B68A0(A,B,B);func_800D4AD0(A);beginEntityActionA8D8C(A);
             }else{D_800FADC6[D_800FADB8]=0;func_800D37C0(A->heading,func_800D63F0(A,0,2),A->moveDelta);func_800A6C48(A,3);A->step=2;}
         }break;
     case 3:
+#ifdef TARGET_PC
+        /* as above: the partner's pointer, not an s32 */
+        if(!(A->grappleCtx&0x80))func_800D2BAC(A,B,1.0f,2);
+#else
         if(!(A->grappleCtx&0x80))func_800D2BAC(A,(s32)B,1.0f,2);
+#endif
         if(A->animFramesLeft<=0){if(A->grappleCtx&0x800000)animId=0xEE0;else animId=0xEDC;func_800D427C(A,animId,0);A->step--;}
         break;
     case 4:

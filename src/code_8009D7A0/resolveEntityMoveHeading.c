@@ -24,7 +24,12 @@ s32 func_800D6610(void *, s16);
 #endif
 f32 func_800D63F0(void *, s32, s32);
 void func_800D37C0(s32, f32, void *);
+#ifdef TARGET_PC
+/* PC: func_800D26A0 with its definition's types (the offset as a Nw2DirectionResult *, the id to skip as an s8). */
+s8 func_800D26A0(Wrestler *w, Nw2DirectionResult *arg1, s8 ignoreId);
+#else
 s8 func_800D26A0(void *, void *, s32);
+#endif
 u32 func_800D2ACC(void *, s32, void *);
 s32 resolveEntityMoveHeading(Wrestler *w, u16 input, s32 *out) {
     f32 point[4];
@@ -91,7 +96,14 @@ s32 resolveEntityMoveHeading(Wrestler *w, u16 input, s32 *out) {
     }
     if (w->moveMode & 8) *out = func_800D6610(w, w->dirIndex);
     func_800D37C0(*out, func_800D63F0(w, 0, 2), w->moveDelta);
+#ifdef TARGET_PC
+    /* PC: the offset is moveDelta, which the N64 passes as a plain address. func_800D26A0 copies 16 bytes from it and
+     * uses x and z (moveDelta[0] and [2]); the last 4 bytes it copies are turnPerTick, the field after moveDelta on
+     * PC as on the N64, and are not used. */
+    if (func_800D26A0(w, (Nw2DirectionResult *)w->moveDelta, -1) != -1) return 0;
+#else
     if (func_800D26A0(w, w->moveDelta, -1) != -1) return 0;
+#endif
     hit = func_800D2ACC(w, 2, w->moveDelta);
     if (hit && (w->moveMode & 6)) {
         if (w->flags & WR_FLAG_ON_APRON) return 0;

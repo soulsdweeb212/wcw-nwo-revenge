@@ -13,7 +13,9 @@ extern u8 D_80100000;
 extern u8 D_8002FECC;
 extern u8 D_80030214;
 extern s32 D_800482D0;
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800482D4 */
 extern s32 D_800482D4;
+#endif
 extern s16 D_800482DA;
 typedef struct {
     s32 f0; s32 f4; void *f8; s32 fC; void *f10; s32 f14; s32 f18;

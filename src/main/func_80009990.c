@@ -30,7 +30,9 @@ typedef struct {
 } Stream9990;
 
 extern Stream9990 D_800706A8[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_8004859C */
 extern void *D_8004859C;
+#endif
 s32 osEPiStartDma(void *, void *, s32);
 s32 osRecvMesg(void *, void *, s32);
 

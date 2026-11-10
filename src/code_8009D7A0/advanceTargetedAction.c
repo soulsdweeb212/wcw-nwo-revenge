@@ -11,6 +11,11 @@ s32 func_800D2B64(void *, f32, u16, s32);
 void func_800D427C(void *, s32, s32);
 void func_800D4AD0(void *);
 void func_800D2600(void *, s32, f32);
+#ifdef TARGET_PC
+/* The N64 code calls func_800D26A0 undeclared (C89 takes it as returning int); the PC compiler needs a declaration.
+ * These are the definition's types (func_800D26A0.c): the call's 0 is a NULL offset and -1 the s8 "ignore none". */
+s8 func_800D26A0(Wrestler *w, Nw2DirectionResult *arg1, s8 ignoreId);
+#endif
 
 /* Timed-action state machine (sibling of updateTimedAction). On the object
  * D_800EB408: step 0 starts animation 0xE7A; step 1 re-evaluates the current

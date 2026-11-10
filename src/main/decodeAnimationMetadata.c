@@ -8,7 +8,9 @@
 extern u16 D_8006A2B0[][2];
 extern u16 D_8006A2B2[][2];
 typedef struct { u8 b[36]; } AnimSource;
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_8007BD38 (u8 *) */
 extern AnimSource *D_8007BD38;
+#endif
 typedef struct { s32 offset; u8 b[24]; } AnimDest;
 /* Decodes the packed animation metadata for animation id arg1 (>= 0xE39) into
  * the destination record: the source offset from the lookup table plus the
@@ -16,7 +18,12 @@ typedef struct { s32 offset; u8 b[24]; } AnimDest;
 void decodeAnimationMetadata(void *arg0, s16 arg1) {
     AnimDest *d=arg0; AnimSource *p; u8 *s; s32 i;
     if(arg1>=0xE39) {
+#ifdef TARGET_PC
+        /* PC: port_decls.h declares the table as u8 *; it holds these 36-byte records. */
+        i=arg1-0xE39; p=(AnimSource *)D_8007BD38;
+#else
         i=arg1-0xE39; p=D_8007BD38;
+#endif
         d->offset=(D_8006A2B0[i][0]&0x3FF)*4;
         d->b[0]=D_8006A2B2[i][0];
         d->b[3]=D_8006A2B0[i][0]>>10;

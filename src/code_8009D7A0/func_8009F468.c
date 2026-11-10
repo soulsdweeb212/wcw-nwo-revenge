@@ -11,7 +11,13 @@ void func_800D25D0(void *,f32);
 s32 func_800D2B64(void *,f32,u16,s32);
 #endif
 s8 func_800D4198(s16);
+#ifdef TARGET_PC
+/* On PC, the definition's types (func_800C778C.c): it takes a second argument, the id to return when no hitInfo bit
+ * applies. The N64 call below passes only the record; see the call for the value the PC passes. */
+s16 func_800C778C(Wrestler *w, s32 arg1);
+#else
 s16 func_800C778C(void *);
+#endif
 void func_800D427C(void *,s16,s32);
 void func_800D4AD0(void *);
 void beginEntityActionA8D8C(void *);
@@ -32,7 +38,15 @@ void func_8009F468(void) {
         } else if (D_800EB408->flags&0x8000000ULL) anim=0x1047;
         else if (func_800D4198(300)) {
             D_800EB408->hitInfo=(D_800EB408->hitInfo&0x8FFFEFFF)|0x10000000;
+#ifdef TARGET_PC
+            /* The N64 call leaves func_800C778C's arg1 in $a1 as func_800D4198 left it. The line above has just set
+             * hitInfo bit 0x10000000 and cleared 0x1000, 0x20000000 and 0x40000000, so func_800C778C takes its
+             * profile-byte switch, which sets arg1 on every path (0x1049 by default) before returning it: arg1 is
+             * never read, and 0 stands in for it. */
+            func_800D427C(D_800EB408,func_800C778C(D_800EB408,0),1);
+#else
             func_800D427C(D_800EB408,func_800C778C(D_800EB408),1);
+#endif
             D_800EB408->step=2;
             break;
         } else if (*(u64*)(D_800EB408->profile+0x38)&0x200ULL) anim=0x1047;

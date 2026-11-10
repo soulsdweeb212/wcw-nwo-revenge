@@ -31,8 +31,18 @@ void translateEntityXZ(void *, void *);
  * animation.  Step 3 finishes. */
 void func_800C1A24(void)
 {
+#ifdef TARGET_PC
+    /* Step 1 sets animCmd and aimHeading only when animId is 0xF1D..0xF20, and the N64 code leaves them unset
+     * otherwise (their registers, $s0 and $s1, then hold whatever this function's caller left there). That path never
+     * runs: a state starts at step 0, which starts one of the animations 0xF1D..0xF20 (func_800D427C stores it in
+     * animId), and nothing in between changes animId (func_800D2B64 and func_800D4AD0 do not). The PC gives both a
+     * value so no read of an unset variable remains: the N64's leftover registers have no value to copy. */
+    s32 animCmd = 0;
+    s32 aimHeading = 0;
+#else
     s32 animCmd;
     s32 aimHeading;
+#endif
 
     switch (D_800FAF5C->step) {
     case 0:
