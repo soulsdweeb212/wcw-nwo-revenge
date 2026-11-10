@@ -59,8 +59,8 @@ These exist only under `TARGET_PC`:
 - `ROM_RES_BASE`, `ROM_RES_TABLE`, `ROM_SEG1_INIT` and the other `ROM_` names: the ROM addresses of the decomp's ROM
   symbols (`D_000DAC50` and so on), which the PC build does not link.
 - The PC declarations of `readRomSynchronousChunks`, `lookupResourceDescriptor` and `func_80003684`.
-- `port_decls.h`, which `port.h` includes at its end: the PC declarations of the other game functions and variables
-  that game files declare with other types (see "The PC declarations: port_decls.h").
+- `PortIoMesg`: a cartridge read request (libultra's `OSIoMesg`) with real pointers, 0x28 bytes, which the port's
+  `osEPiStartDma` takes and the game's animation streams keep (`Nw2AnimStream` in `common.h`).
 - Declarations of functions the port implements: `port_rom_read`, `port_res_loaded`, `port_fatal` (print a message
   and stop), and `port_ptr_to_slot`/`port_slot_to_ptr` behind the slot macros.
 - Renames of SDK functions the port replaces, such as `#define osRecvMesg port_osRecvMesg`. A rename changes the
@@ -73,8 +73,14 @@ These exist only under `TARGET_PC`:
     but they work on LUS's own, larger record layouts (larger pad records; 64-bit pointers in queues and `OSPfs`)
     instead of the N64-sized storage the game gives them, or do nothing (LUS's `osEPiStartDma` copies nothing).
 
-The renames apply only to text that comes after `port.h`, which `common.h` includes last. So a game file that needs a
-system header includes it before `common.h`; otherwise the renames would also rename the header's declarations.
+The renames apply only to text that comes after `port.h`, which `common.h` includes after all its N64 types. So a
+game file that needs a system header includes it before `common.h`; otherwise the renames would also rename the
+header's declarations.
+
+`port.h` does not include `port_decls.h`, the PC declarations of the other game functions and variables that game
+files declare with other types. `common.h` includes it as the last line of its `TARGET_PC` section, after `port.h` and
+after the PC layouts of the shared records, so that a declaration there can name those layouts' types (see "The PC
+declarations: port_decls.h").
 
 ## The PC declarations: port_decls.h
 
@@ -85,7 +91,9 @@ address. The decompilation keeps these declarations, because the N64 code it mus
 on them, and on the N64 they do no harm ("Checking the calls between game files" below says why). On a 64-bit PC the
 same calls can cut a pointer in half or hand the function another number.
 [`include/port_decls.h`](../include/port_decls.h) gives each such name one PC declaration with the right types.
-`port.h` includes it at its end under `TARGET_PC`, so every game file sees it on the PC and none sees it on the N64.
+`common.h` includes it as the last line of its `TARGET_PC` section, after `port.h` and after the PC layouts of the
+shared records ("Shared records on PC"), so every game file sees it on the PC and none sees it on the N64, and a
+declaration in it can name a PC layout's type (an array of `Nw2Descr4BA8`, for example).
 
 It holds:
 
@@ -247,10 +255,11 @@ would not compile on PC, stop the program there with `port_fatal`, which names t
 
 1. **The display record of a mesh or a picture** (0x2C bytes on the N64): `Nw2Descr4BA8`, at the end of `common.h`.
    Its first 0x20 bytes follow `Nw2TextureDisplayObj`, as an assert checks. `fC` to `f1C` (the vertices, the material
-   list, the list of vertices and triangles, the texture and the palette) and `f28` (the arena its buffers come from,
-   or NULL) are pointers, and the record is 0x48 bytes. Code that steps through an array of records steps by
-   `sizeof(Nw2Descr4BA8)`, not 0x2C, and reads the fields by name or by `offsetof` (`func_8000498C`,
-   `freeResourceDescriptorArray`, `func_8000520C`, `releaseObjectHeapBlocks`, `func_80004AFC`). Not decided yet: the
+   list, the list of vertices and triangles, the texture and the palette), `f20` and `f24` (the work blocks of its two
+   vertex groups, or NULL) and `f28` (the arena its buffers come from, or NULL) are pointers, and the record is 0x50
+   bytes. Code that steps through an array of records steps by `sizeof(Nw2Descr4BA8)`, not 0x2C, and reads the fields
+   by name or by `offsetof` (`func_8000498C`, `freeResourceDescriptorArray`, `func_8000520C`,
+   `releaseObjectHeapBlocks`, `func_80004AFC`). Not decided yet: the
    arena that `f28` points to, and the 0xDC-byte object record into which `func_80007818` and `func_80007874` copy
    the display record's addresses (both are in the list below). Other files still step through these records by 0x2C or
    reach their fields at N64 offsets (`func_80007020`, `buildObjectChain`, `initializeMatchResources`,
@@ -258,7 +267,7 @@ would not compile on PC, stop the program there with `port_fatal`, which names t
    `releaseAllResources1211C`), and the arrays of these records in the game's `.bss` reserve 0x2C bytes for each.
    So do the 0x3F4-byte slots of 23 records each (`D_80050800`, and `D_80073EB0` with `D_80073F34` three records into
    it), which `applyEntityTextureMasks`, `func_8000C784` and `func_8000C91C` read at offsets 0x2C and 0x58. On PC all
-   of them must follow `Nw2Descr4BA8` and its 0x48 bytes; until then they keep their N64 code.
+   of them must follow `Nw2Descr4BA8` and its 0x50 bytes; until then they keep their N64 code.
 2. **The resource-name cache**: 128 entries of `Nw2ResourceEntryHashed`, in a heap block whose address `D_8007FC34`
    holds. An entry's key is 0 (free), -1 (waiting to be freed), the address of the resource's name, or a resource id
    tagged with bit 0x40000000, which no N64 address has. A PC address can have that bit, so on PC the key is
@@ -362,10 +371,11 @@ been set up: the first run of `build.py` extracts `asm/data/` and `assets/` from
    reads or writes.
 2. **It finds what each name is.** A name can be a function of a C file (a `static` one counts only in its own file),
    an old name of a function that `build.json` keeps as a symbol at the function's address (`func_800E2400` is
-   `tryBeginBlockReaction`), a variable (a `build.json` symbol, a label in `asm/data/`, or a C definition), or a
-   function the port supplies, declared in `port.h`. A name that is none of these is an error: the tool names the file
-   and line that use it, still prints the list it found, and exits with 1, because the name could be a function that
-   the list is missing.
+   `tryBeginBlockReaction`), a variable (a `build.json` symbol, a label in `asm/data/`, or a C definition), a
+   function the port supplies, declared in `port.h`, or a name that only the PC has, declared in `port_decls.h`. The
+   tool reads those two headers on their own, with `common.h`'s typedefs, because it keeps no other declaration of a
+   header. A name that is none of these is an error: the tool names the file and line that use it, still prints the
+   list it found, and exits with 1, because the name could be a function that the list is missing.
 3. **It follows function addresses in data.** Some functions are reached only through a table of their addresses:
    overlay 2 calls many of its functions through the tables `D_800E2FF0` and `D_800E3660`. The tool reads the `.word`
    entries of main's data in `asm/data/`, and every 32-bit word of overlay 2's data (`assets/D5FB0.bin`) that equals
@@ -394,8 +404,8 @@ SDK code the port keeps and the game files it replaces. `tools/port_calls.py` re
 it, and the name they use. `--surface` prints, instead of the list, one tab-separated row for each replaced file with
 the names the listed files use in it (the port must supply them), one for each table of function addresses the walk
 followed, with its functions, and one for each other kind of name with every name of that kind: data (which the port
-must fill from the ROM), port functions (declared in `port.h`), inline helpers of the headers, and addresses inside
-main's code that are not where a function starts.
+must fill from the ROM), port names (declared only in `port.h` or `port_decls.h`), inline helpers of the headers, and
+addresses inside main's code that are not where a function starts.
 
 ### Exit status
 
@@ -433,6 +443,11 @@ changes each copy in one way, runs the tool on every copy as a separate program 
    `src/code_8009D7A0/startEntityAction.c` that calls through it, and files of the table's functions gone from the list.
 4. A label added 0x10 bytes into the table `D_800E2FF0`, in both: exit status 2 and the error that a run of function
    addresses goes on from `D_800E2FF0` into the new label.
+5. A PC-only name, `port_filelist_pc_only`, declared in `include/port_decls.h` alone and used in a function added to
+   `src/main/func_80001260.c`: exit status 0 and the same list as the decompilation itself.
+6. The same copy, with the tool's reading of `port_decls.h` left out (the option `--skip-port-decls`, which exists only
+   for this control): exit status 1 and an error at the line that uses the name. This proves that the name is found
+   through that reading.
 
 The self-test gets what it compares with without the tool's own readers: the line that a control expects from a plain
 text search of the copy (a line of that file where the name appears inside braces, comments left out), the file of the
@@ -497,9 +512,11 @@ name other compilers than the `gcc` and `clang` on the path.
    would lose it; `build.py` proves those. For a header this is the only N64 check, and `build.py` proves the files
    that include it.
 
-   `include/port_decls.h` is a PC-only header: `port.h` includes it inside its `TARGET_PC` block, so the N64 never
-   reads it and its N64 view is empty, whatever it holds. Lines are added to it without `TARGET_PC` tests. For it,
-   check 1 proves instead that no file under `src/` or `include/` includes it outside a `TARGET_PC` block.
+   `include/port_decls.h` is a PC-only header: `common.h` includes it inside its `TARGET_PC` section, so the N64
+   never reads it and its N64 view is empty, whatever it holds. Lines are added to it without `TARGET_PC` tests. For
+   it, check 1 proves instead that `common.h`'s PC view includes it (an `#include` directive, not one inside a
+   comment or inside another conditional such as `#if 0`), and that no file under `src/` or `include/` includes it
+   outside a `TARGET_PC` block.
 2. **N64 object**, for C files. The file and HEAD's version are compiled with KMC GCC 2.7.2, each with its own
    `include/`, in two temporary copies of the tree. The command is the one `build.py` uses: the tool asks decompdecomp
    for it, with `build.json`'s flags and its `compiler_ranges`, which give `nw2Sqrtf` `-ffast-math`. The two objects

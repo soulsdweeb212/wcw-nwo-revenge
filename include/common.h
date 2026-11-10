@@ -1908,15 +1908,22 @@ typedef struct {
 #ifdef TARGET_PC
 
 /* ---- PC layouts of shared records that hold addresses ----
- * Their N64 definitions above are N64 only. They come here, after port.h, whose types and offsetof they use. */
+ * Where a record also has an N64 definition above, that one is N64 only. They come here, after port.h, whose types and
+ * offsetof they use, and before port_decls.h (the last line of this section), which declares the game's variables
+ * with these types. Most records get real pointers on PC, so they grow and code reaches them by field name. The few
+ * that many files reach through labels or N64 strides keep their N64 layout instead, and their 4-byte address fields
+ * hold port.h's handles (PTR_TO_SLOT). */
 
 /* Nw2Descr4BA8: the game's 0x2C-byte display record of a mesh or a picture (func_8000498C fills one per mesh), in its
  * PC layout. Its first 0x20 bytes follow the PC layout of Nw2TextureDisplayObj, as the assert below checks: fC to f1C
  * are that struct's colorPtr (the vertices), dl (the material's display list, which ends with a branch to next), next
- * (the display list of the vertices and triangles), tex and palette, all addresses. f28 is the arena that
- * func_8000498C takes the vertex and display-list buffers from (func_80007B50, func_80007B84), or NULL when they come
- * from the heap. f20 and f24 are not known to hold addresses and stay s32. The record is 0x48 bytes on PC, so an array
- * of records steps by sizeof(Nw2Descr4BA8), not by 0x2C. */
+ * (the display list of the vertices and triangles), tex and palette, all addresses. f20 and f24 are the work blocks
+ * (Nw2SceneWork, from the pool at D_80046858) of the record's two vertex groups, which func_80005014 asks
+ * func_8000160C for (f20 the second group, f24 the first), or NULL. They are pointers like the record's other
+ * addresses: only records that keep their N64 layout hold handles. f28 is the arena that func_8000498C takes the
+ * vertex and display-list buffers from (func_80007B50, func_80007B84), or NULL when they come from the heap. Every
+ * field from fC on is a pointer, so the record is 0x50 bytes on PC: an array of records steps by sizeof(Nw2Descr4BA8),
+ * never by 0x2C, and code reads the record by field name or offsetof. */
 typedef struct {
     u8 pad0[2];
     s8 f2;
@@ -1929,8 +1936,8 @@ typedef struct {
     void *f14;
     void *f18;
     void *f1C;
-    s32 f20;
-    s32 f24;
+    void *f20;
+    void *f24;
     void *f28;
 } Nw2Descr4BA8;
 _Static_assert(offsetof(Nw2Descr4BA8, f2) == offsetof(Nw2TextureDisplayObj, count) &&
@@ -1941,6 +1948,9 @@ _Static_assert(offsetof(Nw2Descr4BA8, f2) == offsetof(Nw2TextureDisplayObj, coun
                    offsetof(Nw2Descr4BA8, f18) == offsetof(Nw2TextureDisplayObj, tex) &&
                    offsetof(Nw2Descr4BA8, f1C) == offsetof(Nw2TextureDisplayObj, palette),
                "Nw2Descr4BA8 must follow the PC layout of Nw2TextureDisplayObj");
+_Static_assert(offsetof(Nw2Descr4BA8, f20) == 0x38 && offsetof(Nw2Descr4BA8, f24) == 0x40 &&
+                   offsetof(Nw2Descr4BA8, f28) == 0x48 && sizeof(Nw2Descr4BA8) == 0x50,
+               "the display record is 0x50 bytes on a 64-bit PC, its addresses from +0x10 on");
 
 /* Nw2ResourceEntryHashed: an entry of the resource-name cache (128 entries in a heap block whose address D_8007FC34
  * holds), in its PC layout. Its key is port.h's ResKey, as wide as a pointer, so the allocation follows at +8,
@@ -1956,5 +1966,233 @@ typedef struct {
 } Nw2ResourceEntryHashed;
 _Static_assert(sizeof(Nw2ResourceEntryHashed) == 0x20 && offsetof(Nw2ResourceEntryHashed, reserved) == 0x10,
                "an entry of the resource-name cache is 0x20 bytes on a 64-bit PC");
+
+/* ---- The scene graph: objects and their work blocks (N64 layout, handles) ---- */
+
+/* Nw2SceneObj: the game's 0xDC-byte object, a node of the scene graph (func_80001DC4 walks it), in its PC layout, which
+ * is its N64 layout. 20 labels of the game reach its fields at N64 offsets (D_800651B8 is +0x18 of D_800651A0, for
+ * example), and about 45 files step arrays of objects by 0xDC and 0x13C4 (23 objects), so the record keeps every
+ * offset. Its six address fields are 4 bytes, so on PC each holds a 32-bit handle (port.h's PTR_TO_SLOT) instead of
+ * the address: code stores PTR_TO_SLOT(p) and reads SLOT_TO_PTR(field). A handle of 0 stands for NULL. */
+typedef struct Nw2SceneObj {
+    u32 parent;      /* +0x00 the object whose world matrix this one's is relative to, or 0 */
+    u32 child;       /* +0x04 first child object, or 0 */
+    u32 next;        /* +0x08 next sibling object, or 0 */
+    u32 vtx;         /* +0x0C vertices (16-byte Vtx) */
+    u32 dl;          /* +0x10 display list; a heap buffer for some objects, which func_80006D14 frees */
+    u32 work;        /* +0x14 first work block (Nw2SceneWork), or 0 */
+    u8 group;        /* +0x18 draw group; bit 0x80 hides the object */
+    u8 flat;         /* +0x19 1: a 2D object whose view matrix is set directly */
+    u8 lit;          /* +0x1A 1: lit by func_80001930 */
+    s8 vtxCount;     /* +0x1B */
+    f32 local[4][4]; /* +0x1C */
+    f32 world[4][4]; /* +0x5C local * parent's world */
+    f32 view[4][4];  /* +0x9C world * camera */
+} Nw2SceneObj;
+_Static_assert(offsetof(Nw2SceneObj, parent) == 0x00 && offsetof(Nw2SceneObj, child) == 0x04 &&
+                   offsetof(Nw2SceneObj, next) == 0x08 && offsetof(Nw2SceneObj, vtx) == 0x0C &&
+                   offsetof(Nw2SceneObj, dl) == 0x10 && offsetof(Nw2SceneObj, work) == 0x14 &&
+                   offsetof(Nw2SceneObj, group) == 0x18 && offsetof(Nw2SceneObj, flat) == 0x19 &&
+                   offsetof(Nw2SceneObj, lit) == 0x1A && offsetof(Nw2SceneObj, vtxCount) == 0x1B &&
+                   offsetof(Nw2SceneObj, local) == 0x1C && offsetof(Nw2SceneObj, world) == 0x5C &&
+                   offsetof(Nw2SceneObj, view) == 0x9C && sizeof(Nw2SceneObj) == 0xDC,
+               "the 0xDC-byte object keeps its N64 layout on PC");
+
+/* Nw2SceneWork: a work block, 0xB8 bytes, from the pool of 512 in the heap block D_80046858 (func_80001694 hands them
+ * out). It says what to draw for an object. It keeps its N64 layout on PC for the same reasons as the object, and its
+ * four address fields hold handles. The draw tables D_80046860 and D_80047070, which hold the addresses of work
+ * blocks, are plain pointer arrays on PC. */
+typedef struct Nw2SceneWork {
+    s32 kind;        /* +0x00 0: display list only, 1: mesh; bit 0x80: not drawn */
+    u32 owner;       /* +0x04 the Nw2SceneObj it belongs to */
+    u32 next;        /* +0x08 the owner's next work block, or 0 */
+    f32 center[3];   /* +0x0C centre of the vertices */
+    f32 eye[3];      /* +0x18 that centre in camera space */
+    f32 bias;        /* +0x24 depth bias */
+    f32 depth;       /* +0x28 sort key */
+    s16 count;       /* +0x2C vertices to load */
+    s16 start;       /* +0x2E first vertex slot */
+    u32 vtx;         /* +0x30 vertices */
+    u32 dl;          /* +0x34 display list */
+    s32 mtx[2][16];  /* +0x38 the fixed-point matrix (guMtxF2L) of each frame bank */
+} Nw2SceneWork;
+_Static_assert(offsetof(Nw2SceneWork, kind) == 0x00 && offsetof(Nw2SceneWork, owner) == 0x04 &&
+                   offsetof(Nw2SceneWork, next) == 0x08 && offsetof(Nw2SceneWork, center) == 0x0C &&
+                   offsetof(Nw2SceneWork, eye) == 0x18 && offsetof(Nw2SceneWork, bias) == 0x24 &&
+                   offsetof(Nw2SceneWork, depth) == 0x28 && offsetof(Nw2SceneWork, count) == 0x2C &&
+                   offsetof(Nw2SceneWork, start) == 0x2E && offsetof(Nw2SceneWork, vtx) == 0x30 &&
+                   offsetof(Nw2SceneWork, dl) == 0x34 && offsetof(Nw2SceneWork, mtx) == 0x38 &&
+                   sizeof(Nw2SceneWork) == 0xB8,
+               "a work block keeps its N64 layout on PC");
+
+/* ---- The players' mesh arenas: D_8007C3D0 ---- */
+
+/* Nw2MeshArena: an arena, one per player (D_8007C3D0[0..3]), in its PC layout. It owns two heap blocks and hands out
+ * pieces of them to the display records of the player's meshes (func_8000498C, through the record's f28):
+ * - verts: pool 1, vertex records of 16 bytes on both machines (func_8000486C writes them); func_80007B50 hands them
+ *   out;
+ * - cmds: pool 2, display-list commands, port.h's 16-byte Gfx on PC (8 bytes on the N64); func_80007B84 hands them
+ *   out.
+ * Each pool has a capacity and a count of records handed out, in records, not bytes. func_80007A74 allocates both
+ * blocks, func_80007AFC sets both counts to 0, func_80007B08 frees both blocks, and func_8000C91C clears both bases
+ * the first time it runs. On the N64 the record is 16 bytes: the bases at +0x0 and +0x8 (4 bytes each), pool 1's
+ * capacity and count at +0x4 and +0x6, pool 2's at +0xC and +0xE; the label D_8007C3D8 is arena 0's +0x8. On PC the
+ * bases are pointers and the record is 0x20 bytes; code reaches it by field name only. */
+typedef struct {
+    void *verts;  /* N64 +0x0 */
+    u16 vertCap;  /* N64 +0x4 */
+    u16 vertUsed; /* N64 +0x6 */
+    Gfx *cmds;    /* N64 +0x8 (the label D_8007C3D8 for arena 0) */
+    u16 cmdCap;   /* N64 +0xC */
+    u16 cmdUsed;  /* N64 +0xE */
+} Nw2MeshArena;
+_Static_assert(offsetof(Nw2MeshArena, vertCap) == 0x08 && offsetof(Nw2MeshArena, vertUsed) == 0x0A &&
+                   offsetof(Nw2MeshArena, cmds) == 0x10 && offsetof(Nw2MeshArena, cmdCap) == 0x18 &&
+                   offsetof(Nw2MeshArena, cmdUsed) == 0x1A && sizeof(Nw2MeshArena) == 0x20,
+               "Nw2MeshArena is 0x20 bytes on a 64-bit PC: two 8-byte pointers, each followed by two u16");
+/* The arenas' storage: 0x60 bytes on the N64 (D_8007C3D0 and the label D_8007C3D8), room for 6; players 0 to 3 use
+ * arenas 0 to 3. */
+#define NW2_MESH_ARENA_COUNT 6
+#define NW2_MESH_ARENA_VERTEX_SIZE 16 /* a vertex record, 16 bytes on both; pool 1's step */
+
+/* ---- The animation streams: D_800706A8 ---- */
+
+/* Nw2AnimStream: one of the four stream records D_800706A8, one per wrestler's animation stream, in its PC layout.
+ * The game streams an animation's bytes from the cartridge into the stream's heap buffer D_800485A0[n] (0x6200 bytes),
+ * 0x100 bytes at the start and then 0x80 bytes per frame, and decodes each frame at the read cursor (func_8000AA70).
+ * On the N64 a record is 0xFC bytes, and the N64 code reads it through structs of its own and through labels inside it
+ * (D_800706AC is +4, D_800706B0 +8, D_800706C2 +0x1A, D_800706C4 +0x1C and so on). On PC:
+ * - cursor and destination are host pointers into D_800485A0[n], and source is a RomAddr;
+ * - the three cartridge requests are port.h's PortIoMesg, which hold pointers;
+ * - the queues keep the N64's 0x18 bytes and each message the N64's 4 bytes, as the port's queue functions take them
+ *   (port.h).
+ * So the record is 0x140 bytes, and on PC the labels do not exist: every file reads D_800706A8[n] by field name, and
+ * code that steps through the records steps by sizeof(Nw2AnimStream). The comments give each field's N64 offset. */
+typedef struct {
+    s16 fresh;          /* N64 +0x00: 1 until the stream has played its first animation */
+    s16 replay;         /* N64 +0x02: the animation restarts from the buffer it is already in */
+    s16 id;             /* N64 +0x04: the animation (resource id) whose bytes the buffer holds; -1: none */
+    s16 firstFrame;     /* N64 +0x06: the frame the buffer's data starts at; 0: the start */
+    u8 *cursor;         /* N64 +0x08: where the next frame's data is read, inside D_800485A0[n] */
+    RomAddr source;     /* N64 +0x0C: the ROM address of the next chunk */
+    u8 *destination;    /* N64 +0x10: where the next chunk goes, inside D_800485A0[n] */
+    s32 remaining;      /* N64 +0x14: bytes still to read */
+    s16 anim;           /* N64 +0x18: the animation being played; -1: none */
+    s16 frame;          /* N64 +0x1A: the frame decoded last; -1: none */
+    f32 mtx[16];        /* N64 +0x1C: the root's scale matrix */
+    u32 queue[6];       /* N64 +0x5C: the queue of the first chunk's read (0x18 bytes, as the port's queues are) */
+    PortIoMesg io;      /* N64 +0x74: the first chunk's read */
+    u32 msg;            /* N64 +0x8C: queue's message */
+    u32 ioQueues[2][6]; /* N64 +0x90: the queues of the two reads that func_80009990 alternates */
+    PortIoMesg ios[2];  /* N64 +0xC0: those two reads */
+    u32 ioMsgs[2];      /* N64 +0xF0: their messages */
+    u16 ioNext;         /* N64 +0xF8: which of the two reads comes next */
+    u16 ioStarted;      /* N64 +0xFA: a read has been started, so the next call waits for it */
+} Nw2AnimStream;
+_Static_assert(offsetof(Nw2AnimStream, cursor) == 0x08 && offsetof(Nw2AnimStream, source) == 0x10 &&
+                   offsetof(Nw2AnimStream, destination) == 0x18 && offsetof(Nw2AnimStream, remaining) == 0x20 &&
+                   offsetof(Nw2AnimStream, anim) == 0x24 && offsetof(Nw2AnimStream, mtx) == 0x28 &&
+                   offsetof(Nw2AnimStream, queue) == 0x68 && offsetof(Nw2AnimStream, io) == 0x80 &&
+                   offsetof(Nw2AnimStream, msg) == 0xA8 && offsetof(Nw2AnimStream, ioQueues) == 0xAC &&
+                   offsetof(Nw2AnimStream, ios) == 0xE0 && offsetof(Nw2AnimStream, ioMsgs) == 0x130 &&
+                   offsetof(Nw2AnimStream, ioStarted) == 0x13A && sizeof(Nw2AnimStream) == 0x140,
+               "a stream record is 0x140 bytes on a 64-bit PC");
+_Static_assert(offsetof(Nw2AnimStream, queue) % 4 == 0 && offsetof(Nw2AnimStream, ioQueues) % 4 == 0,
+               "the port's queue functions may read a queue as 4-byte words");
+
+/* ---- Pictures: pairs of texture and palette, and the HUD icons ---- */
+
+/* Nw2TexPair: the pair of heap buffers of a 2D picture, its texture (an 8-byte header, then the texels) and its
+ * palette. func_8000670C loads two resources into them and func_80006E2C frees both. On the N64 a pair is two 4-byte
+ * addresses; on PC two pointers, 16 bytes, the palette at +8, so arrays of pairs step by sizeof(Nw2TexPair). The game
+ * keeps them in .bss arrays: D_80070458 (one per player), D_8005B220 and overlay 2's picture arrays. A file that
+ * declares one of those arrays makes its own view of a pair this type (typedef); a file that only gets a pair by
+ * pointer may keep a view of its own, checked against this one with offsetof. */
+typedef struct {
+    void *img; /* N64 +0x0 */
+    void *pal; /* N64 +0x4 */
+} Nw2TexPair;
+_Static_assert(offsetof(Nw2TexPair, pal) == 8 && sizeof(Nw2TexPair) == 16,
+               "a picture pair is two 8-byte pointers on a 64-bit PC");
+
+/* Nw2HudIcon: one of the two icons overlay 2 draws over the match (D_800EB19C, D_800EB1AC; func_800986DC draws one):
+ * an id (-1: none), a scale, a position and the picture, an entry of the resource-name cache (func_8002A2FC). On the
+ * N64 it is 0xC bytes, and the picture's address at +8 is also reached through the labels D_800EB1A4 and D_800EB1B4;
+ * on PC the icon is 0x10 bytes and those labels are its field tex. */
+typedef struct {
+    s16 id;    /* N64 +0x0 */
+    s16 scale; /* N64 +0x2 */
+    s16 x;     /* N64 +0x4 */
+    s16 y;     /* N64 +0x6 */
+    void *tex; /* N64 +0x8 */
+} Nw2HudIcon;
+_Static_assert(offsetof(Nw2HudIcon, x) == 4 && offsetof(Nw2HudIcon, tex) == 8 && sizeof(Nw2HudIcon) == 16,
+               "a HUD icon is 0x10 bytes on a 64-bit PC, its picture at +8");
+
+/* ---- The render-list records: D_80044590 ---- */
+
+/* NW2_RENDER_LIST_CMDS: the commands a render list holds, 0x4000 bytes of 8-byte commands on the N64. */
+#define NW2_RENDER_LIST_CMDS 0x800
+
+/* Nw2ScMsg: libultra's OSScMsg, a message of the N64 scheduler: its type (1 retrace, 2 task done, 4 reset coming) and
+ * 30 bytes the game does not use. It holds no address: 0x20 bytes on both. */
+typedef struct {
+    s16 type;
+    u8 misc[30];
+} Nw2ScMsg;
+_Static_assert(sizeof(Nw2ScMsg) == 0x20, "a scheduler message is 0x20 bytes, as on the N64");
+
+/* Nw2ScTask: libultra's OSScTask, a task as the N64 scheduler gets it (0x58 bytes on the N64, at +0x4000 of a
+ * render-list record), in its PC layout. Its OSTask, list, is Nw2RspTask (above), whose addresses are pointers; input
+ * is the display list and inputSize its length in bytes. framebuffer is a pointer: submitGraphicsTask turns the frame
+ * record's handle of the framebuffer back into one (SLOT_TO_PTR). msg stays 4 bytes and holds a handle (port.h's
+ * PTR_TO_SLOT) of the record's done message, because a message in the game's queues is 4 bytes. The task is 0xA0
+ * bytes on PC. The port's stand-in for the scheduler reads this layout; the port's src/game.h mirrors it, and
+ * src/game_check.c checks the two. */
+typedef struct Nw2ScTask {
+    struct Nw2ScTask *next; /* N64 +0x00: the scheduler's link; the game clears it */
+    u32 state;              /* N64 +0x04: the scheduler's own */
+    u32 flags;              /* N64 +0x08: 3, or 0x63 for a frame's last task (0x40: show the frame after it) */
+    void *framebuffer;      /* N64 +0x0C: the frame's framebuffer */
+    Nw2RspTask list;        /* N64 +0x10: the OSTask */
+    void *msgQ;             /* N64 +0x50: the queue the done message goes to (D_80046768) */
+    u32 msg;                /* N64 +0x54: the done message, a handle of the record's done */
+} Nw2ScTask;
+_Static_assert(sizeof(((Nw2ScTask *)0)->msg) == 4, "the done message is a 4-byte handle: a queue's message is 4 bytes");
+_Static_assert(offsetof(Nw2ScTask, next) == 0 && offsetof(Nw2ScTask, framebuffer) == 0x10 &&
+                   sizeof(Nw2RspTask) == 0x78 && offsetof(Nw2ScTask, list) == 0x18 &&
+                   offsetof(Nw2ScTask, msgQ) == 0x90 && offsetof(Nw2ScTask, msg) == 0x98 && sizeof(Nw2ScTask) == 0xA0,
+               "the PC layout of a scheduler task on a 64-bit PC, which src/game.h in the port mirrors");
+
+/* Nw2RenderList: one of the four render-list records whose addresses D_80044590 holds (0x4078 bytes on the N64), in
+ * its PC layout: the display list, 0x800 commands of port.h's 16-byte Gfx; the task that submitGraphicsTask fills and
+ * sends; and the message that comes back when the task is done. func_80001260 allocates the four at boot, with
+ * sizeof(Nw2RenderList), and never frees them. Code reaches the parts by name, never at the N64 offsets (+0x4000,
+ * +0x4010, +0x4050, +0x4054, +0x4058). 0x80C0 bytes on PC. */
+typedef struct Nw2RenderList {
+    Gfx dl[NW2_RENDER_LIST_CMDS]; /* N64 +0x0000 */
+    Nw2ScTask sc;                 /* N64 +0x4000 */
+    Nw2ScMsg done;                /* N64 +0x4058: type 2 */
+} Nw2RenderList;
+_Static_assert(offsetof(Nw2RenderList, sc) == 0x8000 && offsetof(Nw2RenderList, done) == 0x80A0 &&
+                   sizeof(Nw2RenderList) == 0x80C0,
+               "the PC layout of a render-list record on a 64-bit PC, which src/game.h in the port mirrors");
+
+/* ---- The animation-command records: D_8005AAA0 ---- */
+
+/* Nw2AnimatedCi4State (defined above for both builds): one of the four per-player animation-command records
+ * D_8005AAA0. On the N64 a record is 0x10 bytes: three 4-byte buffer addresses, then the slot, type, frame and
+ * countdown bytes at +0xC to +0xF, which the N64 code also reaches through labels of their own (D_8005AAAC to
+ * D_8005AAAF, stepped by 16). On PC the three buffers are 8-byte pointers, so the bytes sit at +0x18 to +0x1B and the
+ * record is 0x20 bytes. The labels do not exist on PC: code reads D_8005AAA0[n] by field name. */
+_Static_assert(offsetof(Nw2AnimatedCi4State, slot) == 0x18 && offsetof(Nw2AnimatedCi4State, type) == 0x19 &&
+                   offsetof(Nw2AnimatedCi4State, frame) == 0x1A && offsetof(Nw2AnimatedCi4State, countdown) == 0x1B &&
+                   sizeof(Nw2AnimatedCi4State) == 0x20,
+               "an animation-command record is 0x20 bytes on a 64-bit PC");
+
+/* The PC declarations of game functions and variables that game files declare with other types (port_decls.h). They
+ * come last, after the PC layouts above, whose types they use, and after port.h's renames, as the game files' own
+ * declarations do. */
+#include "port_decls.h"
 #endif
 

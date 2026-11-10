@@ -20,10 +20,10 @@ typedef s32 M2C_UNK32;
 #endif
 
 #ifdef TARGET_PC
-/* PC: arg0 is a display record (func_80090380 passes its node), which is Nw2Descr4BA8 on PC, 0x48 bytes with 8-byte
+/* PC: arg0 is a display record (func_80090380 passes its node), which is Nw2Descr4BA8 on PC, 0x50 bytes with 8-byte
  * address fields. The N64 code clears bytes 0-5 and the words at +0xC to +0x24; at those N64 offsets the PC would
- * clear halves of the addresses. So the PC clears the same fields by name: bytes 0-5, then fC to f24. f6 and f28 stay,
- * as on the N64. */
+ * clear halves of the addresses. So the PC clears the same fields by name: bytes 0-5, then fC to f24, all of them
+ * pointers (f20 and f24 are work blocks). f6 and f28 stay, as on the N64. */
 void func_80004AFC(void *arg0) {
     Nw2Descr4BA8 *d = arg0;
 
@@ -38,8 +38,8 @@ void func_80004AFC(void *arg0) {
     d->f14 = NULL;
     d->f18 = NULL;
     d->f1C = NULL;
-    d->f20 = 0;
-    d->f24 = 0;
+    d->f20 = NULL;
+    d->f24 = NULL;
 }
 #else
 void func_80004AFC(void *arg0) {

@@ -1,7 +1,9 @@
 /* port_decls.h: the PC declarations of game functions and variables that game files declare with other types, PC only.
  *
- * port.h includes this file under TARGET_PC, so every game file sees it on the PC and none sees it on the N64. Each
- * line below is the one declaration of its name that the PC build uses:
+ * common.h includes this file as the last line of its TARGET_PC section, so every game file sees it on the PC and none
+ * sees it on the N64. It comes after port.h's types and renames and after common.h's PC layouts of the shared records
+ * (Nw2Descr4BA8 and the others), so a declaration here can name those types. Each line below is the one declaration of
+ * its name that the PC build uses:
  * - A function is declared with exactly the types of its definition. Where the definition has a PC version of its own
  *   ("PC definition" below), these are the PC version's types, and that version says why it differs from the N64's.
  * - A variable (the game's data: no C file defines one) is declared with the type of what it holds: a pointer where

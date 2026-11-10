@@ -30,8 +30,9 @@ HEAD is git's last commit, the state that build.py last proved identical. Every 
    block differently (a quote that does not close on its line stops it, for example). A header is preprocessed after
    common.h, as game files include it. A new file fails, because HEAD has nothing to compare it with, and so does a
    deleted file, because the N64 build would lose it: only build.py can prove those. For a header this is the only
-   N64 check. include/port_decls.h is PC-only (port.h includes it inside TARGET_PC), so its N64 view is empty; for it
-   the check proves instead that no file under src/ or include/ includes it outside a TARGET_PC block.
+   N64 check. include/port_decls.h is PC-only (common.h includes it inside TARGET_PC), so its N64 view is empty; for
+   it the check proves instead that common.h's PC view includes it, and that no file under src/ or include/ includes it
+   outside a TARGET_PC block.
 2. N64 object (C files). The file and HEAD's version, each with its own include/, are compiled by KMC GCC 2.7.2 the way
    build.py compiles them: decompdecomp's toolchain and command, build.json's flags and compiler_ranges. Both objects
    must hold the same code, relocations, data and symbols (sections the link throws away, such as .comment, aside).
@@ -354,10 +355,11 @@ def pc_test(d: Directive) -> str | None:
     return kind
 
 
-def n64_view(data: bytes) -> tuple[bytes, list[int]]:
+def n64_view(data: bytes, pc: bool = False) -> tuple[bytes, list[int]]:
     """The file as the N64 compiler reads it, TARGET_PC being undefined there: the PC branch of every TARGET_PC test
     dropped, the other branch kept, the TARGET_PC directives' own lines dropped; every other line exactly as it is.
-    Returns the view and, for each of its lines, the line's number in the file."""
+    Returns the view and, for each of its lines, the line's number in the file. With pc=True, the PC view instead: the
+    branches the PC compiler reads, TARGET_PC being defined (only check_pc_only_header asks for it)."""
     text = data.decode("latin-1")  # one character per byte: any bytes, given back exactly
     parts = text.split("\n")
     lines = [p + "\n" for p in parts[:-1]] + ([parts[-1]] if parts[-1] else [])
@@ -380,7 +382,7 @@ def n64_view(data: bytes) -> tuple[bytes, list[int]]:
         if d.name in ("if", "ifdef", "ifndef"):
             kind = pc_test(d)
             if kind:
-                stack.append(["pc", kind == "off", d.first, False])
+                stack.append(["pc", kind == ("on" if pc else "off"), d.first, False])
                 own = True
             else:
                 stack.append(["other"])
@@ -429,16 +431,38 @@ def line_changes(old: bytes, new: bytes) -> tuple[int, int]:
     return added, removed
 
 
-# Headers that only the PC build reads: port.h includes port_decls.h inside its TARGET_PC block. The N64 never reads
-# such a header, so its N64 view is empty, whatever it holds; check 1 proves instead that no file's N64 view includes
-# it.
-PC_ONLY_HEADERS = ("include/port_decls.h",)
+# Headers that only the PC build reads, each with the file that includes it inside a TARGET_PC block: common.h
+# includes port_decls.h as the last line of its TARGET_PC section. The N64 never reads such a header, so its N64 view
+# is empty, whatever it holds; check 1 proves instead that the including file's PC view includes it and that no file's
+# N64 view does.
+PC_ONLY_HEADERS = {"include/port_decls.h": "include/common.h"}
 
 
 def check_pc_only_header(rel: str) -> Result:
-    """Check 1 for a PC-only header: no file under src/ or include/ includes it outside a TARGET_PC block."""
+    """Check 1 for a PC-only header: the file that PC_ONLY_HEADERS names includes it inside a TARGET_PC block (an
+    #include directive in its PC view, found the way a preprocessor finds directives, so not one inside a comment,
+    and not inside any other conditional, such as #if 0, which the PC view keeps), and no file under src/ or include/
+    includes it outside a TARGET_PC block. The including file has no include guard, so the directive must be outside
+    every conditional of its PC view."""
     name = rel.rsplit("/", 1)[-1].encode()
     pattern = re.compile(rb'^[ \t]*#[ \t]*include[ \t]*["<]([^">]*/)?' + re.escape(name) + rb'[">]', re.M)
+    includer = PC_ONLY_HEADERS[rel]
+    try:
+        pc_view, _ = n64_view((ROOT / includer).read_bytes(), pc=True)
+    except (OSError, ViewError) as e:
+        return Result(1, FAIL, f"{includer}: {e}")
+    named = re.compile(r'["<]([^">]*/)?' + re.escape(name.decode()) + r'[">]')
+    depth, found = 0, False  # depth: the other conditionals (not TARGET_PC ones) open around a directive
+    for d in find_directives(pc_view.decode("latin-1")):
+        if d.name in ("if", "ifdef", "ifndef"):
+            depth += 1
+        elif d.name == "endif":
+            depth -= 1
+        elif d.name == "include" and depth == 0 and named.search(d.shown):
+            found = True
+    if not found:
+        return Result(1, FAIL, f"a PC-only header, but {includer} does not include it inside TARGET_PC, outside any "
+                               "other conditional: the PC build might not read it")
     for path in sorted(list((ROOT / "src").rglob("*.[ch]")) + list((ROOT / "include").rglob("*.h"))):
         data = path.read_bytes()
         if name not in data:
@@ -452,8 +476,8 @@ def check_pc_only_header(rel: str) -> Result:
             line = kept[view[:m.start()].count(b"\n")]
             return Result(1, FAIL, f"a PC-only header, but {path.relative_to(ROOT)}:{line} includes it outside "
                                    "TARGET_PC: the N64 build would read it")
-    return Result(1, PASS, "a PC-only header (port.h includes it inside TARGET_PC): its N64 view is empty, and no "
-                           "file includes it outside TARGET_PC")
+    return Result(1, PASS, f"a PC-only header ({includer} includes it inside TARGET_PC): its N64 view is empty, and "
+                           "no file includes it outside TARGET_PC")
 
 
 def check_view(ctx: Context | None, rel: str, head: bytes | None, work: bytes | None) -> Result:

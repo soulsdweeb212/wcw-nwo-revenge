@@ -19,9 +19,10 @@ How it works:
    uses but does not declare itself: the functions it calls or takes the address of, the variables it reads or writes.
 2. It finds what each name is: a function of a C file (a static one only for its own file), an old name of a function
    (a build.json symbol at a function's address), a variable (a build.json symbol, a label in asm/data/ or a C
-   definition), or a function the port supplies (declared in include/port.h). A name that is none of these is an
-   error: the tool names the file and line that use it, still prints the list it found, and exits with 1, because
-   the list may be missing a function.
+   definition), a function the port supplies (declared in include/port.h), or a name that only the PC has (declared
+   in include/port_decls.h; the tool reads both headers on their own, with common.h's typedefs). A name that is none
+   of these is an error: the tool names the file and line that use it, still prints the list it found, and exits with
+   1, because the list may be missing a function.
 3. Data can hold function addresses: the .word entries of main's data in asm/data/, and every word of overlay 2's data
    (assets/D5FB0.bin) that is the address where a function starts. Each such word belongs to the label it lies in (an
    asm/data label in main, a build.json symbol in overlay 2's data), and a file that uses the label reaches every
@@ -997,12 +998,18 @@ class Parser:
 # The decompilation: its functions, symbols and data, and its C files read as above.
 # =====================================================================================================================
 
+# The headers whose declarations stand for names the port provides or declares for the PC: port.h (the port's own
+# functions) and port_decls.h (the PC declarations, among them names that only the PC has). port.h comes first.
+PORT_HEADERS = ("include/port.h", "include/port_decls.h")
+
+
 @dataclass
 class Target:
     # What a name turned out to be:
     #   local (defined in the same file), func (a C function), alias (an old name of one, from build.json), cdata (a
-    #   variable a C file defines), data, rom (a ROM address), main-code-area, port (declared by port.h), inline (a
-    #   static inline helper of a header), overlay1 / overlay1-data, code-middle (inside overlay code, not a function)
+    #   variable a C file defines), data, rom (a ROM address), main-code-area, port (declared by port.h or
+    #   port_decls.h and nothing else), inline (a static inline helper of a header), overlay1 / overlay1-data,
+    #   code-middle (inside overlay code, not a function)
     kind: str
     file: str | None   # the C file that provides it, if any
     name: str          # the function or variable it stands for
@@ -1272,8 +1279,9 @@ class Decomp:
 
     # -- the C files --------------------------------------------------------------------------------------------------
 
-    def read_c(self) -> None:
-        """Reads every C file of build.json (overlay 1's too: its names must be known to be refused)."""
+    def read_c(self, read_port_decls: bool = True) -> None:
+        """Reads every C file of build.json (overlay 1's too: its names must be known to be refused), then the names
+        the port's headers declare."""
         # A byte that is not UTF-8 does not stop the C reader.
         pp = Preprocessor(self.root / "include", PC_DEFINES, lambda path: self.read_text(path, errors="replace"))
         self.units: dict[str, Unit] = {}
@@ -1308,11 +1316,17 @@ class Decomp:
                         seen_headers[key] = (P.typedefs - before[0], P.enums - before[1])
                 pos = b
             self.units[src] = unit
-        # what include/port.h itself declares: the functions the port supplies (port_fatal, port_rom_read ...)
-        toks, _ = pp.run(self.root / "include" / "port.h", "include/port.h")
+        # What the port's two headers declare: include/port.h the functions the port supplies (port_fatal,
+        # port_rom_read ...), include/port_decls.h the PC declarations of game functions and variables, among them
+        # names that only the PC has. common.h includes both, port_decls.h as the last line of its TARGET_PC section,
+        # but the reading above keeps only what a header defines, so each is read here on its own, with common.h's
+        # typedefs. read_port_decls=False leaves port_decls.h out, for a control of --self-test.
         common = seen_headers.get(("include/common.h", ()), (set(), set()))
-        pu = Parser(toks, set(common[0]), set(common[1])).unit("include/port.h")
-        self.port_decls = pu.externs | set(pu.funcs)
+        self.port_decls: set[str] = set()
+        for header in PORT_HEADERS if read_port_decls else PORT_HEADERS[:1]:
+            toks, _ = pp.run(self.root / header, header)
+            pu = Parser(toks, set(common[0]), set(common[1])).unit(header)
+            self.port_decls |= pu.externs | set(pu.funcs)
         self._index_definitions()
 
     def _index_definitions(self) -> None:
@@ -1493,10 +1507,11 @@ def walk(d: Decomp, roots: list[str], redirect: dict[str, str]) -> Result:
     return res
 
 
-def find_files(root: Path, roots: list[str], redirect: dict[str, str]) -> tuple[Decomp, Result]:
+def find_files(root: Path, roots: list[str], redirect: dict[str, str],
+               read_port_decls: bool = True) -> tuple[Decomp, Result]:
     """Reads the decompilation at `root` and walks from the roots. Raises InputError when the inputs stop it."""
     d = Decomp(root)
-    d.read_c()
+    d.read_c(read_port_decls)
     return d, walk(d, roots, redirect)
 
 
@@ -1507,7 +1522,7 @@ def problems(d: Decomp, res: Result) -> tuple[int, list[str]]:
     for src, line, name in sorted(set(res.unresolved)):
         lines.append(f"{src}:{line}: error: '{name}' names nothing this tool knows: not a function or variable of the "
                      "decompilation (a C file, a build.json symbol, an asm/data label) and not declared by "
-                     "include/port.h")
+                     "include/port.h or include/port_decls.h")
         status = status or 1
     for src, line, name, where in sorted(set(res.overlay1)):
         lines.append(f"{src}:{line}: error: '{name}' is in overlay 1 ({where}), which this program does not have")
@@ -1523,7 +1538,7 @@ def problems(d: Decomp, res: Result) -> tuple[int, list[str]]:
 _CLASS_WORDS = {"game": "game", "keep-SDK": "kept SDK", "drop-SDK": "Nintendo SDK code that the port replaces",
                 "drop-game": "game code that the port replaces", "overlay 1": "overlay 1"}
 _KIND_WORDS = {"main-code-area": "inside main's code", "cdata": "C variable", "rom": "ROM address",
-               "inline": "inline helper of a header", "port": "port function"}
+               "inline": "inline helper of a header", "port": "port name"}
 
 
 def summary(d: Decomp, res: Result, set_name: str, roots: list[str]) -> list[str]:
@@ -1542,7 +1557,7 @@ def summary(d: Decomp, res: Result, set_name: str, roots: list[str]) -> list[str
 def surface(d: Decomp, res: Result) -> str:
     """--surface: what the listed files use outside the list, one tab-separated row each. 'replaced' rows name a
     replaced file and the names used in it, 'table' rows a data label whose function addresses the walk followed, and
-    the other rows every name of each other kind (data, port function ...)."""
+    the other rows every name of each other kind (data, port name ...)."""
     rows = []
     for g in sorted(res.leaves):
         stem = Path(g).stem
@@ -1599,7 +1614,8 @@ def write_if_changed(path: Path, text: str) -> None:
 # tables. The self-test also checks that each change really cuts files off the list, and that the unchanged copy
 # follows both tables in full. It gets the facts it compares with by reading the files itself, not through the tool's
 # own readers, so that a fault there cannot hide itself: where a file uses a name (lines_using), and which functions a
-# table holds (table_functions).
+# table holds (table_functions). Two more controls prove the tool's reading of include/port_decls.h: a PC-only name
+# declared there alone, and used in one file, resolves; with that reading left out, the same use is an error.
 # =====================================================================================================================
 
 # An old name of a function, kept as a build.json symbol at the function's address, and the file that calls the
@@ -1609,6 +1625,12 @@ ALIAS_CONTROL = ("func_800E2400", "src/code_8009D7A0/func_8009DD60.c")
 TABLE_CONTROL = ("D_800E3660", "src/code_8009D7A0/startEntityAction.c")
 # A table of function addresses in overlay 2's data, and how far into it (in bytes) the control adds a label.
 SPLIT_CONTROL = ("D_800E2FF0", 0x10)
+# A name that only the PC has, which the control declares in include/port_decls.h alone, and the file (a root's, so
+# always listed) that the control makes use it. Found only by the tool's own reading of port_decls.h: common.h
+# includes that header, but the C reader keeps no declaration of a header.
+PC_ONLY_CONTROL = ("port_filelist_pc_only", "src/main/func_80001260.c")
+# The option that leaves that reading out, for the control that proves it is needed. --help does not show it.
+SKIP_PORT_DECLS = "--skip-port-decls"
 
 # An error line that names a file and a line: "src/x.c:12: error: 'name' ..."
 _LOCATED_ERROR = re.compile(r"^(?P<file>[^\s:]+):(?P<line>\d+): error: '(?P<name>[^']*)'")
@@ -1663,6 +1685,22 @@ def edit_symbols(copy: Path, remove: str | None = None, add: tuple[str, int, str
     path.write_text(json.dumps(build, indent=1), encoding="utf-8")
     if ld is not None:
         ld_path.write_text(ld, encoding="utf-8")
+
+
+def add_pc_only_name(copy: Path) -> None:
+    """Declares the name of PC_ONLY_CONTROL in the copy's include/port_decls.h, just before its closing #endif, and adds
+    to the end of the control's C file a function that assigns to it. Nothing else declares the name."""
+    name, file = PC_ONLY_CONTROL
+    decls = copy / "include" / "port_decls.h"
+    text = decls.read_text(encoding="latin-1")
+    end = "#endif /* PORT_DECLS_H */"
+    if text.count(end) != 1:
+        raise InputError(f"include/port_decls.h does not have the line '{end}' once")
+    decls.write_text(text.replace(end, f"extern s32 {name}; /* the self-test's PC-only name */\n{end}"),
+                     encoding="latin-1")
+    src = copy / file
+    src.write_text(src.read_text(encoding="latin-1") + f"\nvoid {name}_user(void) {{\n    {name} = 1;\n}}\n",
+                   encoding="latin-1")
 
 
 def located_errors(copy: Path, status: int, errors: list[str], name: str, file: str) -> str | None:
@@ -1724,6 +1762,7 @@ def self_test(tree: Path) -> int:
     alias, alias_file = ALIAS_CONTROL
     table, table_file = TABLE_CONTROL
     split_table, split_offset = SPLIT_CONTROL
+    pc_only, pc_only_file = PC_ONLY_CONTROL
     # What each control must cut off, found without the tool's C reader: the file of the function at the old name's
     # address (build.json), and the functions each table holds (its bytes).
     alias_target = sorted({d.func_src[n] for n in d.at_vram.get(d.symbols.get(alias, -1), ())
@@ -1733,6 +1772,9 @@ def self_test(tree: Path) -> int:
     unfit += [f"{alias} is not the address of a function of main or overlay 2"] if not alias_target else []
     unfit += [f"{name} holds no function address" for name, funcs in tables.items() if not funcs]
     unfit += [f"the decompilation's own list does not have {f}" for f in alias_target if f not in res.files]
+    unfit += [f"the decompilation's own list does not have {pc_only_file}"] if pc_only_file not in res.files else []
+    unfit += [f"the decompilation already has the name {pc_only}"] if pc_only in d.port_decls or pc_only in d.symbols \
+        or pc_only in d.global_funcs or pc_only in d.global_vars else []
     if unfit:
         print("self-test FAILED: the controls no longer fit the decompilation: " + "; ".join(unfit))
         return 1
@@ -1778,6 +1820,16 @@ def self_test(tree: Path) -> int:
             return f"expected only the error '... {crossing} ...'"
         return None
 
+    def pc_only_found(copy: Path, status: int, files: list[str], errors: list[str], err: str) -> str | None:
+        if status != 0 or errors:
+            return f"exit status {status}, expected 0: {pc_only} is declared in include/port_decls.h"
+        if files != res.files:
+            return f"{len(files)} files listed, which differ from the {len(res.files)} of the decompilation itself"
+        return None
+
+    def pc_only_unread(copy: Path, status: int, files: list[str], errors: list[str], err: str) -> str | None:
+        return located_errors(copy, status, errors, pc_only, pc_only_file)
+
     table_sizes = " and ".join(f"{name} with {len(funcs)}" for name, funcs in tables.items())
     # (what the control does and must give, how it changes the copy, the check of the result)
     controls: list[tuple[str, dict, Callable[[Path, int, list[str], list[str], str], str | None]]] = [
@@ -1789,6 +1841,10 @@ def self_test(tree: Path) -> int:
          {"remove": table}, table_removed),
         (f"{label} added {split_offset:#x} bytes into the table {split_table} ({edited}): the error that a label "
          "splits a table", {"add": (label, label_addr, split_table)}, split),
+        (f"{pc_only}, a PC-only name, declared in include/port_decls.h alone and used in {pc_only_file}: the same "
+         "list as the decompilation itself, without an error", {"pc_only": True}, pc_only_found),
+        (f"the same, with the tool's reading of include/port_decls.h left out ({SKIP_PORT_DECLS}): an error at the "
+         f"use of {pc_only} in {pc_only_file}", {"pc_only": True, "args": [SKIP_PORT_DECLS]}, pc_only_unread),
     ]
     inputs = sorted(d.files_read)
     script = str(Path(__file__).resolve())
@@ -1803,14 +1859,17 @@ def self_test(tree: Path) -> int:
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(path, dest)
             try:
-                edit_symbols(copy, **change)
+                edit_symbols(copy, **{k: v for k, v in change.items() if k in ("remove", "add")})
+                if change.get("pc_only"):
+                    add_pc_only_name(copy)
             except InputError as exc:
                 print(f"self-test FAILED: cannot set up the control '{title}': {exc}")
                 return 1
         # The tool on each copy, as a separate program; they all run at the same time.
-        runs = [subprocess.Popen([sys.executable, "-B", "-I", script, "--decomp", str(copy), "--set", "match"],
+        runs = [subprocess.Popen([sys.executable, "-B", "-I", script, "--decomp", str(copy), "--set", "match"] +
+                                 change.get("args", []),
                                  cwd=copy, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-                for copy in copies]
+                for copy, (title, change, check) in zip(copies, controls)]
         for copy, (title, change, check), run in zip(copies, controls, runs):
             out, err = run.communicate()
             files = out.splitlines()
@@ -1857,11 +1916,13 @@ def main() -> int:
                     help="experiment: start the walk from FUNCTION instead of the set's roots (repeatable)")
     ap.add_argument("--redirect", action="append", default=[], metavar="OLD=NEW",
                     help="experiment: read every use of the name OLD as NEW (repeatable)")
+    # for a control of --self-test only: the names declared only in include/port_decls.h are then not found
+    ap.add_argument(SKIP_PORT_DECLS, action="store_true", help=argparse.SUPPRESS)
     a = ap.parse_args()
     root = a.decomp.resolve()
     if a.self_test:
-        if a.root or a.redirect or a.output or a.depends:
-            ap.error("--self-test takes no --root, --redirect, --output or --depends")
+        if a.root or a.redirect or a.output or a.depends or a.skip_port_decls:
+            ap.error(f"--self-test takes no --root, --redirect, --output, --depends or {SKIP_PORT_DECLS}")
         return self_test(root)
     if a.explain and (a.output or a.depends):
         ap.error("--explain takes no --output or --depends")
@@ -1874,7 +1935,7 @@ def main() -> int:
     roots = a.root or list(SETS[a.set])
     set_name = "custom (--root, --redirect)" if a.root or a.redirect else a.set
     try:
-        d, res = find_files(root, roots, dict(x.split("=", 1) for x in a.redirect))
+        d, res = find_files(root, roots, dict(x.split("=", 1) for x in a.redirect), not a.skip_port_decls)
     except InputError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

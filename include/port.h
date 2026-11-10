@@ -15,9 +15,11 @@
 /* Besides the PC forms of the macros and their helpers, these exist only under TARGET_PC: port_fatal below,
  * WRITE_BE16/32 (PC code that writes into data that stays big-endian), the check that the CPU is little-endian, Gfx
  * (the display-list command), and the PC-only part at the end of this file: the ROM loader's PC interface (RomAddr,
- * ResDesc, the ROM_ addresses and the loader's declarations), ResKey (the key of the resource-name cache), the renames
- * of the SDK functions that the port replaces, and port_decls.h (the PC declarations of game functions and variables
- * that game files declare with other types).
+ * ResDesc, the ROM_ addresses and the loader's declarations), PortIoMesg (a cartridge read request), ResKey (the key
+ * of the resource-name cache) and the renames of the SDK functions that the port replaces.
+ * This file does not include port_decls.h (the PC declarations of game functions and variables that game files declare
+ * with other types): common.h includes it as the last line of its TARGET_PC section, after the PC layouts of the
+ * shared records, whose types it uses.
  *
  * System headers go before the renames at the end of this file, which would otherwise rename their declarations too
  * (bzero in <strings.h>, for example). A game file that needs a system header includes it before common.h.
@@ -126,6 +128,18 @@ static inline uintptr_t port_dl_addr(const void *p) {
  * not fit there, so on PC the field holds a 32-bit handle, and the port's handle table turns pointers into handles
  * and back. On N64 both macros give back their argument. */
 #ifdef TARGET_PC
+/* The rules of handles on PC:
+ * - A handle lives only in a 4-byte field whose width something outside its struct fixes: a field of a record that
+ *   keeps its N64 layout (the scene objects and work blocks in common.h, the frame records D_800EB360 with their two
+ *   framebuffers at +0 and +4, the pad records), or a message in one of the game's queues (4 bytes each). Every other
+ *   record gets a PC layout with real pointers.
+ * - A handle names an address, not an allocation: PTR_TO_SLOT gives the same handle for the same address every time,
+ *   and a handle stays valid for the whole run (there is no release). A handle kept after its heap block is freed
+ *   means what the N64's stale 32-bit address meant.
+ * - PTR_TO_SLOT(NULL) is 0 and SLOT_TO_PTR(0) is NULL. SLOT_TO_PTR of a value that PTR_TO_SLOT never gave stops the
+ *   program (port_fatal), and so does a full table.
+ * - A field that holds a handle is never stepped by arithmetic: code turns it into a pointer first and moves that.
+ *   Never pass PTR_TO_SLOT the address of a local variable. */
 u32 port_ptr_to_slot(void *p);
 void *port_slot_to_ptr(u32 slot);
 #define PTR_TO_SLOT(p) port_ptr_to_slot((void *)(p))
@@ -181,6 +195,27 @@ void *func_80003684(void *out, s32 id, void *buf);
 void port_rom_read(void *dst, RomAddr src, u32 size);
 void port_res_loaded(u32 id, void *buf, s32 size);
 
+/* PortIoMesg: a cartridge read request, the OSIoMesg that the game hands to osEPiStartDma (port_osEPiStartDma on PC).
+ * On the N64 it is 0x18 bytes: type, pri, status, then retQueue, dramAddr, devAddr, size and piHandle as 4-byte words.
+ * On PC retQueue, dramAddr and piHandle are host pointers and devAddr is a RomAddr, so the request is 0x28 bytes. The
+ * port's osEPiStartDma copies size bytes of the ROM at devAddr to dramAddr, sets piHandle, and sends a message to
+ * retQueue, as the N64's PI manager does when the transfer ends. The game's streams (func_8000946C,
+ * initializeResourceStream, func_80009990) keep three of these in each stream record (Nw2AnimStream, common.h). */
+typedef struct {
+    u16 type;        /* N64 +0x0: osEPiStartDma sets it */
+    u8 pri;          /* N64 +0x2 */
+    u8 status;       /* N64 +0x3 */
+    void *retQueue;  /* N64 +0x4: the queue (0x18 bytes) that gets the message when the copy is done */
+    void *dramAddr;  /* N64 +0x8: where the bytes go */
+    RomAddr devAddr; /* N64 +0xC: the ROM address they come from */
+    u32 size;        /* N64 +0x10 */
+    void *piHandle;  /* N64 +0x14: osEPiStartDma stores its handle here */
+} PortIoMesg;
+_Static_assert(offsetof(PortIoMesg, retQueue) == 0x08 && offsetof(PortIoMesg, devAddr) == 0x18 &&
+                   offsetof(PortIoMesg, size) == 0x1C && offsetof(PortIoMesg, piHandle) == 0x20 &&
+                   sizeof(PortIoMesg) == 0x28,
+               "PortIoMesg is 0x28 bytes on a 64-bit PC");
+
 /* ---- PC only: the key of the resource-name cache ----
  * The resource-name cache is a heap block of 128 entries (Nw2ResourceEntryHashed in common.h), whose address
  * D_8007FC34 holds. Each entry has a key:
@@ -225,7 +260,10 @@ static inline ResKey port_res_key_name(const void *name) {
  *   LUS at link time. osContStartQuery, osContGetQuery and osContSetCh are not in LUS; they are renamed with the rest
  *   so all controller access goes through the port.
  * - Message queues: LUS's OSMesgQueue is 40 bytes on a 64-bit PC, but the game gives each queue 0x18 bytes of storage
- *   (s32 queue[6] in func_80003D20, for example). The port's versions keep the N64 size. */
+ *   (s32 queue[6] in func_80003D20, for example). The port's versions keep the N64 size. A queue is those 0x18 bytes
+ *   at 4-byte alignment, and a message is 4 bytes, the N64 size, as all the game's message storage gives it
+ *   (readRomSynchronousChunks' s32 message, func_80003D20's s32 msg[2], the 16 messages of D_80046780). A message
+ *   that carries an address carries its handle (PTR_TO_SLOT), and the receiver turns it back (SLOT_TO_PTR). */
 #define sinf n64_sinf
 #define cosf n64_cosf
 #define bzero port_bzero
@@ -245,12 +283,6 @@ static inline ResKey port_res_key_name(const void *name) {
 #define osSendMesg port_osSendMesg
 #define osRecvMesg port_osRecvMesg
 #define osSetEventMesg port_osSetEventMesg
-
-/* ---- PC only: the PC declarations of game functions and variables ----
- * port_decls.h declares, once, game functions and variables that game files declare with other types than the
- * function's definition (or than what the variable holds); where a file's own declaration differs, it is N64 only.
- * It comes after the renames above, as the game files' own declarations do. */
-#include "port_decls.h"
 #endif /* TARGET_PC */
 
 #endif /* PORT_H */
