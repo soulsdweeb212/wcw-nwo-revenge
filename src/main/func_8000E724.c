@@ -13,7 +13,9 @@
  * called and the countdown is reloaded from the constant table at
  * D_80075459/D_8007545A.
  */
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_8000327C */
 s32 func_8000327C(s32);
+#endif
 void func_8000439C(s16);
 void func_800043CC(s16);
 void func_8000440C(s16);

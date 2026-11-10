@@ -5,6 +5,32 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: o is an entry of the resource-name cache (func_8002A2FC passes it), whose PC layout is Nw2ResourceEntryHashed in
+ * common.h: the key is as wide as a pointer, so the allocation lies at +8 and reserved at +0x10. The N64 view keeps the
+ * allocation in an s32, which on PC would read half of its address and the sizes 4 bytes before the places where
+ * func_80028F3C writes them. This view follows the entry field for field: str is the key (the name's address), f4 the
+ * allocation (the pixels drawn into), and f8, fC, fE and f10 are the sizes in reserved (the allocation's size, the row
+ * width, the row count and the text's width), at reserved's +0, +4, +6 and +8. The assert checks it. On the PC,
+ * port_decls.h declares func_800291C0 with its definition's types, so the pixels' address (dst) stays a pointer. */
+typedef struct {
+    u8 *str;
+    u8 *f4;
+    s32 f8;
+    s16 fC;
+    s16 fE;
+    s16 f10;
+} Nw2Layout295B4;
+_Static_assert(offsetof(Nw2Layout295B4, str) == offsetof(Nw2ResourceEntryHashed, key) &&
+                   offsetof(Nw2Layout295B4, f4) == offsetof(Nw2ResourceEntryHashed, allocation) &&
+                   offsetof(Nw2Layout295B4, f8) == offsetof(Nw2ResourceEntryHashed, reserved) &&
+                   offsetof(Nw2Layout295B4, fC) == offsetof(Nw2ResourceEntryHashed, reserved) + 4 &&
+                   offsetof(Nw2Layout295B4, fE) == offsetof(Nw2ResourceEntryHashed, reserved) + 6 &&
+                   offsetof(Nw2Layout295B4, f10) == offsetof(Nw2ResourceEntryHashed, reserved) + 8 &&
+                   sizeof(Nw2Layout295B4) == sizeof(Nw2ResourceEntryHashed),
+               "Nw2Layout295B4 must follow the PC layout of Nw2ResourceEntryHashed");
+
+#else
 typedef struct {
     u8 *str;
     s32 f4;
@@ -15,6 +41,7 @@ typedef struct {
 } Nw2Layout295B4;
 
 s32 func_800291C0(u8 *, s32, s32, s32, s32, s32);
+#endif
 extern u8 D_80064AD8;
 
 void func_800295B4(Nw2Layout295B4 *o, s32 arg1) {

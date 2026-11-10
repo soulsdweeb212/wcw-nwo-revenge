@@ -15,9 +15,13 @@
  * DONE() starts the follow-up clip and finishes the action with stateTimer 100. */
 void func_800A7D1C(void *, s32);
 void func_800B68A0(void *, void *, void *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(void *, f32, u16, s32);
+#endif
 void func_800D427C(void *, s32, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D4D44 */
 s16 func_800D4D44(void *, s32, f32);
+#endif
 #define DONE() func_800D427C(D_800EB408, func_800D4D44(D_800EB408, 2, 0.0f), 3); func_800A6C48(D_800EB408, 0x40); D_800EB408->stateTimer = 100; D_800EB408->step = 1
 
 void updateEntityActionStateA30FC(void) {

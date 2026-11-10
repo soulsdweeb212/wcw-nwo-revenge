@@ -28,7 +28,9 @@ extern u8 D_8007EF30[];
 extern s8 D_800E2F58;
 extern s8 D_800E2F59;
 extern s8 D_800E2F5A;
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800EB1D0 */
 extern G *D_800EB1D0;
+#endif
 extern Node *D_800EB1D4;
 extern G *D_800EB29C[];
 extern s16 D_800EB2A8;

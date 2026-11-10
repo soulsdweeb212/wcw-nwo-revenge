@@ -9,7 +9,9 @@ extern u8 D_8007EF30[];
 extern u8 D_800FABE8[], D_800FABEC[], D_800FABEE[];
 extern s16 D_800EB4D0[];
 void func_800D2638(void *, u16, f32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(void *, f32, u16, s32);
+#endif
 
 /* Pushes w along one axis: axis mask 0x300 (X), or 0xC00 (Z) when w->dirIndex
  * bit 0 is set. First func_800D2638(w, mask, 4.0f) pushes it out of the other

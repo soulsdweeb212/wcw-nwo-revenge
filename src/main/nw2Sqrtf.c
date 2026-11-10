@@ -22,6 +22,12 @@ typedef s32 M2C_UNK32;
 #define M2C_OVERFLOW(a) (0)
 #endif
 
+#ifdef TARGET_PC
+/* PC: the C library's sqrtf, declared as libultra's own callers declare it (guAlignF.c, guLookAt.c). The N64 compiler
+ * expands sqrtf inline without a declaration (one sqrt.s); a C99 compiler needs one. Both round the square root
+ * correctly (IEEE 754), so the results are the same. */
+f32 sqrtf(f32);
+#endif
 f32 nw2Sqrtf(f32 arg0) {
     return sqrtf(arg0);
 }

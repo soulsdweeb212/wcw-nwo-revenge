@@ -24,10 +24,21 @@ typedef struct {
 } Nw2ResDesc;
 #endif
 
+#ifdef TARGET_PC
+/* PC: an entry of the resource-name cache (Nw2ResourceEntryHashed, common.h) is 0x20 bytes, because its key, f0 here,
+ * is as wide as a pointer (port.h's ResKey). This view follows it, as the assert checks. */
+typedef struct {
+    ResKey f0;
+    u8 pad[sizeof(Nw2ResourceEntryHashed) - sizeof(ResKey)];
+} Nw2Rec18;
+_Static_assert(sizeof(Nw2Rec18) == sizeof(Nw2ResourceEntryHashed) && offsetof(Nw2ResourceEntryHashed, key) == 0,
+               "Nw2Rec18 must follow the PC layout of the resource-name cache's entries");
+#else
 typedef struct {
     s32 f0;
     u8 pad[0x14];
 } Nw2Rec18;
+#endif
 
 #ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void lookupResourceDescriptor(void *, s32);
@@ -58,10 +69,18 @@ void func_8002AA28(void)
     D_80064AD4 = p;
     func_80003684(&out2, 2, p);
 
+#ifdef TARGET_PC
+    /* PC: room for the 128 entries at their PC size (0x18 bytes each on N64), and rp starts at the last of them. */
+    base = allocateHeap(128 * sizeof(Nw2Rec18));
+    D_8007FC34 = base;
+    i = 0x7F;
+    rp = (Nw2Rec18 *)base + 0x7F;
+#else
     base = allocateHeap(0xC00);
     D_8007FC34 = base;
     i = 0x7F;
     rp = (Nw2Rec18 *)(base + 0xBE8);
+#endif
     do {
         rp->f0 = 0;
         i--;

@@ -25,7 +25,9 @@ typedef struct
     u32 f5C;
 } Nw2B9D5C;
 extern Nw2B9D5C *D_800FABD0;
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D3B24 */
 s8 func_800D3B24(void *, void *, f32, s32);
+#endif
 s32 func_800D4148(void);
 void func_800ADFB8(void);
 void func_800AA290(void);

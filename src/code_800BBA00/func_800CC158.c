@@ -6,7 +6,30 @@
 #include "common.h"
 
 extern u16 D_800EB5B8[];extern u8 D_8007EF30[];extern s8 D_800FADB8,D_800FAF78;extern u16 D_800FABE6,D_800FAF8A;
+#ifdef TARGET_PC
+/* PC: port_decls.h declares func_8000B710 and func_800D5438, so the PC copy of this line leaves them out. */
+void func_800D427C(void*,s16,s32);
+s16 func_800B6DEC(void*,void*,s32);
+void func_800D7690(void*,s32,s32);
+s8 func_800B71F8(void*,s32,s32);
+void func_800B68A0(void*,void*,void*);
+void func_800A7F6C(void*,s32);
+void func_800A837C(void*);
+void func_800D2BEC(void*,void*,void*,f32,u16,s32);
+void beginEntityActionA8D8C(void*);
+void func_800C472C(void*,void*,s32);
+void func_800D4AD0(void*);
+void func_800D7894(void*,u16,u64);
+void *func_800087DC(s16);
+void func_8000B728(s8,void*);
+void func_8000C784(s8);
+void func_800CCC64(void*,void*,u32);
+void func_8009786C(s32);
+void func_8009791C(void);
+void func_80097BB4(void);
+#else
 s16 func_800D5438(void*,s32);void func_800D427C(void*,s16,s32);s16 func_800B6DEC(void*,void*,s32);void func_800D7690(void*,s32,s32);s16 func_8000B710(s8);s8 func_800B71F8(void*,s32,s32);void func_800B68A0(void*,void*,void*);void func_800A7F6C(void*,s32);void func_800A837C(void*);void func_800D2BEC(void*,void*,void*,f32,u16,s32);void beginEntityActionA8D8C(void*);void func_800C472C(void*,void*,s32);void func_800D4AD0(void*);void func_800D7894(void*,u16,u64);void *func_800087DC(s16);void func_8000B728(s8,void*);void func_8000C784(s8);void func_800CCC64(void*,void*,u32);void func_8009786C(s32);void func_8009791C(void);void func_80097BB4(void);
+#endif
 #define CONFIG (*(u16*)&D_8007EF30[0x170])
 void func_800CC158(void){switch(D_800FAF5C->step){case 0:
         D_800FAF5C->flags|=0x400000000000ULL;func_800D427C(D_800FAF5C,func_800D5438(D_800F9B00,1),1);D_800EB5B8[D_800FADB8]=0;D_800FAF5C->escapeTimer=func_800B6DEC(D_800FAF5C,D_800F9B00,3);func_800D7690(D_800FAF5C,0,0);

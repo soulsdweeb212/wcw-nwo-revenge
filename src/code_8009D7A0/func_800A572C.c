@@ -17,7 +17,9 @@ void func_800D2BEC(void *, void *, void *, f32, u16, s32);
 void func_800D36B4(void *, void *, void *);
 void func_800D427C(void *, s16, s32);
 void func_800D4AD0(void *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D5438 */
 s16 func_800D5438(void *, s32);
+#endif
 void translateEntityXZ(void *, void *);
 
 /* Two-step action handler on D_800EB408, held by D_800EB414.

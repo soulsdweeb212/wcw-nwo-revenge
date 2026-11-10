@@ -10,8 +10,10 @@ extern u16 D_800FABE6, D_800FAF8A;
 extern s8 D_800FADB8;
 
 s8 func_800A93C0(void);
+#ifndef TARGET_PC /* on PC, port_decls.h declares applyEntityMovementC8D84 and func_800D2B64 */
 void applyEntityMovementC8D84(void *, void *, s32, s32);
 s32 func_800D2B64(void *, f32, u16, s32);
+#endif
 f32 func_800D3890(void *, void *, void *);
 void func_800D427C(void *, s16, s32);
 void func_800D4AD0(void *);
@@ -55,7 +57,15 @@ void func_800C86C8(void) {
             t->flags &= ~WR_FLAG_PAIR_LEADER;
             D_800FAF5C->step += 1;
         } else {
+#ifdef TARGET_PC
+            /* PC: applyEntityMovementC8D84 takes a float as its last parameter (port_decls.h), and D_800EB540 holds
+             * floats (the gap recorded in step 1). The N64 code reads the float's bits as an s32 and passes them in
+             * a3, an integer register, where the N64 callee reads them as a float. On the PC an s32 argument would be
+             * converted to a float of another value, so the PC passes the float itself. */
+            applyEntityMovementC8D84(D_800FAF5C, D_800F9B00, D_800FABE6, D_800EB540[(s8)D_800FADB8]);
+#else
             applyEntityMovementC8D84(D_800FAF5C, D_800F9B00, D_800FABE6, *(s32 *)&D_800EB540[(s8)D_800FADB8]);
+#endif
             if ((D_800FAF8A & 0x10) || func_800A93C0()) {
                 D_800FAF5C->pairSignals |= 1;
             }

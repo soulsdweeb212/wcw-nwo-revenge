@@ -19,12 +19,18 @@ void func_800BA770(s32,s32,s32);
 void func_800C2B8C(void*);
 void func_800E1920(void*,s32);
 void func_800D427C(void*,s16,s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D4D44 */
 s16 func_800D4D44(void*,s32,s32);
+#endif
 f32 func_800D63F0(void*,void*,s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D37C0 */
 void func_800D37C0(void*,f32,void*);
+#endif
 s8 func_800D25D0(void*,f32);
 void func_800D4AD0(void*);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(void*,f32,u16,s32);
+#endif
 void translateEntityXZ(void*,void*);
 void func_800C0354(void) {
     u16 mask; s16 anim; s32 mode; f32 speed; u8 buf[0x30];
@@ -62,7 +68,13 @@ void func_800C0354(void) {
         else {
             anim=func_800D4D44(D_800FAF5C,10,0); func_800D427C(D_800FAF5C,anim,0);
             speed=(f64)func_800D63F0(D_800FAF5C,0,2)*D_800E58C8;
+#ifdef TARGET_PC
+            /* PC: port_decls.h declares func_800D37C0 as its definition does, with the heading as an s32; the cast
+             * to void * only matched this file's own declaration of it, which the PC build does not read. */
+            func_800D37C0(D_800FAF5C->heading,speed,D_800FAF5C->moveDelta); D_800FAF5C->step++;
+#else
             func_800D37C0((void*)D_800FAF5C->heading,speed,D_800FAF5C->moveDelta); D_800FAF5C->step++;
+#endif
         }
         D_800FAF5C->stateTimer=0; break;
     case 6:

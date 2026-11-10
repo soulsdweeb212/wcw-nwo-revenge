@@ -17,7 +17,9 @@ typedef struct {
 /* Current display-list buffer (0..2). Its own scalar symbol (new build.json entry, 0x800E2E9A):
  * as D_800E2E98+2 the address is forced into a register and CSE shares it. */
 extern u8 D_800E2E9A;
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800EB0C0 */
 extern G *D_800EB0C0;
+#endif
 extern Node *D_800EB0C4;
 extern G *D_800EB18C[3];
 typedef struct {

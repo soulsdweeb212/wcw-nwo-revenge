@@ -15,7 +15,9 @@ s8 func_800D4198(s16);
 void func_800A7C40(void *, s8, s16);
 void func_800D4AD0(void *);
 void beginEntityActionA8D8C(void *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D5438 */
 s16 func_800D5438(void *, s32);
+#endif
 void beginPairedEntityActions(void *, s32, void *, s32);
 
 /* Five-step paired grapple/throw on D_800FAF5C->step.  Step 0 calls

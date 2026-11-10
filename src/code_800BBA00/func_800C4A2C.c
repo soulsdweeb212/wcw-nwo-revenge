@@ -21,7 +21,9 @@ void func_800A837C(void *);
 s8 func_800C2CDC(void *, s32);
 s32 func_800C3A78(void *, void *, s32);
 s32 func_800D427C(void *, s16, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D5438 */
 s32 func_800D5438(void *, s32);
+#endif
 
 /* D_800FAF5C step machine:
  *   0: snap x/z from the dirIndex table, start the AD animation, advance;

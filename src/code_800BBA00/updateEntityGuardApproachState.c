@@ -11,7 +11,19 @@
  * brace/impact animations, and resolves the grapple/counter from the attacker's
  * pairSignals (0x10 -> mutual grapple with flag/slot swap, else the counter). */
 extern s16 D_800EB628[]; extern s32 D_800EB610[]; extern u16 D_800FAF8A; extern u8 D_800FABE4, D_800FADB8;
+#ifdef TARGET_PC
+/* PC: port_decls.h declares func_800D5438, so the PC copy of this line leaves it out. */
+void selectTurnAnimationCDC04(void *,void *);
+void func_800A7F6C(void *,s32);
+void translateEntityXZ(void *,void *);
+s32 func_800D35B0(s32,s32);
+void func_800D427C(void *,s16,s32);
+void func_800D7690(void *,u16,s32);
+void func_800D43B4(void *,s16,s32);
+void func_800A6BE0(void *,s32);
+#else
 void selectTurnAnimationCDC04(void *,void *); void func_800A7F6C(void *,s32); void translateEntityXZ(void *,void *); s32 func_800D35B0(s32,s32); void func_800D427C(void *,s16,s32); void func_800D7690(void *,u16,s32); void func_800D43B4(void *,s16,s32); s32 func_800D5438(void *,s32); void func_800A6BE0(void *,s32);
+#endif
 /* One step of the brace approach: tick until the per-id threshold, then finish
  * (heading from D_800EB610, step 7 if the attacker's grappleCtx has 0x100000)
  * else walk the entity forward when the attacker allows (0x200). Returns 1 when done. */

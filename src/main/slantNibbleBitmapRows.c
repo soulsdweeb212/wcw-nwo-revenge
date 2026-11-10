@@ -10,6 +10,18 @@
  * nibbles from the shifted source (rebuilding each byte from the neighbouring
  * low nibble) and zero the vacated columns on the left. */
 typedef struct { s32 f0; u8 *buf; s32 f8; s16 width; s16 height; } Nw2Bitmap;
+#ifdef TARGET_PC
+/* PC: obj is an entry of the resource-name cache (func_8002A2FC passes it), whose PC layout is Nw2ResourceEntryHashed
+ * in common.h. On PC the view's pointer field (buf) is 8 bytes and starts at a multiple of 8, so it lies at +8, the
+ * entry's allocation, and width and height fall at reserved's +4 and +6 (+0x14 and +0x16), where func_80028F3C writes
+ * the row width and the row count.
+ * The view needs no PC version of its own (f0 and f8 are not read); the assert checks that it still agrees with the
+ * entry. */
+_Static_assert(offsetof(Nw2Bitmap, buf) == offsetof(Nw2ResourceEntryHashed, allocation) &&
+                   offsetof(Nw2Bitmap, width) == offsetof(Nw2ResourceEntryHashed, reserved) + 4 &&
+                   offsetof(Nw2Bitmap, height) == offsetof(Nw2ResourceEntryHashed, reserved) + 6,
+               "Nw2Bitmap must follow the PC layout of Nw2ResourceEntryHashed");
+#endif
 static __inline__ void putByte29(Nw2Bitmap *o,s32 x,s32 y,u32 c) { o->buf[x+y*o->width/2]=c; }
 static __inline__ s32 rowShift29(s32 y,s32 flags) { if(flags&0x8000) return (23-y%24)/4; else return (13-y%14)/4; }
 void slantNibbleBitmapRows(Nw2Bitmap *obj,s32 flags) {

@@ -19,7 +19,9 @@ s8 func_800B4B3C(void *);
 void func_800E212C(void *);
 s16 func_800D65D0(void *, u16);
 void getRingBoundaryPointAlongHeading(void *, s32, void *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D6610 */
 s32 func_800D6610(void *, s16);
+#endif
 f32 func_800D63F0(void *, s32, s32);
 void func_800D37C0(s32, f32, void *);
 s8 func_800D26A0(void *, void *, s32);

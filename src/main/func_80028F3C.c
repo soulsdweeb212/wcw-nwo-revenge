@@ -7,6 +7,30 @@
 
 s32 func_80028E28(u8 *, s32);
 
+#ifdef TARGET_PC
+/* PC: arg0 is an entry of the resource-name cache (func_8002A2FC passes it), whose PC layout is Nw2ResourceEntryHashed
+ * in common.h: the key is as wide as a pointer, so the allocation lies at +8 and reserved at +0x10. The N64 view keeps
+ * the allocation in an s32, which on PC would put the sizes this function writes 4 bytes before the places where
+ * func_8002A2FC reads them. This view follows the entry field for field: f0 is the key (the name's address), f4 the
+ * allocation, and f8, fC, fE and f10 are the sizes in reserved (the allocation's size in bytes, the row width rounded
+ * up to 16 pixels, the row count and the text's width), at reserved's +0, +4, +6 and +8. The assert checks it. */
+typedef struct {
+    u8 *f0;
+    void *f4;
+    s32 f8;
+    s16 fC;
+    u16 fE;
+    u16 f10;
+} Nw2Str28F3C;
+_Static_assert(offsetof(Nw2Str28F3C, f0) == offsetof(Nw2ResourceEntryHashed, key) &&
+                   offsetof(Nw2Str28F3C, f4) == offsetof(Nw2ResourceEntryHashed, allocation) &&
+                   offsetof(Nw2Str28F3C, f8) == offsetof(Nw2ResourceEntryHashed, reserved) &&
+                   offsetof(Nw2Str28F3C, fC) == offsetof(Nw2ResourceEntryHashed, reserved) + 4 &&
+                   offsetof(Nw2Str28F3C, fE) == offsetof(Nw2ResourceEntryHashed, reserved) + 6 &&
+                   offsetof(Nw2Str28F3C, f10) == offsetof(Nw2ResourceEntryHashed, reserved) + 8 &&
+                   sizeof(Nw2Str28F3C) == sizeof(Nw2ResourceEntryHashed),
+               "Nw2Str28F3C must follow the PC layout of Nw2ResourceEntryHashed");
+#else
 typedef struct {
     u8 *f0;
     s32 f4;
@@ -15,6 +39,7 @@ typedef struct {
     u16 fE;
     u16 f10;
 } Nw2Str28F3C;
+#endif
 
 void func_80028F3C(Nw2Str28F3C *arg0, s32 arg1) {
     volatile unsigned long long pad;

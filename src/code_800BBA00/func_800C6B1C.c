@@ -11,7 +11,9 @@ void func_800A7F6C(void *, s32);
 s8 func_800C2CDC(void *, s32);
 void func_800C3A78(void *, void *, s32);
 void func_800D25D0(void *, f32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 void func_800D2B64(void *, f32, s32, s32);
+#endif
 void func_800A7188(void *);
 
 /* Step machine driven by D_800FAF5C->step:

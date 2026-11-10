@@ -16,7 +16,9 @@ void func_800D0700(void *, void *, u16);
 void translateEntityXZ(void *, void *);
 s32 func_800D35B0(s32, s32);
 void func_800D427C(void *, s16, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D5438 */
 s16 func_800D5438(void *, s32);
+#endif
 void func_800A6BE0(void *, s32);
 void beginPairedEntityActions(void *, s32, void *, s32);
 s32 func_800D2BEC(void *, void *, void *, f32, u16, s32);

@@ -24,7 +24,9 @@ extern s16 D_800F9AFA;
 s16 func_8000B3C4(s32);
 u8 *func_80028B5C(u8 *, u8 *);
 u8 *func_8002AD34(s32, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_8002A2FC, whose key is as wide as a pointer (port.h's ResKey) */
 void *func_8002A2FC(u32, u16);
+#endif
 
 /* wrestler name for slot i; D_8007E8C0[0x1C + i] is D_8007E8C0+0x70 */
 #define NAME(i) func_8002AD34(func_8000B3C4(i), D_8007E8C0[0x1C + (i)])
@@ -114,7 +116,12 @@ void func_80097EF4(s16 arg0) {
                 func_80028B5C(s, " ");
             }
         }
+#ifdef TARGET_PC
+        /* PC: the key is the text's address, whole (port.h's RES_KEY_NAME); a u32 would cut it in half. */
+        D_800EB1AC.tex = func_8002A2FC(RES_KEY_NAME(D_800EB1B8), 0x8008);
+#else
         D_800EB1AC.tex = func_8002A2FC((u32)D_800EB1B8, 0x8008);
+#endif
         D_800EB1AC.id = 0;
     }
 }

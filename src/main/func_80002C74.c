@@ -9,7 +9,9 @@ s32 osRecvMesg(s32 *, s32, s32);
 s32 osSendMesg(s32 *, s32, s32);
 extern s32 D_800467C0;
 extern s32 D_800467E0;
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800467FC */
 extern s32 D_800467FC;
+#endif
 extern s32 D_80046800;
 
 /* Initialize two message queues (D_800467C0, D_800467E0), mark the second active,

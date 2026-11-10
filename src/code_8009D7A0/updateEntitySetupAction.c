@@ -7,7 +7,9 @@
 
 void func_800D4270(void *);
 void func_800D427C(void *,s16,s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D4D44 */
 s16 func_800D4D44(void *,s32,f32);
+#endif
 void func_8000B728(s8);
 void func_8000C784(s8);
 void func_800C2B8C(void);

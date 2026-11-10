@@ -5,7 +5,11 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Gfx Gfx2454; /* on PC a command is port.h's 16-byte Gfx */
+#else
 typedef struct { u32 w0, w1; } Gfx2454;
+#endif
 
 typedef struct Obj2454 {
     s32 key;
@@ -28,7 +32,12 @@ s16 func_80002454(Gfx2454 **gfx, s16 bank, s16 first)
     u32 i;
     s32 key;
     Obj2454 *p;
+#ifdef TARGET_PC
+    /* PC: addr holds the address of vertices for a command, which a u32 would cut in half. */
+    uptr addr;
+#else
     u32 addr;
+#endif
     u32 n;
     u32 start;
 
@@ -43,7 +52,12 @@ s16 func_80002454(Gfx2454 **gfx, s16 bank, s16 first)
                 Gfx2454 *g = *gfx;
                 *gfx = g + 1;
                 g->w0 = 0xDC38000E;
+#ifdef TARGET_PC
+                /* PC: the matrix's address goes into the command as the whole pointer (port.h's DL_ADDR). */
+                g->w1 = DL_ADDR(p->mtx[bank]);
+#else
                 g->w1 = (u32)p->mtx[bank] - 0x80000000;
+#endif
             }
             {
                 Gfx2454 *g = *gfx;
@@ -52,7 +66,13 @@ s16 func_80002454(Gfx2454 **gfx, s16 bank, s16 first)
                 g->w1 = 0x10000;
             }
             if (p->vtx != NULL) {
+#ifdef TARGET_PC
+                /* PC: the vertices' address as the whole pointer (port.h's DL_ADDR); osVirtualToPhysical returns a u32.
+                 * A vertex is 16 bytes on both, so the 0x200 bytes added below are 32 vertices on both. */
+                addr = DL_ADDR(p->vtx);
+#else
                 addr = osVirtualToPhysical(p->vtx);
+#endif
                 n = p->count;
                 start = p->start;
                 while (n > 32) {

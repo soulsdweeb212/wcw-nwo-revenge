@@ -9,7 +9,9 @@ extern s32 D_800E3C90[];
 extern u16 D_800E3CD0[];
 extern f32 D_800F9B0C;
 void func_800A7240(void *, s32, s32, u64);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D6658 */
 s32 func_800D6658(void *, void *, u16, s32, f32);
+#endif
 
 /* Two-step quadrant approach action on D_800FAF5C: raises the 0x1000000000
  * flag, then step 0 stores dirIndex from the pelvis position; step 1 plays

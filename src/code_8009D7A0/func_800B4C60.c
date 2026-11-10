@@ -22,10 +22,14 @@ void func_800A837C(void *);
 s8 func_800A93C0(void);
 s8 startEntityGrapple(void *, s16, u16);
 s8 func_800C2634(void *, u16);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 u32 func_800D2B64(void *, f32, s32, s32);
+#endif
 s16 findBoundaryQuadrant(void *, s32, s32);
 s16 func_800D3638(s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D3B24 */
 s8 func_800D3B24(f32 *, f32 *, f32, s32);
+#endif
 s16 func_800D65D0(void *, u16);
 s16 func_800D7A2C(u16);
 s8 func_800DF924(void *, void *);

@@ -9,7 +9,9 @@ extern u8 D_8007EF30[];
 extern u8 D_800FABE8[], D_800FABEC[], D_800FABEE[];
 extern s16 D_800EB4D0[];
 void func_800D2638(void *, u16, f32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(void *, f32, u16, s32);
+#endif
 
 /* Per-wrestler timer D_800EB4D0[id] for comboHits: mode 0 (called when a hit adds to comboHits) reloads it to 60;
  * mode 1 counts it down and, once it has reached zero, clears w->comboHits. */

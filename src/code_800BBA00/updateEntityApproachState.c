@@ -11,7 +11,21 @@
  * end animations and, based on the pair's animation state (func_800D7690),
  * decides which entity leads the follow-up action. */
 extern s16 D_800EB620[];extern s32 D_800EB600[];extern u16 D_800FAF8A;extern u8 D_800FABE4,D_800FADB8;
+#ifdef TARGET_PC
+/* PC: port_decls.h declares func_800D5438, so the PC copy of this line leaves it out. */
+void setupEntityMoveCD990(void*,void*);
+void func_800A7F6C(void*,s32);
+s16 func_800CDEE4(void*,void*);
+void func_800A837C(void*);
+void func_800A7C40(void*,s8,s16);
+s32 func_800D35B0(s32,s32);
+void func_800D427C(void*,s16,s32);
+s16 func_800D7690(void*,u16,s16);
+void func_800D43B4(void*,s16,s32);
+void translateEntityXZ(void*,void*);
+#else
 void setupEntityMoveCD990(void*,void*);void func_800A7F6C(void*,s32);s16 func_800CDEE4(void*,void*);void func_800A837C(void*);void func_800A7C40(void*,s8,s16);s32 func_800D35B0(s32,s32);void func_800D427C(void*,s16,s32);s16 func_800D7690(void*,u16,s16);void func_800D43B4(void*,s16,s32);s16 func_800D5438(void*,s32);void translateEntityXZ(void*,void*);
+#endif
 /* Advance one step of the approach: either finish (heading from D_800EB600,
  * advance to step 7 on grappleCtx 0x100000 else reset stateTimer via
  * func_800CDEE4) or walk toward the target and tick stateTimer. Returns 1 when the approach is done. */

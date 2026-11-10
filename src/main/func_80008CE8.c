@@ -49,7 +49,9 @@ void func_80009D98(s16, s16, s8);
 void initializeResourceStream(s16, s16);
 void updateBodyPartTransforms(s16);
 void func_80007E14(f32 *, f32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_80007E04 */
 void func_80007E04(f32 *, f32, f32, f32);
+#endif
 void guMtxXFMF(f32 *, f32, f32, f32, f32 *, f32 *, f32 *);
 void func_80001DC4(void *);
 void guMtxCatF(f32 *, f32 *, f32 *);

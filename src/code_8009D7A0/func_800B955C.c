@@ -20,7 +20,15 @@ s8 func_800BA578(s8);
 void func_800D5B74(s8, s8, u32);
 
 typedef struct { u8 f0; s8 f1; s8 f2; s8 f3; } Rec;
+#ifdef TARGET_PC
+/* PC: on the big-endian N64 the first word of a u64 in memory is its upper half; on a little-endian PC (port.h checks
+ * that the CPU is one) it is the lower half. With the words named in memory order, w.hi would read the lower half, so
+ * for mask 0x2000 the test hi == 0 would fail and mode would never be set. The PC names them the other way round, so
+ * hi and lo are the same halves of v as on the N64. */
+typedef union { u64 v; struct { u32 lo; u32 hi; } w; } U64;
+#else
 typedef union { u64 v; struct { u32 hi; u32 lo; } w; } U64;
+#endif
 
 s8 func_800B955C(u64 mask) {
     U64 m;

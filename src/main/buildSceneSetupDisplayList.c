@@ -13,7 +13,13 @@
  * (guarded by D_8002EEC6), a 0x3C-entry 0xF6 gradient ramp with its 0xE3/0xE2/
  * 0xF7/0xE7 bracketing. It finishes with the standard RDP setup words
  * (0xD7/0xD9/0xE3/0xFB/0xE3) and returns the advanced pointer. */
+#ifdef TARGET_PC
+/* On PC a command is port.h's 16-byte Gfx, whose two words are fields of their own, w0 and w1 (the N64 union below
+ * holds them in w). */
+typedef Gfx Dl;
+#else
 typedef union { u64 align; struct { u32 w0; u32 w1; } w; } Dl;
+#endif
 typedef struct { s32 f0; s32 f4; u16 f8; } Obj2664;
 extern Dl *D_80044590[];
 extern s16 D_8002EEBC;
@@ -21,7 +27,11 @@ extern s16 D_8002EEC6;
 extern s32 D_8007E228;
 extern u8 D_1000010[];
 u32 osVirtualToPhysical(void *);
+#ifdef TARGET_PC
+#define C(a, b) { Dl *g = dl++; g->w0 = (a); g->w1 = (b); } /* PC: the words of port.h's Gfx */
+#else
 #define C(a, b) { Dl *g = dl++; g->w.w0 = (a); g->w.w1 = (b); }
+#endif
 
 Dl *buildSceneSetupDisplayList(Obj2664 *arg0, s16 arg1) {
     Dl *dl;
@@ -29,9 +39,23 @@ Dl *buildSceneSetupDisplayList(Obj2664 *arg0, s16 arg1) {
 
     dl = D_80044590[D_8002EEBC];
     C(0xDB060000, 0);
+#ifdef TARGET_PC
+    /* PC: D_8007E228 holds the segment-1 buffer as a 32-bit handle (port.h's PTR_TO_SLOT; func_80001260 sets it), and
+     * the buffer's address goes into the command as the whole pointer (port.h's DL_ADDR); osVirtualToPhysical returns
+     * a u32. */
+    C(0xDB060004, DL_ADDR(SLOT_TO_PTR(D_8007E228)));
+#else
     C(0xDB060004, osVirtualToPhysical((void *)D_8007E228));
+#endif
     C(0xDB0E0000, arg0->f8);
+#ifdef TARGET_PC
+    /* PC: the N64 word is 0x01000010, the address 0x10 into segment 1, which the command two lines up points at the
+     * segment-1 buffer (the N64 code writes it as an offset from osVirtualToPhysical's address, which compiles to the
+     * ROM's instructions). On PC the command gets the address of that list in the buffer, as the whole pointer. */
+    C(0xDE000000, DL_ADDR((u8 *)SLOT_TO_PTR(D_8007E228) + 0x10));
+#else
     C(0xDE000000, (u32)osVirtualToPhysical - 0x7F01CE70);
+#endif
     if (arg1) {
         C(0xFF1001DF, (u32)(arg0->f0 - 0x80000000));
         if (D_8002EEC6) {
@@ -41,8 +65,14 @@ Dl *buildSceneSetupDisplayList(Obj2664 *arg0, s16 arg1) {
             C(0xF7000000, 0x10001);
             for (i = 0; i < 0x3C; i++) {
                 Dl *g = dl++;
+#ifdef TARGET_PC
+                /* PC: the words of port.h's Gfx. */
+                g->w0 = 0xF677C000 | ((((i + 1) * 4 - 1) & 0x3FF) << 2);
+                g->w1 = (i << 4) & 0xFF0;
+#else
                 g->w.w0 = 0xF677C000 | ((((i + 1) * 4 - 1) & 0x3FF) << 2);
                 g->w.w1 = (i << 4) & 0xFF0;
+#endif
             }
             C(0xE7000000, 0);
         }

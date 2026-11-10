@@ -6,9 +6,20 @@
 #include "common.h"
 
 extern s32 D_800F9B14;
+#ifdef TARGET_PC
+/* PC: D_800F9B0C is a float (the distance to the opponent), and func_800D4D44's third parameter is a float (on PC,
+ * port_decls.h declares it with its definition's types). The N64 code reads the float's bits as an s32 and passes
+ * them in an integer register, where the N64 callee finds them. On PC an s32 would be converted by value into another
+ * float, so the PC reads the variable as the float it is. The literal 0 in case 0 becomes 0.0f, whose bits are 0 as
+ * well. */
+extern f32 D_800F9B0C;
+#else
 extern s32 D_800F9B0C;
+#endif
 extern u16 D_800FABE6;
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D4D44 */
 s32 func_800D4D44(void *, s32, s32);
+#endif
 void func_800D427C(void *, s32, s32);
 void func_800A7240(void *, s32, s32, u64);
 s8 func_800A93C0(void);
@@ -16,7 +27,9 @@ void func_800A7D1C(void *, s32);
 void func_800B68A0(void *, void *, void *);
 void func_800D4AD0(void *);
 void func_800D25D0(void *, f32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(void *, f32, u16, s32);
+#endif
 
 void func_800A2E68(void) {
     func_800D25D0(D_800EB408, 4.0f);

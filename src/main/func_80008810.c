@@ -65,8 +65,16 @@ void func_80008810(void) {
         for (n = 0; n < 0xFB1; n++) {
             lookupResourceDescriptor(sp10, n + 0xE39);
             readRomSynchronousChunks(sp10[0], buf, 4);
+#ifdef TARGET_PC
+            /* PC: buf holds the resource's first 4 bytes as the ROM has them (readRomSynchronousChunks does not pass
+             * port_res_loaded, which converts whole resources), so its two u16 are big-endian. They are stored in the
+             * PC's byte order, so that D_8006A2B0's readers (decodeAnimationMetadata, func_8000946C) need no change. */
+            D_8006A2B0[n][0] = READ_BE16(&buf[0]);
+            D_8006A2B0[n][1] = READ_BE16(&buf[1]);
+#else
             D_8006A2B0[n][0] = buf[0];
             D_8006A2B0[n][1] = buf[1];
+#endif
             func_80008574((s16)(n + 0xE39));
         }
         releaseHeapBlock(buf);

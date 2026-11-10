@@ -34,5 +34,7 @@ void func_8000E6AC(void) {
 }
 
 extern u16 D_800306A0[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800032A4 */
 s32 func_800032A4(s32, s32, s32, s32, s32);
+#endif
 void MusHandleSetReverb(s32, s32);

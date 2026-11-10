@@ -13,7 +13,9 @@ extern s32 D_800E3F20[];
 extern s32 D_800E3CC0[];
 extern s8 D_800FABE4;
 
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D5438 */
 s16 func_800D5438(void *, s32);
+#endif
 void func_800D427C(void *, s16, s32);
 s32 func_800DACE4(void *, void *);
 s32 func_800D35B0(s32, s32);
@@ -33,7 +35,9 @@ s16 func_800B68A0(void *, void *, void *);
 s8 func_800D4CC4(void *);
 void addEntityHealthDelta(void *, s8);
 void beginEntityActionA8D8C(void *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 void func_800D2B64(void *, f32, s32, s32);
+#endif
 
 #define SLOT D_800F9870[D_800FADB8]
 

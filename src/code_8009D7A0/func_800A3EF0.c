@@ -8,7 +8,9 @@
 void func_800A9290(void *);
 void func_800B68A0(void *, void *, void *);
 void func_800C472C(void *, void *, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(void *, f32, u16, s32);
+#endif
 void func_800D427C(void *, s16, s32);
 void func_800D4AD0(void *);
 /* Three-step action machine on D_800EB408 (step):

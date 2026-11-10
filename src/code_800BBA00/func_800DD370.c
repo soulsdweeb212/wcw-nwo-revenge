@@ -17,7 +17,9 @@ void addEntityHealthDelta(void *, s32);
 void func_800D427C(void *, s16, s32);
 void func_800D4AD0(void *);
 s8 func_800D4CC4(void *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D5438 */
 s16 func_800D5438(void *, s32);
+#endif
 s32 func_800DACE4(void *, void *);
 void func_800DB348(void *, void *);
 s8 func_800DB4FC(void *, void *);

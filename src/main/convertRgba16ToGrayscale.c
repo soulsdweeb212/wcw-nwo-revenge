@@ -16,7 +16,13 @@ void convertRgba16ToGrayscale(u16 *pixels, u16 pixelCount) {
     u32 i;
     u16 pixel, r, g, b, a, gray;
     for (i = 0; i < pixelCount; i++, pixels++) {
+#ifdef TARGET_PC
+        /* PC: palettes stay in the N64's byte order (Fast3D reads them big-endian), so each entry is read and written
+         * big-endian. */
+        pixel = READ_BE16(pixels);
+#else
         pixel = *pixels;
+#endif
         r = pixel >> 11;
         g = (pixel >> 6) & 31;
         b = (pixel >> 1) & 31;
@@ -24,6 +30,11 @@ void convertRgba16ToGrayscale(u16 *pixels, u16 pixelCount) {
         g = (u32)(g * D_8003B0F0);
         b = (u32)(b * D_8003B100);
         gray = (u32)((r + g + b) * D_8003B108);
+#ifdef TARGET_PC
+        /* PC: the entry is written back big-endian, as above. */
+        WRITE_BE16(pixels, a | ((gray << 11) | (gray << 6) | (gray << 1)));
+#else
         *pixels = a | ((gray << 11) | (gray << 6) | (gray << 1));
+#endif
     }
 }

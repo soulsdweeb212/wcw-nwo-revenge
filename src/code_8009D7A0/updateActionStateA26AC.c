@@ -17,10 +17,14 @@ extern f32 D_800F9B0C;
 extern s32 D_800E3CA0[];
 
 void func_800D25D0(void *, f32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(void *, f32, u16, s32);
+#endif
 void func_800D427C(void *, s16, s32);
 void func_800D4AD0(void *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D6658 */
 void func_800D6658(void *, void *, u16, s32, f32);
+#endif
 void func_800D7B54(void *, u16, u16, s32);
 s8 func_800D7894(void *, u16);
 

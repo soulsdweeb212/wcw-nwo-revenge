@@ -18,7 +18,9 @@ extern s32 D_800EB5C4[][4];
 extern f32 D_800EB5C8[][4];
 extern s32 D_800EB5CC[][4];
 
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D5438 */
 s16 func_800D5438(void *, s32);
+#endif
 void func_800D427C(void *, s16, s32);
 s32 func_800D1B5C(void *, void *);
 void func_800D1EA8(void *, void *);
@@ -32,7 +34,9 @@ s32 func_800D2BEC(void *, void *, void *, f32, u16, s32);
 s16 findBoundaryQuadrant(void *, s32, s32);
 void func_800D43B4(void *, s16, s32);
 void func_800D4AD0(void *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D6610 */
 s32 func_800D6610(void *, s16);
+#endif
 void func_800A6BE0(void *, s32);
 void func_800A837C(void *);
 void func_800A7C40(void *, s8, s16);

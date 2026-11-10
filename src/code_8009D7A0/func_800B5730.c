@@ -22,14 +22,21 @@ s32 isEntityActionEligible(void *, void *, s32);
 s32 func_800B5CA0(void *, void *, u16, f32);
 s32 func_800B5DC4(void *, s32);
 f32 func_800D3EEC(void *, void *, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D3B24 */
 s32 func_800D3B24(void *, f32 *, f32, Nw2DirectionResult *);
+#endif
 s32 func_800D3550(s32);
 s32 func_800D3684(s32, s32);
 void getRingBoundaryPointAlongHeading(void *, s32, f32 *);
 
 s32 func_800B5730(Wrestler *arg0, Wrestler *arg1, u16 arg2, u16 arg3, u8 arg4, f32 arg5) {
     f32 sp10[3];
+#ifdef TARGET_PC
+    /* PC: C forbids taking the address of a register variable (&sp20 below), which KMC GCC 2.7.2 allowed. */
+    Nw2DirectionResult sp20;
+#else
     register Nw2DirectionResult sp20;
+#endif
     Nw2Att5730 *att;
     u64 comb;
     f64 d;

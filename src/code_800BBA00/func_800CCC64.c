@@ -11,7 +11,9 @@
  * amount and swing self's x/z around other's root position by the same angle. */
 f32 func_800D3564(f32);
 s32 func_800D35B0(s32, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D3B24 */
 s32 func_800D3B24(void *, void *, s32, f32 *);
+#endif
 s32 func_800D3E40(void *, f32 *, s32, f32 *);
 void translateEntityXZ(void *, void *);
 

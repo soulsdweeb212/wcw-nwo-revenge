@@ -12,7 +12,9 @@
  * clear the action on the last animation frame or once the opponent leaves
  * state 0x84. */
 extern s32 D_800F9B14;
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(void *,f32,u16,s32);
+#endif
 s32 func_800D35B0(s32,s32);
 void func_800D427C(void *,s32,s32);
 void func_800D4AD0(void *);

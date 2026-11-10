@@ -21,8 +21,10 @@ extern f32 D_80070C50[][713], D_80070D10[][713], D_80070D18[][713];
 extern f64 D_8003B1F8, D_8003B200, D_8003B208, D_8003B210, D_8003B218;
 void func_8000E8A0(s8, s32, s8, s8);
 s16 func_8000335C(s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_8000327C and func_800032A4 */
 s32 func_800032A4(s16, s16, s32, s32, s32);
 s32 func_8000327C(s32);
+#endif
 void func_800056CC(f32 *, f32 *, f32 *);
 f32 func_8001A480(f32);
 void playEntitySound(s16 entity, s16 code) {

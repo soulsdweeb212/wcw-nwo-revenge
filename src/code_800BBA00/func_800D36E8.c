@@ -25,9 +25,18 @@ extern f64 D_800E6B80;
 extern f64 D_800E6B88;
 
 /* Convert the atan2-style result of func_80003A3C into a 4096-unit heading. */
+#ifdef TARGET_PC
+/* PC: every caller passes two floats (getXZDirectionQuadrant, func_800A01B0 and five more declare
+ * s32 func_800D36E8(f32, f32)). On the N64 they are still in $f12 and $f14 when this function calls func_80003A3C
+ * without arguments, so func_80003A3C receives them. C passes them on. */
+s32 func_800D36E8(f32 x, f32 y) {
+    return (s32) ((f64) func_80003A3C(x, y) * D_800E6B80);
+}
+#else
 s32 func_800D36E8(void) {
     return (s32) ((f64) ((f32 (*)(void)) func_80003A3C)() * D_800E6B80);
 }
+#endif
 
 /* Evaluate sqrt(x*x + y*y); the result is not consumed here. */
 f32 func_800D371C(f32 x, f32 y) {

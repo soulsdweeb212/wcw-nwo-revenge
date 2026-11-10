@@ -20,13 +20,17 @@ void func_800A7240(void *, s32, s32, u64);
 s8 selectNewLinkedTarget(void *, s32);
 s8 updateSpecialMoveRequest(void *);
 s8 isEntityActionAllowedC2870(void *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D6658 */
 u32 func_800D6658(void *, void *, s32, s32, f32);
+#endif
 s8 func_800DF5C4(void *, void *, u16, u16, s8, s32);
 s8 func_800DE9C0(void *, void *, u16, u16, s32);
 s8 tryEntityAttackDEF84(void *, u16, u16, s32);
 s8 func_800E2400(void *, u16, u16, u32);
 s8 func_800DF214(void *, u16);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800DF3E4 */
 s8 func_800DF3E4(void *, void *, u16, f32);
+#endif
 s8 func_800DFDD4(void *, void *, u16, void *);
 s8 func_800DF99C(void *, void *, u16, void *);
 s8 func_800E022C(void *, void *, u16, void *);

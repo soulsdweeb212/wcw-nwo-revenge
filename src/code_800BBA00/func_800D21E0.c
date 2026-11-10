@@ -11,7 +11,19 @@
  *    setting step 7 when the opponent is in a given mode),
  * 2) run the 4-frame hold then hand control back. */
 extern s32 D_800EB610[]; extern s16 D_800EB628[];
+#ifdef TARGET_PC
+/* PC: port_decls.h declares func_800D5438, so the PC copy of this line leaves it out. */
+void selectTurnAnimationCDC04(void *,void *);
+void func_800D427C(void *,s16,s32);
+s32 func_800D35B0(s32,s32);
+void translateEntityXZ(void *,void *);
+s32 func_800D2BEC(void *,void *,void *,f32,u16,s32);
+void func_800D4AD0(void *);
+void beginEntityActionA8D8C(void *);
+void func_800C472C(void *,void *,s32);
+#else
 void selectTurnAnimationCDC04(void *,void *); void func_800D427C(void *,s16,s32); s16 func_800D5438(void *,s32); s32 func_800D35B0(s32,s32); void translateEntityXZ(void *,void *); s32 func_800D2BEC(void *,void *,void *,f32,u16,s32); void func_800D4AD0(void *); void beginEntityActionA8D8C(void *); void func_800C472C(void *,void *,s32);
+#endif
 static inline s16 step(Wrestler *self,Wrestler *other) {
     s8 slot;
     self->stateTimer++; slot=self->id;

@@ -9,7 +9,9 @@ s32 beginEntityActionA8D8C(void *);
 s32 func_800C472C(void *, void *, s32);
 s32 func_800D427C(void *, s16, s32);
 s32 func_800D4AD0(void *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D5438 */
 s16 func_800D5438(void *, s32);
+#endif
 s32 func_800D7E80(void *, void *);
 s32 func_800D8D74(void *, s32);
 

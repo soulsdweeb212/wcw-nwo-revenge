@@ -15,7 +15,9 @@ extern s16 D_800EB440[];
 extern s16 D_800EB450[];
 
 void func_800D427C(void *, s16, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D5438 */
 s16 func_800D5438(void *, s32);
+#endif
 void func_800D43B4(void *, s16, s32);
 void tryApplyHitReaction(void *, void *, u16, u16);
 void func_800AD574(void *, void *, u16);

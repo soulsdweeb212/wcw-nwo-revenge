@@ -15,7 +15,9 @@ extern u16 D_800FAF8A;
 extern s32 D_800F9B14;
 
 void func_800D25D0(Wrestler *, f32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(Wrestler *, s32, u16, s32);
+#endif
 void func_800D427C(Wrestler *, s16, s32);
 void func_800D4AD0(Wrestler *);
 s8 func_800D8DF0(Wrestler *);
@@ -28,7 +30,14 @@ void func_800A7240(Wrestler *, s32, s32, u64);
 
 void func_800E0D60(void) {
     func_800D25D0(D_800FAF5C, 4.0f);
+#ifdef TARGET_PC
+    /* PC: func_800D2B64 takes a float as its second parameter (port_decls.h). The N64 code passes 0x40000000, the
+     * bits of 2.0f, in a1, an integer register, where the N64 callee reads them as a float. On the PC the integer
+     * would be converted to 1073741824.0f, so the PC passes 2.0f itself. */
+    func_800D2B64(D_800FAF5C, 2.0f, 0, 0xFFFFE);
+#else
     func_800D2B64(D_800FAF5C, 0x40000000, 0, 0xFFFFE);
+#endif
 
     switch (D_800FAF5C->step) {
     case 0:

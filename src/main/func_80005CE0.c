@@ -5,6 +5,32 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* On PC a command is port.h's 16-byte Gfx, and obj is the display record in the PC layout of Nw2TextureDisplayObj
+ * (common.h): palette is a pointer there, which a u32 would cut in half, and with 8-byte pointers maybe, dl, next, tex
+ * and palette sit at that struct's colorPtr, dl, next, tex and palette, as the assert checks. */
+typedef Gfx GfxPair;
+typedef struct {u32 f0;u8 clampS,clampT,maskS,maskT;} TexInfo;
+typedef struct {
+    u8 pad0[2];
+    s8 count;
+    s8 first;
+    u8 pad4[4];
+    u16 w;
+    u16 h;
+    void *maybe;
+    GfxPair *dl;
+    void *next;
+    TexInfo *tex;
+    void *palette;
+} TexRect;
+_Static_assert(offsetof(TexRect, maybe) == offsetof(Nw2TextureDisplayObj, colorPtr) &&
+                   offsetof(TexRect, dl) == offsetof(Nw2TextureDisplayObj, dl) &&
+                   offsetof(TexRect, next) == offsetof(Nw2TextureDisplayObj, next) &&
+                   offsetof(TexRect, tex) == offsetof(Nw2TextureDisplayObj, tex) &&
+                   offsetof(TexRect, palette) == offsetof(Nw2TextureDisplayObj, palette),
+               "TexRect must follow the display record's PC layout");
+#else
 typedef struct {u32 w0,w1;} GfxPair;
 typedef struct {u32 f0;u8 clampS,clampT,maskS,maskT;} TexInfo;
 typedef struct {
@@ -20,7 +46,13 @@ typedef struct {
     TexInfo *tex;
     u32 palette;
 } TexRect;
+#endif
 #define EMIT(a,b) {GfxPair *g=dl++;g->w0=(u32)(a);g->w1=(u32)(b);}
+#ifdef TARGET_PC
+/* On PC an address goes into its command as the whole pointer (port.h's DL_ADDR), through EMIT_ADDR: EMIT would cut
+ * it to 32 bits. */
+#define EMIT_ADDR(a,p) {GfxPair *g=dl++;g->w0=(u32)(a);g->w1=DL_ADDR(p);}
+#endif
 
 /* Emits the RDP display list for one textured rectangle.  It first takes the
  * tile clamp masks from obj->tex and records the tile size (1<<maskS / 1<<maskT)
@@ -44,13 +76,23 @@ void func_80005CE0(TexRect *obj) {
     EMIT(0xE200001C,0x504240);
     EMIT(0xFA000000,0xD0);
     EMIT(0xFCFFB3FF,0xFF64FE7F);
+#ifdef TARGET_PC
+    /* The palette's address, whole, through EMIT_ADDR (above). */
+    EMIT_ADDR(0xFD100000,obj->palette);
+#else
     EMIT(0xFD100000,obj->palette-0x80000000);
+#endif
     EMIT(0xE8000000,0);
     EMIT(0xF5000100,0x07000000);
     EMIT(0xE6000000,0);
     EMIT(0xF0000000,0x0703C000);
     EMIT(0xE7000000,0);
+#ifdef TARGET_PC
+    /* The texels start 8 bytes into the texture, after its header (TexInfo). */
+    EMIT_ADDR(0xFD500000,(u8 *)obj->tex+8);
+#else
     EMIT(0xFD500000,(u32)obj->tex+0x80000008);
+#endif
     EMIT(0xF5500000,(((u32)clampT&3)<<18)|0x07000000|(((u32)maskT&15)<<14)|(((u32)clampS&3)<<8)|(((u32)maskS&15)<<4));
     EMIT(0xE6000000,0);
     {GfxPair *g=dl++;s32 numerator;s32 count;
@@ -63,6 +105,11 @@ void func_80005CE0(TexRect *obj) {
     EMIT(0xE7000000,0);
     EMIT(0xF5400000|((((((s16)obj->w>>1)+7)>>3)&0x1FF)<<9),(((u32)clampT&3)<<18)|(((u32)maskT&15)<<14)|(((u32)clampS&3)<<8)|(((u32)maskS&15)<<4));
     EMIT(0xF2000000,((((((s16)obj->w-1)*4)&0xFFF)<<12)|((((s16)obj->h-1)*4)&0xFFF)));
+#ifdef TARGET_PC
+    /* The address of the next display list, whole, through EMIT_ADDR (above). */
+    if(obj->next!=0) {EMIT_ADDR(0xDE010000,obj->next);}
+#else
     if(obj->next!=0) {EMIT(0xDE010000,(u32)obj->next-0x80000000);}
+#endif
     else {EMIT(0xDF000000,0);}
 }

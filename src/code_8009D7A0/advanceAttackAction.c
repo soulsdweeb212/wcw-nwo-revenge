@@ -8,10 +8,14 @@
 void func_800A7C40(void *, s8, s16);
 void func_800A7F6C(void *, s32);
 void func_800A837C(void *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(void *, f32, u16, s32);
+#endif
 void func_800D427C(void *, s16, s32);
 void func_800D4AD0(void *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D5438 */
 s16 func_800D5438(void *, s32);
+#endif
 extern s8 D_800FADB8;
 
 /* Attack action on D_800EB408: step 0 plays animation 0xAE, sets the action

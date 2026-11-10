@@ -12,6 +12,17 @@ typedef struct {
     s16 width;     /* @0xC: grid width in pixels */
     s16 height;    /* @0xE: grid height in pixels */
 } Nw2Grid2A1C4;
+#ifdef TARGET_PC
+/* PC: o is an entry of the resource-name cache (func_8002A2FC passes it), whose PC layout is Nw2ResourceEntryHashed in
+ * common.h. On PC the view's pointer field (pixels) is 8 bytes and starts at a multiple of 8, so it lies at +8, the
+ * entry's allocation, and width and height fall at reserved's +4 and +6 (+0x14 and +0x16), not at the N64 offsets the
+ * comments above give; there func_80028F3C writes the row width and the row count. The view needs no PC version of
+ * its own; the assert checks that it still agrees with the entry. */
+_Static_assert(offsetof(Nw2Grid2A1C4, pixels) == offsetof(Nw2ResourceEntryHashed, allocation) &&
+                   offsetof(Nw2Grid2A1C4, width) == offsetof(Nw2ResourceEntryHashed, reserved) + 4 &&
+                   offsetof(Nw2Grid2A1C4, height) == offsetof(Nw2ResourceEntryHashed, reserved) + 6,
+               "Nw2Grid2A1C4 must follow the PC layout of Nw2ResourceEntryHashed");
+#endif
 
 s32 countNibblePixelNeighbors(void *, s32, s32, s32, s32);
 

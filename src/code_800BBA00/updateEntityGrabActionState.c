@@ -15,11 +15,15 @@ extern s8 D_800FADB8;
 void func_800D427C(void*,s32,s32);
 void func_800A7C40(void*,s8,s16);
 void func_800A7F6C(void*,s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D5438 */
 s16 func_800D5438(void*,s32);
+#endif
 s8 func_800C2CDC(void*,s32);
 void func_800A837C(void*);
 void func_800A7188(void*);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(void*,f32,u16,s32);
+#endif
 void func_800A7D1C(void*,s32);
 void func_800C5FBC(void*);
 s8 func_800D26A0(void*,void*,s32);

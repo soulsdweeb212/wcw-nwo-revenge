@@ -10,7 +10,9 @@ extern s32 *D_800F99D4;
 extern s32 D_800F99C0;
 
 extern void buildColorOverlayDisplayList(void *, s32, s32, s32, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 extern void func_800D2B64(void *, s32, s32, s32);
+#endif
 extern void func_800D427C(void *, s32, s32);
 extern void func_800D2BEC(void *, s32, s32, s32, s32, s32);
 extern void func_800D4AD0(void *);

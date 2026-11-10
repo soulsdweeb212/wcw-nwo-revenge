@@ -8,7 +8,9 @@
 typedef struct {u32 w[4];} Nw2Vec4U;
 extern f32 D_800FADE0[][23],D_800FADE4[][23],D_800FADF4[][23];
 extern u32 D_800EB4D8[][4],D_800EB4DC[][4],D_800EB4E0[][4],D_800EB4E4[][4];
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D3B24 */
 s8 func_800D3B24(void*,void*,f32,s32);
+#endif
 void func_800C357C(void*,s16,s8*);
 void func_800E2230(void*,void*);
 #define OK ((arg0->flags&0x40 && T->flags&0xC0)||(arg0->flags&0x80 && T->flags&0x1C0)||(arg0->flags&0x100 && T->flags&0x100))

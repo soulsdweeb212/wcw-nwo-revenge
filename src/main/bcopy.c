@@ -24,6 +24,26 @@
  * Checked in an emulator against the ROM bytes: src/dst offsets 0..11 (plus 40/80) with overlap in
  * both directions, len 0..100, plus negative-len overflow cases (e.g. src 0x80000010, dst
  * 0x80000020, len -0x20). Same buffer contents, same $v0, and the same add-overflow trap. */
+#ifdef TARGET_PC
+/* PC: the C version below cannot run on a PC. Its addTrap is a MIPS instruction, which an x86-64 assembler accepts as
+ * an Intel APX three-operand add that most CPUs lack (the program stops with an illegal-instruction signal), and it
+ * compares and adds addresses as 32-bit integers, which cuts a 64-bit pointer in half. For len > 0 the N64 routine
+ * leaves the same bytes as memmove: it copies backwards exactly when dst lies inside (src, src + len), where a forward
+ * copy would overwrite bytes it has not read yet. A negative len makes the N64 copy until memory runs out or trap, so
+ * the PC stops with a message. port.h renames bcopy to port_bcopy. __builtin_memmove is the compiler's memmove; it
+ * needs no system header, which would have to come before common.h (port.h). */
+#include "common.h"
+void *bcopy(const void *src, void *dst, s32 len)
+{
+    if (len < 0) {
+        port_fatal("bcopy: negative length %d", (int)len);
+    }
+    if (len != 0 && src != dst) {
+        __builtin_memmove(dst, src, (size_t)len);
+    }
+    return dst;
+}
+#else
 #ifdef NON_MATCHING
 #include "common.h"
 /* The asm's three "handwritten instruction" adds are the TRAPPING `add` (not addu): if the signed
@@ -423,3 +443,4 @@ asm(
     ".set reorder\n"
     );
 #endif
+#endif /* TARGET_PC */

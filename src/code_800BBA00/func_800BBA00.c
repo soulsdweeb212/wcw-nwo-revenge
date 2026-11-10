@@ -16,6 +16,12 @@ void updateFieldRecordMotion(void);
 void updatePlayerEntryStates(void);
 void func_800A712C(void *, void *, s32 *, f32 *);
 void func_800A7240(void *, s32, s32, u64);
+#ifdef TARGET_PC
+/* func_800D49A0 is the old name of copyPartCoordinateFields. The N64 link gets that name's address from build.json's
+ * symbol list, and the N64 compiler accepts a call without a declaration; the PC link finds a function only under the
+ * name it is defined with, and C99 needs a declaration. */
+void copyPartCoordinateFields(void);
+#endif
 void func_800BBA00(void)
 {
     s16 i;
@@ -44,7 +50,12 @@ void func_800BBA00(void)
         }
     }
 
+#ifdef TARGET_PC
+    /* PC: func_800D49A0 by the name it is defined with, as the note above the function says. */
+    copyPartCoordinateFields();
+#else
     func_800D49A0();
+#endif
     seq = (s8) D_800EB466;
     D_800F9D10[0].flags &= ~WR_FLAG_UPDATED;
     D_800F9D10[1].flags &= ~WR_FLAG_UPDATED;

@@ -11,7 +11,24 @@
  * 2) run func_800DB348 until the timer expires, then finish (combo) or clear. */
 extern s32 D_800E3F20[],D_800FABD8;
 extern s8 D_800FADB8;
+#ifdef TARGET_PC
+/* PC: port_decls.h declares func_800D5438, so the PC copy of this line leaves it out. */
+void func_800A7C40(void *,s8,s16);
+void func_800A7D1C(void *,s32);
+void func_800A7F6C(void *,s32);
+void beginEntityActionA8D8C(void *);
+void func_800B68A0(void *,void *,void *);
+void addEntityHealthDelta(void *,s32);
+void func_800D427C(void *,s16,s32);
+void func_800D4AD0(void *);
+s8 func_800D4CC4(void *);
+s32 func_800DACE4(void *,void *);
+void func_800DB348(void *,void *);
+s8 func_800DB4FC(void *,void *);
+s8 func_800B60C8(void *,void *);
+#else
 void func_800A7C40(void *,s8,s16); void func_800A7D1C(void *,s32); void func_800A7F6C(void *,s32); void beginEntityActionA8D8C(void *); void func_800B68A0(void *,void *,void *); void addEntityHealthDelta(void *,s32); void func_800D427C(void *,s16,s32); void func_800D4AD0(void *); s8 func_800D4CC4(void *); s16 func_800D5438(void *,s32); s32 func_800DACE4(void *,void *); void func_800DB348(void *,void *); s8 func_800DB4FC(void *,void *); s8 func_800B60C8(void *,void *);
+#endif
 void func_800DD188(void) {
     Wrestler *actor;
     switch(D_800FAF5C->step) {

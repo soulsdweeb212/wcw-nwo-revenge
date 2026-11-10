@@ -17,7 +17,9 @@
  * fails it clears attached[0] and flag 0x40000000 and queues action 0x2B. */
 extern u8 D_800FABE4;
 s32 func_800D2BEC(void *, void *, void *, f32, u16, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D5438 */
 s16 func_800D5438(void *, s32);
+#endif
 void func_800D427C(void *, s16, s32);
 void func_800B68A0(void *, void *, void *);
 void func_800A837C(void *);

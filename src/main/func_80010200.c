@@ -22,7 +22,16 @@ typedef struct {
 extern u8 D_80036D28[];
 extern Pose D_8005A1A0[][3];
 
+#ifdef TARGET_PC
+/* PC: the callers pass the angle as an f32 (func_8000AD00 and initSideSlotTransforms declare it so;
+ * stepRecordedFramePlayback passes the literal 0, which on PC becomes 0.0f, whose bits are 0 as well). On the N64 it
+ * travels in a2, an integer register, where the N64 definition takes it as the s32 bits and turns them back into the
+ * float below; on PC a float travels in a float register, so the PC definition takes the f32 (port_decls.h declares
+ * it so). */
+void func_80010200(s16 id, s16 side, f32 angleArg)
+#else
 void func_80010200(s16 id, s16 side, s32 bits)
+#endif
 {
     union { s32 i; f32 f; } cv;
     f32 angle;
@@ -30,7 +39,12 @@ void func_80010200(s16 id, s16 side, s32 bits)
     u32 i;
 
     t = D_80036D28[side];
+#ifdef TARGET_PC
+    /* PC: the f32 the caller passed; the N64 gets the same float as its bits in cv.i. */
+    cv.f = angleArg;
+#else
     cv.i = bits;
+#endif
     angle = cv.f;
     if (t < 2) {
         angle = -angle;

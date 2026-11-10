@@ -5,7 +5,9 @@
  */
 #include "common.h"
 
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D3B24 */
 s8 func_800D3B24(void *, void *, f32, void *);
+#endif
 s8 func_800CEAE0(void *, void *, u8);
 s32 func_800C357C(void *, s32, void *);
 s32 func_800D3684(s32, s32);

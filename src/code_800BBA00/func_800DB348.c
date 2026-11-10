@@ -16,7 +16,9 @@ extern s16 D_800F9888[];
 void func_800D3890(void *, void *, void *);
 void func_800D37C0(s32, f32, void *);
 void translateEntityXZ(void *, void *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(void *, f32, u16, s32);
+#endif
 
 /* Per-frame movement of self's dive / jump toward the point func_800DACE4 stored (D_800F9890[id]). Sets flag
  * 0x80000000000. While animFrame is inside anim.activeStart..activeEnd: takes the XZ direction from

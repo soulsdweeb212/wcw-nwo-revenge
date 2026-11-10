@@ -10,7 +10,9 @@ M2C_UNK osRecvMesg(M2C_UNK *, M2C_UNK, M2C_UNK);
 M2C_UNK osSendMesg(M2C_UNK *, M2C_UNK, M2C_UNK);
 extern M2C_UNK D_800467C0;
 extern M2C_UNK D_800467E0;
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800467FC */
 extern s32 D_800467FC;
+#endif
 extern s32 D_80046800;
 
 /* Resets the two event counters and clears both message queues. */

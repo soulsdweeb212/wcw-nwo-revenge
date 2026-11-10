@@ -19,7 +19,9 @@ extern f64 D_800E7760, D_800E7768;
 extern u8 D_800F98E0[][48], D_800F98E1[][48], D_800F98E2[][48], D_800F98E3[][48];
 extern f32 D_800F98E4[][12], D_800F98E8[][12], D_800F98EC[][12], D_800F9900[][12], D_800F9904[][12], D_800F9908[][12], D_800F990C[][12];
 extern s32 D_800F98FC[][12];
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D37C0 */
 void func_800D37C0(s32, f32, f32 *);
+#endif
 
 void updateFieldRecordMotion(void) {
     f32 move[3];

@@ -12,10 +12,18 @@
  *    still match, have the opponent react;
  * 2) run the alternate 4-frame hold and finish. */
 void beginEntityActionA8D8C(void *); void func_800C472C(void *,void *,s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(void *,f32,u16,s32);
+#endif
 s32 func_800D2BEC(void *,void *,void *,f32,u16,s32);
 void func_800D427C(void *,s16,s32); void func_800D4AD0(void *);
+#ifdef TARGET_PC
+/* PC: port_decls.h declares func_800D5438, so the PC copy of this line leaves it out. */
+void func_800D7E80(void *,void *);
+void func_800D8D74(void *,s32);
+#else
 s16 func_800D5438(void *,s32); void func_800D7E80(void *,void *); void func_800D8D74(void *,s32);
+#endif
 void func_800A4274(void) {
     switch(D_800EB408->step) {
     case 0:

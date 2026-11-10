@@ -12,11 +12,21 @@
  * (func_800D8D74), step 2 finishes the raise (scale via func_800C278C) and
  * picks the carry animation, step 3 gently scales the attachment while held. */
 extern u16 D_800FABE6;
+#ifdef TARGET_PC
+/* PC: D_800F9B0C is a float (the distance to the opponent), and func_800D4D44's third parameter is a float (its
+ * definition: s32 func_800D4D44(Wrestler *, s16, f32)). The N64 code reads the float's bits as an s32 and passes them
+ * in an integer register, where the N64 callee reads them as a float. On the PC an s32 argument would be converted to
+ * a float of another value (100.0f's bits would arrive as 1120403456.0f), so the PC declares it f32. */
+extern f32 D_800F9B0C;
+#else
 extern s32 D_800F9B0C;
+#endif
 s8 isEntityActionAllowedC2870(void *);
 s16 func_800BF2FC(void *);
 void func_800E212C(void *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D4D44 */
 s32 func_800D4D44(void *, s32, s32);
+#endif
 void func_800D427C(void *, s16, s32);
 void func_800D7E80(void *, s32);
 s8 func_800D8D74(void *, s32);

@@ -7,7 +7,9 @@
 
 extern f64 D_800E6A10, D_800E6A18, D_800E6A20;
 extern f32 D_800FADE4[][23], D_800FADEC[][23];
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D3B24 */
 s8 func_800D3B24(void *, void *, f32, s32);
+#endif
 /* Proximity test between a source (src) and a target wrestler (tgt): interpolate
  * the source's XZ between jointA[9] and jointA[17] by D_800E6A10, then test that
  * point against the target's jointA[3] circle (radius D_800FADEC[tgt->id][0] +

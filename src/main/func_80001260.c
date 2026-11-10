@@ -38,10 +38,20 @@ void func_80001260(void) {
     s32 t; u8 *v; u32 *p; u32 i; s16 two; s32 *width; u8 *q;
     if(D_8002EEC4) {
         D_8002EEC4=0;
-        D_8007E228=(s32)(((u32)&D_8007FC4F>>4)<<4);
 #ifdef TARGET_PC
-        /* PC: the ROM symbols D_3C6D0/D_3C770 are not linked; the same block is read by its ROM address. */
-        readRomSynchronousChunks(ROM_SEG1_INIT,(void *)D_8007E228,ROM_SEG1_INIT_END-ROM_SEG1_INIT);
+        /* PC: D_8007E228 is the first word of a block that 42 of the developer program's files (74 across src/) name,
+         * and most of them read its other fields at their N64 offsets (some through labels of their own, such as
+         * D_8007E280 for +0x58). So it keeps its 4 bytes, and holds the segment-1 buffer as a 32-bit handle (port.h's
+         * PTR_TO_SLOT) instead of the buffer's address, which 32 bits would cut in half. The buffer starts at
+         * D_8007FC4F's address rounded down to a multiple of 16 (0x8007FC40 on the N64). */
+        D_8007E228=PTR_TO_SLOT(((uptr)&D_8007FC4F>>4)<<4);
+#else
+        D_8007E228=(s32)(((u32)&D_8007FC4F>>4)<<4);
+#endif
+#ifdef TARGET_PC
+        /* PC: the ROM symbols D_3C6D0/D_3C770 are not linked; the same block is read by its ROM address, into the
+         * buffer that D_8007E228's handle stands for. */
+        readRomSynchronousChunks(ROM_SEG1_INIT,SLOT_TO_PTR(D_8007E228),ROM_SEG1_INIT_END-ROM_SEG1_INIT);
 #else
         readRomSynchronousChunks(D_3C6D0,(void *)D_8007E228,D_3C770-D_3C6D0);
 #endif

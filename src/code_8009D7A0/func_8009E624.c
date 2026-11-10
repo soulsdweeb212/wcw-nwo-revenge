@@ -15,13 +15,17 @@ extern s32 D_800EB3E0[];
 void func_800E212C(void *);
 void translateEntityXZ(void *, void *);
 void func_800D427C(void *, s16, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D4D44 */
 s32 func_800D4D44(void *, s32, s32);
+#endif
 s32 func_800D3684(s32, s32);
 s32 func_800D35B0(s32, s32);
 f32 func_800D63F0(void *, void *, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64, func_800D37C0 and func_800D6610 */
 void func_800D37C0(s32, f32, f32 *);
 s32 func_800D6610(void *, s16);
 s32 func_800D2B64(void *, f32, u16, s32);
+#endif
 void func_800D25D0(void *, f32);
 void func_800D4AD0(void *);
 void func_800A7188(void *);

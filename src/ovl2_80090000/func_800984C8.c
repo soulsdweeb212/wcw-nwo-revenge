@@ -9,7 +9,9 @@ void releaseHeapBlock(void *);
 void func_8002A5F4(void *);
 void releaseResourcePool(void);
 
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800EB0C0 */
 extern s32 D_800EB0C0;
+#endif
 extern void *D_800EB18C[3];
 extern void *D_800EB1A4;
 extern void *D_800EB1B4;

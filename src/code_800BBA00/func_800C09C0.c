@@ -15,7 +15,9 @@ s8 func_800A9348(void *);
 void func_800B68A0(void *, void *, void *);
 s16 func_800B6DEC(void *, s32, s32);
 s16 func_800BF2FC(void *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(void *, f32, u16, s32);
+#endif
 s8 func_800D4198(s16);
 void func_800D427C(void *, s32, s32);
 void func_800D4AD0(void *);

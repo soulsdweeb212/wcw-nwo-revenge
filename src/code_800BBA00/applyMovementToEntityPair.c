@@ -27,7 +27,9 @@ extern f64 D_800E6D78;
 f32 func_800D63F0(void *, void *, s16);
 s32 func_800D7A68(s32);
 void func_800D2600(void *, s32, f32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(void *, f32, u16, s32);
+#endif
 s32 func_800D35B0(s32, s32);
 
 void applyMovementToEntityPair(Wrestler *source, Wrestler *target, u16 flags) {

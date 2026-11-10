@@ -12,7 +12,13 @@ typedef union { Gwords words; long long force_structure_alignment; } Gfx;
 #endif
 
 #define _SHIFTL(v, s, w) ((u32)(((u32)(v) & ((0x01 << (w)) - 1)) << (s)))
+#ifdef TARGET_PC
+/* On PC the texture's address goes into its command as the whole pointer (port.h's DL_ADDR), so timg must be the
+ * texture's own address there. The N64 version subtracts 0x80000000 in 32 bits, which would cut a pointer in half. */
+#define OS_K0_TO_PHYSICAL(x) DL_ADDR(x)
+#else
 #define OS_K0_TO_PHYSICAL(x) (u32)(((char *)(x)-0x80000000))
+#endif
 
 #define G_SETTIMG 0xfd
 #define G_SETTILE 0xf5
@@ -37,6 +43,18 @@ typedef union { Gwords words; long long force_structure_alignment; } Gfx;
 #define G_TX_NOMASK 0
 #define G_TX_NOLOD 0
 
+#ifdef TARGET_PC
+/* On PC a command is port.h's Gfx, whose two words are fields of their own, w0 and w1, each as wide as a pointer;
+ * gbi.h's Gfx above (N64 only) holds them in words. So each macro that writes a command's words has a PC version that
+ * writes w0 and w1, and gSetImage keeps the whole address it gets from OS_K0_TO_PHYSICAL. */
+#define gSetImage(pkt, cmd, fmt, siz, width, i)                             \
+{                                                                           \
+    Gfx *_g = (Gfx *)(pkt);                                                 \
+    _g->w0 = _SHIFTL(cmd, 24, 8) | _SHIFTL(fmt, 21, 3) |                    \
+             _SHIFTL(siz, 19, 2) | _SHIFTL((width)-1, 0, 12);               \
+    _g->w1 = (uintptr_t)(i);                                                \
+}
+#else
 #define gSetImage(pkt, cmd, fmt, siz, width, i)                             \
 {                                                                           \
     Gfx *_g = (Gfx *)(pkt);                                                 \
@@ -44,7 +62,23 @@ typedef union { Gwords words; long long force_structure_alignment; } Gfx;
                    _SHIFTL(siz, 19, 2) | _SHIFTL((width)-1, 0, 12);         \
     _g->words.w1 = (unsigned int)(i);                                       \
 }
+#endif
 #define gDPSetTextureImage(pkt, f, s, w, i) gSetImage(pkt, G_SETTIMG, f, s, w, i)
+#ifdef TARGET_PC
+/* PC: the words of port.h's Gfx, as in gSetImage. */
+#define gDPSetTile(pkt, fmt, siz, line, tmem, tile, palette, cmt,           \
+                   maskt, shiftt, cms, masks, shifts)                       \
+{                                                                           \
+    Gfx *_g = (Gfx *)(pkt);                                                 \
+    _g->w0 = _SHIFTL(G_SETTILE, 24, 8) | _SHIFTL(fmt, 21, 3) |              \
+             _SHIFTL(siz, 19, 2) | _SHIFTL(line, 9, 9) |                    \
+             _SHIFTL(tmem, 0, 9);                                           \
+    _g->w1 = _SHIFTL(tile, 24, 3) | _SHIFTL(palette, 20, 4) |               \
+             _SHIFTL(cmt, 18, 2) | _SHIFTL(maskt, 14, 4) |                  \
+             _SHIFTL(shiftt, 10, 4) | _SHIFTL(cms, 8, 2) |                  \
+             _SHIFTL(masks, 4, 4) | _SHIFTL(shifts, 0, 4);                  \
+}
+#else
 #define gDPSetTile(pkt, fmt, siz, line, tmem, tile, palette, cmt,           \
                    maskt, shiftt, cms, masks, shifts)                       \
 {                                                                           \
@@ -57,14 +91,36 @@ typedef union { Gwords words; long long force_structure_alignment; } Gfx;
                    _SHIFTL(shiftt, 10, 4) | _SHIFTL(cms, 8, 2) |            \
                    _SHIFTL(masks, 4, 4) | _SHIFTL(shifts, 0, 4);            \
 }
+#endif
+#ifdef TARGET_PC
+/* PC: the words of port.h's Gfx, as in gSetImage. */
+#define gDPNoParam(pkt, cmd)                                                \
+{                                                                           \
+    Gfx *_g = (Gfx *)(pkt);                                                 \
+    _g->w0 = _SHIFTL(cmd, 24, 8);                                           \
+    _g->w1 = 0;                                                             \
+}
+#else
 #define gDPNoParam(pkt, cmd)                                                \
 {                                                                           \
     Gfx *_g = (Gfx *)(pkt);                                                 \
     _g->words.w0 = _SHIFTL(cmd, 24, 8);                                     \
     _g->words.w1 = 0;                                                       \
 }
+#endif
 #define gDPLoadSync(pkt) gDPNoParam(pkt, G_LOADSYNC)
 #define gDPPipeSync(pkt) gDPNoParam(pkt, G_RDPPIPESYNC)
+#ifdef TARGET_PC
+/* PC: the words of port.h's Gfx, as in gSetImage. */
+#define gDPLoadTileGeneric(pkt, c, tile, uls, ult, lrs, lrt)                \
+{                                                                           \
+    Gfx *_g = (Gfx *)(pkt);                                                 \
+    _g->w0 = _SHIFTL(c, 24, 8) | _SHIFTL(uls, 12, 12) |                     \
+             _SHIFTL(ult, 0, 12);                                           \
+    _g->w1 = _SHIFTL(tile, 24, 3) | _SHIFTL(lrs, 12, 12) |                  \
+             _SHIFTL(lrt, 0, 12);                                           \
+}
+#else
 #define gDPLoadTileGeneric(pkt, c, tile, uls, ult, lrs, lrt)                \
 {                                                                           \
     Gfx *_g = (Gfx *)(pkt);                                                 \
@@ -73,6 +129,7 @@ typedef union { Gwords words; long long force_structure_alignment; } Gfx;
     _g->words.w1 = _SHIFTL(tile, 24, 3) | _SHIFTL(lrs, 12, 12) |            \
                    _SHIFTL(lrt, 0, 12);                                     \
 }
+#endif
 #define gDPSetTileSize(pkt, t, uls, ult, lrs, lrt)                          \
     gDPLoadTileGeneric(pkt, G_SETTILESIZE, t, uls, ult, lrs, lrt)
 #define gDPLoadTile(pkt, t, uls, ult, lrs, lrt)                             \
@@ -120,12 +177,22 @@ typedef union { Gwords words; long long force_structure_alignment; } Gfx;
                    (lrs)<<G_TEXTURE_IMAGE_FRAC, (lrt)<<G_TEXTURE_IMAGE_FRAC)\
 }
 
+#ifdef TARGET_PC
+/* PC: the words of port.h's Gfx, as in gSetImage. */
+#define gImmp1(pkt, c, p0)                                                  \
+{                                                                           \
+    Gfx *_g = (Gfx *)(pkt);                                                 \
+    _g->w0 = _SHIFTL(c, 24, 8);                                             \
+    _g->w1 = (unsigned int)(p0);                                            \
+}
+#else
 #define gImmp1(pkt, c, p0)                                                  \
 {                                                                           \
     Gfx *_g = (Gfx *)(pkt);                                                 \
     _g->words.w0 = _SHIFTL(c, 24, 8);                                       \
     _g->words.w1 = (unsigned int)(p0);                                      \
 }
+#endif
 
 /* Draws a large texture as a grid of stepX x stepY tiles: for each tile it
  * loads the texels (one texel of border on each side, clamped to the image)
@@ -202,10 +269,18 @@ void func_80006178(Gfx **glistp, void *timg, s32 fmt, u32 siz, u32 width, u32 he
                 Gfx *_g = gfx++;
                 s32 xl, yl;
 
+#ifdef TARGET_PC
+                /* PC: the words of port.h's Gfx, as in gSetImage. */
+                _g->w0 = _SHIFTL(G_TEXRECT, 24, 8) | _SHIFTL(rx, 12, 12) | _SHIFTL(ry, 0, 12);
+                xl = sx << 2;
+                yl = sy << 2;
+                _g->w1 = _SHIFTL(G_TX_RENDERTILE, 24, 3) | _SHIFTL(xl, 12, 12) | _SHIFTL(yl, 0, 12);
+#else
                 _g->words.w0 = _SHIFTL(G_TEXRECT, 24, 8) | _SHIFTL(rx, 12, 12) | _SHIFTL(ry, 0, 12);
                 xl = sx << 2;
                 yl = sy << 2;
                 _g->words.w1 = _SHIFTL(G_TX_RENDERTILE, 24, 3) | _SHIFTL(xl, 12, 12) | _SHIFTL(yl, 0, 12);
+#endif
                 gImmp1(gfx++, G_RDPHALF_1, _SHIFTL((s32)(s * 32.0f), 16, 16) | _SHIFTL((s32)(t * 32.0f), 0, 16));
                 gImmp1(gfx++, G_RDPHALF_2, _SHIFTL(1 << 10, 16, 16) | _SHIFTL(1 << 10, 0, 16));
             }

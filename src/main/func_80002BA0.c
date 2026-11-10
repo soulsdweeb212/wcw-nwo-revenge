@@ -5,7 +5,9 @@
  */
 #include "common.h"
 
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800467FC */
 extern s32 D_800467FC;
+#endif
 extern s32 D_80046800;
 
 /* Resets the two event counters and puts both objects into state 1. */

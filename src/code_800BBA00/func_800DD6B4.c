@@ -6,7 +6,23 @@
 #include "common.h"
 
 extern s8 D_800FADB8,D_800FAF78;extern s32 D_800E3F20[],D_800FABD8;
+#ifdef TARGET_PC
+/* PC: port_decls.h declares func_800D2B64 and func_800D5438, so the PC copy of this line leaves them out. */
+void func_800A7C40(void*,s8,s16);
+void func_800D427C(void*,s16,s32);
+void func_800A7F6C(void*,s32);
+s8 func_800DB4FC(void*,void*);
+void func_800C38FC(void*,u64,s32);
+void func_800D4AD0(void*);
+void func_800A7D1C(void*,s32);
+void func_800B68A0(void*,void*,void*);
+s8 func_800D4CC4(void*);
+void addEntityHealthDelta(void*,s32);
+void beginEntityActionA8D8C(void*);
+void func_800A837C(void*);
+#else
 void func_800A7C40(void*,s8,s16);s16 func_800D5438(void*,s32);void func_800D427C(void*,s16,s32);void func_800A7F6C(void*,s32);s8 func_800DB4FC(void*,void*);void func_800C38FC(void*,u64,s32);s32 func_800D2B64(void*,f32,u16,s32);void func_800D4AD0(void*);void func_800A7D1C(void*,s32);void func_800B68A0(void*,void*,void*);s8 func_800D4CC4(void*);void addEntityHealthDelta(void*,s32);void beginEntityActionA8D8C(void*);void func_800A837C(void*);
+#endif
 void func_800DD6B4(void) {
     s16 anim; Wrestler *e;
     switch(D_800FAF5C->step) {

@@ -10,10 +10,14 @@ extern u16 D_800E3F84[], D_800E3F8C[];
 extern f64 D_800E6D60, D_800E6D68, D_800E6D70;
 typedef struct { f32 x, y, z; s32 angle; } Nw2DirRes;
 s8 func_800D25D0(Wrestler *, f32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 void func_800D2B64(void *, f32, s32, s32);
+#endif
 void func_800D3890(void *, void *, void *);
 void func_800D427C(Wrestler *, s32, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D4D44 */
 s16 func_800D4D44(Wrestler *, s32, f32);
+#endif
 f32 func_800D63F0(Wrestler *, void *, s32);
 s16 func_800D7A68(u16);
 
@@ -53,7 +57,14 @@ static inline s16 chooseDirection(s16 q, u16 mask) {
  * - No direction pressed: clear bit 0x800000000, func_800DECAC(w, 0, 0, 0) (only zeroes D_800F98D0[id]), push
  *   apart, and in mode 0 start 0x1081 (apron) or func_800D4D44(w, 1, timer).
  * Finally func_800D2B64(w, 1.0f, 0, 2). Declared void, but some callers use the value func_800D2B64 leaves in v0. */
+#ifdef TARGET_PC
+/* PC: the callers use a result (func_800C16BC, func_800C17D8, func_800C18D4 and func_8009DD60 declare it to return
+ * s32 or u32): the value of the func_800D2B64 call at the end, which the N64 leaves in v0, where this function,
+ * declared void, does not touch v0 before it returns. On PC the function returns it (port_decls.h declares it so). */
+s32 func_800D6658(Wrestler *w, Wrestler *other, u16 arg2, s32 arg3, f32 arg4) {
+#else
 void func_800D6658(Wrestler *w, Wrestler *other, u16 arg2, s32 arg3, f32 arg4) {
+#endif
     f32 off[3];
     f32 res[3];
     Nw2DirRes dir;
@@ -145,5 +156,10 @@ void func_800D6658(Wrestler *w, Wrestler *other, u16 arg2, s32 arg3, f32 arg4) {
             else func_800D427C(w, func_800D4D44(w, 1, arg4), 3);
         }
     }
+#ifdef TARGET_PC
+    /* PC: the result the callers read. */
+    return func_800D2B64(w, 1.0f, 0, 2);
+#else
     func_800D2B64(w, 1.0f, 0, 2);
+#endif
 }

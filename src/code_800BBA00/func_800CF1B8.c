@@ -19,7 +19,9 @@ void func_800A7C40(Wrestler *,s8,s16);
 void func_800A7F6C(void *,s32);
 s8 checkFacingProximity(Wrestler *,Wrestler *,s32);
 void func_800D427C(void *,s16,s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D5438 */
 s16 func_800D5438(void *,s32);
+#endif
 void func_800CF1B8(Wrestler *self,Wrestler *opponent,s32 arg2,s32 arg3) {
     s32 animId;
     s16 reactionId;

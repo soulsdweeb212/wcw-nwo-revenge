@@ -19,7 +19,9 @@ s8 func_800B71F8(void *, s32, s32);
 s8 func_800E1920(void *, s32);
 f32 func_800D63F0(void *, void *, s16);
 void func_800D37C0(s32, f32, void *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D4D44 */
 s16 func_800D4D44(void *, s32, s32);
+#endif
 
 void func_800A67E8(void) {
     D_800EB408->flags |= 0x1000000000ULL;

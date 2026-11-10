@@ -13,9 +13,11 @@
  * and both records are translated by it. */
 void translateEntityXZ(void *, void *);
 f32 func_800D63F0(void *, void *, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800E3C90, func_800D37C0 and func_800D6610 */
 void *func_800D6610(void *, s16);
 void func_800D37C0(void *, f32, void *);
 extern void *D_800E3C90[];
+#endif
 void func_800D1EA8(Wrestler *w, Wrestler *opponent)
 {
     f32 xform[4];

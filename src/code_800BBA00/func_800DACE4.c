@@ -28,7 +28,9 @@ s32 func_800D3684(s32, s32);
 s32 func_800D3550(s32);
 f32 func_800D3564(f32);
 s32 func_800D35B0(s32, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D37C0 */
 void func_800D37C0(void *, f32, void *);
+#endif
 
 /* Aims a dive / jump of self at other. Sets D_800F9888[id] to the length of the anim's active window
  * (anim.activeEnd - anim.activeStart + 1, at least 1) and clears unk034. By state it sets the zone bits and a
@@ -201,7 +203,13 @@ s32 func_800DACE4(Wrestler *self, Wrestler *other) {
         dir.y = floor;
     }
 
+#ifdef TARGET_PC
+    /* PC: port_decls.h declares func_800D37C0 as its definition does, with the angle as an s32; the cast to void *
+     * only matched this file's own declaration of it, which the PC build does not read. */
+    func_800D37C0(dir.angle, dir.y, &dir);
+#else
     func_800D37C0((void *)dir.angle, dir.y, &dir);
+#endif
     *(f32 *)(D_800F9890 + sid * 16) = self->jointA[1].x + dir.x;
     *(f32 *)(D_800F9898 + sid * 16) = self->jointA[1].z + dir.z;
     return dir.angle;

@@ -5,8 +5,30 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: D_800F9B0C is a float (the distance to the opponent), and func_800D4D44's third parameter is a float (its
+ * definition: s32 func_800D4D44(Wrestler *, s16, f32)). The N64 code reads the float's bits as an s32 and passes them
+ * in an integer register, where the N64 callee reads them as a float. On the PC an s32 argument would be converted to
+ * a float of another value (100.0f's bits would arrive as 1120403456.0f), so the PC copy of the N64 line below
+ * declares it f32. */
+extern f32 D_800E3248[];
+extern f32 D_800E324C[];
+extern s32 D_800E3238[];
+extern f32 D_800F9B0C;
+extern s32 D_800F9B24[];
+extern s8 D_800FADB8;
+#else
 extern f32 D_800E3248[]; extern f32 D_800E324C[]; extern s32 D_800E3238[]; extern s32 D_800F9B0C; extern s32 D_800F9B24[]; extern s8 D_800FADB8;
+#endif
+#ifdef TARGET_PC
+/* PC: port_decls.h declares func_800D2B64 and func_800D4D44, so the PC copy of this line leaves them out. */
+void func_800D427C(void*,s32,s32);
+void func_800A7240(void*,s32,s32,u64);
+void func_800A6BE0(void*,s32);
+void translateEntityXZ(void*,void*);
+#else
 s32 func_800D4D44(void*,s32,s32); void func_800D427C(void*,s32,s32); void func_800A7240(void*,s32,s32,u64); void func_800A6BE0(void*,s32); void translateEntityXZ(void*,void*); s32 func_800D2B64(void*,f32,u16,s32);
+#endif
 void func_800A4FB8(void){
     D_800EB408->flags|=0x1000000000ULL;
     switch(D_800EB408->step){

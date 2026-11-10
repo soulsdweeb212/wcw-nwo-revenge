@@ -11,7 +11,12 @@
  * the two entities' status words and action ids either starts a mutual grapple
  * (both action 5, slot indices swapped) or a one-sided lockup, or runs the
  * grapple check func_800B678C. Returns 1 if a grapple/lockup started. */
+#ifdef TARGET_PC
+/* PC: port_decls.h declares getEntityPairFacingFlags, so the PC copy of this line leaves it out. */
+s32 func_800D26A0(void*,s32,s32);
+#else
 s32 func_800D26A0(void*,s32,s32);s32 getEntityPairFacingFlags(void*,void*);
+#endif
 void func_800A6BE0(void*,s32); void func_800A6CDC(void*,s32);void func_800E212C(void*);s16 func_800B678C(void*,void*,u16);
 s32 startEntityGrapple(Wrestler *self,s16 arg1,u16 arg2) {
     s32 id; Wrestler *other; u32 facing; s16 result;

@@ -15,7 +15,9 @@ extern s16 D_8002EECA;
 extern s32 D_8002EEC0;
 extern s32 D_80046800;
 extern u8 D_80046768[], D_800467C0[], D_800467E0[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800467FC */
 extern Task2CC4 *D_800467FC;
+#endif
 extern s16 D_80047066;
 extern Obj2CC4 *D_80047070[][512];
 s32 osRecvMesg(void *, void *, s32);

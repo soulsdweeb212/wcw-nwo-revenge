@@ -24,7 +24,9 @@
  * 0x46. Returns 1 when an action was started. */
 
 void beginPairedEntityActions(void *, s32, void *, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares getEntityPairFacingFlags */
 s32 getEntityPairFacingFlags(void *, void *);
+#endif
 void addEntityHealthDelta(void *, s32);
 void func_800E212C(void *);
 s32 func_800D7B54(void *, s32, s32, s32);

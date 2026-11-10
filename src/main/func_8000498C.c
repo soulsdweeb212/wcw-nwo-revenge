@@ -19,8 +19,15 @@ void func_80003684(void *, u16, void *);
 #endif
 void *allocateHeap(u32);
 void releaseHeapBlock(void *);
+#ifdef TARGET_PC
+/* PC: the types of func_80007B50's and func_80007B84's definitions. They take the arena's address, which the N64
+ * declarations pass as an s32. */
+void *func_80007B50(void *, s32);
+void *func_80007B84(void *, s32);
+#else
 void *func_80007B50(s32, u8);
 void *func_80007B84(s32, u16);
+#endif
 void func_8000486C(void *, void *);
 void buildVertexDisplayList(void *, void *);
 void buildObjectDisplayListTail(void *);
@@ -39,11 +46,32 @@ void func_8000498C(Nw2Descr4BA8 *p, u16 id) {
     ((u8 *)p)[4] = raw[3] >> 4;
     ((u8 *)p)[5] = raw[3] & 15;
     if (p->f2 > 0) {
+#ifdef TARGET_PC
+        /* PC: p is the display record in its PC layout (Nw2Descr4BA8, common.h), whose fC, f10, f14 and f28 are
+         * pointers, which an s32 would cut in half. A vertex is 16 bytes on both. */
+        if (p->f28) p->fC = func_80007B50(p->f28, raw[1]);
+        else p->fC = allocateHeap(raw[1] * 16);
+        func_8000486C(p->fC, raw);
+#else
         if (p->f28) p->fC = (s32)func_80007B50(p->f28, raw[1]);
         else p->fC = (s32)allocateHeap(raw[1] * 16);
         func_8000486C((void *)p->fC, raw);
+#endif
     }
     if (((s8 *)p)[1] > 0) {
+#ifdef TARGET_PC
+        /* PC: as above, and f14 and f10 hold display lists, whose commands are 16 bytes on PC (port.h's Gfx), not 8:
+         * the heap blocks hold the same number of commands as on the N64, (count / 2 + 5) and 32 (256 bytes there).
+         * The arena hands out 8-byte records for them (func_80007B84); its PC layout, with 16-byte records for these
+         * lists, is not decided yet. */
+        if (p->f28) {
+            p->f14 = func_80007B84(p->f28, ((s8 *)p)[1] / 2 + 5);
+            p->f10 = func_80007B84(p->f28, 24);
+        } else {
+            p->f14 = allocateHeap((((s8 *)p)[1] / 2 + 5) * sizeof(Gfx));
+            p->f10 = allocateHeap(256 / 8 * sizeof(Gfx));
+        }
+#else
         if (p->f28) {
             p->f14 = (s32)func_80007B84(p->f28, ((s8 *)p)[1] / 2 + 5);
             p->f10 = (s32)func_80007B84(p->f28, 24);
@@ -51,6 +79,7 @@ void func_8000498C(Nw2Descr4BA8 *p, u16 id) {
             p->f14 = (s32)allocateHeap((((s8 *)p)[1] / 2 + 5) * 8);
             p->f10 = (s32)allocateHeap(256);
         }
+#endif
         buildVertexDisplayList(p, raw);
         buildObjectDisplayListTail(p);
     }

@@ -24,6 +24,41 @@ static __inline__ void release72(void *data) {
         releaseHeapBlock(node->data);releaseHeapBlock(node);
     }
 }
+#ifdef TARGET_PC
+/* PC: base is an array of display records in their PC layout (Nw2Descr4BA8, common.h), where the fields that hold
+ * addresses are 8-byte pointers at other offsets than on the N64. So F72 reads each field at its offsetof (the loaded
+ * flag at +0 stays where it is), the shared flag at +0x28 is the arena pointer f28, and the walk steps by
+ * sizeof(Nw2Descr4BA8) instead of 0x2C and compares whole addresses (uptr). */
+#define DESC(field) offsetof(Nw2Descr4BA8, field)
+void freeResourceDescriptorArray(void *base, void *allocation, s16 count) {
+    void *desc,*entry,*res;
+    if(count) {
+        s32 countCopy=count;
+        desc=base;
+loop:
+        if(F72(desc,void*,DESC(f18))) {
+            release72(F72(desc,void*,DESC(f18)));
+            F72(desc,void*,DESC(f18))=0;
+        }
+        entry=desc;
+        if(F72(entry,u8,0)) {
+            res=F72(entry,void*,DESC(fC)); F72(entry,u8,0)=0;
+            if(res) {if(!F72(entry,void*,DESC(f28))) releaseHeapBlock(res); F72(entry,void*,DESC(fC))=0;}
+            res=F72(entry,void*,DESC(f10));
+            if(res) {if(!F72(entry,void*,DESC(f28))) releaseHeapBlock(res); F72(entry,void*,DESC(f10))=0;}
+            res=F72(entry,void*,DESC(f14));
+            if(res) {if(!F72(entry,void*,DESC(f28))) releaseHeapBlock(res); F72(entry,void*,DESC(f14))=0;}
+            res=F72(entry,void*,DESC(f18));
+            if(res) {releaseHeapBlock(res); F72(entry,void*,DESC(f18))=0;}
+            res=F72(entry,void*,DESC(f1C));
+            if(res) {releaseHeapBlock(res); F72(entry,void*,DESC(f1C))=0;}
+        }
+        desc=(u8*)desc+sizeof(Nw2Descr4BA8);
+        if((uptr)desc<(uptr)(countCopy*sizeof(Nw2Descr4BA8)+(uptr)base)) goto loop;
+    }
+    releaseHeapBlock(allocation);
+}
+#else
 void freeResourceDescriptorArray(void *base, void *allocation, s16 count) {
     void *desc,*entry,*res;
     if(count) {
@@ -52,3 +87,4 @@ loop:
     }
     releaseHeapBlock(allocation);
 }
+#endif

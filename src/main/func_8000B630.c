@@ -20,7 +20,14 @@ void func_8000B630(u8 *out, u32 id, s16 variant) {
 
     id &= 31;
     id--;
+#ifdef TARGET_PC
+    /* PC: D_80036710 holds pointers to tables of pointers, 8 bytes each. The N64 code steps through both with byte
+     * offsets of 4 per entry (group is the table's index times 4, id << 2 the entry's) and keeps the sub-table's
+     * address in a u32, which would cut it in half. (s32)id keeps the N64's entry -1 when the id's low 5 bits are 0. */
+    entry = D_80036710[group >> 2][(s32)id];
+#else
     entry = *(u16 **)((id << 2) + *(u32 *)((u8 *)D_80036710 + group));
+#endif
     if (variant >= 4) variant = 0;
     entry += variant * 2;
     out[0] = entry[0];

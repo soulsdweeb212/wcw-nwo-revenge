@@ -21,7 +21,9 @@ void func_800D25D0(Wrestler *, f32);
 s32 func_800D2B64(Wrestler *, f32, u16, s32);
 void func_800D427C(Wrestler *, s16, s32);
 void func_800D4AD0(Wrestler *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D6658 */
 void func_800D6658(Wrestler *, Wrestler *, u16, s32, f32);
+#endif
 void func_800A7240(Wrestler *, s32, s32, u64);
 void func_800A7364(Wrestler *);
 void func_800A7D1C(Wrestler *, s32);

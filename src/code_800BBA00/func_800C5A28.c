@@ -6,7 +6,19 @@
 #include "common.h"
 
 extern s32 D_800E3F20[],D_800FABD8;extern s8 D_800FADB8;extern u16 D_800FAF8E[];
+#ifdef TARGET_PC
+/* PC: port_decls.h declares func_800D2B64 and func_800D5438, so the PC copy of this line leaves them out. */
+void func_800D427C(void*,s32,s32);
+void func_800A7C40(void*,s8,s16);
+void func_800A7F6C(void*,s32);
+s8 func_800C2CDC(void*,s32);
+void func_800C3A78(void*,void*,s32);
+void func_800C5FBC(void*);
+void func_800D25D0(void*,f32);
+void func_800A7188(void*);
+#else
 void func_800D427C(void*,s32,s32);void func_800A7C40(void*,s8,s16);void func_800A7F6C(void*,s32);s16 func_800D5438(void*,s32);s8 func_800C2CDC(void*,s32);void func_800C3A78(void*,void*,s32);void func_800C5FBC(void*);void func_800D25D0(void*,f32);void func_800A7188(void*);s32 func_800D2B64(void*,f32,u16,s32);
+#endif
 
 /* Step machine on D_800FAF5C->step.  State 0 picks the attack animation
  * (5/6 by the 0xF00 bits of D_800FAF8E when flag 0x100000000000000 is set, else

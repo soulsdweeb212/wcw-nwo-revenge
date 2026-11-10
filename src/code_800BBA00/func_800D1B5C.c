@@ -10,7 +10,9 @@ extern s32 D_800E3CB0[];
 s32 func_800D3550(s32);
 s32 func_800D35B0(s32, s32);
 s32 func_800D3684(s32, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D6610 */
 void *func_800D6610(void *, s16);
+#endif
 s16 getRingBoundaryPointAlongHeading(void *, s32, void *);
 
 s32 func_800D1B5C(Wrestler *self, Wrestler *other) {

@@ -460,6 +460,7 @@ extern f64 D_800E76B8;
  * s32 +0x30/+0x34. Typed access was required: with raw u8* casts the entry-block
  * schedule differed (stack params s2-s4 loaded before the saves; the src->f28
  * store sank into the first jal delay slot). With the structs the prologue matches. */
+#ifndef TARGET_PC /* on PC, defined at the end of this file: its pointers are 8 bytes there */
 typedef struct {
     u8 pad0[2];
     s8 f2;
@@ -476,6 +477,7 @@ typedef struct {
     s32 f24;
     s32 f28;
 } Nw2Descr4BA8;
+#endif
 typedef struct {
     s32 f0;
     u8 pad0[0x28];
@@ -903,6 +905,7 @@ typedef struct {
  * and clears a referenced keyed-buffer slot's +0/+0x40/+0x44 if in pool.
  * Return -1 for invalidated existing entry, zero for empty/no entry.
  */
+#ifndef TARGET_PC /* on PC, defined at the end of this file: its key is as wide as a pointer there */
 typedef struct {
     u32 key;
     void *allocation;
@@ -910,6 +913,7 @@ typedef struct {
     u16 variant;
     union { struct { u16 length, sum; } h; u32 word; } hash;
 } Nw2ResourceEntryHashed;
+#endif
 
 /* Memory-region init descriptors passed BY VALUE to func_80000700 (and, by the
  * caller's declaration, func_8000082C) -- see matched func_80013108.
@@ -1875,9 +1879,9 @@ typedef struct {
 #ifdef TARGET_PC
     /* On PC a pointer: the palette resource's address, which a u32 would cut in half. With 8-byte pointers, each at a
      * multiple of 8, the fields from colorPtr on sit at +0x10, +0x18, +0x20, +0x28 and +0x30 (N64: +0xC to +0x1C),
-     * and the object is 0x38 bytes. The object is the game's 0x2C-byte display record of a mesh or a picture
-     * (func_8000498C fills one per mesh). buildVertexDisplayList, buildObjectDisplayListTail and func_80004E08 read
-     * the same record through structs of their own, which follow this layout on PC. */
+     * and the object is 0x38 bytes. The object is the first 0x20 bytes of the game's 0x2C-byte display record of a
+     * mesh or a picture (func_8000498C fills one per mesh), whose whole PC layout is Nw2Descr4BA8 at the end of this
+     * file. Other files read the same record through structs of their own, which follow this layout on PC. */
     void *palette;
 #else
     u32 palette;
@@ -1901,4 +1905,56 @@ typedef struct {
  * lookupResourceDescriptor, func_80003684): port.h has their PC declarations, and game files keep their own behind
  * #ifndef TARGET_PC. */
 #include "port.h"
+#ifdef TARGET_PC
+
+/* ---- PC layouts of shared records that hold addresses ----
+ * Their N64 definitions above are N64 only. They come here, after port.h, whose types and offsetof they use. */
+
+/* Nw2Descr4BA8: the game's 0x2C-byte display record of a mesh or a picture (func_8000498C fills one per mesh), in its
+ * PC layout. Its first 0x20 bytes follow the PC layout of Nw2TextureDisplayObj, as the assert below checks: fC to f1C
+ * are that struct's colorPtr (the vertices), dl (the material's display list, which ends with a branch to next), next
+ * (the display list of the vertices and triangles), tex and palette, all addresses. f28 is the arena that
+ * func_8000498C takes the vertex and display-list buffers from (func_80007B50, func_80007B84), or NULL when they come
+ * from the heap. f20 and f24 are not known to hold addresses and stay s32. The record is 0x48 bytes on PC, so an array
+ * of records steps by sizeof(Nw2Descr4BA8), not by 0x2C. */
+typedef struct {
+    u8 pad0[2];
+    s8 f2;
+    s8 f3;
+    u8 pad4[2];
+    u8 f6;
+    u8 pad7[5];
+    void *fC;
+    void *f10;
+    void *f14;
+    void *f18;
+    void *f1C;
+    s32 f20;
+    s32 f24;
+    void *f28;
+} Nw2Descr4BA8;
+_Static_assert(offsetof(Nw2Descr4BA8, f2) == offsetof(Nw2TextureDisplayObj, count) &&
+                   offsetof(Nw2Descr4BA8, f3) == offsetof(Nw2TextureDisplayObj, first) &&
+                   offsetof(Nw2Descr4BA8, fC) == offsetof(Nw2TextureDisplayObj, colorPtr) &&
+                   offsetof(Nw2Descr4BA8, f10) == offsetof(Nw2TextureDisplayObj, dl) &&
+                   offsetof(Nw2Descr4BA8, f14) == offsetof(Nw2TextureDisplayObj, next) &&
+                   offsetof(Nw2Descr4BA8, f18) == offsetof(Nw2TextureDisplayObj, tex) &&
+                   offsetof(Nw2Descr4BA8, f1C) == offsetof(Nw2TextureDisplayObj, palette),
+               "Nw2Descr4BA8 must follow the PC layout of Nw2TextureDisplayObj");
+
+/* Nw2ResourceEntryHashed: an entry of the resource-name cache (128 entries in a heap block whose address D_8007FC34
+ * holds), in its PC layout. Its key is port.h's ResKey, as wide as a pointer, so the allocation follows at +8,
+ * reserved at +0x10, and the entry is 0x20 bytes (N64: 0x18). reserved holds the allocation's size (u32) at its +0 and
+ * three 16-bit sizes at +4, +6 and +8, which the N64 code reads at the entry's +8, +0xC, +0xE and +0x10. On PC, code
+ * that steps through the entries or reads one by offset goes by this struct. */
+typedef struct {
+    ResKey key;
+    void *allocation;
+    u8 reserved[10];
+    u16 variant;
+    union { struct { u16 length, sum; } h; u32 word; } hash;
+} Nw2ResourceEntryHashed;
+_Static_assert(sizeof(Nw2ResourceEntryHashed) == 0x20 && offsetof(Nw2ResourceEntryHashed, reserved) == 0x10,
+               "an entry of the resource-name cache is 0x20 bytes on a 64-bit PC");
+#endif
 

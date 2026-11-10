@@ -10,7 +10,9 @@ extern f64 D_8003B2A0;
 extern u8 D_80059D90[];
 extern s16 D_8005A380[][3][2];
 extern s16 D_8005A382[][3][2];
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_80010200 */
 s32 func_80010200(s32, s16, f32);
+#endif
 s32 initializeTransformNode(void *, s32, f32, f32, f32);
 s32 func_80007E14(void *, f32);
 s32 guMtxCatF(void *, void *, void *);

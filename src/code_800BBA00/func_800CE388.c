@@ -5,7 +5,18 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: port_decls.h declares func_800D5438, so the PC copy of this line leaves it out. */
+void func_800A72FC(void *,void *,s32);
+void func_800A7328(void *);
+void func_800A7C40(void *,s8,s16);
+s32 func_800D35B0(s32,s32);
+void func_800D3E40(void *,void *,s32,void *);
+void func_800D427C(void *,s32,s32);
+extern s32 D_800E3CA0[];
+#else
 void func_800A72FC(void *,void *,s32); void func_800A7328(void *); void func_800A7C40(void *,s8,s16);s32 func_800D35B0(s32,s32);void func_800D3E40(void *,void *,s32,void *);void func_800D427C(void *,s32,s32);s32 func_800D5438(void *,s32);extern s32 D_800E3CA0[];
+#endif
 
 /* Sets up a grapple/clinch positioning move between self and opp: a target
  * position posVec, the facing *headingOut (from D_800E3CA0, indexed by a ringSide:

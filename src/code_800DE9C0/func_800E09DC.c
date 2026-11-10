@@ -6,7 +6,20 @@
 #include "common.h"
 
 extern f32 D_800F9B0C;extern void *D_800F9B14;extern u16 D_800FABE6;extern s8 D_800FAF78;extern f64 D_800E76F8;
+#ifdef TARGET_PC
+/* PC: port_decls.h declares func_800D2B64, so the PC copy of this line leaves it out. */
+void func_800D25D0(void *,f32);
+s32 func_800D35B0(s32,s32);
+f32 func_800D3EEC(void *,void *,s32);
+void func_800D427C(void *,s32,s32);
+void func_800D4AD0(void *);
+s32 updateEntityHealthLevel(void *);
+void func_800E1560(void *,void *);
+s8 func_800A93C0(void);
+void beginPairedEntityActions(void *,s32,void *,s32);
+#else
 void func_800D25D0(void *,f32);s32 func_800D2B64(void *,f32,u16,s32);s32 func_800D35B0(s32,s32);f32 func_800D3EEC(void *,void *,s32);void func_800D427C(void *,s32,s32);void func_800D4AD0(void *);s32 updateEntityHealthLevel(void *);void func_800E1560(void *,void *);s8 func_800A93C0(void);void beginPairedEntityActions(void *,s32,void *,s32);
+#endif
 
 /* Try to start a paired grapple between self and opponent when the opponent's
  * flags allow it (0x400000 set, 0x1000000000 clear), the gap is within

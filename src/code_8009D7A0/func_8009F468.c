@@ -7,7 +7,9 @@
 
 extern s32 D_800E3CA0[];
 void func_800D25D0(void *,f32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(void *,f32,u16,s32);
+#endif
 s8 func_800D4198(s16);
 s16 func_800C778C(void *);
 void func_800D427C(void *,s16,s32);

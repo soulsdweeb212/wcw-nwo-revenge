@@ -12,7 +12,14 @@
 #define PORT_H
 
 #ifdef TARGET_PC
-/* System headers go before the renames at the end of this file, which would otherwise rename their declarations too
+/* Besides the PC forms of the macros and their helpers, these exist only under TARGET_PC: port_fatal below,
+ * WRITE_BE16/32 (PC code that writes into data that stays big-endian), the check that the CPU is little-endian, Gfx
+ * (the display-list command), and the PC-only part at the end of this file: the ROM loader's PC interface (RomAddr,
+ * ResDesc, the ROM_ addresses and the loader's declarations), ResKey (the key of the resource-name cache), the renames
+ * of the SDK functions that the port replaces, and port_decls.h (the PC declarations of game functions and variables
+ * that game files declare with other types).
+ *
+ * System headers go before the renames at the end of this file, which would otherwise rename their declarations too
  * (bzero in <strings.h>, for example). A game file that needs a system header includes it before common.h.
  * <stddef.h> gives game files offsetof, which their PC layout checks use. It comes after common.h's NULL and replaces
  * it with its own, which is the same. */
@@ -50,6 +57,26 @@ static inline u64 port_be64(const void *p) {
 #define READ_BE16(p) port_be16((const void *)(p))
 #define READ_BE32(p) port_be32((const void *)(p))
 #define READ_BE64(p) port_be64((const void *)(p))
+/* WRITE_BE16, WRITE_BE32 (PC only): store a value in the N64's byte order, into data that stays big-endian on PC:
+ * textures and palettes, which Fast3D reads big-endian (DecodePaletteEntry in LUS's src/fast/interpreter.cpp). The
+ * N64 code stores such a value with a plain assignment, so these are used only inside TARGET_PC blocks, and the N64
+ * build has no form of them. */
+static inline void port_write_be16(void *p, u16 v) {
+    u8 *b = (u8 *)p;
+    b[0] = (u8)(v >> 8);
+    b[1] = (u8)v;
+}
+static inline void port_write_be32(void *p, u32 v) {
+    port_write_be16(p, (u16)(v >> 16));
+    port_write_be16((u8 *)p + 2, (u16)v);
+}
+#define WRITE_BE16(p, v) port_write_be16((void *)(p), (u16)(v))
+#define WRITE_BE32(p, v) port_write_be32((void *)(p), (u32)(v))
+/* The PC code assumes a little-endian CPU, as the PCs the port runs on are (x86-64, and ARM64 under Windows, macOS and
+ * Linux). Where the N64 code reads a value through a view of another width, such as a u64 as two u32 or a u16 and the
+ * u16 after it as one u32, its PC version is written for that byte order (func_800B955C, func_8009EDBC). GCC and
+ * Clang, the compilers that build the game's C, define __BYTE_ORDER__. */
+_Static_assert(__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__, "the PC code assumes a little-endian CPU");
 #else
 #define READ_BE16(p) (*(u16 *)(p))
 #define READ_BE32(p) (*(u32 *)(p))
@@ -154,6 +181,33 @@ void *func_80003684(void *out, s32 id, void *buf);
 void port_rom_read(void *dst, RomAddr src, u32 size);
 void port_res_loaded(u32 id, void *buf, s32 size);
 
+/* ---- PC only: the key of the resource-name cache ----
+ * The resource-name cache is a heap block of 128 entries (Nw2ResourceEntryHashed in common.h), whose address
+ * D_8007FC34 holds. Each entry has a key:
+ * - 0 for a free entry, -1 for an entry waiting to be freed;
+ * - the address of the resource's name, a string (often one of the 40 name buffers whose address D_8007FC3C holds);
+ * - or a resource id, tagged so that it cannot be taken for an address.
+ * On N64 the key is a u32 and the tag is bit 0x40000000, which no N64 address has (RAM starts at 0x80000000). On a PC
+ * an address is 64 bits and its low 32 bits can have any value, so the N64 test would take some addresses for ids. On
+ * PC the key is a ResKey, as wide as a pointer, and the tag is RES_KEY_ID_TAG, bit 62, the same place from the top as
+ * the N64's bit 30. A program's addresses lie far below it on the 64-bit PCs the port runs on: below 2^57 on x86-64,
+ * below 2^52 on ARM64, unless a system keeps a tag in an address's top byte. So RES_KEY_NAME checks every address it
+ * turns into a key, and stops the program if one has the tag. An id sits in the key's low 30 bits on both.
+ * - RES_KEY_IS_ID(k): whether key k is an id (N64: k & 0x40000000).
+ * - RES_KEY_ID(id): the key of resource id (N64: id | 0x40000000).
+ * - RES_KEY_NAME(p): the key of the name at p (N64: (u32)p). */
+typedef uintptr_t ResKey;
+#define RES_KEY_ID_TAG ((ResKey)1 << 62)
+#define RES_KEY_IS_ID(k) (((ResKey)(k) & RES_KEY_ID_TAG) != 0)
+#define RES_KEY_ID(id) (RES_KEY_ID_TAG | ((u32)(id) & 0x3FFFFFFFu))
+static inline ResKey port_res_key_name(const void *name) {
+    if ((ResKey)name & RES_KEY_ID_TAG) {
+        port_fatal("RES_KEY_NAME: the name at %p has the id tag", name);
+    }
+    return (ResKey)name;
+}
+#define RES_KEY_NAME(p) port_res_key_name((const void *)(p))
+
 /* ---- PC only: SDK functions the port replaces ----
  * Each name is renamed in every game file: calls, declarations and the game's own definitions alike (src/main/sinf.c
  * then defines n64_sinf). That keeps them from clashing with, or standing in for, a library's function of the same
@@ -164,13 +218,12 @@ void port_res_loaded(u32 id, void *buf, s32 size);
  *   turn memset(p, 0, n) into a call to bzero, so a PC bzero written with memset could otherwise call itself.
  * - __floatdisf, __udivdi3: routines of the N64 compiler's runtime (s64 to float, unsigned 64-bit divide) that game
  *   code calls by name. PC runtimes do not provide them (64-bit hosts) or have their own (32-bit hosts).
- * - Controller, rumble and PI DMA functions: LUS defines most of them, but with its own record layouts, which are larger
- *   than the N64's (its OSContPad adds gyro and right-stick fields, 20 bytes per pad on any PC, so its
+ * - Controller, rumble and PI DMA functions: LUS defines most of them, but with its own record layouts, which are
+ *   larger than the N64's (its OSContPad adds gyro and right-stick fields, 20 bytes per pad on any PC, so its
  *   osContGetReadData clears 80 bytes where the game's pad buffer is 24; its OSPfs keeps channel at +0x10 on a 64-bit
  *   PC), or as stubs (its osEPiStartDma copies nothing). Defining a second function of the same name would clash with
- *   LUS at link time. osContStartQuery,
- *   osContGetQuery and osContSetCh are not in LUS; they are renamed with the rest so all controller access goes
- *   through the port.
+ *   LUS at link time. osContStartQuery, osContGetQuery and osContSetCh are not in LUS; they are renamed with the rest
+ *   so all controller access goes through the port.
  * - Message queues: LUS's OSMesgQueue is 40 bytes on a 64-bit PC, but the game gives each queue 0x18 bytes of storage
  *   (s32 queue[6] in func_80003D20, for example). The port's versions keep the N64 size. */
 #define sinf n64_sinf
@@ -192,6 +245,12 @@ void port_res_loaded(u32 id, void *buf, s32 size);
 #define osSendMesg port_osSendMesg
 #define osRecvMesg port_osRecvMesg
 #define osSetEventMesg port_osSetEventMesg
+
+/* ---- PC only: the PC declarations of game functions and variables ----
+ * port_decls.h declares, once, game functions and variables that game files declare with other types than the
+ * function's definition (or than what the variable holds); where a file's own declaration differs, it is N64 only.
+ * It comes after the renames above, as the game files' own declarations do. */
+#include "port_decls.h"
 #endif /* TARGET_PC */
 
 #endif /* PORT_H */

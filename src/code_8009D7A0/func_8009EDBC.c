@@ -17,11 +17,15 @@ void translateEntityByActionQuadrant(void *);
 void translateEntityXZ(void *, void *);
 void func_800C38FC(void *, u64, s32);
 void func_800D427C(void *, s16, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(void *, s32, u16, s32);
+#endif
 s32 func_800D35B0(s32, s32);
 s32 func_800D3684(s32, s32);
 f32 func_800D63F0(void *, void *, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D37C0 */
 void func_800D37C0(s32, f32, f32 *);
+#endif
 void func_800A7D1C(void *, s32);
 void func_800A7F6C(void *, s32);
 void func_800A837C(void *);
@@ -85,7 +89,13 @@ void func_8009EDBC(void) {
             func_800D37C0(D_800EB408->heading, d, D_800EB408->moveDelta);
             v = D_800EB408->moveMode;
             D_800EB408->moveMode = v & 0xFF7F;
+#ifdef TARGET_PC
+            /* PC: the N64 code reads moveMode and the u16 after it as one big-endian u32, so bits 0x04200000 are
+             * moveMode's bits 0x0420. A little-endian PC would test the other u16. */
+            if ((D_800EB408->moveMode & 0x0420) == 0x0020) {
+#else
             if ((*(u32 *)&D_800EB408->moveMode & 0x04200000) == 0x00200000) {
+#endif
                 if ((s16)D_800FADC6[D_800FADB8] >= 2) {
                     func_800A6C48(D_800EB408, 1);
                     break;
@@ -132,7 +142,14 @@ void func_8009EDBC(void) {
             D_800EB408->heading = func_800D35B0(D_800EB408->heading, D_800EB408->turnPerTick);
         }
         translateEntityXZ(D_800EB408, D_800EB408->moveDelta);
+#ifdef TARGET_PC
+        /* PC: the float itself. func_800D2B64's second parameter is a float, and the N64 declaration above passes its
+         * bits as an s32 (0x3F800000 is 1.0f) in a1, an integer register, where the N64 callee reads them as a float.
+         * On PC the caller sees port_decls.h's f32, which would turn 0x3F800000 into 1065353216.0f. */
+        mask = func_800D2B64(D_800EB408, 1.0f, 0, 2);
+#else
         mask = func_800D2B64(D_800EB408, 0x3F800000, 0, 2);
+#endif
         if (mask & 0xFFFF) {
             if (D_800E3CD0[D_800EB408->dirIndex] & mask) {
                 func_800D427C(D_800EB408, 0xE74, 3);

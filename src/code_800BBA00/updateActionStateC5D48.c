@@ -22,12 +22,16 @@ void func_800D427C(void *, s32, s32);
 void func_800A7D1C(void *, s32);
 void func_800A7F6C(void *, s32);
 void func_800A7C40(void *, s8, s16);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D5438 */
 s16 func_800D5438(void *, s32);
+#endif
 s8 func_800C2CDC(void *, s32);
 void func_800C3A78(void *, void *, s32);
 void func_800C5FBC(void *);
 void func_800D25D0(void *, f32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 void func_800D2B64(void *, f32, s32, s32);
+#endif
 void func_800A7188(void *);
 
 void updateActionStateC5D48(void)

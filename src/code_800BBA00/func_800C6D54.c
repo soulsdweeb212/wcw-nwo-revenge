@@ -6,7 +6,18 @@
 #include "common.h"
 
 extern s32 D_800E3F20[],D_800FABD8;extern s8 D_800FADB8;
+#ifdef TARGET_PC
+/* PC: port_decls.h declares func_800D2B64 and func_800D5438, so the PC copy of this line leaves them out. */
+void func_800D427C(void*,s32,s32);
+void func_800A7C40(void*,s8,s16);
+void func_800A7F6C(void*,s32);
+s8 func_800C2CDC(void*,s32);
+void func_800A837C(void*);
+void func_800E212C(void*);
+void func_800A7188(void*);
+#else
 void func_800D427C(void*,s32,s32);void func_800A7C40(void*,s8,s16);void func_800A7F6C(void*,s32);s16 func_800D5438(void*,s32);s8 func_800C2CDC(void*,s32);void func_800A837C(void*);void func_800E212C(void*);void func_800A7188(void*);s32 func_800D2B64(void*,f32,u16,s32);
+#endif
 
 /* Three-step machine on D_800FAF5C->step.  Step 0 calls func_800E212C and
  * sends animation 0xB9/0xBA (0xBA when state==0x26) via

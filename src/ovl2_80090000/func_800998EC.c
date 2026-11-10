@@ -6,7 +6,9 @@
 #include "common.h"
 
 void releaseHeapBlock(void *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800EB1D0 */
 extern s32 D_800EB1D0;
+#endif
 extern void *D_800EB29C[3];
 extern void *D_800EB2B8[35];
 

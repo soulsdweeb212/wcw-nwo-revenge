@@ -25,7 +25,9 @@ f32 nw2Sqrtf(f32);
 void guScaleF(void*,f32,f32,f32);
 void func_80007E14(void*,f32);
 void multiplyMatrix4x4(void*,void*,void*);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_80007E04 */
 void func_80007E04(void*,f32,f32,s32);
+#endif
 
 typedef struct {
     u8 pad0[0x18];
@@ -115,7 +117,15 @@ loop:
         guScaleF(m, sx, 1.0f, sz);
         func_80007E14(r, angle);
         multiplyMatrix4x4(m, r, dst->mat);
+#ifdef TARGET_PC
+        /* PC: the table at D_80070C9C holds floats (each part's z), and func_80007E04 takes floats (port_decls.h).
+         * The N64 code reads the bits as s32 and passes them in a3, an integer register, where the N64 callee stores
+         * them unchanged into the matrix. On the PC an s32 argument would be converted to a float of another value,
+         * so the PC reads the same word as f32 (still a volatile read, as on the N64). */
+        func_80007E04(dst->mat, -FLD(D_80070C94,off), height, *(volatile f32*)((u8*)D_80070C9C + off));
+#else
         func_80007E04(dst->mat, -FLD(D_80070C94,off), height, *(volatile s32*)((u8*)D_80070C9C + off));
+#endif
     }
     off += 0x7C;
     src++;

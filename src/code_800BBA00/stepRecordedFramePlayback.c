@@ -21,7 +21,9 @@ extern u8 D_800EB6D0[], D_800EB6D2[], D_800EB6D4[], D_800EB6D6[], D_800EB6D8[], 
 extern u8 D_800F2750[], D_800F2751[], D_800F2752[], D_800F2754[], D_800F2756[];
 extern u8 D_800F2758[], D_800F2759[], D_800F275A[], D_800F275B[];
 
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_80010200 */
 void func_80010200(s16, s16, s32);
+#endif
 void func_8000DB90(s32, s32);
 void func_8000946C(s32, s16, s16);
 void func_80008CE8(s32, s16, s16, f32 *, s32, s8);

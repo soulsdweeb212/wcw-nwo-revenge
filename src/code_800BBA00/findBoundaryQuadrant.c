@@ -12,7 +12,9 @@ typedef struct {
 extern f32 D_800E3C50[][2];
 extern f32 D_800E3C54[][2];
 
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800D3B24 */
 s8 func_800D3B24(void *, void *, f32, s32);
+#endif
 
 /* Finds which of the four diagonal boundary directions (quadrants 0..3) the
  * position `data` (or w->jointA[1], the pelvis, when NULL) lies on, testing each direction with

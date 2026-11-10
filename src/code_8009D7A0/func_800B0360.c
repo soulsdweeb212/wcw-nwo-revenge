@@ -12,7 +12,13 @@
  * joints -> D_800E3CF0 written to +6); it resets on close range (func_800D3B24
  * within 100), or switches to action 0x15 when the AI wrestler is on the floor
  * and +0x1E differs from +0x2C; otherwise it counts down +0xE and resets at zero. */
+#ifdef TARGET_PC
+/* PC: port_decls.h declares func_800D3B24, so the PC copy of this line leaves it out. */
+s32 func_800D3650(void *, void *);
+s32 func_800D4148(void);
+#else
 s32 func_800D3650(void *, void *); s8 func_800D3B24(void *, void *, f32, s32); s32 func_800D4148(void);
+#endif
 extern u16 D_800E3CF0[]; extern void *D_800FABD0; 
 #define F(p, t, o) (*(t *)((u8 *)(p) + (o)))
 #define RESET(id) { void *p = D_800FABD0; Wrestler *g = D_800F9B60; F(p, s16, 2) = id; F(p, s16, 4) = 0; F(p, u16, 0x2E) = (u16)g->state; F(p, u32, 0x5C) &= ~7; }
