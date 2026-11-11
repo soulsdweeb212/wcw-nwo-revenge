@@ -13,29 +13,43 @@ extern s8 D_80036CAC[];
 #ifndef TARGET_PC /* on PC, port_decls.h declares D_80058A0C */
 extern s32 D_80058A0C;
 #endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80058A10 (display records) */
 extern u8 D_80058A10[];
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares D_80058F90 */
 extern s32 D_80058F90;
 #endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80058FA0 (display records) */
 extern u8 D_80058FA0[];
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares D_80059520 */
 extern s32 D_80059520;
 #endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80059528 (display records) */
 extern u8 D_80059528[];
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares D_80059898 */
 extern s32 D_80059898;
 #endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800598A0 (display records) */
 extern u8 D_800598A0[];
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares D_80059C10 */
 extern s32 D_80059C10;
 #endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80059C18 (display records) */
 extern u8 D_80059C18[];
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares D_80059CC8 */
 extern s32 D_80059CC8;
 #endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80059CD0 (display records) */
 extern u8 D_80059CD0[];
+#endif
 extern u8 D_80056950[];
+#ifndef TARGET_PC /* on PC, the label D_80056954 (+0x4 of D_80056950) has no symbol: the PC line writes that field */
 extern u8 *D_80056954;
+#endif
 extern u8 D_80036750[];
 extern u8 D_80036758[];
 extern u8 D_80036760[];
@@ -47,12 +61,10 @@ extern const f64 D_8003B238;
 extern const f64 D_8003B240;
 #ifdef TARGET_PC
 /* PC: func_80007020 returns the display list it built, a pointer (Gfx7020 *, a type of its own file), and takes the
- * record count as an s16; its pointer parameters stay void * here. func_80007818 gets that display list as a pointer:
- * its definition still takes an s32 there, and its PC version stops the program until the 0xDC-byte object record has
- * a PC layout (docs/port.md, "Shared records on PC"). */
+ * record count as an s16; its pointer parameters stay void * here. port_decls.h declares func_80007818, which takes
+ * that display list as a pointer. */
 void *func_80007020(void *, void *, void *, s16);
 void initializeTransformNode(void *, s32, f32, f32, f32);
-void func_80007818(void *, void *, void *, s32);
 #else
 s32 func_80007020(void *, void *, void *, s8);
 void initializeTransformNode(void *, s32, f32, f32, f32);
@@ -104,7 +116,14 @@ void func_8000EF90(void)
     }
     D_80059CC8 = r;
     initializeTransformNode(base, 0, zero, zero, zero);
+#ifdef TARGET_PC
+    /* PC: the objects at base keep their N64 layout (Nw2SceneObj, common.h), so their links are handles (port.h's
+     * PTR_TO_SLOT). D_80056954 is the first object's child field: the PC writes it by name. */
+    node = base + 0xDC;
+    ((Nw2SceneObj *)D_80056950)[0].child = PTR_TO_SLOT(node);
+#else
     node = (D_80056954 = base + 0xDC);
+#endif
 loop1:
     initializeTransformNode(node, 0, zero, zero, zero);
 
@@ -118,10 +137,18 @@ loop1:
         func_80007818(node, D_80059528, D_80059520, 0);
     }
     func_80001544(node);
+#ifdef TARGET_PC
+    /* PC: the work block (Nw2SceneWork) is reached through the object's handle; parent and next are handles. */
+    ((Nw2SceneWork *)SLOT_TO_PTR(((Nw2SceneObj *)node)->work))->bias = 3000.0f;
+    p = node + 0x1C;
+    ((Nw2SceneObj *)node)->parent = PTR_TO_SLOT(base);
+    ((Nw2SceneObj *)node)->next = PTR_TO_SLOT(base + s3);
+#else
     *((f32 *) ((*((u8 **) (node + 0x14))) + 0x24)) = 3000.0f;
     p = node + 0x1C;
     *((u8 **) node) = base;
     *((u8 **) (node + 8)) = base + s3;
+#endif
     q = s1 & 3;
     a = (f64) q;
     if (q < 0)
@@ -149,8 +176,14 @@ loop1:
         func_80007818(node, D_80059C18, D_80059C10, 0);
         func_80001544(node);
         ;
+#ifdef TARGET_PC
+        /* PC: handles, as above. */
+        ((Nw2SceneObj *)node)->parent = PTR_TO_SLOT(base);
+        ((Nw2SceneObj *)node)->next = PTR_TO_SLOT(base + s3);
+#else
         *((u8 **) node) = base;
         *((u8 **) (node + 8)) = base + s3;
+#endif
         q = s1 & 3;
         b = (f64) q;
         new_var3 = 0x1C + node;

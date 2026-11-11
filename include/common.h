@@ -68,8 +68,10 @@ typedef struct {
 
 /* Globals whose type every matched use agrees on. */
 extern s16 D_800EB37A;
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800F99C0 (a Nw2SceneObj); its label D_800F99D4 has no PC symbol */
 extern s32 D_800F99C0;
 extern s32 *D_800F99D4;
+#endif
 
 /* xform/scene record built by guMtxIdentF (12 f32 "matrix") and given 3 coords:
  * guTranslateF(obj, x,y,z) writes 0x30/0x34/0x38, guTranslate builds it on the stack (size 0x40).
@@ -1248,7 +1250,9 @@ typedef struct { s32 reserved0; u32 vertices; u16 count; } Nw2VertexDescriptor92
  * Resets states +C/+E/+360, bytes +362/+363 to signed -1; establishes
  * reciprocal IDs at +353 and target +351. Flag reset uses u64 mask
  * ~0x10810000000ULL then OR 0x1000000000ULL. */
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800DECAC, which returns an s32 */
 void func_800DECAC(Wrestler *, s32, s32, s32);
+#endif
 void func_800A700C(Wrestler *);
 /* void beginPairedEntityActions(void *,s16,void *,s16); local for legacy callers. */
 

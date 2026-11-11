@@ -7,15 +7,18 @@
 
 /* Allocate arg1 8-byte records from the second pool in arg0. */
 #ifdef TARGET_PC
-/* PC: not ported yet. arg0 is an arena (D_8007C3D0[n], 16 bytes), whose second pool's base address is the 4-byte field
- * at +8: func_80007A74 stores it there, and func_8000C91C clears it. That record has no PC layout yet (docs/port.md,
- * "Shared records on PC"), and a 64-bit address cannot be read back from 4 bytes, so the PC stops the program here
- * instead of handing out records at half an address. Its PC layout must also make this pool's records sizeof(Gfx)
- * bytes, since func_8000498C builds 16-byte display-list commands in them on PC. */
+/* PC: arg0 is an arena in its PC layout (Nw2MeshArena, common.h), whose pool-2 base is a pointer, read here by name.
+ * A record here is a display-list command, 16 bytes on PC (port.h's Gfx, 8 bytes on the N64), and func_80007A74
+ * sized the block in sizeof(Gfx) commands, so the step is sizeof(Gfx). As on the N64, the count moves on even when
+ * the pool overflows, and the result is then NULL. The address is worked out in a uptr, as the N64 works it out in an
+ * s32, so that an empty arena (base NULL) does no arithmetic on a null pointer. */
 void *func_80007B84(void *arg0, s32 arg1) {
-    (void)arg0;
-    (void)arg1;
-    port_fatal("func_80007B84: the arena record (D_8007C3D0) has no PC layout yet");
+    Nw2MeshArena *a = arg0;
+    u16 first = a->cmdUsed;
+    u16 used = first + arg1;
+
+    a->cmdUsed = used;
+    return (used <= a->cmdCap) ? (void *)((uptr)a->cmds + (uptr)first * sizeof(Gfx)) : NULL;
 }
 #else
 void *func_80007B84(void *arg0, s32 arg1) {

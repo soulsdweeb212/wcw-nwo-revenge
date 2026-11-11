@@ -29,13 +29,51 @@ typedef struct {
     u16 started;
 } Stream9990;
 
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800706A8 (as Nw2AnimStream) and D_8004859C */
 extern Stream9990 D_800706A8[];
-#ifndef TARGET_PC /* on PC, port_decls.h declares D_8004859C */
 extern void *D_8004859C;
 #endif
 s32 osEPiStartDma(void *, void *, s32);
 s32 osRecvMesg(void *, void *, s32);
 
+#ifdef TARGET_PC
+/* PC: the stream record is Nw2AnimStream (common.h), read by field name: source is a RomAddr, destination a host
+ * pointer, and the two reads are port.h's PortIoMesg requests, whose dramAddr holds the whole address (the N64's
+ * Stream9990 view keeps it in a u32). The N64 code reaches the same fields through its own view at the N64 offsets:
+ * dev +0xC, dram +0x10, mq +0x90, io +0xC0, msgs +0xF0, idx +0xF8, started +0xFA. */
+void func_80009990(s16 n)
+{
+    Nw2AnimStream *s = &D_800706A8[n];
+    s32 count;
+    s32 idx;
+
+    if (s->remaining == 0) {
+        return;
+    }
+    count = 0x80;
+    if (s->remaining < 0x80) {
+        count = s->remaining;
+    }
+    idx = s->ioNext;
+    s->ios[idx].retQueue = s->ioQueues[idx];
+    s->ios[idx].pri = 0;
+    s->ios[idx].devAddr = s->source;
+    s->ios[idx].dramAddr = s->destination;
+    s->ios[idx].size = count;
+    while (osEPiStartDma(D_8004859C, &s->ios[idx], 0) != 0) {
+    }
+    idx ^= 1;
+    if (s->ioStarted) {
+        osRecvMesg(s->ioQueues[idx], NULL, 1);
+    } else {
+        s->ioStarted = 1;
+    }
+    s->ioNext = idx;
+    s->source += count;
+    s->destination += count;
+    s->remaining -= count;
+}
+#else
 void func_80009990(s16 n)
 {
     s32 count;
@@ -67,3 +105,4 @@ void func_80009990(s16 n)
     D_800706A8[n].dram += count;
     D_800706A8[n].remaining -= count;
 }
+#endif

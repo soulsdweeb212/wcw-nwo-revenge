@@ -19,6 +19,14 @@ typedef s32 M2C_UNK32;
 #define M2C_OVERFLOW(a) (0)
 #endif
 
+#ifdef TARGET_PC
+/* PC: the types of port_decls.h's line. obj is the 0xDC-byte object, which keeps its N64 layout (Nw2SceneObj in
+ * common.h), so its display list at +0x10 is a 4-byte field that takes the list's handle (port.h's PTR_TO_SLOT). */
+void func_80005204(void *obj, void *dl) {
+    ((Nw2SceneObj *)obj)->dl = PTR_TO_SLOT(dl);
+}
+#else
 void func_80005204(void *arg0, s32 arg1) {
     M2C_FIELD(arg0, s32 *, 0x10) = arg1;
 }
+#endif

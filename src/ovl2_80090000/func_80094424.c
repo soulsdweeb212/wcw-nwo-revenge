@@ -9,6 +9,25 @@ typedef struct {
     s32 flags;
 } Node;
 
+#ifdef TARGET_PC
+/* PC: a scene object (common.h's Nw2SceneObj), which keeps its N64 layout on PC: f10 (its display list) and node (its
+ * work block) are 4-byte handles (port.h's PTR_TO_SLOT). This file only clears f10 and steps through D_800E7950,
+ * which the asserts keep at the object's 0xDC bytes. */
+typedef struct {
+    u8 pad0[0x10];
+    u32 f10;
+    u32 node;
+    u8 pad18[0xC4];
+} ObjDC;
+_Static_assert(offsetof(ObjDC, f10) == offsetof(Nw2SceneObj, dl) &&
+                   offsetof(ObjDC, node) == offsetof(Nw2SceneObj, work) && sizeof(ObjDC) == sizeof(Nw2SceneObj),
+               "ObjDC must follow Nw2SceneObj");
+
+/* PC: the display records and the picture pairs are common.h's PC layouts, the types port_decls.h declares the
+ * arrays with, so &arr[i] steps by their PC sizes. */
+typedef Nw2Descr4BA8 Rec2C;
+typedef Nw2TexPair Tex8;
+#else
 typedef struct {
     u8 pad0[0x10];
     s32 f10;
@@ -23,6 +42,7 @@ typedef struct {
 typedef struct {
     u8 data[8];
 } Tex8;
+#endif
 
 extern ObjDC D_800E77C0;
 extern void *D_800E789C[];

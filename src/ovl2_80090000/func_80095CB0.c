@@ -9,6 +9,21 @@ typedef struct {
     s32 flags;
 } Node;
 
+#ifdef TARGET_PC
+/* PC: a scene object (common.h's Nw2SceneObj), which keeps its N64 layout on PC: node, its work block, is a 4-byte
+ * handle (port.h's PTR_TO_SLOT), read through SLOT_TO_PTR. Node's flags is the work block's kind word. */
+typedef struct {
+    u8 pad0[0x14];
+    u32 node;
+    u8 pad18[0xC4];
+} ObjDC;
+_Static_assert(offsetof(ObjDC, node) == offsetof(Nw2SceneObj, work) && sizeof(ObjDC) == sizeof(Nw2SceneObj),
+               "ObjDC must follow Nw2SceneObj");
+_Static_assert(offsetof(Node, flags) == offsetof(Nw2SceneWork, kind), "Node must follow Nw2SceneWork");
+
+/* PC: the picture pair is common.h's Nw2TexPair, the type port_decls.h declares D_800E7DA0 with. */
+typedef Nw2TexPair Tex8;
+#else
 typedef struct {
     u8 pad0[0x14];
     Node *node;
@@ -18,6 +33,7 @@ typedef struct {
 typedef struct {
     u8 data[8];
 } Tex8;
+#endif
 
 extern u8 D_8007EF30[];
 extern u16 D_800E2B10[];
@@ -59,10 +75,20 @@ void func_80095CB0(s16 sec, s16 min) {
         min = 60;
         sec = 0;
     }
+#ifdef TARGET_PC
+    /* PC: the work block through its handle. */
+    if (((Node *)SLOT_TO_PTR(D_800E7950[0].node))->flags & 0x80) {
+#else
     if (D_800E7950[0].node->flags & 0x80) {
+#endif
         for (i = 0; i < 5; i++) {
             D_800E77B8[i] = -1;
+#ifdef TARGET_PC
+            /* PC: as above. */
+            ((Node *)SLOT_TO_PTR(D_800E7950[i].node))->flags &= ~0x80;
+#else
             D_800E7950[i].node->flags &= ~0x80;
+#endif
         }
         if (min == 0 && sec == 0) {
             func_80091CB4();

@@ -35,6 +35,14 @@ void func_8000498C(Nw2Descr4BA8 *p, u16 id) {
     s32 descriptor[4];
     s32 scratch[4];
     u8 *raw;
+#ifdef TARGET_PC
+    /* PC: p must start a record of an array of Nw2Descr4BA8 (0x50 bytes, 8-byte aligned). A caller that still steps
+     * through the records by the N64's 0x2C bytes lands 4 bytes off that alignment on every odd record, so this stops
+     * the program there instead of letting the record run over its neighbour. */
+    if ((uptr)p % _Alignof(Nw2Descr4BA8)) {
+        port_fatal("func_8000498C: display record %p is not on a record boundary", (void *)p);
+    }
+#endif
     lookupResourceDescriptor(descriptor, id);
     raw = allocateHeap(descriptor[2]);
     func_80003684(scratch, id, raw);
@@ -62,8 +70,8 @@ void func_8000498C(Nw2Descr4BA8 *p, u16 id) {
 #ifdef TARGET_PC
         /* PC: as above, and f14 and f10 hold display lists, whose commands are 16 bytes on PC (port.h's Gfx), not 8:
          * the heap blocks hold the same number of commands as on the N64, (count / 2 + 5) and 32 (256 bytes there).
-         * The arena hands out 8-byte records for them (func_80007B84); its PC layout, with 16-byte records for these
-         * lists, is not decided yet. */
+         * The arena's pool 2 hands out sizeof(Gfx)-byte commands on PC (func_80007B84; Nw2MeshArena, common.h), so
+         * the arena branch asks for the N64's counts, (count / 2 + 5) and 24. */
         if (p->f28) {
             p->f14 = func_80007B84(p->f28, ((s8 *)p)[1] / 2 + 5);
             p->f10 = func_80007B84(p->f28, 24);

@@ -13,6 +13,7 @@ typedef struct {
 } G;
 #endif
 
+#ifndef TARGET_PC /* on PC, D_800EB1C0 is common.h's Nw2SceneObj and its work block a Nw2SceneWork, read by name */
 typedef struct {
     s32 flags;
     u8 pad4[0x1C];
@@ -28,8 +29,11 @@ typedef struct {
     u8 pad1A[0x9C - 0x1A];
     u8 mtx[0xDC - 0x9C];
 } ObjDC;
+#endif
 
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800EB1C0 (a Nw2SceneObj) */
 extern ObjDC D_800EB1C0;
+#endif
 extern G *D_800EB29C[3];
 extern s8 D_800EB2AC[6];
 extern s16 D_800EB2B2;
@@ -65,6 +69,9 @@ void func_80099628(void) {
     s32 id;
     G *g;
     void *p;
+#ifdef TARGET_PC
+    Nw2SceneWork *work;
+#endif
 
     initializeTransformNode(&D_800EB1C0, 5, 0.0f, 0.0f, 0.0f);
     func_800015AC(&D_800EB1C0, 0);
@@ -72,15 +79,22 @@ void func_80099628(void) {
     guOrthoF(proj, 0.0f, 480.0f, 0.0f, 240.0f, -1.0f, 10.0f, 1.0f);
     guLookAtF(view, 0.0f, 240.0f, -1.0f, 0.0f, 240.0f, 0.0f, 0.0f, -1.0f, 0.0f);
 #ifdef TARGET_PC
-    /* PC: mtx is the 0x40 bytes of a 4x4 float matrix, which the function takes as f32[4][4]. */
-    multiplyMatrix4x4(view, proj, (f32(*)[4])D_800EB1C0.mtx);
+    /* PC: the product goes to the object's view matrix (+0x9C). The object keeps its N64 layout (Nw2SceneObj), so its
+     * work (+0x14) is the handle (port.h's PTR_TO_SLOT) of its work block (Nw2SceneWork), which func_800015AC set up:
+     * kind 0x80 hides it, bias is the block's depth bias (+0x24) and eye[2] its +0x20. */
+    multiplyMatrix4x4(view, proj, D_800EB1C0.view);
+    D_800EB1C0.flat = 1;
+    work = SLOT_TO_PTR(D_800EB1C0.work);
+    work->kind |= 0x80;
+    work->bias = -5000.0f;
+    work->eye[2] = 100.0f;
 #else
     multiplyMatrix4x4(view, proj, D_800EB1C0.mtx);
-#endif
     D_800EB1C0.f19 = 1;
     D_800EB1C0.node->flags |= 0x80;
     D_800EB1C0.node->f24 = -5000.0f;
     D_800EB1C0.node->f20 = 100.0f;
+#endif
     for (i = 0; i < 3; i++) {
 #ifdef TARGET_PC
         /* PC: room for the same 512 commands at 16 bytes each instead of 8. */

@@ -31,7 +31,9 @@ typedef struct {
     s16 b;
 } A2B2Rec;
 
+#ifndef TARGET_PC /* on PC this label of the stream record D_800706A8 does not exist: it is read by field name */
 extern StreamSlot D_800706AC[];
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares D_800485A0 and D_8004859C */
 extern u8 *D_800485A0[];
 extern s32 D_8004859C;
@@ -60,6 +62,55 @@ s32 osRecvMesg(void *, void *, s32);
  * queue message without waiting for a free slot, and enqueues it
  * (osRecvMesg).  Then it clamps the requested frame to the resource's per-slot
  * maximum from D_8006A2B2 and records the destination buffer pointer. */
+#ifdef TARGET_PC
+/* PC: the stream record is Nw2AnimStream (common.h), read by field name: source is a RomAddr (the resource's ROM
+ * address from desc[0], a RomAddr in port.h's ResDesc), cursor and destination are host pointers, and the read is the
+ * PortIoMesg request io (port.h). The N64 code reaches the same fields through its view StreamSlot at the label
+ * D_800706AC, 4 bytes into the record: f14 is anim, f16 frame, state firstFrame, buffer cursor, type the request. */
+void func_8000946C(s16 slot, s16 resourceId, s16 frame) {
+    Nw2AnimStream *s = &D_800706A8[slot];
+    s32 desc[4];
+    s32 chunk;
+    s32 offset;
+
+    if (resourceId != s->anim || frame < s->firstFrame) {
+        func_8000B2B8(slot);
+        lookupResourceDescriptor(desc, (u16)resourceId);
+        offset = (((frame << 16) >> 17) * 0x62) & ~0x1F;
+        s->source = (RomAddr)desc[0] + 4 + offset;
+        s->destination = D_800485A0[slot] + offset;
+        s->remaining = desc[2] - (offset + 4);
+        s->firstFrame = frame;
+        chunk = 0x100;
+        osInvalDCache(s->destination, s->remaining);
+        if (s->remaining < 0x100) {
+            chunk = s->remaining;
+        }
+        s->io.retQueue = s->queue;
+        s->io.pri = 0;
+        s->io.size = chunk;
+        s->io.devAddr = s->source;
+        s->io.dramAddr = s->destination;
+        do {
+        } while (osEPiStartDma(D_8004859C, &s->io, 0) != 0);
+        s->frame = -1;
+        s->id = resourceId;
+        s->anim = resourceId;
+        s->source += chunk;
+        s->destination += chunk;
+        s->remaining -= chunk;
+        osRecvMesg(s->queue, 0, 1);
+    }
+
+    {
+        s16 maxFrame = D_8006A2B2[s->anim - 0xE39].a;
+        if (maxFrame < frame) {
+            frame = maxFrame;
+        }
+        s->cursor = D_800485A0[slot] + ((frame << 16) >> 17) * 0x62;
+    }
+}
+#else
 void func_8000946C(s16 slot, s16 resourceId, s16 frame) {
     s32 desc[4];
     s32 chunk;
@@ -71,13 +122,7 @@ void func_8000946C(s16 slot, s16 resourceId, s16 frame) {
         func_8000B2B8(slot);
         lookupResourceDescriptor(desc, (u16)resourceId);
         offset = (((frame << 16) >> 17) * 0x62) & ~0x1F;
-#ifdef TARGET_PC
-        /* PC: desc[0] is the resource's ROM address (a RomAddr in port.h's ResDesc), which the stream keeps as the
-         * cartridge address of its DMA; it is widened to the pointer's width without changing its value. */
-        src = (u8 *)((uptr)(u32)desc[0] + 4);
-#else
         src = (u8 *)desc[0] + 4;
-#endif
         D_800706AC[slot].source = src + offset;
         D_800706AC[slot].destination = D_800485A0[slot] + offset;
         headerBytes = offset + 4;
@@ -115,3 +160,4 @@ void func_8000946C(s16 slot, s16 resourceId, s16 frame) {
         D_800706AC[slot].buffer = dst + ((frame << 16) >> 17) * 0x62;
     }
 }
+#endif

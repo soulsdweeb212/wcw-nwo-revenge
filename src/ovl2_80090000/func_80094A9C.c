@@ -9,6 +9,26 @@ typedef struct {
     s32 flags;
 } Node;
 
+#ifdef TARGET_PC
+/* PC: a scene object (common.h's Nw2SceneObj), which keeps its N64 layout on PC: node, its work block, is a 4-byte
+ * handle (port.h's PTR_TO_SLOT). NODE(o) gives o's work block, whose kind word is Node's flags. */
+typedef struct {
+    u8 pad0[0x14];
+    u32 node;
+    u8 pad18[0xC4];
+} ObjDC;
+_Static_assert(offsetof(ObjDC, node) == offsetof(Nw2SceneObj, work) && sizeof(ObjDC) == sizeof(Nw2SceneObj),
+               "ObjDC must follow Nw2SceneObj");
+_Static_assert(offsetof(Node, flags) == offsetof(Nw2SceneWork, kind), "Node must follow Nw2SceneWork");
+#define NODE(o) ((Node *)SLOT_TO_PTR((o).node))
+
+/* PC: the display record and the picture pairs are common.h's PC layouts, the types port_decls.h declares the arrays
+ * with. The record's picture is its f18 (texture) and f1C (palette); a pair's are img and pal, both void *, which the
+ * palette copy below assigns to its u32 pointers. */
+typedef Nw2Descr4BA8 Rec2C;
+typedef Nw2TexPair Tex8;
+typedef Nw2TexPair Pal8;
+#else
 typedef struct {
     u8 pad0[0x14];
     Node *node;
@@ -31,6 +51,7 @@ typedef struct {
     u32 *img;
     u32 *pal;
 } Pal8;
+#endif
 
 typedef struct {
     u8 id;
@@ -53,8 +74,10 @@ extern s16 D_800E2C64[];
 extern u8 D_800E2C6C[];
 extern s32 D_800E77B4;
 extern ObjDC D_800E9878[];
+#ifndef TARGET_PC /* on PC no symbol: D_800E9BE0 is the pair before D_800E9BE8, D_800E9C30 is its pair 9 */
 extern Tex8 D_800E9BE0[];
 extern Tex8 D_800E9C30[];
+#endif
 extern Rec2C D_800E9C88[];
 extern s8 D_800E9D38[];
 extern Rec0C D_800E9D40[];
@@ -82,11 +105,20 @@ f32 nw2Sqrtf(f32);
 s8 readEntityStunState(s8, s16 *, s16 *);
 
 static inline void func_8009075C(Rec2C *r, Tex8 *t) {
+#ifdef TARGET_PC
+    /* PC: the pair's texture and palette go into the record's f18 and f1C, by name, then are cleared. */
+    r->f18 = t->img;
+    r->f1C = t->pal;
+    func_80004F80(r, 0, 0);
+    r->f18 = NULL;
+    r->f1C = NULL;
+#else
     r->img = t->img;
     r->pal = t->pal;
     func_80004F80(r, 0, 0);
     r->img = NULL;
     r->pal = NULL;
+#endif
 }
 
 void func_80094A9C(void) {
@@ -206,14 +238,24 @@ void func_80094A9C(void) {
             }
         }
         if (D_800E9D40[i].hp == 100 || D_800E9D40[i].hp == 0) {
+#ifdef TARGET_PC
+            /* PC: the work block through its handle (NODE). */
+            NODE(D_800EA268[i])->flags &= ~0x80;
+#else
             D_800EA268[i].node->flags &= ~0x80;
+#endif
             if (D_800E9D40[i].hp == 100) {
                 func_800907A0(&D_800EA268[i], &D_800EA5E8[i], D_800E2C5C[D_800E9D40[i].id & 3], D_800E2C64[D_800E9D40[i].id & 3] + 2,
                               0.47f, 0.5f, off * 0.03 + 1.2, off * 0.015 + 0.6, 0xFF, 0xFF, 0xFF, 0xFF);
                 off = 10;
                 if (D_800E9D40[i].f6 < 150) {
                     if (D_800E9D40[i].b1 == 0) {
+#ifdef TARGET_PC
+                        /* PC: as above. */
+                        NODE(D_800EA268[i])->flags |= 0x80;
+#else
                         D_800EA268[i].node->flags |= 0x80;
+#endif
                     }
                     D_800E9D40[i].b1++;
                     if (D_800E9D40[i].b1 > D_800E2C6C[(s16)(D_800E9D40[i].f6 / 60)]) {
@@ -226,37 +268,80 @@ void func_80094A9C(void) {
                 off = 0;
             }
         } else {
+#ifdef TARGET_PC
+            /* PC: as above. */
+            NODE(D_800EA268[i])->flags |= 0x80;
+#else
             D_800EA268[i].node->flags |= 0x80;
+#endif
         }
         w = D_800E9D40[i].hp * 0.5f + off;
         func_800907A0(&D_800EAC88[i], &D_800EAFF8[i], D_800E2C5C[D_800E9D40[i].id & 3], D_800E2C64[D_800E9D40[i].id & 3],
                       0.5f, 0.0f, w, 4.0f, r, g, b, 0xFF);
+#ifdef TARGET_PC
+        /* PC: as above. */
+        if (NODE(D_800E9D70[i])->flags & 0x80) {
+            NODE(D_800E9D70[i])->flags &= ~0x80;
+            NODE(D_800EAC88[i])->flags &= ~0x80;
+#else
         if (D_800E9D70[i].node->flags & 0x80) {
             D_800E9D70[i].node->flags &= ~0x80;
             D_800EAC88[i].node->flags &= ~0x80;
+#endif
             func_800907A0(&D_800EA758[i], &D_800EAAC8[i], D_800E2C0C[D_800E9D40[i].id & 3], D_800E9D40[i].y,
                           0.0f, 0.0f, 2.0f, 1.0f, 0xFF, 0xFF, 0xFF, 0xFF);
         }
+#ifdef TARGET_PC
+        /* PC: as above. */
+        if (!(D_800E77B4 & 8) && isEntityEligibleForSpecialAction(i)) {
+            NODE(D_800EA758[i])->flags &= ~0x80;
+        } else {
+            NODE(D_800EA758[i])->flags |= 0x80;
+        }
+#else
         if (!(D_800E77B4 & 8) && isEntityEligibleForSpecialAction(i)) {
             D_800EA758[i].node->flags &= ~0x80;
         } else {
             D_800EA758[i].node->flags |= 0x80;
         }
+#endif
         if (func_800AD730(i) != D_800E9D38[i]) {
             n = D_800E9D38[i] = func_800AD730(i);
             if (n > 0) {
+#ifdef TARGET_PC
+                /* PC: the N64 labels D_800E9BE0 (one pair before D_800E9BE8) and D_800E9C30 (D_800E9BE8's pair 9),
+                 * indexed from 1, become D_800E9BE8's own pairs n - 1 and n + 9. The work block through its handle,
+                 * as above. */
+                if ((D_800E9D40[i].id & 3) < 2) {
+                    func_8009075C(&D_800E9C88[i], &D_800E9BE8[n - 1]);
+                } else {
+                    func_8009075C(&D_800E9C88[i], &D_800E9BE8[n + 9]);
+                }
+                if (NODE(D_800E9878[i])->flags & 0x80) {
+#else
                 if ((D_800E9D40[i].id & 3) < 2) {
                     func_8009075C(&D_800E9C88[i], &D_800E9BE0[n]);
                 } else {
                     func_8009075C(&D_800E9C88[i], &D_800E9C30[n]);
                 }
                 if (D_800E9878[i].node->flags & 0x80) {
+#endif
                     func_800907A0(&D_800E9878[i], &D_800E9C88[i], D_800E2BF8[D_800E9D40[i].id & 3], D_800E2C00[D_800E9D40[i].id & 3],
                                   0.0f, 0.0f, 1.0f, 1.0f, 0xFF, 0xFF, 0xFF, 0xFF);
+#ifdef TARGET_PC
+                    /* PC: as above. */
+                    NODE(D_800E9878[i])->flags &= ~0x80;
+#else
                     D_800E9878[i].node->flags &= ~0x80;
+#endif
                 }
             } else {
+#ifdef TARGET_PC
+                /* PC: as above. */
+                NODE(D_800E9878[i])->flags |= 0x80;
+#else
                 D_800E9878[i].node->flags |= 0x80;
+#endif
             }
         }
     }

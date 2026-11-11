@@ -8,10 +8,17 @@
 extern s16 D_80059D80,D_80059D82;
 extern void *D_80036C74[];
 typedef struct {u8 data[0xDC];} EDE0Obj;
+#ifdef TARGET_PC
+/* PC: a display record has its PC layout, Nw2Descr4BA8 (0x50 bytes), so &D_800583F8[i] steps by its size. */
+typedef Nw2Descr4BA8 EDE0Res;
+#else
 typedef struct {u8 data[0x2C];} EDE0Res;
+#endif
 extern EDE0Obj D_80057030[];
 extern EDE0Res D_800583F8[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800587F0, D_80058900 and D_80058988 (display records) */
 extern u8 D_800587F0[], D_80058900[], D_80058988[];
+#endif
 #ifdef TARGET_PC
 /* PC: D_800587EC, D_800588F8 and D_80058984 hold the display lists that func_8000E920 got from func_80007020, so
  * they are pointers (port_decls.h). freeResourceDescriptorArray takes the list as a pointer, as its definition does. */

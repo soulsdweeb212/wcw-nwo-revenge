@@ -9,7 +9,9 @@ extern s32 D_800FABD8;
 extern u16 D_800E3F84[];
 extern u16 D_800E3F8C[];
 extern u8 D_80030560[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_8007C438; not used here */
 extern u8 D_8007C438[];
+#endif
 
 typedef struct { f32 x; f32 y; } Nw2Vec2C50;
 extern Nw2Vec2C50 D_800E3C50[];

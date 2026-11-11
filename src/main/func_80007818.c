@@ -12,17 +12,18 @@ void func_800015AC(void *, s8);
  * object's +0x10 to arg2, attach the work block with the descriptor's mode byte,
  * then clear the work block's first word. */
 #ifdef TARGET_PC
-/* PC: not ported yet. The display record side is ready (descriptorBase is an array of Nw2Descr4BA8, common.h), but this
- * function stores the record's vertices (fC) and arg2, a display list, into the 0xDC-byte object's 4-byte fields +0xC
- * and +0x10, and clears the first word of its work block (+0x14). That object has no PC layout yet (docs/port.md,
- * "Shared records on PC"), and a 64-bit address does not fit a 4-byte field, so the PC stops the program here instead
- * of storing half an address. */
-void func_80007818(u8 *obj, s32 descriptorBase, s32 arg2, s16 index) {
-    (void)obj;
-    (void)descriptorBase;
-    (void)arg2;
-    (void)index;
-    port_fatal("func_80007818: the 0xDC-byte object record has no PC layout yet");
+/* PC: the types of port_decls.h's line. recs is an array of display records in their PC layout (Nw2Descr4BA8,
+ * common.h), so index picks a record by the array's own step. The object keeps its N64 layout (Nw2SceneObj), so its
+ * vertices and display list are stored as handles (port.h's PTR_TO_SLOT), and its work block is reached through its
+ * handle. The order is the N64's: func_800015AC copies the object's display list into the work block. */
+void func_80007818(void *obj, void *recs, void *dl, s16 index) {
+    Nw2SceneObj *o = obj;
+    Nw2Descr4BA8 *t = (Nw2Descr4BA8 *)recs + index;
+
+    o->dl = PTR_TO_SLOT(dl);
+    o->vtx = PTR_TO_SLOT(t->fC);
+    func_800015AC(o, t->f2);
+    ((Nw2SceneWork *)SLOT_TO_PTR(o->work))->kind = 0;
 }
 #else
 void func_80007818(u8 *obj, s32 descriptorBase, s32 arg2, s16 index) {

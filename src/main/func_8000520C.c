@@ -36,23 +36,26 @@ typedef struct {
  * buffer pointers (+0xC/+0x10/+0x14/+0x18/+0x1C) and clear it. Pointers whose
  * block has the shared-ownership flag +0x28 set are left alone. */
 #ifdef TARGET_PC
-/* PC: arg1 is a display record (the record func_8000498C fills; the callers func_8000CD84, func_8000D718 and
- * func_8000EDE0 pair the 0xDC-byte objects with the records of D_80073EB0, D_80050800 and D_800583F8). Its PC layout is
- * Nw2Descr4BA8 (common.h): the five buffers are 8-byte pointers from +0x10 on, and +0x28 is the arena pointer f28
- * rather than an s32 flag. So this version reads arg1 through that struct (rec) by name and frees whole addresses. arg0
- * is the 0xDC-byte object, whose buffer at +0x10 is a 4-byte field with no PC layout yet (docs/port.md, "Shared records
- * on PC"): no address can be read back from it, so a set field stops the program rather than free half an address. An
- * empty field needs nothing freed, as on the N64. */
-void func_8000520C(Holder520C *arg0, ResBlock520C *arg1) {
-    Nw2Descr4BA8 *rec = (Nw2Descr4BA8 *)arg1;
+/* PC: the types of port_decls.h's line. arg1 is a display record (the record func_8000498C fills; the callers
+ * func_8000CD84, func_8000D718 and func_8000EDE0 pair the 0xDC-byte objects with the records of D_80073EB0, D_80050800
+ * and D_800583F8). Its PC layout is Nw2Descr4BA8 (common.h): the five buffers are 8-byte pointers from +0x10 on, and
+ * +0x28 is the arena pointer f28 rather than an s32 flag. So this version reads arg1 through that struct (rec) by name
+ * and frees whole addresses. arg0 is the 0xDC-byte object, which keeps its N64 layout (Nw2SceneObj in common.h), so the
+ * buffer at +0x10 (Holder520C's f10, the object's display list) holds a handle (port.h's PTR_TO_SLOT): it is turned
+ * back into the address with SLOT_TO_PTR, freed, and cleared to 0. */
+void func_8000520C(void *arg0, void *arg1) {
+    Nw2SceneObj *obj = arg0;
+    Nw2Descr4BA8 *rec = arg1;
     void *temp;
 
     if (rec->pad0[0] != 0) {
         rec->pad0[0] = 0;
-        if (arg0->f10 != 0) {
-            port_fatal("func_8000520C: the 0xDC-byte object's buffer at +0x10 has no PC layout yet");
+        temp = SLOT_TO_PTR(obj->dl);
+        if (temp != NULL) {
+            releaseHeapBlock(temp);
+            obj->dl = 0;
         }
-        func_800015AC(arg0, 0);
+        func_800015AC(obj, 0);
         temp = rec->fC;
         if (temp != NULL) {
             if (rec->f28 == NULL) {

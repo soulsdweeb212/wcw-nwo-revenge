@@ -11,7 +11,9 @@ extern u8 D_8007FC4F;
 extern s32 D_8007E228;
 typedef struct {u32 words[20];} VideoMode;
 extern VideoMode D_80037540,D_80037590;
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80044590 (the addresses of the four render-list records) */
 extern u32 D_80044590[];
+#endif
 extern void *D_800445A0,*D_800445A4,*D_800445A8;
 extern u8 D_800445B0[],D_80046760[],D_80046768[],D_80046780[],D_800467C0[],D_800467D8[],D_800467E0[],D_800467F8[],D_80046808[];
 extern s32 D_80046810,D_80046828,D_80046830,D_80046844;
@@ -73,17 +75,27 @@ void func_80001260(void) {
         osSetIntMask(t);
         setVideoModeFromWidth(width);
         osViSetSpecialFeatures(0x6A);osViBlack(1);
-        two=2;p=D_80044590;
 #ifdef TARGET_PC
-        /* PC: not ported yet; the program stops here. Each of the four render-list records (0x4078 bytes) holds a
-         * display list of 8-byte N64 commands up to +0x4000, the task at +0x4000/+0x4010 (pointer fields in
-         * submitGraphicsTask's Nw2OSTask), the queue's address at +0x4050 and the address of +0x4058 at +0x4054; and
-         * D_80044590, declared u32[] here and a table of pointers in submitGraphicsTask.c and
-         * buildSceneSetupDisplayList.c, holds their addresses. On PC the commands are 16 bytes and the addresses 8, so
-         * the record needs one PC layout, which the port's renderTaskThread must also read; until it is decided
-         * (docs/port.md, "Shared records on PC"), storing the addresses here would cut them in half. */
-        (void)v; (void)p; (void)two; (void)i;
-        port_fatal("func_80001260: the render-list record (D_80044590) has no PC layout yet");
+        /* PC: D_80044590 is a table of pointers to the records (port_decls.h), which the u32 cursor p cannot step. */
+        two=2;
+#else
+        two=2;p=D_80044590;
+#endif
+#ifdef TARGET_PC
+        /* PC: each render-list record has its PC layout, Nw2RenderList (common.h): 0x800 16-byte commands, the
+         * scheduler's task with 8-byte pointers, and the done message. So it is allocated by sizeof, its fields are
+         * set by name, and D_80044590 holds the four addresses. The done message is a 4-byte value in the game's
+         * queues, so the task holds a handle of the message's address (port.h's PTR_TO_SLOT), which func_80002CC4
+         * turns back. The records are never freed, so their handles last as long as the program. */
+        (void)v; (void)p;
+        do {
+            Nw2RenderList *rl = allocateHeap(sizeof(Nw2RenderList));
+            D_80044590[i] = rl;
+            rl->done.type = two;
+            rl->sc.msgQ = D_80046768;
+            rl->sc.msg = PTR_TO_SLOT(&rl->done);
+            i += 1;
+        } while (i < 4);
 #else
         do {v=allocateHeap(0x4078);p[i]=(u32)v;*(s16 *)(v+0x4058)=two;*(u8 **)(v+0x4050)=D_80046768;*(u32 *)(v+0x4054)=p[i]+(unsigned)0x4058;i += 1;}while(i<4);
 #endif

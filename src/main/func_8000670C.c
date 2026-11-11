@@ -7,6 +7,14 @@
 
 typedef struct { s32 w0, w1, w2, w3; } IdInfo;
 typedef struct { void *f0; void *f4; } Nw2TwoBuf;
+#ifdef TARGET_PC
+/* PC: arg0 is a picture pair (common.h's Nw2TexPair), two pointers there, the palette at +8; callers step arrays of
+ * pairs by sizeof(Nw2TexPair). This view keeps its own field names, so the assert checks that it has the same
+ * layout. */
+_Static_assert(sizeof(Nw2TwoBuf) == sizeof(Nw2TexPair) && offsetof(Nw2TwoBuf, f0) == offsetof(Nw2TexPair, img) &&
+                   offsetof(Nw2TwoBuf, f4) == offsetof(Nw2TexPair, pal),
+               "Nw2TwoBuf must follow Nw2TexPair");
+#endif
 void *allocateHeap(u32);
 void releaseHeapBlock(void *);
 #ifndef TARGET_PC /* on PC, port.h declares the loader functions */

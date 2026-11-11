@@ -6,7 +6,13 @@
 #include "common.h"
 
 extern s8 D_800FADB8;
+#ifdef TARGET_PC
+/* PC: port_decls.h declares D_8007C438 (the texture-cache table, void *[4][23]); the animation rows this file loads
+ * at its +0x180 on the N64 are the PC variable D_8007C5B8. So the PC copy of this line leaves it out. */
+extern u8 D_8007E228[],D_80070494[],D_80075468[],D_8007EF30[];
+#else
 extern u8 D_8007E228[],D_80070494[],D_80075468[],D_8007C438[],D_8007EF30[];
+#endif
 extern u16 D_800FADD0,D_800F99BA,D_800EB4C0,D_800E3AB4[],D_800E3970[];
 extern u8 *D_80038A64[];
 extern f64 D_800E58C8,D_800E58D0,D_800E58D8;
@@ -50,7 +56,13 @@ void func_800C0354(void) {
         D_800FAF5C->step++; break;
     }
     case 2: func_80003684(buf+0x10,(u16)(D_800EB4C0+1),D_80075468+0x10+D_800FADB8*0x1A30); D_800FAF5C->step++; break;
+#ifdef TARGET_PC
+    /* PC: the player's row of animation ids, D_8007C5B8[D_800FADB8] (port_decls.h); the N64 computes it as
+     * D_8007C438 + 0x180 + D_800FADB8 * 0x600. */
+    case 3: func_80003684(buf+0x20,(u16)(D_800EB4C0+2),D_8007C5B8[D_800FADB8]); D_800FAF5C->step++; break;
+#else
     case 3: func_80003684(buf+0x20,(u16)(D_800EB4C0+2),D_8007C438+0x180+D_800FADB8*0x600); D_800FAF5C->step++; break;
+#endif
     case 4: if((func_8000DC50(D_800FADB8,(s16)D_800FAF5C->nextCharacterId)<<16)==0) D_800FAF5C->step++; break;
     case 5:
         func_8000DB90(D_800FADB8,1);

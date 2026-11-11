@@ -17,7 +17,9 @@ typedef struct {
 #endif
 
 extern s16 D_800E2E98;
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800EB19C (a Nw2HudIcon, whose id is the N64's s16) */
 extern s16 D_800EB19C;
+#endif
 extern s16 D_800EB1A8;
 extern s16 D_800EB1AA;
 
@@ -50,7 +52,11 @@ void func_80097BE0(G **dl) {
             D_800E2E98 += 0x18;
             if (D_800E2E98 >= 0xF0) {
                 D_800E2E98 = 0xEF;
+#ifdef TARGET_PC
+                D_800EB19C.id = 0; /* PC: the icon's id, the s16 the N64 code writes */
+#else
                 D_800EB19C = 0;
+#endif
                 func_8000DEE4(0x410);
             }
         }
@@ -59,7 +65,11 @@ void func_80097BE0(G **dl) {
         } else {
             D_800EB1A8 = -1;
         }
+#ifdef TARGET_PC
+        t = &D_800EB19C.id; /* PC: the icon's first field, so the same address as the icon */
+#else
         t = &D_800EB19C;
+#endif
         g = *dl;
         drawBar(&g, D_800E2E98);
         if (*t != -1) {

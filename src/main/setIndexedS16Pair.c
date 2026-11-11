@@ -19,7 +19,13 @@ extern f64 D_8003B250;
 void func_8000F4FC(s16);
 void func_800074A4(s32, void *, void *, s32);
 extern void *D_80036C74[], *D_80036C94[];
+#ifdef TARGET_PC
+/* PC: port_decls.h declares D_800587F0, D_80058900 and D_80058988 (display records), so the PC copy of this line
+ * leaves them out. */
+extern u8 D_80036D04[];
+#else
 extern u8 D_80036D04[], D_800587F0[], D_80058900[], D_80058988[];
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares D_800587EC, D_800588F8 and D_80058984 */
 extern s32 D_800587EC, D_800588F8, D_80058984;
 #endif

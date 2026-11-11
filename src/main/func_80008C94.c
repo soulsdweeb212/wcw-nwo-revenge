@@ -9,7 +9,9 @@
 extern u8 *D_8007BD38;
 extern void *D_800485A0[];
 #endif
+#ifndef TARGET_PC /* on PC this label of the stream record D_800706A8 does not exist: it is read by field name */
 extern u8 D_800706C4[];
+#endif
 
 u8 *allocateHeap(s32);
 #ifndef TARGET_PC /* on PC, port.h declares the loader functions */
@@ -24,5 +26,11 @@ void guScaleF(void *, f32, f32, f32);
 void func_80008C94(s16 arg0) {
     f32 f = func_8000B370(arg0);
 
+#ifdef TARGET_PC
+    /* PC: the matrix is the field mtx of the stream record (Nw2AnimStream, common.h), which the N64 reaches through
+     * the label D_800706C4 (+0x1C of the first record) and the record's N64 size, 0xFC. */
+    guScaleF(D_800706A8[arg0].mtx, f, f, f);
+#else
     guScaleF(D_800706C4 + arg0 * 0xFC, f, f, f);
+#endif
 }

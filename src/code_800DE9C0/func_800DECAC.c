@@ -14,7 +14,15 @@ s32 func_800DEEE8(void *, s32);
  * If side is 0 or the low 16 bits of arg1 & arg2 are 0 the counter is zeroed; else, while func_800DEEE8(w, arg2)
  * is nonzero, the counter counts up and from 13 on the side index is ringSide (minus 1, & 3, when side == 1). Unless a present wrestler is already in state 2 with that
  * dirIndex, flag 0x8000000000 is set to (side == 1), dirIndex = that index, state 2 starts and 1 is returned. */
+#ifdef TARGET_PC
+/* PC: the function returns an s32 (1 when state 2 starts, else 0), whose low byte func_8009DD60 tests; its other
+ * callers drop it. The N64 file gives this body a second, void name with an alias between two function types, which
+ * GCC warns about (-Wattribute-alias) and macOS does not support. On PC the body is func_800DECAC itself, and
+ * port_decls.h declares it returning s32. */
+s32 func_800DECAC(Wrestler *w, s32 arg1, s32 arg2, s32 arg3) {
+#else
 static s32 func_800DECAC_impl(Wrestler *w, s32 arg1, s32 arg2, s32 arg3) {
+#endif
     u8 id = w->id;
     s32 s3 = (s16)arg3;
     u16 a2 = arg2;
@@ -49,4 +57,6 @@ clear:
     return 0;
 }
 
+#ifndef TARGET_PC /* on PC the body above is func_800DECAC itself */
 void func_800DECAC(Wrestler *, s32, s32, s32) __attribute__((alias("func_800DECAC_impl")));
+#endif

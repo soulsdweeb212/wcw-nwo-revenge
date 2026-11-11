@@ -22,7 +22,9 @@ extern s16 D_80075442[];
 extern s16 D_80075444[];
 extern s16 D_8007C318[][23];
 extern void *D_8007C438[][23];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_8007C3D0 */
 extern u8 D_8007C3D0[][16];
+#endif
 inline static void **getList(u32 id)
 {
     s32 bank = (id >> 8) & 0x1F;
@@ -85,7 +87,12 @@ void func_8000CFD4(s16 arg0, u32 arg1, s16 arg2, s16 arg3, s32 arg4, s8 arg5, s8
         }
     }
 
+#ifdef TARGET_PC
+    /* PC: the player's arena (Nw2MeshArena, 0x20 bytes on PC). */
+    func_80007AFC(&D_8007C3D0[arg0]);
+#else
     func_80007AFC(D_8007C3D0[arg0]);
+#endif
     func_8000BDD0(arg0);
     func_80008B5C(arg0);
     func_80008C94(arg0);

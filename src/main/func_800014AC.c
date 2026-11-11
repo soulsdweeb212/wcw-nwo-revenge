@@ -12,7 +12,9 @@ extern f32 D_80048288[4][4];
 #else
 extern u8 D_80048288[8];
 #endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80046860 */
 extern s32 D_80046860[];
+#endif
 extern s16 D_80047062;
 extern u8 *D_80046858;
 extern s16 D_80047060;

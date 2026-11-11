@@ -17,12 +17,27 @@ typedef struct {
 } Nw2PartTransform;
 
 /* Render record for one body part: owner link at +0, world matrix at +0x1C. */
+#ifdef TARGET_PC
+/* PC: the record is the part's 0xDC-byte object, which keeps its N64 layout (Nw2SceneObj in common.h), so its link at
+ * +0 is a 4-byte handle (port.h's PTR_TO_SLOT) and the record stays 0xDC bytes, the step of D_800651A0. The matrix
+ * this function writes is the object's local matrix. The asserts check the view against Nw2SceneObj. */
+typedef struct {
+    u32 link;
+    u8 pad4[0x18];
+    f32 matrix[16];
+    u8 tail[0x80];
+} Nw2PartRenderRecord;
+_Static_assert(offsetof(Nw2PartRenderRecord, matrix) == offsetof(Nw2SceneObj, local) &&
+                   sizeof(Nw2PartRenderRecord) == sizeof(Nw2SceneObj),
+               "Nw2PartRenderRecord must follow Nw2SceneObj");
+#else
 typedef struct {
     void *link;
     u8 pad4[0x18];
     f32 matrix[16];
     u8 tail[0x80];
 } Nw2PartRenderRecord;
+#endif
 
 extern Nw2PartTransform D_80070C40[][23];
 extern Nw2PartRenderRecord D_800651A0[][23];

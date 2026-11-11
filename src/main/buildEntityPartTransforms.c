@@ -14,7 +14,14 @@
 extern u8 D_80030894[];
 extern u8 D_800308A8[];
 extern f32 D_800308BC[];
+#ifdef TARGET_PC
+/* PC: the label D_8006527C (D_800651A0 + 0xDC, each entity's object 1) has no symbol on PC; the code reads it through
+ * its base D_800651A0, whose 0xDC-byte objects keep their N64 layout (Nw2SceneObj, common.h; Nw2Part770 below is
+ * 0xDC bytes on both). */
+extern u8 D_800651A0[];
+#else
 extern u8 D_8006527C[];
+#endif
 extern f32 D_80070C70[],D_80070C78[],D_80070C88[],D_80070C8C[],D_80070C90[],D_80070C94[],D_80070C98[],D_80070C9C[],D_80070CAC[],D_80070CB4[],D_80070E20[],D_80070E28[];
 extern f64 D_8003B1E0,D_8003B1E8,D_8003B1F0;
 
@@ -38,6 +45,10 @@ typedef struct {
     u8 pad9C[0x40];
 } Nw2Part770;
 typedef struct { Nw2Part770 part[0x17]; } Nw2Entity770;
+#ifdef TARGET_PC
+_Static_assert(sizeof(Nw2Part770) == sizeof(Nw2SceneObj) && sizeof(Nw2Entity770) == 0x13C4,
+               "Nw2Part770 is one 0xDC-byte object and Nw2Entity770 an entity's 23, as on the N64");
+#endif
 
 #define FLD(base,off) (*(f32*)((u8*)(base) + (off)))
 
@@ -68,7 +79,12 @@ void buildEntityPartTransforms(Nw2Part770 *arg0, s16 id, f32 upper, f32 lower) {
     i = 1;
     group = id * 0xB24;
     off = group + 0x7C;
+#ifdef TARGET_PC
+    /* PC: D_8006527C through its base (see the declarations above). */
+    src = (Nw2Part770 *)((Nw2Entity770 *)(D_800651A0 + 0xDC) + id);
+#else
     src = (Nw2Part770 *)((Nw2Entity770 *)D_8006527C + id);
+#endif
     dst = arg0 + 1;
 loop:
     kind = D_80030894[i];

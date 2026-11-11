@@ -8,14 +8,17 @@
 /* Allocates arg1 0x10-byte records from the descriptor's first pool (+0/+4/+6),
  * returning the block or NULL when it would overflow. */
 #ifdef TARGET_PC
-/* PC: not ported yet. arg0 is an arena (D_8007C3D0[n], 16 bytes), whose first pool's base address is the 4-byte field
- * at +0: func_80007A74 stores it there, and func_8000C91C clears it. That record has no PC layout yet (docs/port.md,
- * "Shared records on PC"), and a 64-bit address cannot be read back from 4 bytes, so the PC stops the program here
- * instead of handing out records at half an address. */
+/* PC: arg0 is an arena in its PC layout (Nw2MeshArena, common.h), whose pool-1 base is a pointer, read here by name.
+ * A vertex record is 16 bytes on both machines. As on the N64, the count moves on even when the pool overflows, and
+ * the result is then NULL. The address is worked out in a uptr, as the N64 works it out in an s32, so that an empty
+ * arena (base NULL) does no arithmetic on a null pointer. */
 void *func_80007B50(void *arg0, s32 arg1) {
-    (void)arg0;
-    (void)arg1;
-    port_fatal("func_80007B50: the arena record (D_8007C3D0) has no PC layout yet");
+    Nw2MeshArena *a = arg0;
+    u16 first = a->vertUsed;
+    u16 used = first + arg1;
+
+    a->vertUsed = used;
+    return (used <= a->vertCap) ? (void *)((uptr)a->verts + (uptr)first * NW2_MESH_ARENA_VERTEX_SIZE) : NULL;
 }
 #else
 void *func_80007B50(void *arg0, s32 arg1) {

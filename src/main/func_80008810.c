@@ -27,7 +27,9 @@ extern void *D_800485A0[];
 #endif
 extern s8 D_800485B0[][8];
 extern s8 D_800485D0[][8];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800706A8 (as Nw2AnimStream) */
 extern Ctl D_800706A8[];
+#endif
 extern s8 D_800307C0[];
 extern u8 D_80074EC0[][0x40];
 #ifndef TARGET_PC /* on PC, port_decls.h declares D_8004859C and D_8007BD38 */
@@ -66,7 +68,9 @@ void func_80008810(void) {
     u32 n;
     u32 i;
     u32 j;
+#ifndef TARGET_PC /* on PC the queues are reached by field name, without this pointer */
     MQ *q;
+#endif
     s8 *px;
     s8 *py;
     u8 *dst;
@@ -103,6 +107,22 @@ void func_80008810(void) {
     func_80003684(sp30, 0x20F, D_8007BD38);
     for (i = 0; i < 4; i++) {
         D_800485A0[i] = allocateHeap(0x6200);
+#ifdef TARGET_PC
+        /* PC: the stream record is Nw2AnimStream (common.h), set up by field name: the N64's f0 is fresh, f2 replay,
+         * f4 id, f18 anim, f1A frame, mq queue (its message is msg), mqs ioQueues (messages ioMsgs), fF8 ioNext and
+         * fFA ioStarted. The queues keep the N64's 0x18 bytes and each message its 4 bytes, as the port's queue
+         * functions take them (port.h). */
+        D_800706A8[i].fresh = 1;
+        D_800706A8[i].replay = 0;
+        D_800706A8[i].id = -1;
+        D_800706A8[i].anim = -1;
+        D_800706A8[i].frame = -1;
+        osCreateMesgQueue(D_800706A8[i].queue, &D_800706A8[i].msg, 1);
+        osCreateMesgQueue(D_800706A8[i].ioQueues[0], &D_800706A8[i].ioMsgs[0], 1);
+        osCreateMesgQueue(D_800706A8[i].ioQueues[1], &D_800706A8[i].ioMsgs[1], 1);
+        D_800706A8[i].ioNext = 0;
+        D_800706A8[i].ioStarted = 0;
+#else
         D_800706A8[i].f0 = 1;
         D_800706A8[i].f2 = 0;
         D_800706A8[i].f4 = -1;
@@ -114,6 +134,7 @@ void func_80008810(void) {
         osCreateMesgQueue(&q[1], &D_800706A8[i].msgs[1], 1);
         D_800706A8[i].fF8 = 0;
         D_800706A8[i].fFA = 0;
+#endif
         for (j = 1; j < 8; j++) {
             D_800485B0[i][j] = -1;
             D_800485D0[i][j] = 0;

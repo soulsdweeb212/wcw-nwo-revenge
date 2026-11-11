@@ -21,7 +21,9 @@ typedef Gfx Dl;
 typedef union { u64 align; struct { u32 w0; u32 w1; } w; } Dl;
 #endif
 typedef struct { s32 f0; s32 f4; u16 f8; } Obj2664;
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80044590 (the addresses of the four render-list records) */
 extern Dl *D_80044590[];
+#endif
 extern s16 D_8002EEBC;
 extern s16 D_8002EEC6;
 extern s32 D_8007E228;
@@ -37,7 +39,12 @@ Dl *buildSceneSetupDisplayList(Obj2664 *arg0, s16 arg1) {
     Dl *dl;
     u32 i;
 
+#ifdef TARGET_PC
+    /* PC: the list is the first part of the record's PC layout, Nw2RenderList (common.h). */
+    dl = D_80044590[D_8002EEBC]->dl;
+#else
     dl = D_80044590[D_8002EEBC];
+#endif
     C(0xDB060000, 0);
 #ifdef TARGET_PC
     /* PC: D_8007E228 holds the segment-1 buffer as a 32-bit handle (port.h's PTR_TO_SLOT; func_80001260 sets it), and
@@ -57,7 +64,13 @@ Dl *buildSceneSetupDisplayList(Obj2664 *arg0, s16 arg1) {
     C(0xDE000000, (u32)osVirtualToPhysical - 0x7F01CE70);
 #endif
     if (arg1) {
+#ifdef TARGET_PC
+        /* PC: the frame record keeps its N64 layout and holds the framebuffer as a 32-bit handle (port.h's
+         * PTR_TO_SLOT; func_80002CC4 stores it), so the colour image gets the address back as the whole pointer. */
+        C(0xFF1001DF, DL_ADDR(SLOT_TO_PTR(arg0->f0)));
+#else
         C(0xFF1001DF, (u32)(arg0->f0 - 0x80000000));
+#endif
         if (D_8002EEC6) {
             C(0xE3000A01, 0x300000);
             D_8002EEC6 = 0;

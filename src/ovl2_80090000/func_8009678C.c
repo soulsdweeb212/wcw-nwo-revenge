@@ -7,11 +7,26 @@
 
 typedef struct { s32 flags; } St;
 
+#ifdef TARGET_PC
+/* PC: Sprite is the game's 0xDC-byte scene object, common.h's Nw2SceneObj, which keeps its N64 layout on PC: the
+ * address of its first work block at +0x14 is a 4-byte handle (port.h's PTR_TO_SLOT), and St is the start of that work
+ * block (its kind word, Nw2SceneWork's kind). Code reaches the work block through SLOT_TO_PTR. The asserts check the
+ * view against both records. */
+typedef struct {
+    u8 pad0[0x14];
+    u32 st;
+    u8 pad18[0xC4];
+} Sprite;
+_Static_assert(sizeof(Sprite) == sizeof(Nw2SceneObj) && offsetof(Sprite, st) == offsetof(Nw2SceneObj, work) &&
+                   offsetof(St, flags) == offsetof(Nw2SceneWork, kind),
+               "Sprite must follow Nw2SceneObj, and St Nw2SceneWork");
+#else
 typedef struct {
     u8 pad0[0x14];
     St *st;
     u8 pad18[0xC4];
 } Sprite;
+#endif
 
 void func_80097BB4(void);
 extern u8 D_8007EF30[];
@@ -32,9 +47,16 @@ void func_8009678C(void) {
     if (D_800E8B1A < n) {
         for (i = 0; i < 2; i++) {
             D_800E8B20[i] = -1;
+#ifdef TARGET_PC
+            /* PC: the objects' work blocks through their handles (see Sprite above). */
+            if (!(((St *)SLOT_TO_PTR(D_800E80C8[i].st))->flags & 0x80)) {
+                ((St *)SLOT_TO_PTR(D_800E80C8[i].st))->flags |= 0x80;
+                ((St *)SLOT_TO_PTR(D_800E8280[i].st))->flags |= 0x80;
+#else
             if (!(D_800E80C8[i].st->flags & 0x80)) {
                 D_800E80C8[i].st->flags |= 0x80;
                 D_800E8280[i].st->flags |= 0x80;
+#endif
             }
         }
     }

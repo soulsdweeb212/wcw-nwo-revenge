@@ -20,8 +20,15 @@ typedef struct { s8 a, b; } Pair;
 extern Ent D_8007E010[];
 extern u8 D_8005A3C0[];
 extern u8 D_8005A730[];
+#ifdef TARGET_PC
+/* PC: the labels D_800651B8 (D_800651A0 + 0x18, each object's draw group) and D_80066054 (D_800651A0 + 0xEB4, object
+ * 17's draw group) have no symbol on PC; the code reads them through their base D_800651A0, whose 0xDC-byte objects
+ * keep their N64 layout (Nw2SceneObj, common.h), at the N64 offsets and strides. */
+extern u8 D_800651A0[];
+#else
 extern u8 D_800651B8[];
 extern u8 D_80066054[];
+#endif
 extern Pair D_80070478[];
 extern s8 D_80036D30[];
 extern s8 D_80036D38[];
@@ -85,11 +92,21 @@ void func_80012CD0(void) {
                                   &D_8007E010[i].pts[n][0], &D_8007E010[i].pts[n][1], &D_8007E010[i].pts[n][2]);
                 }
             }
+#ifdef TARGET_PC
+            /* PC: D_80066054 through its base (see the declarations above). */
+            obj[0x18] = D_800651A0[0xEB4 + D_8007E010[i].e12 * 0x13C4];
+#else
             obj[0x18] = D_80066054[D_8007E010[i].e12 * 0x13C4];
+#endif
         }
         if (D_80070478[i].a != -1) {
             obj = D_8005A730 + i * 0xDC;
+#ifdef TARGET_PC
+            /* PC: D_800651B8 through its base (see the declarations above). */
+            obj[0x18] = D_800651A0[0x18 + i * 0x13C4 + D_80070478[i].b * 0xDC];
+#else
             obj[0x18] = D_800651B8[i * 0x13C4 + D_80070478[i].b * 0xDC];
+#endif
             func_80001DC4(obj);
         }
     }

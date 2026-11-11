@@ -5,7 +5,9 @@
  */
 #include "common.h"
 
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80046860 */
 extern void *D_80046860[];
+#endif
 extern s16 D_80047062;
 extern f32 D_80048288[][4];
 f32 nw2Sqrtf(f32);
@@ -38,7 +40,13 @@ void func_80001EA8(s32 arg0)
         {
             s0 = D_80046860[s1];
             ((f32 *) s0)[0xA] = ((f32 *) s0)[9] * 1024.0f;
+#ifdef TARGET_PC
+            /* PC: the work block's owner at +4 is a handle (Nw2SceneWork in common.h keeps the N64 layout), which
+             * SLOT_TO_PTR turns back into the object's address. */
+            a0p = SLOT_TO_PTR(*((u32 *) (((u8 *) s0) + 4)));
+#else
             a0p = *((void **) (((u8 *) s0) + 4));
+#endif
             t4 = 0;
             if ((*((u8 *) (((u8 *) a0p) + 0x19))) == 0)
             {

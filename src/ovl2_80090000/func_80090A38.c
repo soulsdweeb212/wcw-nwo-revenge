@@ -9,10 +9,24 @@ typedef struct {
     u32 flags;
 } Cam;
 
+#ifdef TARGET_PC
+/* PC: Obj is the start of the game's 0xDC-byte scene object, common.h's Nw2SceneObj, which keeps its N64 layout on PC:
+ * the address of its first work block at +0x14 is a 4-byte handle (port.h's PTR_TO_SLOT), and Cam is the start of that
+ * work block (its kind word, Nw2SceneWork's kind). Code reaches the work block through SLOT_TO_PTR. The asserts check
+ * the view against both records. */
+typedef struct {
+    u8 pad0[0x14];
+    u32 cam;
+} Obj;
+_Static_assert(offsetof(Obj, cam) == offsetof(Nw2SceneObj, work) &&
+                   offsetof(Cam, flags) == offsetof(Nw2SceneWork, kind),
+               "Obj must follow Nw2SceneObj, and Cam Nw2SceneWork");
+#else
 typedef struct {
     u8 pad0[0x14];
     Cam *cam;
 } Obj;
+#endif
 
 typedef struct Spr Spr;
 
@@ -26,23 +40,46 @@ s32 func_80090A38(Obj *a, Spr *as, Obj *b, Spr *bs, f32 y, s16 t, s16 flag) {
     s32 done;
 
     done = 1;
+#ifdef TARGET_PC
+    /* PC: the objects' work blocks through their handles (see Obj above). */
+    if (!(((Cam *)SLOT_TO_PTR(a->cam))->flags & 0x80) || !(((Cam *)SLOT_TO_PTR(b->cam))->flags & 0x80)) {
+#else
     if (!(a->cam->flags & 0x80) || !(b->cam->flags & 0x80)) {
+#endif
         done = 0;
         if (t < 6) {
             func_800907A0(a, as, 0xF0, y, 0.5f, -0.2f, 3.0 - t * 0.33, 3.0 - t * 0.33, 0xFF, 0xFF, 0xFF, t * 32 + 0x5F);
             func_800907A0(b, bs, 0xF0, y, 0.5f, -0.2f, 3.0 - t * 0.33, 3.0 - t * 0.33, 0xFF, 0xFF, 0xFF, t * 32 + 0x5F);
+#ifdef TARGET_PC
+            /* PC: as above, the work block through its handle. */
+            ((Cam *)SLOT_TO_PTR(a->cam))->flags |= 0x80;
+            ((Cam *)SLOT_TO_PTR(b->cam))->flags &= ~0x80;
+#else
             a->cam->flags |= 0x80;
             b->cam->flags &= ~0x80;
+#endif
         } else if (t < 9) {
             func_800907A0(a, as, 0xF0, y, 0.5f, -0.2f, 2.0f, 1.5f, 0xFF, 0xFF, 0xFF, 0xFF);
             func_800907A0(b, bs, 0xF0, y, 0.5f, -0.2f, 2.0f, 1.5f, 0xFF, 0xFF, 0xFF, 0xFF);
+#ifdef TARGET_PC
+            /* PC: as above, the work block through its handle. */
+            ((Cam *)SLOT_TO_PTR(a->cam))->flags &= ~0x80;
+            ((Cam *)SLOT_TO_PTR(b->cam))->flags |= 0x80;
+#else
             a->cam->flags &= ~0x80;
             b->cam->flags |= 0x80;
+#endif
         } else if (t < 18) {
             func_800907A0(a, as, 0xF0, y, 0.5f, -0.2f, 2.0f, 1.5f, 0xFF, 0xFF, 0xFF, 0xFF);
             func_800907A0(b, bs, 0xF0, y, 0.5f, -0.2f, 2.0f, 1.5f, 0xFF, 0xFF, 0xFF, 0xFF - (t - 9) * 30);
+#ifdef TARGET_PC
+            /* PC: as above, the work block through its handle. */
+            ((Cam *)SLOT_TO_PTR(a->cam))->flags &= ~0x80;
+            ((Cam *)SLOT_TO_PTR(b->cam))->flags |= 0x80;
+#else
             a->cam->flags &= ~0x80;
             b->cam->flags |= 0x80;
+#endif
         } else {
             if (flag == 0) {
                 if (t < 24) {
@@ -70,11 +107,23 @@ s32 func_80090A38(Obj *a, Spr *as, Obj *b, Spr *bs, f32 y, s16 t, s16 flag) {
                 }
             }
             if (done) {
+#ifdef TARGET_PC
+                /* PC: as above, the work block through its handle. */
+                ((Cam *)SLOT_TO_PTR(a->cam))->flags |= 0x80;
+                ((Cam *)SLOT_TO_PTR(b->cam))->flags |= 0x80;
+#else
                 a->cam->flags |= 0x80;
                 b->cam->flags |= 0x80;
+#endif
             } else {
+#ifdef TARGET_PC
+                /* PC: as above, the work block through its handle. */
+                ((Cam *)SLOT_TO_PTR(a->cam))->flags &= ~0x80;
+                ((Cam *)SLOT_TO_PTR(b->cam))->flags |= 0x80;
+#else
                 a->cam->flags &= ~0x80;
                 b->cam->flags |= 0x80;
+#endif
             }
         }
         if (D_800EB0AA == 2 && flag == 0) {

@@ -5,10 +5,14 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Gfx Gfx2; /* on PC a command is port.h's 16-byte Gfx, as func_80090380 allocates them */
+#else
 typedef struct {
     u32 w0;
     u32 w1;
 } Gfx2;
+#endif
 
 typedef struct {
     s32 flags;
@@ -16,7 +20,32 @@ typedef struct {
     f32 f20;
     f32 f24;
 } Cam;
+#ifdef TARGET_PC
+/* Cam is a work block (common.h's Nw2SceneWork, N64 layout on PC): flags is its kind, f20 the depth of its eye
+ * (eye[2]) and f24 its depth bias. */
+_Static_assert(offsetof(Cam, flags) == offsetof(Nw2SceneWork, kind) &&
+                   offsetof(Cam, f20) == offsetof(Nw2SceneWork, eye) + 2 * sizeof(f32) &&
+                   offsetof(Cam, f24) == offsetof(Nw2SceneWork, bias),
+               "Cam must follow Nw2SceneWork");
+#endif
 
+#ifdef TARGET_PC
+/* PC: a scene object (common.h's Nw2SceneObj), which keeps its N64 layout on PC. Its display list (+0x10) and its
+ * work block (+0x14) are 4-byte handles (port.h's PTR_TO_SLOT): code reads them through SLOT_TO_PTR. */
+typedef struct {
+    u8 pad0[0x10];
+    u32 dl;
+    u32 node;
+    u8 pad18;
+    u8 f19;
+    u8 pad1A[0x82];
+    f32 mtx[4][4];
+} Spr;
+_Static_assert(offsetof(Spr, dl) == offsetof(Nw2SceneObj, dl) && offsetof(Spr, node) == offsetof(Nw2SceneObj, work) &&
+                   offsetof(Spr, f19) == offsetof(Nw2SceneObj, flat) &&
+                   offsetof(Spr, mtx) == offsetof(Nw2SceneObj, view) && sizeof(Spr) == sizeof(Nw2SceneObj),
+               "Spr must follow Nw2SceneObj");
+#else
 /* 0xDC-byte sprite/display object */
 typedef struct {
     u8 pad0[0x10];
@@ -27,7 +56,14 @@ typedef struct {
     u8 pad1A[0x82];
     f32 mtx[4][4];
 } Spr;
+#endif
 
+#ifdef TARGET_PC
+/* PC: the display record (dl is its f10, then f18 and f1C, the picture's texture and palette) and the picture pair
+ * are common.h's PC layouts, the types port_decls.h declares the arrays with. */
+typedef Nw2Descr4BA8 SprTex;
+typedef Nw2TexPair Tex8;
+#else
 /* 0x2C-byte texture record */
 typedef struct {
     u8 pad0[0x10];
@@ -43,6 +79,7 @@ typedef struct {
     s32 w0;
     s32 w1;
 } Tex8;
+#endif
 
 extern u8 D_8007E228[];
 extern s32 D_8007E8C0[];
@@ -144,9 +181,13 @@ void guOrthoF(void *, f32, f32, f32, f32, f32, f32, f32);
 void guLookAtF(void *, f32, f32, f32, f32, f32, f32, f32, f32, f32);
 void multiplyMatrix4x4(void *, void *, void *);
 void func_8000670C(void *, s16, s16);
+#ifndef TARGET_PC /* on PC, port_decls.h declares convertRgba16ToGrayscale */
 void convertRgba16ToGrayscale(s32, s32);
+#endif
 void func_80004F80(void *, s16, s16);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_80007960 */
 void func_80007960(s32, s32);
+#endif
 void func_80090380(void *, u16);
 void func_800907A0(void *, void *, s16, s16, f32, f32, f32, f32, u8, u8, u8, u8);
 void func_800948B4(void);
@@ -165,9 +206,16 @@ static inline void initCamera(Spr *n) {
     guLookAtF(view, 0.0f, 240.0f, -1.0f, 0.0f, 240.0f, 0.0f, 0.0f, -1.0f, 0.0f);
     multiplyMatrix4x4(view, proj, n->mtx);
     n->f19 = 1;
+#ifdef TARGET_PC
+    /* PC: node is the work block's handle; SLOT_TO_PTR gives the work block. */
+    ((Cam *)SLOT_TO_PTR(n->node))->flags |= 0x80;
+    ((Cam *)SLOT_TO_PTR(n->node))->f24 = -5000.0f;
+    ((Cam *)SLOT_TO_PTR(n->node))->f20 = 100.0f;
+#else
     n->node->flags |= 0x80;
     n->node->f24 = -5000.0f;
     n->node->f20 = 100.0f;
+#endif
 }
 
 static inline void initSprite(Spr *n) {
@@ -177,8 +225,14 @@ static inline void initSprite(Spr *n) {
     initializeTransformNode(n, 5, z[0], z[0], z[0]);
     func_80006814(n, NULL, 0.0f, 0.0f);
     func_80001DC4(n);
+#ifdef TARGET_PC
+    /* PC: the work block through its handle, as in initCamera. */
+    ((Cam *)SLOT_TO_PTR(n->node))->flags |= 0x80;
+    ((Cam *)SLOT_TO_PTR(n->node))->f24 = -3000.0f;
+#else
     n->node->flags |= 0x80;
     n->node->f24 = -3000.0f;
+#endif
 }
 
 /* func_800906D8 */
@@ -187,7 +241,12 @@ static inline void loadTex(SprTex *n, s16 a, s16 b, s32 c) {
 
     func_80004F80(n, a, b);
     func_80007960(n->f1C, c & 0xFF);
+#ifdef TARGET_PC
+    /* PC: the record's display list is its f10, by name; its commands are 16-byte Gfx. */
+    g = n->f10;
+#else
     g = n->dl;
+#endif
     {
         Gfx2 *d = g++;
         d->w0 = 0xE200001C;
@@ -202,11 +261,20 @@ static inline void loadTex(SprTex *n, s16 a, s16 b, s32 c) {
 
 /* func_8009075C */
 static inline void loadTexFrom(SprTex *n, Tex8 *v) {
+#ifdef TARGET_PC
+    /* PC: the pair's texture and palette are pointers, copied into the record's f18 and f1C by name, then cleared. */
+    n->f18 = v->img;
+    n->f1C = v->pal;
+    func_80004F80(n, 0, 0);
+    n->f18 = NULL;
+    n->f1C = NULL;
+#else
     n->f18 = v->w0;
     n->f1C = v->w1;
     func_80004F80(n, 0, 0);
     n->f18 = 0;
     n->f1C = 0;
+#endif
 }
 
 void func_800922C0(void) {
@@ -238,16 +306,33 @@ void func_800922C0(void) {
     D_800F9AF8 = 0;
     initSprite(&D_800E77C0);
     D_800E7942 = 0x80;
+#ifdef TARGET_PC
+    /* PC: the object's display list is a handle (func_80006814 allocated it): free the list it names, then clear it. */
+    releaseHeapBlock(SLOT_TO_PTR(D_800E77C0.dl));
+    D_800E77C0.dl = 0;
+#else
     releaseHeapBlock(D_800E77C0.dl);
     D_800E77C0.dl = NULL;
+#endif
     for (i = 0; i < 3; i++) {
+#ifdef TARGET_PC
+        /* PC: each list holds the N64's 320 commands (0xA00 bytes of 8-byte commands), which func_80006814 writes
+         * into it, at sizeof(Gfx) = 16 bytes each. */
+        D_800E789C[i] = allocateHeap(0xA00 / 8 * sizeof(Gfx));
+#else
         D_800E789C[i] = allocateHeap(0xA00);
+#endif
     }
     D_800E7940 = 0;
     for (i = 0; i < 19; i++) {
         func_8000670C(&D_800E78A8[i], i * 2 + 0x2A5, i * 2 + 0x2A4);
         if (D_800307A0 == 1) {
+#ifdef TARGET_PC
+            /* PC: the pair's palette (16 colours), by name. */
+            convertRgba16ToGrayscale(D_800E78A8[i].pal, 0x10);
+#else
             convertRgba16ToGrayscale(D_800E78A8[i].w1, 0x10);
+#endif
         }
     }
     for (i = 0; i < 3; i++) {
@@ -326,13 +411,24 @@ void func_800922C0(void) {
         D_800E9D38[i] = -1;
     }
     for (i = 0; i < 4; i++) {
+#ifdef TARGET_PC
+        /* PC: the pair's two pointers, by name. */
+        D_800EA0E0[i].img = NULL;
+        D_800EA0E0[i].pal = NULL;
+#else
         D_800EA0E0[i].w0 = 0;
         D_800EA0E0[i].w1 = 0;
+#endif
     }
     func_8000670C(&D_800EA100[0], 0x27E, 0x274);
     func_8000670C(&D_800EA100[1], 0x27F, 0x274);
     for (i = 0; i < 20; i++) {
+#ifdef TARGET_PC
+        /* PC: the pair's texture pointer, by name. */
+        D_800EA110[i].img = NULL;
+#else
         D_800EA110[i].w0 = 0;
+#endif
         func_8000670C(&D_800EA110[i], 0, D_800E2C14[i]);
     }
     func_8000670C(&D_800EA5D8, 0x281, 0x280);

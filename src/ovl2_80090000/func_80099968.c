@@ -17,7 +17,9 @@ typedef struct {
     u16 pressed;
     u8 pad8[4];
 } Pad;
+#ifndef TARGET_PC /* on PC the object's work block is common.h's Nw2SceneWork, read by name */
 typedef struct { s32 flags; } Node;
+#endif
 
 s16 func_80098960(G **, s32);
 void func_80098D54(G **, s32);
@@ -34,10 +36,19 @@ extern u8 D_8007EF30[];
 extern s8 D_800E2F58;
 extern s8 D_800E2F59;
 extern s8 D_800E2F5A;
-#ifndef TARGET_PC /* on PC, port_decls.h declares D_800EB1D0 */
+#ifndef TARGET_PC /* on PC D_800EB1D0 has no symbol: it is the dl of D_800EB1C0, which port_decls.h declares */
 extern G *D_800EB1D0;
 #endif
+#ifdef TARGET_PC
+/* PC: the N64 label D_800EB1D4 is D_800EB1C0's work (+0x14). D_800EB1C0 keeps its N64 layout (Nw2SceneObj in
+ * common.h), so work holds the handle (port.h's PTR_TO_SLOT) of the object's work block (Nw2SceneWork); menuWork turns
+ * it back into the block, whose kind is the N64's flags. */
+static inline Nw2SceneWork *menuWork(void) {
+    return SLOT_TO_PTR(D_800EB1C0.work);
+}
+#else
 extern Node *D_800EB1D4;
+#endif
 extern G *D_800EB29C[];
 extern s16 D_800EB2A8;
 extern s16 D_800EB2AA;
@@ -122,20 +133,41 @@ s16 func_80099968(s16 arg0) {
     g->w0 = 0xDF000000;
     g->w1 = 0;
     g++;
+#ifdef TARGET_PC
+    /* PC: the object's dl (+0x10, the N64 label D_800EB1D0) holds the list's handle (port.h's PTR_TO_SLOT). */
+    D_800EB1C0.dl = PTR_TO_SLOT(D_800EB29C[D_800E2F58++]);
+#else
     D_800EB1D0 = D_800EB29C[D_800E2F58++];
+#endif
     D_800E2F58 %= 3;
     if (close) {
+#ifdef TARGET_PC
+        if (!(menuWork()->kind & 0x80)) { /* PC: see menuWork */
+#else
         if (!(D_800EB1D4->flags & 0x80)) {
+#endif
             func_80003418(D_800E2F5A);
         }
+#ifdef TARGET_PC
+        menuWork()->kind |= 0x80;
+#else
         D_800EB1D4->flags |= 0x80;
+#endif
     } else {
+#ifdef TARGET_PC
+        if (menuWork()->kind & 0x80) {
+#else
         if (D_800EB1D4->flags & 0x80) {
+#endif
             D_800E2F5A = func_80003464();
             func_80003418(D_800E2F5A / 2);
             MusHandleSetReverb(func_8000DEE4(0x410), 0);
         }
+#ifdef TARGET_PC
+        menuWork()->kind &= ~0x80;
+#else
         D_800EB1D4->flags &= ~0x80;
+#endif
         if (ret == 0) {
             ret = 1;
         }

@@ -18,21 +18,34 @@ extern u8 D_800706A4[];
 extern u8 D_80075468[];
 extern s16 D_80075440[][3];
 extern s16 D_8007C318[][23];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_8007C438 */
 extern s32 D_8007C438[][23];
+#endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_8007C3D0; its label D_8007C3D8 has no PC symbol */
 extern s32 D_8007C3D0[][4];
 extern s32 D_8007C3D8[][4];
+#endif
 extern u8 D_800651A0[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80073EB0 */
 extern u8 D_80073EB0[];
+#endif
 extern u8 D_800517D0[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80050800 */
 extern u8 D_80050800[];
+#endif
 
 typedef struct {
     u8 d[0xDC];
 } ObjC91C;
 
+#ifdef TARGET_PC
+/* PC: a slot of D_80073EB0 holds display records, whose PC layout is Nw2Descr4BA8 (common.h, 0x50 bytes). */
+typedef Nw2Descr4BA8 SlotC91C;
+#else
 typedef struct {
     u8 d[0x2C];
 } SlotC91C;
+#endif
 
 void func_80004B34(void *, void *, s32, f32, f32, f32);
 void func_80007A74(void *, s32, s32);
@@ -88,8 +101,14 @@ void func_8000C91C(s16 arg0, u16 arg1, s16 arg2, s16 arg3, s32 arg4, s8 arg5, s8
             {
                 D_80075440[i][j] = 0;
             }
+#ifdef TARGET_PC
+            /* PC: the arena's two bases by name (Nw2MeshArena in common.h); D_8007C3D8 is arena 0's cmds. */
+            D_8007C3D0[i].verts = NULL;
+            D_8007C3D0[i].cmds = NULL;
+#else
             D_8007C3D0[i][0] = 0;
             D_8007C3D8[i][0] = 0;
+#endif
         }
     }
     bank = (arg1 >> 8) & 0x1F;
@@ -114,7 +133,12 @@ void func_8000C91C(s16 arg0, u16 arg1, s16 arg2, s16 arg3, s32 arg4, s8 arg5, s8
     D_8007DFB0[arg0] = arg3;
     D_800566E0[arg0] = D_8006A2A4[arg0];
     e = getEntry(D_8006A2A4[arg0], D_8007DFB0[arg0]);
+#ifdef TARGET_PC
+    /* PC: the player's slot of 23 display records (port_decls.h). */
+    s = D_80073EB0[arg0];
+#else
     s = (SlotC91C *) (D_80073EB0 + arg0 * 0x3F4);
+#endif
     a = (ObjC91C *) (D_800651A0 + arg0 * 0x13C4);
     D_80075440[arg0][0] = *(u16 *) (e + 0x16);
     D_80075440[arg0][1] = first;
@@ -123,11 +147,21 @@ void func_8000C91C(s16 arg0, u16 arg1, s16 arg2, s16 arg3, s32 arg4, s8 arg5, s8
     {
         func_80004B34(&a[i], &s[i], 4, 0.0f, 0.0f, 0.0f);
     }
+#ifdef TARGET_PC
+    /* PC: the player's arena (Nw2MeshArena, 0x20 bytes on PC). */
+    func_80007A74(&D_8007C3D0[arg0], 0x2BC, 0x4B0);
+#else
     func_80007A74(D_8007C3D0[arg0], 0x2BC, 0x4B0);
+#endif
     func_8000BDD0(arg0);
     func_8000C1B8(arg0, 0);
     func_8000C1B8(arg0, 1);
     func_80008B5C(arg0);
     func_80008C94(arg0);
+#ifdef TARGET_PC
+    /* PC: the player's slot of 23 display records of D_80050800 (port_decls.h); the objects keep their N64 size. */
+    buildObjectChain(D_800517D0 + arg0 * 0x13C4, D_80050800[arg0]);
+#else
     buildObjectChain(D_800517D0 + arg0 * 0x13C4, D_80050800 + arg0 * 0x3F4);
+#endif
 }

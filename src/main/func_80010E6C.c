@@ -30,7 +30,13 @@ typedef struct {
     char pad[0xD8];
 } Grp10E6C;
 extern Obj10E6C D_8005A1A0[4][3];
+#ifdef TARGET_PC
+/* PC: the label D_80059D9C (+0xC of D_80059D90) has no symbol. D_80059D90 holds the four side slots' scene objects
+ * (Nw2SceneObj, common.h, 0xDC bytes each), and the PC reads each one's vertices (+0xC) by name. */
+extern u8 D_80059D90[];
+#else
 extern Grp10E6C D_80059D9C[];
+#endif
 
 void func_80010E6C(void) {
     u32 i;
@@ -96,11 +102,9 @@ void func_80010E6C(void) {
             }
         }
 #ifdef TARGET_PC
-        /* PC: not ported yet. D_80059D9C is D_80059D90 + 0xC: the vertices' address in the 4-byte field +0xC of side
-         * i's 0xDC-byte object, which func_8000FAF8 allocates. That object has no PC layout yet (docs/port.md, "Shared
-         * records on PC"), and its s32 view here holds only half of a 64-bit address, so the PC stops the program
-         * instead of handing func_8000F710 a cut pointer to write through. */
-        port_fatal("func_80010E6C: the 0xDC-byte object record has no PC layout yet");
+        /* PC: side i's vertices, which func_8000FAF8 allocates: the object keeps the handle (port.h's PTR_TO_SLOT) of
+         * the block, and func_8000F710 gets the pointer. */
+        func_8000F710((u8 *)SLOT_TO_PTR(((Nw2SceneObj *)D_80059D90)[i].vtx), i);
 #else
         func_8000F710(D_80059D9C[i].p, i);
 #endif

@@ -6,8 +6,10 @@
 #include "common.h"
 
 extern s16 D_800EB37A;
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800F99C0 (a Nw2SceneObj); its label D_800F99D4 has no PC symbol */
 extern s32 *D_800F99D4;
 extern s32 D_800F99C0;
+#endif
 
 extern void buildColorOverlayDisplayList(void *, s32, s32, s32, s32);
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
@@ -31,6 +33,12 @@ s32 func_8009D844(s32 arg0, s32 arg1, s32 arg2) {
         buildColorOverlayDisplayList(&D_800F99C0, arg0 & 0xFF, arg1 & 0xFF, arg2 & 0xFF, temp_v0 & 0xFF);
         return 1;
     }
+#ifdef TARGET_PC
+    /* PC: D_800F99C0 keeps its N64 layout (Nw2SceneObj), so its work (+0x14, the N64 label D_800F99D4) is the handle
+     * (port.h's PTR_TO_SLOT) of its work block (Nw2SceneWork), whose kind is the N64's flags word. */
+    ((Nw2SceneWork *)SLOT_TO_PTR(D_800F99C0.work))->kind |= 0x80;
+#else
     *D_800F99D4 |= 0x80;
+#endif
     return 0;
 }

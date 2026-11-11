@@ -25,7 +25,13 @@ void func_800080A0(u8 *entity, f32 *avg, f32 *maxOut, f32 *minOut)
     sy = 0;
     sz = 0;
     count = (s8)entity[0x1B];
+#ifdef TARGET_PC
+    /* PC: the object's vertices at +0xC are a 4-byte handle (Nw2SceneObj in common.h keeps the N64 layout), which
+     * SLOT_TO_PTR turns back into their address. */
+    v = SLOT_TO_PTR(*(u32 *)(entity + 0xC));
+#else
     v = *(Vtx80A0 **)(entity + 0xC);
+#endif
     if (count != 0) {
         maxX = minX = v[0].x;
         maxY = minY = v[0].y;

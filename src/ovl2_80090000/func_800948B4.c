@@ -5,19 +5,40 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: Rec2C is the game's display record of a picture, whose PC layout is common.h's Nw2Descr4BA8 (0x50 bytes, its
+ * addresses as pointers). port_decls.h declares D_800EA1B0 with that type, and &X[i] steps by whole records. */
+typedef Nw2Descr4BA8 Rec2C;
+#else
 typedef struct {
     u8 data[0x2C];
 } Rec2C;
+#endif
 
 typedef struct {
     s32 flags;
 } Node;
 
+#ifdef TARGET_PC
+/* PC: ObjDC is the game's 0xDC-byte scene object, common.h's Nw2SceneObj, which keeps its N64 layout on PC: the address
+ * of its first work block at +0x14 is a 4-byte handle (port.h's PTR_TO_SLOT), and Node is the start of that work block
+ * (its kind word, Nw2SceneWork's kind). This file only steps through D_800E9D70 by objects, so only the 0xDC size
+ * matters here. The asserts check the view against both records. */
+typedef struct {
+    u8 pad0[0x14];
+    u32 node;
+    u8 pad18[0xC4];
+} ObjDC;
+_Static_assert(sizeof(ObjDC) == sizeof(Nw2SceneObj) && offsetof(ObjDC, node) == offsetof(Nw2SceneObj, work) &&
+                   offsetof(Node, flags) == offsetof(Nw2SceneWork, kind),
+               "ObjDC must follow Nw2SceneObj, and Node Nw2SceneWork");
+#else
 typedef struct {
     u8 pad0[0x14];
     Node *node;
     u8 pad18[0xC4];
 } ObjDC;
+#endif
 
 typedef struct {
     u8 id;

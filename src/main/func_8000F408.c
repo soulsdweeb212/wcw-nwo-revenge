@@ -9,27 +9,39 @@ extern s8 D_80036CAC[];
 #ifndef TARGET_PC /* on PC, port_decls.h declares D_80058A0C */
 extern s32 D_80058A0C;
 #endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80058A10 (display records) */
 extern u8 D_80058A10[];
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares D_80058F90 */
 extern s32 D_80058F90;
 #endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80058FA0 (display records) */
 extern u8 D_80058FA0[];
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares D_80059520 */
 extern s32 D_80059520;
 #endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80059528 (display records) */
 extern u8 D_80059528[];
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares D_80059898 */
 extern s32 D_80059898;
 #endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800598A0 (display records) */
 extern u8 D_800598A0[];
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares D_80059C10 */
 extern s32 D_80059C10;
 #endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80059C18 (display records) */
 extern u8 D_80059C18[];
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares D_80059CC8 */
 extern s32 D_80059CC8;
 #endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80059CD0 (display records) */
 extern u8 D_80059CD0[];
+#endif
 extern s16 D_80059D82;
 #ifdef TARGET_PC
 /* PC: the types of freeResourceDescriptorArray's definition. It frees the display list, which the N64 line passes as

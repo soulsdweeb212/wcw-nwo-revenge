@@ -11,7 +11,9 @@ extern u8 D_80059D90[];
 
 void releaseHeapBlock(s32);
 
+#ifndef TARGET_PC /* on PC, D_8005AAAD is the type field of D_8005AAA0[n] (port_decls.h); the label has no PC symbol */
 extern u8 D_8005AAAD[];
+#endif
 extern u8 D_80036DFC[];
 extern u8 D_80036E04[];
 extern u8 D_80036E0C[];
@@ -26,7 +28,11 @@ s32 func_80011B24(s32 arg0) {
     u32 c;
     u32 r;
 
+#ifdef TARGET_PC
+    idx = D_8005AAA0[(s16)arg0].type; /* PC: the animation-command record's type by field name */
+#else
     idx = D_8005AAAD[((s16)arg0) << 4];
+#endif
     if (idx == 6) {
         idx = 5;
     }

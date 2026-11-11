@@ -8,8 +8,17 @@
 typedef struct { f32 x, y, z; } VecAA70;
 extern VecAA70 D_80048590;
 
+#ifdef TARGET_PC
+/* PC: the third parameter is a void *, as port_decls.h declares it, because port_decls.h cannot name this file's
+ * VecAA70; it is read as one. Its callers pass the stream's read cursor as a u8 * (func_8000A310, func_8000A3DC), so
+ * the address stays whole, and they store or keep the advanced cursor this returns. */
+u8 *func_8000AA70(u8 *p, f32 *out, void *vecArg)
+{
+    VecAA70 *vec = vecArg;
+#else
 u8 *func_8000AA70(u8 *p, f32 *out, VecAA70 *vec)
 {
+#endif
     s32 x, y, z;
     s32 hasVec, absVec;
 

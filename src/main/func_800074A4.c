@@ -86,7 +86,12 @@ void func_800074A4(Gfx74A4 *buf, Ent74A4 *arg1, u16 *arg2, s16 arg3)
                 prev = e;
             }
             if (e == NULL) {
+#ifdef TARGET_PC
+                /* PC: the entry holds two 8-byte pointers, so it is sizeof(Cache74A4) = 0x18 bytes, not 0xC. */
+                e = allocateHeap(sizeof(Cache74A4));
+#else
                 e = allocateHeap(0xC);
+#endif
                 if (prev == NULL) {
                     nw2ResourceCacheHead = e;
                 } else {

@@ -52,6 +52,14 @@ typedef struct {
     s16 y;
     Tex *tex;
 } Icon;
+#ifdef TARGET_PC
+/* PC: the icons this draws (D_800EB19C, D_800EB1AC) are common.h's Nw2HudIcon, as port_decls.h declares them; this
+ * view only names the picture's type. The assert checks that the two layouts agree (the picture at +8, 0x10 bytes). */
+_Static_assert(offsetof(Icon, id) == offsetof(Nw2HudIcon, id) && offsetof(Icon, scale) == offsetof(Nw2HudIcon, scale) &&
+                   offsetof(Icon, x) == offsetof(Nw2HudIcon, x) && offsetof(Icon, y) == offsetof(Nw2HudIcon, y) &&
+                   offsetof(Icon, tex) == offsetof(Nw2HudIcon, tex) && sizeof(Icon) == sizeof(Nw2HudIcon),
+               "Icon must follow Nw2HudIcon");
+#endif
 
 #ifndef TARGET_PC /* on PC, port_decls.h declares D_800E2E80, which holds palette addresses */
 extern u32 D_800E2E80[];

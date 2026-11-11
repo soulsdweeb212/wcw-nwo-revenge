@@ -55,7 +55,12 @@ void setupEntityMoveCD990(Wrestler *w, Wrestler *target) {
         func_800D3E40(targetPos, &dir, func_800D35B0(*heading, 0x800), pos);
         func_800A72FC(w, pos, *steps);
         func_800D36B4(&w->x, selfPos, &dir);
+#ifdef TARGET_PC
+        /* PC: the offset's x as the f32 * the function takes; it reads x and z, at dir's +0 and +8, as on the N64. */
+        translateEntityXZ(w, &dir.x);
+#else
         translateEntityXZ(w, &dir);
+#endif
     }
     w->turnPerTick = func_800D3684(*heading, w->heading) / *steps;
     func_800D427C(w, anim, 2);

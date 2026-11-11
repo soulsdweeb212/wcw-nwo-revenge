@@ -8,6 +8,7 @@
 void bcopy(void *, void *, s32);
 void func_80001DC4(void *);
 
+#ifndef TARGET_PC /* on PC, the function reads the node as Nw2SceneObj (common.h) */
 typedef struct {
     s32 parent;   /* @0x0: parent node, or 0 */
     void *child;  /* @0x4 */
@@ -16,21 +17,55 @@ typedef struct {
     f32 local[4][4];
     f32 world[4][4];
 } Nw2Node1DC4;
+#endif
 
 /* Recursively recompute world matrices for a scene-graph list: with no parent,
  * copy the local matrix verbatim (bcopy); with a parent, multiply the
  * local matrix by the parent's matrix at +0x5C. Then recurse into the child and
  * continue along the sibling list. */
 #ifdef TARGET_PC
-/* PC: not ported yet; the program stops here. The nodes are the 0xDC-byte transform nodes (objects), whose first word
- * holds the parent's address as an s32 and whose next two hold the child's and the next sibling's; the matrices
- * follow at +0x1C and +0x5C. On PC those addresses are 8 bytes, so the node needs one PC layout that every file that
- * reads it follows, and it has none yet (docs/port.md, "Shared records on PC"). This view would cut the
- * parent's address in half and place the other fields where no writer puts them. */
+/* PC: the nodes are the 0xDC-byte objects, which keep their N64 layout (Nw2SceneObj in common.h), so their parent,
+ * child and next fields hold handles (port.h's PTR_TO_SLOT). This version turns each handle back with SLOT_TO_PTR
+ * (a handle of 0 gives NULL) and reads the matrices by name: local at +0x1C and world at +0x5C. */
 void func_80001DC4(void *arg0)
 {
-    (void)arg0;
-    port_fatal("func_80001DC4: the 0xDC-byte transform node has no PC layout yet");
+    Nw2SceneObj *node = arg0;
+    Nw2SceneObj *parent;
+    f32 (*m)[4];
+    f32 *wp;
+    f32 *lp;
+    f32 *a;
+    u32 i;
+    u32 j;
+    u32 k;
+    f32 sum;
+
+    while (node != NULL) {
+        parent = SLOT_TO_PTR(node->parent);
+        if (parent == NULL) {
+            bcopy(node->local, node->world, 0x40);
+        } else {
+            m = parent->world;
+            i = 0;
+            wp = node->world[0];
+            lp = node->local[0];
+            while (i < 4) {
+                a = lp;
+                for (j = 0; j < 4; j++) {
+                    sum = 0.0f;
+                    for (k = 0; k < 4; k++)
+                        sum += a[k] * m[k][j];
+                    wp[j] = sum;
+                }
+                wp += 4;
+                lp += 4;
+                i++;
+            }
+        }
+        if (node->child != 0)
+            func_80001DC4(SLOT_TO_PTR(node->child));
+        node = SLOT_TO_PTR(node->next);
+    }
 }
 #else
 void func_80001DC4(void *arg0)

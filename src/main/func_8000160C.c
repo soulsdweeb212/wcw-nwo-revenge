@@ -9,6 +9,24 @@ void *func_80001694();
 
 /* Allocate a new scratch block, attach arg0 as its owner (+4), and append it to the
  * end of arg0's work-block chain (linked through +8). */
+#ifdef TARGET_PC
+/* PC: the object and its work blocks keep their N64 layout (Nw2SceneObj and Nw2SceneWork in common.h), so the owner,
+ * the object's first block and each block's next hold handles (port.h's PTR_TO_SLOT). This version walks the chain
+ * with SLOT_TO_PTR and stores the handles of the object and of the new block. */
+void *func_8000160C(void *arg0) {
+    Nw2SceneWork *block;
+    Nw2SceneWork *tail;
+
+    block = func_80001694();
+    block->owner = PTR_TO_SLOT(arg0);
+    tail = SLOT_TO_PTR(((Nw2SceneObj *)arg0)->work);
+    while (tail->next != 0) {
+        tail = SLOT_TO_PTR(tail->next);
+    }
+    tail->next = PTR_TO_SLOT(block);
+    return block;
+}
+#else
 void *func_8000160C(void *arg0) {
     void *block;
     void *tail;
@@ -24,3 +42,4 @@ void *func_8000160C(void *arg0) {
     *(void **)((s8 *)tail + 8) = block;
     return block;
 }
+#endif

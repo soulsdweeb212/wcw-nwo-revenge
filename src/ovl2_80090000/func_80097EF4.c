@@ -5,6 +5,11 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: the icon is common.h's Nw2HudIcon, as port_decls.h declares D_800EB1AC: the picture's pointer at +8 is 8 bytes,
+ * so an icon is 0x10 bytes. */
+typedef Nw2HudIcon Icon;
+#else
 typedef struct {
     s16 id;
     s16 scale;
@@ -12,6 +17,7 @@ typedef struct {
     s16 y;
     void *tex;
 } Icon;
+#endif
 
 extern u32 D_8007E848; /* D_8007E228+0x620: present / winner bits */
 extern u16 D_8007E280; /* D_8007E228+0x58 */

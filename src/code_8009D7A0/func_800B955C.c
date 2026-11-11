@@ -13,7 +13,12 @@
  * fallback) or the 0x100000/mode path, returning 1 on a hit. */
 extern s16 D_800EB474;
 extern s16 D_800EB478;
+#ifdef TARGET_PC
+/* PC: the definition's types (func_800B9730.c): it reads each {id, -1, -1, -1} buffer as signed bytes. */
+void func_800B9730(s8 *arg0, s8 *arg1, s32 arg2, s32 arg3);
+#else
 void func_800B9730(u8 *, u8 *, u32, s32);
+#endif
 void playEntitySound(s32, s32);
 s32 func_800B8484(u32);
 s8 func_800BA578(s8);
@@ -61,17 +66,32 @@ s8 func_800B955C(u64 mask) {
             r1.f2 = -1;
             if (mode == 0x10000) {
                 if (D_800EB478 < D_800EB474) {
+#ifdef TARGET_PC
+                    /* PC: the two buffers as the s8 * the function takes; the N64 passes the same addresses. */
+                    func_800B9730((s8 *)&r0, (s8 *)&r1, 0x10000, 1);
+#else
                     func_800B9730(&r0, &r1, 0x10000, 1);
+#endif
                     playEntitySound(0, 2);
                 } else {
                     return func_800B8484(0x10000);
                 }
             } else if (func_800BA578((s8)i)) {
+#ifdef TARGET_PC
+                /* PC: the buffers as s8 *, as in the first call. */
+                func_800B9730((s8 *)&r0, (s8 *)&r1, mode | 0x100000, 1);
+#else
                 func_800B9730(&r0, &r1, mode | 0x100000, 1);
+#endif
                 func_800D5B74((s8)r0.f0, (s8)r1.f0, mode);
                 return 1;
             } else {
+#ifdef TARGET_PC
+                /* PC: the buffers as s8 *, as in the first call. */
+                func_800B9730((s8 *)&r0, (s8 *)&r1, mode, 1);
+#else
                 func_800B9730(&r0, &r1, mode, 1);
+#endif
             }
         }
     }

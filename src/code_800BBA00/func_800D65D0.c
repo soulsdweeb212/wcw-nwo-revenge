@@ -9,7 +9,9 @@ extern u32 D_800FABD8;
 extern u16 D_800E3F84[];
 extern u16 D_800E3F8C[];
 extern u8 D_80030560[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_8007C438; not used here */
 extern u8 D_8007C438[];
+#endif
 
 /* Classify the wrestler's ringSide against mask arg1: 1 when D_800E3F84[ringSide]
  * shares a bit with it, else 2 when D_800E3F8C[ringSide] does, else 0. */

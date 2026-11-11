@@ -150,9 +150,18 @@ void func_8009DD60(void) {
         u32 s0 = s1 & 0xFFFF;
         void *p;
         if (s0) {
+#ifdef TARGET_PC
+            /* PC: the N64 calls the void-declared name through an s8 cast and tests the low byte of the s32 the body
+             * returns. A call through another function type is undefined in C, so the PC calls func_800DECAC as
+             * port_decls.h declares it, returning s32, and tests the same low byte. */
+            if ((s8)func_800DECAC(D_800EB408, D_800FABE6, s0, 1)) {
+                return;
+            }
+#else
             if (((s8 (*)(void *, s32, s32, s32))func_800DECAC)(D_800EB408, D_800FABE6, s0, 1)) {
                 return;
             }
+#endif
             if (func_800DF5C4(D_800EB408, D_800EB40C, D_800FAF8A, D_800FABE6,
                               D_800FAF78, s0)) {
                 return;

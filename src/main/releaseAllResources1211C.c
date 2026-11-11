@@ -12,13 +12,14 @@
 #ifndef TARGET_PC /* on PC, port_decls.h declares these as pointers (display lists and D_8005B218's vertex block) */
 extern s32 D_8005AAE0, D_8005AB40, D_8005ABA0, D_8005AC2C, D_8005ACB4, D_8005AD3C, D_8005ADC4, D_8005AE4C, D_8005AEA8, D_8005AFE4, D_8005B06C, D_8005B218;
 #endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares these: display records (Nw2Descr4BA8), picture pairs (Nw2TexPair) */
 extern u8 D_8005AAE8[], D_8005AB48[], D_8005ABA8[], D_8005AC30[], D_8005ACB8[], D_8005AD40[], D_8005ADC8[], D_8005AE50[], D_8005AEB0[], D_8005AFE8[], D_8005B070[], D_8005B110[][44], D_8005B220[][8];
+#endif
 #ifdef TARGET_PC
-/* PC: port_decls.h declares D_8005B0F8. D_8005AAA0[i][j] holds the address of a heap block that
- * initializeMatchResources allocates and stores through its view void *[][4]; this file frees it through the same
- * view. releaseHeapBlock and freeResourceDescriptorArray are declared with their definitions' types: they take the
+/* PC: port_decls.h declares D_8005B0F8 and D_8005AAA0, the four animation-command records (Nw2AnimatedCi4State), whose
+ * three buffers are heap blocks that initializeMatchResources allocates; this file frees them by field name.
+ * releaseHeapBlock and freeResourceDescriptorArray are declared with their definitions' types: they take the
  * addresses as pointers and the count as an s16. */
-extern void *D_8005AAA0[][4];
 void releaseHeapBlock(u8 *);
 void func_80006E2C(void *);
 void freeResourceDescriptorArray(void *, void *, s16);
@@ -43,15 +44,30 @@ void releaseAllResources1211C(void) {
     freeResourceDescriptorArray(D_8005AFE8, D_8005AFE4, 3); D_8005AFE4 = 0;
     freeResourceDescriptorArray(D_8005B070, D_8005B06C, 3); D_8005B06C = 0;
     for (i = 0; i < 6; i++) {
+#ifdef TARGET_PC
+        /* PC: D_8005B110 is an array of display records (Nw2Descr4BA8): record i is D_8005B110[i]. */
+        freeResourceDescriptorArray(&D_8005B110[i], D_8005B0F8[i], 1);
+#else
         freeResourceDescriptorArray(D_8005B110[i], D_8005B0F8[i], 1);
+#endif
         D_8005B0F8[i] = 0;
     }
     releaseHeapBlock(D_8005B218); D_8005B218 = 0;
     for (i = 0; i < 26; i++)
+#ifdef TARGET_PC
+        func_80006E2C(&D_8005B220[i]); /* PC: D_8005B220 is an array of picture pairs (Nw2TexPair) */
+#else
         func_80006E2C(D_8005B220[i]);
+#endif
     for (i = 0; i < 4; i++)
         for (j = 0; j < 3; j++) {
+#ifdef TARGET_PC
+            /* PC: the animation-command record's buffers by field name (Nw2AnimatedCi4State). */
+            releaseHeapBlock(D_8005AAA0[i].buffers[j]);
+            D_8005AAA0[i].buffers[j] = NULL;
+#else
             releaseHeapBlock(D_8005AAA0[i][j]);
             D_8005AAA0[i][j] = 0;
+#endif
         }
 }

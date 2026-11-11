@@ -17,7 +17,9 @@ void func_80094424(void);
 void func_800984C8(void);
 extern u8 D_800706A0[];
 extern s16 D_800FACEA[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800F99C0 (a Nw2SceneObj) */
 extern s32 D_800F99C0;
+#endif
 extern s16 D_800307A0;
 
 void func_8009A5F4(void) {

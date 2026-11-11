@@ -14,6 +14,11 @@
 typedef Gfx Nw2Gfx;
 typedef struct { u32 f0; u8 cms, cmt, masks, maskt; } Nw2Ci4Texture;
 typedef struct { Nw2Ci4Texture *tex; void *palette; } Nw2Ci4Object;
+/* The object is a picture pair (Nw2TexPair, common.h): func_80011764 passes &D_8005B220[n]. tex is the pair's img, the
+ * texture's heap buffer (an 8-byte header, then the texels), and palette its pal. */
+_Static_assert(sizeof(Nw2Ci4Object) == sizeof(Nw2TexPair) && offsetof(Nw2Ci4Object, tex) == offsetof(Nw2TexPair, img) &&
+                   offsetof(Nw2Ci4Object, palette) == offsetof(Nw2TexPair, pal),
+               "Nw2Ci4Object must follow Nw2TexPair");
 #else
 typedef struct { u32 w0, w1; } Nw2Gfx;
 typedef struct { u32 f0; u8 cms, cmt, masks, maskt; } Nw2Ci4Texture;

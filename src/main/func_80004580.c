@@ -48,7 +48,12 @@ void *func_80004580(s16 arg0) {
         node = node->next;
     }
     if (node == NULL) {
+#ifdef TARGET_PC
+        /* PC: the node holds two 8-byte pointers, so it is sizeof(Nw2ResNode) = 0x18 bytes, not 0xC. */
+        node = allocateHeap(sizeof(Nw2ResNode));
+#else
         node = allocateHeap(0xC);
+#endif
         if (prev == NULL) {
             nw2ResourceCacheHead = node;
         } else {

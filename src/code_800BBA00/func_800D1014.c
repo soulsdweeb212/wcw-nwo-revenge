@@ -13,10 +13,12 @@ typedef struct {
 extern s8 D_800FADB8;
 extern u8 D_800FABE4;
 extern u16 D_800E3CD0[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800EB5C0; the three labels are fields of its rows */
 extern s32 D_800EB5C0[][4];
 extern s32 D_800EB5C4[][4];
 extern f32 D_800EB5C8[][4];
 extern s32 D_800EB5CC[][4];
+#endif
 
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800D5438 */
 s16 func_800D5438(void *, s32);
@@ -25,7 +27,12 @@ void func_800D427C(void *, s16, s32);
 s32 func_800D1B5C(void *, void *);
 void func_800D1EA8(void *, void *);
 f32 func_800D3890(void *, void *, void *);
+#ifdef TARGET_PC
+/* PC: the definition's types (func_800D3E40.c), which returns nothing; the calls below do not use a result. */
+void func_800D3E40(f32 *arg0, f32 *arg1, s32 arg2, f32 *arg3);
+#else
 s32 func_800D3E40(void *, f32 *, s32, f32 *);
+#endif
 void func_800D36B4(void *, void *, void *);
 void translateEntityXZ(void *, void *);
 s32 func_800D3684(s32, s32);
@@ -52,10 +59,20 @@ void func_800D1014(void) {
     case 0: {
         s32 v;
         func_800D427C(D_800FAF5C, func_800D5438(D_800FAF5C, 0), 2);
+#ifdef TARGET_PC
+        /* PC: the slot's row of D_800EB5C0 by field name. The N64 reaches z and angle through the labels D_800EB5C8
+         * and D_800EB5CC, 8 and 12 bytes into the same 16-byte row; no label has a symbol on PC. x is a float that
+         * the N64 clears with an integer 0, which has the same bits as 0.0f. */
+        D_800EB5C0[D_800FADB8].x = 0.0f;
+        D_800EB5C0[D_800FADB8].z = func_800D3890(&D_800FAF5C->x, &D_800F9B00->x, 0);
+        v = func_800D1B5C(D_800FAF5C, D_800F9B00);
+        D_800EB5C0[D_800FADB8].angle = v;
+#else
         D_800EB5C0[D_800FADB8][0] = 0;
         D_800EB5C8[D_800FADB8][0] = func_800D3890(&D_800FAF5C->x, &D_800F9B00->x, 0);
         v = func_800D1B5C(D_800FAF5C, D_800F9B00);
         D_800EB5CC[D_800FADB8][0] = v;
+#endif
         D_800FAF5C->turnPerTick = func_800D3684(v, D_800FAF5C->heading) / D_800FAF5C->animFramesLeft;
         D_800FAF5C->step++;
     }
@@ -66,7 +83,12 @@ void func_800D1014(void) {
             v = func_800D35B0(D_800FAF5C->heading, D_800FAF5C->turnPerTick);
             D_800FAF5C->heading = v;
             D_800F9B00->heading = func_800D35B0(v, 0x800);
+#ifdef TARGET_PC
+            /* PC: the row's x as the f32 * the function takes; it reads x and z, the row's first and third floats. */
+            func_800D3E40(&D_800FAF5C->x, &D_800EB5C0[D_800FADB8].x, D_800FAF5C->heading, buf);
+#else
             func_800D3E40(&D_800FAF5C->x, &D_800EB5C0[D_800FADB8][0], D_800FAF5C->heading, buf);
+#endif
             buf[1] = 0;
             func_800D36B4(&D_800F9B00->x, buf, &dir);
             translateEntityXZ(D_800F9B00, &dir);
@@ -90,10 +112,18 @@ void func_800D1014(void) {
         break;
     case 2:
         func_800D3890(&D_800FAF5C->x, &D_800F9B00->x, &dir);
+#ifdef TARGET_PC
+        /* PC: the slot's row by field name, as in case 0 (D_800EB5C4 is its y). */
+        D_800EB5C0[D_800FADB8].z = dir.y;
+        D_800EB5C0[D_800FADB8].x = 0.0f;
+        D_800EB5C0[D_800FADB8].y = 0.0f;
+        D_800EB5C0[D_800FADB8].angle = func_800D3684(dir.angle, D_800FAF5C->heading);
+#else
         D_800EB5C8[D_800FADB8][0] = dir.y;
         D_800EB5C0[D_800FADB8][0] = 0;
         D_800EB5C4[D_800FADB8][0] = 0;
         D_800EB5CC[D_800FADB8][0] = func_800D3684(dir.angle, D_800FAF5C->heading);
+#endif
         func_800D1EA8(D_800FAF5C, D_800F9B00);
         D_800FAF5C->step++;
         break;
@@ -109,7 +139,13 @@ void func_800D1014(void) {
             }
             func_800A7240(D_800FAF5C, v, 0x16, 0);
             D_800F9B00->heading = func_800D35B0(D_800FAF5C->heading, 0x800);
+#ifdef TARGET_PC
+            /* PC: the row's angle by field name and its x as the f32 *, as in case 1. */
+            func_800D3E40(&D_800FAF5C->x, &D_800EB5C0[D_800FADB8].x,
+                          func_800D35B0(D_800FAF5C->heading, D_800EB5C0[D_800FADB8].angle), buf);
+#else
             func_800D3E40(&D_800FAF5C->x, &D_800EB5C0[D_800FADB8][0], func_800D35B0(D_800FAF5C->heading, D_800EB5CC[D_800FADB8][0]), buf);
+#endif
             buf[1] = 0;
             func_800D36B4(&D_800F9B00->x, buf, &dir);
             translateEntityXZ(D_800F9B00, &dir);

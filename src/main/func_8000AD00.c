@@ -7,7 +7,9 @@
 
 typedef struct { f32 v; u8 pad[0x78]; } Part;
 typedef struct { Part p[23]; } Ent;
+#ifndef TARGET_PC /* on PC this label of the stream record D_800706A8 does not exist: it is read by field name */
 extern s16 D_800706AC[];
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares D_8007BD38 */
 extern s32 D_8007BD38;
 #endif
@@ -50,7 +52,13 @@ void func_8000AD00(s32 arg0, u16 arg1)
     count = 0;
     sh = arg0 << 16;
     entity = sh >> 16;
+#ifdef TARGET_PC
+    /* PC: the stream's animation id is the field id of its record (Nw2AnimStream, common.h), which the N64 reads 4
+     * bytes into the record through the label D_800706AC, as an s16 array with the record's 0xFC bytes as its step. */
+    idx = D_800706A8[entity].id;
+#else
     idx = D_800706AC[entity * 126];
+#endif
     off = (idx * 0x24) + bias;
 #ifdef TARGET_PC
     /* PC: D_8007BD38 is a pointer (port_decls.h); off is an s32, as on the N64. */

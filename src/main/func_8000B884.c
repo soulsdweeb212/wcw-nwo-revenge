@@ -16,7 +16,9 @@ extern s16 D_8003086C[];
 #ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void func_80003684(void *, u16, void *);
 #endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares convertRgba16ToGrayscale, which takes the u16 colours */
 void convertRgba16ToGrayscale(void *, u16);
+#endif
 void func_8000B884(u16 *out, s16 entity, s16 slot)
 {
     u8 meta[16];

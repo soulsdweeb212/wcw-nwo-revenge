@@ -5,7 +5,9 @@
  */
 #include "common.h"
 
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_8007C438: the addresses as void * */
 extern s32 D_8007C438[][23];
+#endif
 extern u16 D_8007C318[][23];
 
 typedef struct {
@@ -16,33 +18,57 @@ typedef struct {
 } Nw2SectionInfo;
 
 void *allocateHeap(u32 bytes);
+#ifdef TARGET_PC
+/* PC: its definition takes the block's address as a pointer, so it is declared with a pointer here. */
+void releaseHeapBlock(void *);
+#else
 void releaseHeapBlock(s32);
+#endif
 #ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void lookupResourceDescriptor(Nw2SectionInfo *, s32);
 void func_80003684(Nw2SectionInfo *, s32, void *);
 #endif
 void func_80004F80(void *, s16, s16);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_8000B884, which takes the palette as a u16 * */
 void func_8000B884(s32, s16, s16);
+#endif
 
 /* Loads resource `arg2` into texture-cache row arg3, slot arg4: frees any
  * existing buffer in that slot, allocates at least 0x20 bytes for the decoded
  * resource, decodes it into the new buffer and records its halfword length in
  * D_8007C318. Then refreshes the palette cache for the entity. */
 #ifdef TARGET_PC
-/* PC: not ported yet. The function keeps the loaded buffer's address in the texture-cache table D_8007C438, which
- * this file and func_8000C91C view as s32 and func_8000B884, func_8000CD84 and func_8000CFD4 as void *. Its PC storage
- * would be 0x2E0 bytes and so run 0x160 bytes into the animation rows that overlay 2 reaches at +0x180. That table has
- * no PC layout yet (docs/port.md, "Shared records on PC"). Even without a resource to load (arg2 == 0),
- * func_8000B884 then reads the slot's buffer from the table for most slots (those with a palette id in D_8003086C),
- * and on PC no address could have been kept there. So the PC stops the program here instead of keeping or reading half
- * an address. (arg0 is a display record, Nw2Descr4BA8 in common.h; its palette is the pointer field f1C on PC.) */
+/* PC: the texture-cache table is void *[4][23] (port_decls.h), so the slot is a void ** and the buffer's address is
+ * kept whole; the N64 computes the slot's address and stores the buffer's address in 32 bits. The animation rows that
+ * follow the table on the N64 are a variable of their own on PC (D_8007C5B8). arg0 is a display record (Nw2Descr4BA8
+ * in common.h): its palette is the pointer f1C on PC (+0x1C on the N64). */
 void loadTextureIntoCacheSlot(void *arg0, s16 arg1, s16 arg2, s16 arg3, s16 arg4) {
-    (void)arg0;
-    (void)arg1;
-    (void)arg2;
-    (void)arg3;
-    (void)arg4;
-    port_fatal("loadTextureIntoCacheSlot: the texture-cache table D_8007C438 has no PC layout yet");
+    Nw2SectionInfo info;
+    Nw2SectionInfo out;
+    u32 size;
+    void **slot;
+    u16 id;
+    void *buf;
+
+    func_80004F80(arg0, arg1, arg2);
+    if (arg2 != 0) {
+        id = arg2 & 0xFFFF;
+        lookupResourceDescriptor(&info, id);
+        slot = &D_8007C438[arg3][arg4];
+        if (*slot != NULL) {
+            releaseHeapBlock(*slot);
+            *slot = NULL;
+        }
+        size = info.size;
+        if (size < 0x20) {
+            size = 0x20;
+        }
+        buf = allocateHeap(size);
+        *slot = buf;
+        func_80003684(&out, id, buf);
+        D_8007C318[arg3][arg4] = (u16)(size >> 1);
+    }
+    func_8000B884(((Nw2Descr4BA8 *)arg0)->f1C, arg3, arg4);
 }
 #else
 void loadTextureIntoCacheSlot(void *arg0, s16 arg1, s16 arg2, s16 arg3, s16 arg4) {

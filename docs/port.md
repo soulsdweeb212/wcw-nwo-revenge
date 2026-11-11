@@ -249,25 +249,34 @@ that has no PC layout yet (see "Shared records on PC").
 
 ## Shared records on PC
 
-Some records that many files read hold addresses. Each gets one PC layout, decided once, which every file that reads
-the record follows; until a record's layout is decided, the files that need it keep their N64 code, or, where that code
-would not compile on PC, stop the program there with `port_fatal`, which names the record. Decided so far:
+Some records that many files read hold addresses, which are 4 bytes on the N64 and 8 on a 64-bit PC. Each such record
+has one PC layout, at the end of `common.h` (its `TARGET_PC` section), and every file that reads the record follows it.
+Two ways are used:
 
-1. **The display record of a mesh or a picture** (0x2C bytes on the N64): `Nw2Descr4BA8`, at the end of `common.h`.
-   Its first 0x20 bytes follow `Nw2TextureDisplayObj`, as an assert checks. `fC` to `f1C` (the vertices, the material
-   list, the list of vertices and triangles, the texture and the palette), `f20` and `f24` (the work blocks of its two
-   vertex groups, or NULL) and `f28` (the arena its buffers come from, or NULL) are pointers, and the record is 0x50
-   bytes. Code that steps through an array of records steps by `sizeof(Nw2Descr4BA8)`, not 0x2C, and reads the fields
-   by name or by `offsetof` (`func_8000498C`, `freeResourceDescriptorArray`, `func_8000520C`,
-   `releaseObjectHeapBlocks`, `func_80004AFC`). Not decided yet: the
-   arena that `f28` points to, and the 0xDC-byte object record into which `func_80007818` and `func_80007874` copy
-   the display record's addresses (both are in the list below). Other files still step through these records by 0x2C or
-   reach their fields at N64 offsets (`func_80007020`, `buildObjectChain`, `initializeMatchResources`,
-   `func_8000C1B8`, `func_8000EDE0`, `func_8000E920`, `func_8000BDD0`, `func_8000CD84`, `func_8000D718`,
-   `releaseAllResources1211C`), and the arrays of these records in the game's `.bss` reserve 0x2C bytes for each.
-   So do the 0x3F4-byte slots of 23 records each (`D_80050800`, and `D_80073EB0` with `D_80073F34` three records into
-   it), which `applyEntityTextureMasks`, `func_8000C784` and `func_8000C91C` read at offsets 0x2C and 0x58. On PC all
-   of them must follow `Nw2Descr4BA8` and its 0x50 bytes; until then they keep their N64 code.
+- **A PC struct with real pointers.** The record grows, so code steps through an array of them by `sizeof`, never by
+  the N64 size, and reads the fields by name or by `offsetof`. Most records are done this way.
+- **The N64 layout, with handles.** A few records are reached through many labels or N64 strides, so they keep every
+  N64 offset, and their 4-byte address fields hold a handle instead of the address: code stores `PTR_TO_SLOT(p)` and
+  reads `SLOT_TO_PTR(field)` (`port.h`). A handle of 0 stands for NULL.
+
+**Labels.** Many records are also reached through labels, names the N64 build gives to a field inside a record (for
+example `D_800706AC`, +4 of the stream record `D_800706A8`). On PC no label exists: the `TARGET_PC` lines read the
+record by its own name and a field name or index. A label left in PC code fails to link, which shows where.
+
+**Address tables** (records that hold nothing but addresses) are plain arrays of pointers on PC: the draw tables
+`D_80046860` and `D_80047070`, the render-list table `D_80044590`, and the texture-cache table `D_8007C438`.
+
+**`port_decls.h`** declares each of these variables once for the PC, with its PC type, and a game file that declares it
+its own N64 way wraps that line in `#ifndef TARGET_PC` (see "The PC declarations" above).
+
+The records:
+
+1. **The display record of a mesh or a picture** (0x2C bytes on the N64): `Nw2Descr4BA8`, 0x50 bytes on PC. Its first
+   0x20 bytes follow `Nw2TextureDisplayObj`, as an assert checks. `fC` to `f1C` (the vertices, the material list, the
+   list of vertices and triangles, the texture and the palette), `f20` and `f24` (the work blocks of its two vertex
+   groups, or NULL) and `f28` (the arena its buffers come from, or NULL) are pointers. Every file of the developer
+   program steps through these records by `sizeof(Nw2Descr4BA8)`, and the arrays of them are declared as arrays of
+   `Nw2Descr4BA8` in `port_decls.h`, including the 0x3F4-byte slots of 23 records (`D_80050800[4][23]`).
 2. **The resource-name cache**: 128 entries of `Nw2ResourceEntryHashed`, in a heap block whose address `D_8007FC34`
    holds. An entry's key is 0 (free), -1 (waiting to be freed), the address of the resource's name, or a resource id
    tagged with bit 0x40000000, which no N64 address has. A PC address can have that bit, so on PC the key is
@@ -295,27 +304,46 @@ would not compile on PC, stop the program there with `port_fatal`, which names t
    graphics task as a 4-byte message. On PC both go as handles, `PTR_TO_SLOT(queue)` and `PTR_TO_SLOT(task)`, so the
    port's stand-ins for the scheduler (`osScAddClient` and `__scMain`, which send the retrace messages to the queue,
    and `renderTaskThread`, which receives the task) turn them back with `SLOT_TO_PTR`.
+5. **The scene graph: the 0xDC-byte object and its work block** (`Nw2SceneObj`, `Nw2SceneWork`). The object is a node
+   of the scene graph (links, matrices, the vertices and display list it draws); its work block, 0xB8 bytes from the
+   pool in `D_80046858`, says what to draw. About 45 files step arrays of objects by 0xDC and 0x13C4 (23 objects), and
+   20 labels reach their fields, so both keep their N64 layout and hold handles. `func_80004BA8`, `func_80005014`,
+   `func_80005204`, `func_8000520C`, `func_8000D718`, `func_80007818`, `func_80007874`, `func_80010E6C` and
+   `func_80011764` have PC definitions that read and write them this way.
+6. **The players' mesh arenas** (`D_8007C3D0`, `Nw2MeshArena`): two pools per player that display records take their
+   vertices and display-list commands from. Pointers on PC, 0x20 bytes; the second pool holds 16-byte `Gfx` commands.
+7. **The animation streams** (`D_800706A8`, `Nw2AnimStream`): one per wrestler. The read cursor and the destination are
+   pointers, the cartridge requests are `port.h`'s `PortIoMesg`, and the queues keep the N64's 0x18 bytes and 4-byte
+   messages. 0x140 bytes on PC.
+8. **Pictures** (`Nw2TexPair`): the texture and palette buffers of a 2D picture, two pointers, 16 bytes on PC
+   (`D_80070458`, `D_8005B220`, overlay 2's picture arrays such as `D_800E78A8`). The two HUD icons `D_800EB19C` and
+   `D_800EB1AC` are `Nw2HudIcon`, 0x10 bytes on PC.
+9. **The render lists** (`D_80044590`, `Nw2RenderList`): four records, each a display list of 0x800 16-byte commands,
+   the graphics task (`Nw2ScTask`) and its done message. `func_80001260` allocates them with `sizeof(Nw2RenderList)`.
+   The task's framebuffer is a pointer; its message is a handle, because a message in the game's queues is 4 bytes.
+10. **The texture-cache table** (`D_8007C438`): per player, 23 addresses of heap blocks, `void *[4][23]` on PC. On the
+    N64 four rows of animation ids follow it at +0x180; on PC they are their own array, `D_8007C5B8[4][0x300]`.
+11. **The animation-command records** (`D_8005AAA0`, `Nw2AnimatedCi4State`): per player, three buffer pointers, then
+    the slot, type, frame and countdown bytes, 0x20 bytes on PC.
 
-Not decided yet. These records keep addresses in 4-byte fields, and each needs one PC layout that every file reading it
-follows. Until it has one, a file that needs it keeps its N64 code, and where that code would not compile on PC, the
-function stops the program with `port_fatal` and a message that names the record:
+Five `port_fatal` calls are left in the developer program's files. None waits for a decision; each stops on input the
+N64 would mishandle: a resource id out of range (`lookupResourceDescriptor`), a negative length (`bcopy`), a display
+record not on a record boundary (`func_8000498C`), a display list longer than its render list (`submitGraphicsTask`),
+and a hit with no hit class (`func_800C72DC`).
 
-- **The render-list records** (`D_80044590` holds the addresses of four 0x4078-byte records: a display list, the
-  graphics task, its queue and message). `func_80001260` stops at its allocation loop. It is the boot function that the
-  developer program starts from, so on PC the game's code stops there until this layout is decided.
-- **The 0xDC-byte object** (a transform node: links, matrices, the vertices and display list it draws, and a 0x38-byte
-  work block at +0x14). `func_80007818`, `func_80007874`, `func_80001DC4`, `func_80010E6C` and `func_80011764` stop,
-  and so does `func_8000520C` when the object's buffer at +0x10 is set.
-- **The arena** (`D_8007C3D0`, 16 bytes each: the bases of two pools of records that display records take their
-  buffers from). `func_80007B50` and `func_80007B84` stop.
-- **The stream records** (`D_800706A8`, four of 0xFC bytes, one per wrestler's animation stream: a read cursor, the
-  destination buffer, the cartridge request and its queue). `func_8000A310` stops, and so does `func_80008CE8` where
-  it reads the cursor.
-- **The texture-cache table** (`D_8007C438`: per player, 23 addresses of heap blocks). `loadTextureIntoCacheSlot`
-  stops.
-- **The pairs of heap buffers of a 2D picture** (the image and its palette, which `func_8000670C` fills:
-  `D_80070458`, `D_8005B220`, and overlay 2's picture arrays such as `D_800E78A8`), **the draw table** `D_80046860`,
-  and **the animation records** `D_8005AAA0`.
+Still open, for the step that links the program (G4):
+
+- **The game's variables.** On PC each one becomes a typed C definition, with exactly `port_decls.h`'s type, in a port
+  file. The `.bss` arrays of display records (`asm/data`) still reserve 0x2C bytes each and are not used on PC.
+- **The heap.** `allocateHeap.c`'s block header is 24 bytes on a 64-bit PC, but the allocator counts 16-byte units, so
+  the game's own heap cannot run on PC. Until it has PC code, the port's stand-ins (turnbuckle-dive
+  `src/game_heap.c`) allocate exactly the bytes asked for, so a PC record must be allocated by its `sizeof`: the
+  resource cache's nodes are 0x18 bytes on PC, and `func_80007020`, `func_80004580` and `func_800074A4` ask for
+  `sizeof` of their node on PC, not the N64's 0xC.
+- **Labels of records outside this list.** `initializeMatchResources` and `func_80011764` still name labels inside the
+  0x5C-byte entity records of `D_8007E010` (`D_8007E012` to `D_8007E028`) and `D_80070479`; `func_80094A9C` reads
+  `D_8007E280` and `func_800922C0` reads `D_8007E228` at offsets. They need the same treatment as item 3.
+- **A range check in `func_80094A9C`** (overlay 2's picture index past the end of its array), not added yet.
 
 ## Checking a change for the port
 
