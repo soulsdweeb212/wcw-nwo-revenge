@@ -453,8 +453,8 @@ def build_map(cc: str, jobs: int, out: Path) -> list[str]:
 #   an int 1, 2, 4 or 8      a value of that many bytes;
 #   [shape, shape, ...]      a struct of those fields, aligned as C aligns them on each machine;
 #   Arr(count, shape)        an array; count AUTO means "as many addresses as the data holds there": in main's data,
-#                            the run of words that splat marked as addresses, up to the next label (an array of
-#                            single addresses only);
+#                            the run of words that splat marked as addresses or that are 0 (a list's closing NULL),
+#                            up to the next label (an array of single addresses only);
 #   Ptr(target)              an address (4 bytes on the N64, 8 on PC) of:
 #     Data(w)                data that holds no address, read as w-byte values (1: bytes; also for textures and
 #                            palettes, which stay in the N64's byte order); it keeps its N64 offset in its section's
@@ -505,6 +505,7 @@ TABLES = {
     # main's data
     "D_8002EEB0": Arr(3, Ptr(PORT)),                                  # the three framebuffers
     "nw2ResourceCacheHead": Ptr(Data(1)),                              # the resource cache's first entry: 0 at start
+    "D_80031060": Arr(10, Ptr(Data(2))),                               # sound ids, by group (func_8000E4FC)
     "D_800317F0": Arr(52, Ptr(Data(2))),                               # 52 tables of s16 (func_8000BDD0)
     "D_80031998": Arr(10, Ptr(Data(2))),                               # 10 tables of u16, by bank (func_8000BDD0)
     "D_80032B44": Arr(10, Ptr(Arr(AUTO, Ptr(Arr(AUTO, Ptr(Data(2))))))),  # bank -> index -> list of s16 tables
@@ -620,9 +621,11 @@ class Tables:
             raise Fail(f"{where}: AUTO counts only work in main's data, where splat marked the addresses")
         end = self.next_label(a)
         n = 0
-        while a + 4 * n < end and (a + 4 * n in self.relocs):
+        # Addresses and 0 words (NULL): many lists end with a NULL that the game walks to (func_8000C91C counts the
+        # entries of D_80032B44's lists so), so it must be in the PC array too.
+        while a + 4 * n < end and (a + 4 * n in self.relocs or self.word(a + 4 * n) == 0):
             n += 1
-        if n == 0:
+        if n == 0 or a not in self.relocs:
             raise Fail(f"{where}: no address at {a:#010x}")
         return n
 

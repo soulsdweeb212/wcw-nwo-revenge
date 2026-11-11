@@ -15,14 +15,23 @@ s32 func_800AB2B4(void) {
     p=D_800FAF58; f.value=p->flags;
     if (f.value&WR_FLAG_ON_APRON) {
         if (!(f.value&WR_FLAG_LEGAL)) {
+#ifdef TARGET_PC
+            /* PC: a wrestler record is sizeof(Wrestler) bytes (0x3B8), not the N64's 0x3B0, so the byte offset of slot n is n * sizeof(Wrestler). */
+            off=p->opponentId*(s32)sizeof(Wrestler);
+#else
             off=p->opponentId*0x3B0;
+#endif
             f.words.hi=((WrFlagWords *)((u8 *)&D_800F9D10[0].flags+off))->hi; f.words.lo=((WrFlagWords *)((u8 *)&D_800F9D10[0].flags+off))->lo;
             if (!(f.value&WR_FLAG_LEGAL) && (f.value&WR_FLAG_ON_APRON)) goto success;
         }
         p=D_800FAF58; f.value=p->flags;
     }
     if ((f.value&WR_FLAG_IN_RING) && (f.value&WR_FLAG_LEGAL)) {
+#ifdef TARGET_PC
+        off=p->opponentId*(s32)sizeof(Wrestler);
+#else
         off=p->opponentId*0x3B0;
+#endif
         f.words.hi=((WrFlagWords *)((u8 *)&D_800F9D10[0].flags+off))->hi; f.words.lo=((WrFlagWords *)((u8 *)&D_800F9D10[0].flags+off))->lo;
         if (!(f.value&WR_FLAG_LEGAL) && !(f.value&WR_FLAG_IN_RING)) {
 success:

@@ -365,10 +365,16 @@ decompdecomp's Python has, and gcc:
 ~/.local/share/uv/tools/decompnet/bin/python tools/port_data.py --check
 ```
 
+A wrestler record is `sizeof(Wrestler)` bytes on PC (0x3B8), so code that steps from one wrestler to the next by a
+byte offset uses `n * sizeof(Wrestler)` on PC where the N64 code has `n * 0x3B0` (`copyPartCoordinateFields`,
+`func_800AB2B4`, `runMatchPhaseStateMachine`, `updateEntityTargetLookAngles`, `func_8009D8D0`). The render records
+(0x13C4) and scene objects (0xDC) keep their N64 strides, because they keep their N64 layout.
+
 The tool takes a variable's width from the files' declarations of it. A file that only takes a variable's address
 may declare it as bytes (`extern u8 X[]`) and hand it to a function that reads it at another width; such a declaration
 gets a PC version with the real type (`func_8000E920` and `func_8000EF90` for `func_80007020`'s arrays, the AI files
-for `func_800ADA38`'s tables), or the variable would keep the N64's byte order.
+for `func_800ADA38`'s tables), or the variable would keep the N64's byte order. A table of addresses read through a
+byte declaration gets a pointer declaration on PC and a `TABLES` entry (`D_80031060` in `func_8000E4FC`).
 
 How it works:
 

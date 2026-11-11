@@ -19,9 +19,18 @@ typedef struct {
 } Nw2ActABD0;
 
 extern Nw2ActABD0 *D_800FABD0;
+#ifdef TARGET_PC
+/* PC: tables of {s16 threshold, u16 action, u16 bits} that func_800ADA38 reads as s16. The PC starts game
+ * variables in its own byte order by the width their declarations give (port/game_vars.tsv), so they are
+ * declared with that width here; the N64 code only takes their addresses. */
+extern s16 D_800E3448[];
+extern s16 D_800E3468[];
+extern s16 D_800E3480[];
+#else
 extern u8 D_800E3448[];
 extern u8 D_800E3468[];
 extern u8 D_800E3480[];
+#endif
 extern f64 D_800E4DD8;
 
 s8 func_800AB0E8(void);
@@ -38,7 +47,11 @@ void func_800ADA38(void *);
 void selectActionVariant(void) {
     Nw2ActABD0 *act;
     s16 state;
+#ifdef TARGET_PC
+    s16 *paramSet; /* PC: the tables are s16 (above) */
+#else
     u8 *paramSet;
+#endif
 
     if (func_800AB0E8()) return;
     if (func_800AB1B0()) return;

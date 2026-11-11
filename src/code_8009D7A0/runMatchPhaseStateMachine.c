@@ -111,7 +111,12 @@ void runMatchPhaseStateMachine(void) {
             D_800FADCF |= 0x80;
             if (!D_800EB472) {
                 for (player = 0; player < 4; player++) {
+#ifdef TARGET_PC
+                    /* PC: a wrestler record is sizeof(Wrestler) bytes (0x3B8), not the N64's 0x3B0, so the byte offset of slot n is n * sizeof(Wrestler). */
+                    s32 entityOffset = player * (s32)sizeof(Wrestler);
+#else
                     s32 entityOffset = player * 0x3B0;
+#endif
                     u8 linkValue;
                     outBase = player * 8;
                     AU8(D_8007E228, 0x60 + outBase) = WRV(u16, health, entityOffset);
@@ -127,7 +132,11 @@ void runMatchPhaseStateMachine(void) {
                         AU8(D_8007E228, 0x66 + outBase) = 2;
                     {
                         s32 playerIdx = (s16)player;
+#ifdef TARGET_PC
+                        s32 entityOff = playerIdx * (s32)sizeof(Wrestler);
+#else
                         s32 entityOff = playerIdx * 0x3B0;
+#endif
                         if (WRV(u64, flags, entityOff) & 0x400000000ULL) {
                             s32 outSlot = playerIdx * 8;
                             AU8(D_8007E228, 0x66 + outSlot) |= 1;

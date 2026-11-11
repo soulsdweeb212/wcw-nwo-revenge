@@ -34,7 +34,12 @@ s32 updateEntityTargetLookAngles(s8 entityIndex, Heading *look) {
         if(D_800E6C28<(f64)look->f4) look->f4=67.5f;
         if((f64)look->f4<D_800E6C30) look->f4=-67.5f;
         if(D_800F9D10[(s8)entityIndex].flags&0x140ULL) {if(D_800F9D10[(s8)entityIndex].animId!=0xF13) look->f4=0.0f;}
+#ifdef TARGET_PC
+        /* PC: a wrestler record is sizeof(Wrestler) bytes (0x3B8), not the N64's 0x3B0, so the byte offset of slot n is n * sizeof(Wrestler). */
+        {s32 selfOffset=(s8)entityIndex*(s32)sizeof(Wrestler);
+#else
         {s32 selfOffset=(s8)entityIndex*0x3B0;
+#endif
             targetVec.x=0.0f;
             targetVec.y=D_800F9D10[*(s8 *)((u8 *)&D_800F9D10[0].opponentId+selfOffset)].jointA[5].y;
             targetVec.z=*(f32 *)((u8 *)&D_800F9D10[0].jointA[5].z+selfOffset)+lookDistance;

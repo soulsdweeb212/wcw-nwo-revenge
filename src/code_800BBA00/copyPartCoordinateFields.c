@@ -15,7 +15,12 @@ void copyPartCoordinateFields(void) {
     s32 dst,src;
     for(i=0;i<4;i++) {
         for(j=1;j<20;j++) {
+#ifdef TARGET_PC
+            /* PC: a wrestler record is sizeof(Wrestler) bytes (0x3B8), not the N64's 0x3B0, so the byte offset of slot n is n * sizeof(Wrestler). */
+            dst=j*0x10+i*(s32)sizeof(Wrestler);
+#else
             dst=j*0x10+i*0x3B0;
+#endif
             src=j*0x7C+i*0xB24;
             AT(D_800F9D10[0].jointA[0].x,dst)=AT(D_80070C94,src);
             AT(D_800F9D10[0].jointA[0].z,dst)=AT(D_80070C9C,src);
