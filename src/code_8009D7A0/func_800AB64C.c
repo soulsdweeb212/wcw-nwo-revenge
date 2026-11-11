@@ -8,7 +8,14 @@
 void func_800AD958(s32);
 void func_800ADA38(void *);
 s8 func_800D4198(s16);
+#ifdef TARGET_PC
+/* PC: tables of {s16 threshold, u16 action, u16 bits} that func_800ADA38 reads as s16. The PC starts game
+ * variables in its own byte order by the width their declarations give (port/game_vars.tsv), so they are
+ * declared with that width here; the N64 code only takes their addresses. */
+extern s16 D_800E3548[];
+#else
 extern u8 D_800E3548[];
+#endif
 extern f64 D_800E4E00,D_800E4E08,D_800E4E10,D_800E4E18;
 extern u8 *D_800FABD0;
 #define F(p,o,t) (*(t *)((p)+(o)))

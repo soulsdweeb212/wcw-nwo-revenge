@@ -203,6 +203,15 @@ void port_res_loaded(u32 id, void *buf, s32 size);
 void *port_heap_alloc(u32 bytes);
 void port_heap_free(void *block);
 
+/* The frame hand-off on PC, implemented by the port. On the N64 the game thread hands each frame to the render thread
+ * (func_80002CC4) through two message queues and waits for its answer: func_80002BC0 hands over a frame to draw,
+ * func_80002C0C asks for nothing, func_80002C74 waits for the next retrace. On PC the three call port_present instead,
+ * with what they asked for; the port draws the frame (or, with no picture yet, only counts it) and paces the game. */
+#define PORT_PRESENT_FRAME 0 /* func_80002BC0: a frame to draw; D_800467FC holds it */
+#define PORT_PRESENT_IDLE  1 /* func_80002C0C: nothing to draw, no wait */
+#define PORT_PRESENT_SYNC  2 /* func_80002C74: nothing to draw, wait for the next retrace */
+void port_present(s32 kind);
+
 /* PortIoMesg: a cartridge read request, the OSIoMesg that the game hands to osEPiStartDma (port_osEPiStartDma on PC).
  * On the N64 it is 0x18 bytes: type, pri, status, then retQueue, dramAddr, devAddr, size and piHandle as 4-byte words.
  * On PC retQueue, dramAddr and piHandle are host pointers and devAddr is a RomAddr, so the request is 0x28 bytes. The

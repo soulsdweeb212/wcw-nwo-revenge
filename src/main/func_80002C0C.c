@@ -19,6 +19,11 @@ extern s32 D_80046800;
 void func_80002C0C(void) {
     D_800467FC = 0;
     D_80046800 = 0;
+#ifdef TARGET_PC
+    /* PC: no render thread waits on D_800467C0; the port takes the hand-off (port_present in port.h). */
+    port_present(PORT_PRESENT_IDLE);
+#else
     osSendMesg(&D_800467C0, 0, 1);
     osRecvMesg(&D_800467E0, 0, 1);
+#endif
 }

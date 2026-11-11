@@ -39,8 +39,14 @@ void updateActionStateC6868(void)
             id = 0x100D;
         }
         kind = 0x47;
+#ifdef TARGET_PC
+        /* PC: the N64 code reads D_800FAF5C through its absolute address 0x800FAF5C, which means nothing on a PC; this
+         * reads the same variable by its name. */
+        if ((s16)D_800FAF5C->state == 0x23) {
+#else
         /* D_800FAF5C read through its absolute address: the ROM reloads the pointer here */
         if ((s16)(*(Wrestler **)0x800FAF5C)->state == 0x23) {
+#endif
             id = id + 1;
             kind = 0x48;
         }

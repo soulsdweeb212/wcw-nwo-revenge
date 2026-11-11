@@ -50,12 +50,24 @@ extern u8 D_80056950[];
 #ifndef TARGET_PC /* on PC, the label D_80056954 (+0x4 of D_80056950) has no symbol: the PC line writes that field */
 extern u8 *D_80056954;
 #endif
+#ifdef TARGET_PC
+/* PC: arrays of 16-bit values, which func_80007020 reads as s16 and u16 (its second and third arguments). The
+ * PC starts game variables in its own byte order by the width their declarations give (port/game_vars.tsv), so
+ * they are declared with that width here; the N64 code only takes their addresses. */
+extern s16 D_80036750[];
+extern s16 D_80036758[];
+extern s16 D_80036760[];
+extern s16 D_80036768[];
+extern s16 D_80036790[];
+extern s16 D_800367B8[];
+#else
 extern u8 D_80036750[];
 extern u8 D_80036758[];
 extern u8 D_80036760[];
 extern u8 D_80036768[];
 extern u8 D_80036790[];
 extern u8 D_800367B8[];
+#endif
 extern const f64 D_8003B230;
 extern const f64 D_8003B238;
 extern const f64 D_8003B240;

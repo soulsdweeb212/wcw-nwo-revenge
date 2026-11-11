@@ -65,7 +65,9 @@ These exist only under `TARGET_PC`:
   and stop), `port_ptr_to_slot`/`port_slot_to_ptr` behind the slot macros, and `port_heap_alloc`/`port_heap_free`,
   the game's heap on PC: `allocateHeap` and `releaseHeapBlock` call them, because the N64's heap cannot run on a 64-bit
   PC (its 16-byte block header grows to 24 bytes, while the code counts 16-byte units). `D_8007C430` still counts the
-  blocks in use. The port allocates exactly the bytes asked for, so a PC record must be allocated by its `sizeof`: the
+  blocks in use. `port_present` takes the game's frame hand-offs (`func_80002BC0`, `func_80002C0C`, `func_80002C74`),
+  which on the N64 message the render thread; the PC runs no render thread. The port allocates exactly the bytes
+  asked for, so a PC record must be allocated by its `sizeof`: the
   resource cache's nodes are 0x18 bytes on PC, and `func_80007020`, `func_80004580` and `func_800074A4` ask for
   `sizeof` of their node on PC, not the N64's 0xC.
 - Renames of SDK functions the port replaces, such as `#define osRecvMesg port_osRecvMesg`. A rename changes the
@@ -362,6 +364,11 @@ decompdecomp's Python has, and gcc:
 ~/.local/share/uv/tools/decompnet/bin/python tools/port_data.py
 ~/.local/share/uv/tools/decompnet/bin/python tools/port_data.py --check
 ```
+
+The tool takes a variable's width from the files' declarations of it. A file that only takes a variable's address
+may declare it as bytes (`extern u8 X[]`) and hand it to a function that reads it at another width; such a declaration
+gets a PC version with the real type (`func_8000E920` and `func_8000EF90` for `func_80007020`'s arrays, the AI files
+for `func_800ADA38`'s tables), or the variable would keep the N64's byte order.
 
 How it works:
 

@@ -20,11 +20,25 @@ extern Nw2Action560 *D_800FABD0;
 extern f64 D_800E4DE8;
 extern f64 D_800E4DF0;
 extern f64 D_800E4DF8;
+#ifdef TARGET_PC
+/* PC: tables of {s16 threshold, u16 action, u16 bits} that func_800ADA38 reads as s16. The PC starts game
+ * variables in its own byte order by the width their declarations give (port/game_vars.tsv), so they are
+ * declared with that width here; the N64 code only takes their addresses. */
+extern s16 D_800E34A8[];
+extern s16 D_800E34CC[];
+extern s16 D_800E3504[];
+extern s16 D_800E351C[];
+#else
 extern s8 D_800E34A8[];
 extern s8 D_800E34CC[];
 extern s8 D_800E3504[];
 extern s8 D_800E351C[];
+#endif
+#ifdef TARGET_PC
+void func_800ADA38(s16 *); /* PC: its definition's type, now that the tables are s16 */
+#else
 void func_800ADA38(s8 *);
+#endif
 s8 func_800D4198(s16);
 
 /* Pick an action parameter set for D_800FABD0 by its f34 range: above

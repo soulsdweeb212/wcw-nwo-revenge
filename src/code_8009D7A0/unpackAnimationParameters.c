@@ -30,13 +30,27 @@ void unpackAnimationParameters(u8 *dst, u32 *packed) {
     dst[19]=packed[1]>>28;
     dst[20]=(packed[1]>>12)&15;
     dst[21]=(packed[3]>>25)&7;
+#ifdef TARGET_PC
+    /* PC: the N64 reads the 16-bit half at +12 (the upper half of packed[3]) through a bit-field, whose low 6 bits
+     * are bits 16..21 of the word. The words are in the PC's byte order on PC (port_res_loaded), and a PC lays
+     * bit-fields out from the other end, so the same bits are taken with a shift. */
+    dst[22]=(packed[3]>>16)&63;
+#else
     dst[22]=((Nw2PackedSixBits *)((u8 *)packed+12))->low;
+#endif
     dst[23]=packed[3];
     dst[24]=(packed[2]>>20)&63;
     dst[25]=(packed[2]>>15)&31;
     dst[26]=packed[3]>>8;
     dst[27]=packed[2]>>26;
+#ifdef TARGET_PC
+    /* PC: the N64 reads the 16-bit half at +4 (the upper half of packed[1]) through a bit-field, whose low 6 bits
+     * are bits 16..21 of the word. The words are in the PC's byte order on PC (port_res_loaded), and a PC lays
+     * bit-fields out from the other end, so the same bits are taken with a shift. */
+    dst[28]=(packed[1]>>16)&63;
+#else
     dst[28]=((Nw2PackedSixBits *)((u8 *)packed+4))->low;
+#endif
     dst[29]=(packed[1]>>22)&63;
     *(u32 *)(dst+32)=packed[4]>>6;
     if(dst[5]&32)dst[5]|=0xC0;

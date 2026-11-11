@@ -44,10 +44,20 @@ extern u8 D_800587F0[];
 extern u8 D_80058900[];
 extern u8 D_80058988[];
 #endif
+#ifdef TARGET_PC
+/* PC: arrays of 16-bit values, which func_80007020 reads as s16 and u16 (its second and third arguments). The
+ * PC starts game variables in its own byte order by the width their declarations give (port/game_vars.tsv), so
+ * they are declared with that width here; the N64 code only takes their addresses. */
+extern s16 D_80036C68[];
+extern s16 D_80036C8C[];
+extern s16 D_80036CFC[];
+extern s16 D_80036D04[];
+#else
 extern u8 D_80036C68[];
 extern u8 D_80036C8C[];
 extern u8 D_80036CFC[];
 extern u8 D_80036D04[];
+#endif
 extern void *D_80036C74[];
 extern void *D_80036C94[];
 extern s16 D_80036C50[];
