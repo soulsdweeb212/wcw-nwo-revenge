@@ -11,11 +11,23 @@
  * (osContInit) and sends the "detect" message, then clears the
  * per-seat state flags, tears the temporary seats down and returns the scan
  * result. */
+#ifdef TARGET_PC
+/* PC: the seat records keep the N64's 12 bytes, because the files that read the controller state (func_80003E78, the
+ * match's pad readers) reach their fields at N64 offsets. So the first word holds a handle of the seat descriptor's
+ * address (docs/port.md, "Shared records on PC"); the developer program's files never read it back. */
+typedef struct {
+    u32 p;
+    s32 f4;
+    s32 f8;
+} Nw2Rec6E178;
+_Static_assert(sizeof(Nw2Rec6E178) == 0xC, "Nw2Rec6E178 keeps the N64's 12 bytes");
+#else
 typedef struct {
     void *p;
     s32 f4;
     s32 f8;
 } Nw2Rec6E178;
+#endif
 
 extern Nw2Rec6E178 D_8006E178[4];
 extern s32 D_80048310[];
@@ -44,7 +56,11 @@ s32 func_80003D20(void) {
     u32 i;
 
     for (i = 0; i < 4; i++) {
+#ifdef TARGET_PC
+        D_8006E178[i].p = PTR_TO_SLOT(&D_80048310[i]);
+#else
         D_8006E178[i].p = &D_80048310[i];
+#endif
     }
     osCreateMesgQueue(queue, msg, 1);
     osSetEventMesg(5, queue, 1);

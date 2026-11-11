@@ -195,6 +195,14 @@ void *func_80003684(void *out, s32 id, void *buf);
 void port_rom_read(void *dst, RomAddr src, u32 size);
 void port_res_loaded(u32 id, void *buf, s32 size);
 
+/* The game's heap on PC, implemented by the port; allocateHeap and releaseHeapBlock call them. The N64's heap cannot run
+ * on a 64-bit PC as it is: its block header {next, size, magic} is 16 bytes there and 24 here, but it counts in 16-byte
+ * units and finds a block's header 0x10 bytes before the block. port_heap_alloc returns a block of at least `bytes`
+ * bytes, aligned for any type, filled with zeros (the N64's heap is all zeros until its blocks are reused), and stops
+ * the program when the PC has no memory left. port_heap_free frees a block of port_heap_alloc. */
+void *port_heap_alloc(u32 bytes);
+void port_heap_free(void *block);
+
 /* PortIoMesg: a cartridge read request, the OSIoMesg that the game hands to osEPiStartDma (port_osEPiStartDma on PC).
  * On the N64 it is 0x18 bytes: type, pri, status, then retQueue, dramAddr, devAddr, size and piHandle as 4-byte words.
  * On PC retQueue, dramAddr and piHandle are host pointers and devAddr is a RomAddr, so the request is 0x28 bytes. The

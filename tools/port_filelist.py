@@ -100,8 +100,10 @@ SETS = {
 # - bzero and bcopy: game code calls them by name, and the port's program must not define a function under a C
 #   library name, so port.h renames the game's own two port_bzero and port_bcopy. A replacement written with memset
 #   could end up calling itself, because compilers turn memset(p, 0, n) back into a call to bzero.
+# - __floatdisf (s64 to f32, from the N64 compiler's runtime): the game's own drops the bits below the 24th instead of
+#   rounding them, so a PC conversion could come out 1 ulp bigger; port.h renames it port_floatdisf.
 KEEP_SDK_LIBRARIES = frozenset({"libultra (gu)"})
-KEEP_SDK_FUNCTIONS = frozenset({"bzero", "bcopy"})
+KEEP_SDK_FUNCTIONS = frozenset({"bzero", "bcopy", "__floatdisf"})
 
 # Rows of that table that stay game code. func_80000A40 (library "?") sets up the SRAM handle the way Nintendo's SRAM
 # sample does, but no SDK function matches it, so it counts as the game's own code.

@@ -14,6 +14,15 @@ void bzero(void *, s32);
 /* Allocates at least `bytes` from the circular 16-byte-unit free list,
  * initializing the 0x21000-unit heap on first use. Splits a block when it is
  * larger than needed, stamps the 0xCAFE4ABE magic and returns the payload. */
+#ifdef TARGET_PC
+/* PC: the port's heap (port_heap_alloc in port.h says why the N64's cannot run here). D_8007C430 still counts the
+ * blocks in use. */
+void *allocateHeap(u32 bytes) {
+    void *p = port_heap_alloc(bytes);
+    D_8007C430++;
+    return p;
+}
+#else
 void *allocateHeap(u32 bytes) {
     HeapBlock *prev = D_8002EE94;
     HeapBlock *p;
@@ -44,3 +53,4 @@ void *allocateHeap(u32 bytes) {
     }
     return NULL;
 }
+#endif

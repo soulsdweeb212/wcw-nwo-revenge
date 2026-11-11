@@ -62,7 +62,12 @@ These exist only under `TARGET_PC`:
 - `PortIoMesg`: a cartridge read request (libultra's `OSIoMesg`) with real pointers, 0x28 bytes, which the port's
   `osEPiStartDma` takes and the game's animation streams keep (`Nw2AnimStream` in `common.h`).
 - Declarations of functions the port implements: `port_rom_read`, `port_res_loaded`, `port_fatal` (print a message
-  and stop), and `port_ptr_to_slot`/`port_slot_to_ptr` behind the slot macros.
+  and stop), `port_ptr_to_slot`/`port_slot_to_ptr` behind the slot macros, and `port_heap_alloc`/`port_heap_free`,
+  the game's heap on PC: `allocateHeap` and `releaseHeapBlock` call them, because the N64's heap cannot run on a 64-bit
+  PC (its 16-byte block header grows to 24 bytes, while the code counts 16-byte units). `D_8007C430` still counts the
+  blocks in use. The port allocates exactly the bytes asked for, so a PC record must be allocated by its `sizeof`: the
+  resource cache's nodes are 0x18 bytes on PC, and `func_80007020`, `func_80004580` and `func_800074A4` ask for
+  `sizeof` of their node on PC, not the N64's 0xC.
 - Renames of SDK functions the port replaces, such as `#define osRecvMesg port_osRecvMesg`. A rename changes the
   calls, the declarations and the game's own definition alike, so the game never defines a function under a name that
   LUS or the C library also has. `port.h` says for each group why:
@@ -325,25 +330,65 @@ The records:
     N64 four rows of animation ids follow it at +0x180; on PC they are their own array, `D_8007C5B8[4][0x300]`.
 11. **The animation-command records** (`D_8005AAA0`, `Nw2AnimatedCi4State`): per player, three buffer pointers, then
     the slot, type, frame and countdown bytes, 0x20 bytes on PC.
+12. **The controller seats** (`D_8006E178`): four 12-byte records, whose first word `func_80003D20` sets to the address
+    of the seat's status (`D_80048310`). The developer program's files read the rest at N64 offsets, so the records
+    keep their layout and the word holds a handle. Overlay 1's `func_800C5718` reads the address back and will need
+    `SLOT_TO_PTR` when overlay 1 is compiled for the PC.
 
 Five `port_fatal` calls are left in the developer program's files. None waits for a decision; each stops on input the
 N64 would mishandle: a resource id out of range (`lookupResourceDescriptor`), a negative length (`bcopy`), a display
 record not on a record boundary (`func_8000498C`), a display list longer than its render list (`submitGraphicsTask`),
 and a hit with no hit class (`func_800C72DC`).
 
-Still open, for the step that links the program (G4):
+Still open:
 
-- **The game's variables.** On PC each one becomes a typed C definition, with exactly `port_decls.h`'s type, in a port
-  file. The `.bss` arrays of display records (`asm/data`) still reserve 0x2C bytes each and are not used on PC.
-- **The heap.** `allocateHeap.c`'s block header is 24 bytes on a 64-bit PC, but the allocator counts 16-byte units, so
-  the game's own heap cannot run on PC. Until it has PC code, the port's stand-ins (turnbuckle-dive
-  `src/game_heap.c`) allocate exactly the bytes asked for, so a PC record must be allocated by its `sizeof`: the
-  resource cache's nodes are 0x18 bytes on PC, and `func_80007020`, `func_80004580` and `func_800074A4` ask for
-  `sizeof` of their node on PC, not the N64's 0xC.
 - **Labels of records outside this list.** `initializeMatchResources` and `func_80011764` still name labels inside the
   0x5C-byte entity records of `D_8007E010` (`D_8007E012` to `D_8007E028`) and `D_80070479`; `func_80094A9C` reads
-  `D_8007E280` and `func_800922C0` reads `D_8007E228` at offsets. They need the same treatment as item 3.
+  `D_8007E280` and `func_800922C0` reads `D_8007E228` at offsets. On PC these variables keep their N64 offsets ("The
+  game's variables", below), so the labels reach the same bytes as on the N64.
 - **A range check in `func_80094A9C`** (overlay 2's picture index past the end of its array), not added yet.
+
+## The game's variables on PC: tools/port_data.py
+
+The game files use about 1,250 variables of the N64's data and BSS sections. The port defines all of them, from one
+map, [`port/game_vars.tsv`](../port/game_vars.tsv), which [`tools/port_data.py`](../tools/port_data.py) writes and
+Turnbuckle Dive turns into C when it configures (its `docs/GAME_CODE.md`, "The game's variables"). The map holds no
+byte of the game: names, addresses, sizes and byte-order patterns. Run the tool after a change to the files the port
+compiles, to their declarations of game variables, or to the PC types in `include/`, and commit the new map with the
+change. With `--check` it only compares and exits with 1 when the map is out of date. It needs pyelftools, which
+decompdecomp's Python has, and gcc:
+
+```
+~/.local/share/uv/tools/decompnet/bin/python tools/port_data.py
+~/.local/share/uv/tools/decompnet/bin/python tools/port_data.py --check
+```
+
+How it works:
+
+1. It compiles the developer program's files (`tools/port_filelist.py`) and the asset viewer's two overlay-1 files for
+   the PC with debug information, and reads each file's type for every variable it declares with `extern`. A name
+   that the files use and none defines is a game variable. (clang leaves extern declarations out of its debug
+   information, so the tool uses gcc.)
+2. A variable's N64 address comes from `build.json` (its symbols and functions) or a label of `asm/data/`; the address
+   gives its section, and the next variable's address its extent. Names that share an address are one variable.
+3. A variable whose type holds no address keeps its N64 offset in one block of PC memory per section ("block"): such a
+   type has the same layout on both machines, so labels inside records and arrays read as one keep working. A variable
+   whose type holds an address gets storage of its own, as big as its PC type ("own"); an open array gets as many
+   elements as its extent holds on the N64, each of its PC size.
+4. For the sections the ROM fills, each byte gets the width the files' types read it at, and each variable a swap
+   pattern; an open array, or a type smaller than its extent, repeats over the extent. Two files that read one byte at
+   different widths, a bit-field in a variable of these sections, or a type bigger on the N64 than its extent stop the
+   tool with a message.
+5. An old name of a function that some file still calls (`func_800E2400` for `tryBeginBlockReaction`) gets a
+   "function" line; the port's linker gives the function that second name. Only names of the game's own form count:
+   `build.json` also puts `sqrtf` at `nw2Sqrtf`'s address, but on PC `sqrtf` is the C library's.
+
+The columns, tab-separated: name, address, section (`main.data`, `main.bss`, `ovl1.data`, `ovl2.data`, `ovl2.bss`;
+`other` for the few the port provides; `code` for functions), storage (`block`, `own`, `alias` for a second name at
+the same address, `port`, `function`), bytes (the extent for `block`, the PC size for `own`, the other name for
+`alias` and `function`), and the swap pattern. `P:o.w,o.w` swaps a w-byte value at each offset o, again every P bytes
+(hex), as long as it fits in the extent; `-` means none (BSS, or not filled from the ROM). `rom` marks an own variable
+that the N64 starts from the ROM: its addresses must be turned into PC addresses, which the port does not do yet.
 
 ## Checking a change for the port
 
@@ -415,8 +460,8 @@ been set up: the first run of `build.py` extracts `asm/data/` and `assets/` from
    that open the N64's boot loop (`func_80001260`, `func_80003120`, `func_80003D20` and `initializeAssetSizeTable`),
    `func_8002B750`, which builds the table of wrestler names (on the N64 the menus call it), and overlay 2's entry
    `func_80090000_ovl2`. A file is compiled whole, so every name that any function of a listed file uses counts. The
-   walk does not go into code that the port replaces: the Nintendo SDK apart from libultra's gu library, `bzero` and
-   `bcopy`, and eight of the game's own files in `src/main` (the entry point, the start-up thread and the one that
+   walk does not go into code that the port replaces: the Nintendo SDK apart from libultra's gu library, `bzero`,
+   `bcopy` and `__floatdisf` (s64 to f32, which drops the low bits where a PC conversion would round them), and eight of the game's own files in `src/main` (the entry point, the start-up thread and the one that
    starts the boot loop, the scheduler's two task threads and a helper of theirs, and two files that nothing calls). A
    listed file that uses a name of overlay 1, the menus, is an error, because the developer program does not have
    overlay 1.

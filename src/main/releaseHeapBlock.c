@@ -17,6 +17,17 @@ extern s32 D_8007C430;
 /* Frees the block whose payload is arg0: clears its magic, re-inserts it into
  * the circular free list in address order, and coalesces with the following
  * and/or preceding free block when they are adjacent. */
+#ifdef TARGET_PC
+/* PC: the port's heap (port_heap_alloc in port.h says why the N64's cannot run here). D_8007C430 still counts the
+ * blocks in use. */
+void releaseHeapBlock(u8 *arg0) {
+    if (arg0 == NULL) {
+        return;
+    }
+    port_heap_free(arg0);
+    D_8007C430 = D_8007C430 - 1;
+}
+#else
 void releaseHeapBlock(u8 *arg0) {
     Nw2MemBlock *p;
     Nw2MemBlock *cur;
@@ -64,3 +75,4 @@ void releaseHeapBlock(u8 *arg0) {
     D_8002EE94 = cur;
     D_8007C430 = D_8007C430 - 1;
 }
+#endif
