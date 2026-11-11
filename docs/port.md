@@ -374,7 +374,11 @@ The tool takes a variable's width from the files' declarations of it. A file tha
 may declare it as bytes (`extern u8 X[]`) and hand it to a function that reads it at another width; such a declaration
 gets a PC version with the real type (`func_8000E920` and `func_8000EF90` for `func_80007020`'s arrays, the AI files
 for `func_800ADA38`'s tables), or the variable would keep the N64's byte order. A table of addresses read through a
-byte declaration gets a pointer declaration on PC and a `TABLES` entry (`D_80031060` in `func_8000E4FC`).
+byte declaration gets a pointer declaration on PC and a `TABLES` entry (`D_80031060` in `func_8000E4FC`). So does a
+read through a cast to another width (`*(u16 *)(D_800E3F30 + i)` of a variable declared `u8[]`): the PC declares the
+variable with the width it is read at (`func_800D54A0`, `applyEntityMovementC8D84`), or reads a table inside a variable
+by the table's own label (`func_800D5438` reads the u16 table at `D_80030560 + 0x10` as `D_80030570`, because
+`D_80030560`'s first byte is a byte).
 
 How it works:
 
@@ -398,8 +402,8 @@ How it works:
    reaches, gets its PC layout and a fill line; the data the addresses point at gets a swap range, up to the next
    label.
 5. For the sections the ROM fills, each byte gets the width the files' types read it at, and each variable a swap
-   pattern; an open array, or a type smaller than its extent, repeats up to the next label of the game's data (a
-   `build.json` address, an `asm/data/` label, or a place a table points at), where another object begins. Two files
+   pattern; an open array, or a type smaller than its extent, repeats over the extent, but not past a place a table
+   points at, where other data begins (splat's labels inside a table, such as `D_8003A4FE`, do not stop it). Two files
    that read one byte at different widths, a bit-field in a variable of these sections, or a type bigger on the N64
    than its extent stop the tool with a message.
 6. An old name of a function that some file still calls (`func_800E2400` for `tryBeginBlockReaction`) gets a

@@ -17,7 +17,13 @@ extern s16 D_800F97DE;
 extern s16 D_800F97E2;
 extern u8 D_800F2750[];
 extern s32 D_800E3F20[];
+#ifdef TARGET_PC
+/* PC: 16-bit values, so declared u16: the PC starts game variables in its own byte order by the width their
+ * declarations give (port/game_vars.tsv). */
+extern u16 D_800E3F30[];
+#else
 extern u8 D_800E3F30[];
+#endif
 extern u32 D_800EB6B8[];
 
 extern s16 D_800EB6D0[4][0x258][6];
@@ -156,7 +162,11 @@ void func_800D54A0(void)
             D_800F97E2 = 0;
             D_800F97DE = 0xDE;
             D_800F97DA = D_800F97D8;
+#ifdef TARGET_PC
+            D_800F97DE = D_800E3F30[(s8)D_800F97D0.f0] | 0xDE;
+#else
             D_800F97DE = *(u16 *)(D_800E3F30 + (s8)D_800F97D0.f0 * 2) | 0xDE;
+#endif
         }
     }
 }

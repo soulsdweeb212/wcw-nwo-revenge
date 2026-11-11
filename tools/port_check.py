@@ -86,6 +86,7 @@ PC_FLAGS = [
     "-g",
     "-std=gnu17",
     "-fno-strict-aliasing", "-fwrapv", "-fsigned-char", "-ffp-contract=off", "-fno-builtin-sinf", "-fno-builtin-cosf",
+    "-ftrivial-auto-var-init=zero",
     "-Werror=implicit-function-declaration", "-Werror=int-conversion", "-Werror=pointer-to-int-cast",
     "-Werror=int-to-pointer-cast",
 ]

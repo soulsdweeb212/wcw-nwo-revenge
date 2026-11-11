@@ -38,7 +38,13 @@ s8 func_800D732C(void *, void *);
 s32 func_800D7A68(s32);
 
 void func_800CB054(void) {
+#ifdef TARGET_PC
+    /* PC: out is arr + 4 and func_800D3E40 writes out[0..2], so the array needs 7 floats; the N64's 6 leave its last
+     * write in the stack space after the array. */
+    f32 arr[7];
+#else
     f32 arr[6];
+#endif
 #define vec arr
 #define out (arr+4)
     s32 anim;

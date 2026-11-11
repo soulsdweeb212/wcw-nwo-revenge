@@ -33,8 +33,8 @@ How it works:
    get fill lines of their own, and the data they point at swap ranges.
 6. For each variable in a section that the ROM fills (main's data, overlay 2's data), the swap pattern: which bytes are
    16-, 32- or 64-bit values, which the port turns from the N64's byte order into the PC's after copying the section
-   from the ROM. The files' types say it. A type smaller than the variable's extent repeats up to the next label, which
-   is how an array declared as one value is read.
+   from the ROM. The files' types say it. A type smaller than the variable's extent repeats over it (but not past a
+   place an address table points at), which is how an array declared as one value is read.
 
 Each step checks what it relies on and stops with a message when a file breaks it: two files that read the same bytes
 at different widths, a bit-field, a variable without an address or outside every section, a type bigger on the N64
@@ -260,9 +260,9 @@ def section_widths(sec, rows, views, labels) -> dict[int, tuple[int, int, str]]:
     """The width of every byte of a section that the ROM fills, from the block variables' types: byte offset ->
     (offset of the value it is part of, its width, the file and variable that say so). Each file's type for a variable
     covers the variable's bytes (a record reached through its inner labels covers theirs too); an open array, or a type
-    smaller than the extent, repeats its element up to the next label of the game's data (labels: every address of
-    build.json and asm/data), where another object begins. Two readings of one byte at different widths stop the
-    tool."""
+    smaller than the extent, repeats its element over the extent (which ends at the next variable), but not past a place
+    that an address table points at (labels), where other data begins. Two readings of one byte at different widths stop
+    the tool."""
     later = sorted(b for b in labels if sec[1] <= b < sec[2])
     width: dict[int, tuple[int, int, str]] = {}
     for name, a, s, extent, storage in rows:
@@ -376,7 +376,9 @@ def build_map(cc: str, jobs: int, out: Path) -> list[str]:
     # repeated patterns as labels do.
     tables = Tables(rows, views, syms, all_functions, defined)
     tables.resolve()
-    labels = set(syms.values()) | {w for w, _, _ in tables.claims} | set(tables.objects)
+    # Not every label of the game's data: splat also labels fields inside a table (D_8003A4FE, 2 bytes into the name
+    # tables' counts), where the table's pattern must go on.
+    labels = {w for w, _, _ in tables.claims} | set(tables.objects)
     widths = {sec[0]: section_widths(sec, rows, views, labels) for sec in SECTIONS if sec[3] is not None}
     ranges = tables.add_claims(widths)
     lines = []

@@ -18,8 +18,15 @@
  * placing the opponent's position relative to self's position. */
 typedef struct { f32 a, b, c, d; } Nw2Snapshot;
 
+#ifdef TARGET_PC
+/* PC: 16-bit values, so declared u16: the PC starts game variables in its own byte order by the width their
+ * declarations give (port/game_vars.tsv). */
+extern u16 D_800E3C10[];
+extern u16 D_800E3C12[];
+#else
 extern u8 D_800E3C10[];
 extern u8 D_800E3C12[];
+#endif
 extern f64 D_800E6940;
 f32 func_800D63F0(void *, void *, s32);
 void func_800D2600(void *, s32, f32);
@@ -49,7 +56,11 @@ void applyEntityMovementC8D84(Wrestler *ent, Wrestler *other, u16 flags, f32 sca
     move[2] = 0.0f;
     if (ent->grappleCtx & 0x10) {
         side = ent->ringSide & 1;
+#ifdef TARGET_PC
+        if (flags & (*(u16 *)((u8 *)D_800E3C10 + side * 4) | *(u16 *)((u8 *)D_800E3C12 + side * 4))) {
+#else
         if (flags & (*(u16 *)(D_800E3C10 + side * 4) | *(u16 *)(D_800E3C12 + side * 4))) {
+#endif
             speed = func_800D63F0(ent, 0, 4);
             if (side != 0) {
                 move[0] = 0.0f;
