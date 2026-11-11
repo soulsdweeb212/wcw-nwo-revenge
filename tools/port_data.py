@@ -17,7 +17,7 @@ How it works:
 2. It compiles each of them for the PC (tools/port_check.py's PC_FLAGS, which have -g) into a temporary folder, and
    reads the debug information of each object: every game variable a file declares with extern, with the file's type
    for it. The names the files use and no file defines are the game variables (functions aside).
-3. Each variable's N64 address comes from build.json (its symbols, or the address in a D_XXXXXXXX name). The address
+3. Each variable's N64 address comes from build.json, a label of asm/data, or the address in a D_XXXXXXXX name. The address
    says which N64 section holds it (SECTIONS below), and the next variable's address says how many bytes it has: its
    extent.
 4. Each variable gets one of two kinds of storage on PC:
@@ -28,24 +28,20 @@ How it works:
    - "own": a variable whose type holds an address (a pointer) is bigger on PC, so it gets its own storage, as many
      bytes as its PC type. Code reaches it only by its own name (the decompilation's docs/port.md, "Shared records on
      PC").
-5. For each variable in a section that the ROM fills (main's data, overlay 2's data), the swap pattern: which bytes are
+5. The address tables (TABLES, below): the own variables that the ROM starts, each described by hand down to what its
+   addresses point at, checked against the ROM's data, and written as fill lines; the arrays and records they reach
+   get fill lines of their own, and the data they point at swap ranges.
+6. For each variable in a section that the ROM fills (main's data, overlay 2's data), the swap pattern: which bytes are
    16-, 32- or 64-bit values, which the port turns from the N64's byte order into the PC's after copying the section
-   from the ROM. The files' types say it. A type smaller than the variable's extent repeats over the extent, which is
-   how an array declared as one value is read.
+   from the ROM. The files' types say it. A type smaller than the variable's extent repeats up to the next label, which
+   is how an array declared as one value is read.
 
 Each step checks what it relies on and stops with a message when a file breaks it: two files that read the same bytes
 at different widths, a bit-field, a variable without an address or outside every section, a type bigger on the N64
 than its extent.
 
-The output, one line per variable, tab-separated, sorted by address:
-    name  address  section  storage  bytes  swap
-- bytes: for "block" the extent; for "own" the PC size.
-- swap ("block" in a section the ROM fills, else "-"): "P:o.w,o.w..." swaps a w-byte value at each offset o, again
-  every P bytes; "P:" swaps nothing (bytes only).
-Address-holding variables of the sections the ROM fills ("own" there) are listed with "rom" in swap: their addresses
-must become PC addresses, which a step of its own will do. Other storage: "alias" (a second name at the same address;
-bytes is the first name), "port" (outside the sections: the port provides it) and "function" (an old name of a
-function that some files still call; bytes is the function's name, and the port's linker gives it that second name).
+The output, one line per variable, tab-separated, sorted by address: name, address, section, storage, bytes and the
+swap or fill column. docs/port.md ("The game's variables on PC") explains each storage and column.
 """
 from __future__ import annotations
 
@@ -260,12 +256,14 @@ def section_of(a: int):
 
 # ---- 4-5. Storage and swap patterns ---------------------------------------------------------------------------------
 
-def section_widths(sec, rows, views) -> dict[int, tuple[int, int, str]]:
+def section_widths(sec, rows, views, labels) -> dict[int, tuple[int, int, str]]:
     """The width of every byte of a section that the ROM fills, from the block variables' types: byte offset ->
     (offset of the value it is part of, its width, the file and variable that say so). Each file's type for a variable
     covers the variable's bytes (a record reached through its inner labels covers theirs too); an open array, or a type
-    smaller than the extent, repeats its element over the extent. Two readings of one byte at different widths stop the
+    smaller than the extent, repeats its element up to the next label of the game's data (labels: every address of
+    build.json and asm/data), where another object begins. Two readings of one byte at different widths stop the
     tool."""
+    later = sorted(b for b in labels if sec[1] <= b < sec[2])
     width: dict[int, tuple[int, int, str]] = {}
     for name, a, s, extent, storage in rows:
         if s is not sec or storage != "block":
@@ -276,12 +274,13 @@ def section_widths(sec, rows, views) -> dict[int, tuple[int, int, str]]:
                 raise Fail(f"{name}: {src} reads it through a bit-field, whose layout is the compiler's choice")
             if not elem:
                 continue
-            reps = max(1, -(-extent // elem)) if (is_open or size < extent) else 1
+            stop = min(next((b for b in later if b > a), sec[2]) - a, extent)
+            reps = max(1, -(-stop // elem)) if (is_open or size < stop) else 1
             base0 = a - sec[1]
             for k in range(reps):
                 for o, w, _k in leaves:
                     at = base0 + k * elem + o
-                    if k and at + w > base0 + extent:
+                    if k and at + w > base0 + stop:
                         break
                     for b in range(at, at + w):
                         old = width.get(b)
@@ -332,8 +331,9 @@ def build_map(cc: str, jobs: int, out: Path) -> list[str]:
     syms = addresses()
     # Old names of functions: build.json keeps a renamed function's first name as a symbol at its address, and some
     # files still call it by that name (tryBeginBlockReaction was func_800E2400). The PC link needs the same second name.
-    functions = {f["vram"]: f["name"] for f in json.loads((ROOT / "build.json").read_text(encoding="utf-8"))["functions"]
-                 if "vram" in f and f["name"] in defined}
+    all_functions = {f["vram"]: f["name"] for f in json.loads((ROOT / "build.json").read_text(encoding="utf-8"))["functions"]
+                     if "vram" in f}
+    functions = {a: n for a, n in all_functions.items() if n in defined}
     # Only names of the game's own form: build.json also puts sqrtf at nw2Sqrtf's address, and on PC sqrtf is the C
     # library's (nw2Sqrtf calls it), so that second name would replace it in the whole program.
     old_names = sorted((n, functions[syms[n]]) for n in used - defined - set(views)
@@ -372,8 +372,32 @@ def build_map(cc: str, jobs: int, out: Path) -> list[str]:
             nxt = next((b for b in addrs[i + 1:] if first[b][2] is r[2]), r[2][2])
             r[3] = nxt - a
 
-    widths = {sec[0]: section_widths(sec, rows, views) for sec in SECTIONS if sec[3] is not None}
+    # The address tables first: the places their addresses point at begin objects too, so they bound the variables'
+    # repeated patterns as labels do.
+    tables = Tables(rows, views, syms, all_functions, defined)
+    tables.resolve()
+    labels = set(syms.values()) | {w for w, _, _ in tables.claims} | set(tables.objects)
+    widths = {sec[0]: section_widths(sec, rows, views, labels) for sec in SECTIONS if sec[3] is not None}
+    ranges = tables.add_claims(widths)
     lines = []
+    # The data that the tables' addresses point at, where no block variable's extent covers it: swap-only ranges.
+    blocks = sorted((r[1], r[1] + r[3]) for r in rows if r[4] == "block" and r[3])
+    for sec, lo, hi in ranges:
+        for blo, bhi in blocks:
+            if blo <= lo < bhi:
+                lo = bhi
+        for blo, bhi in blocks:
+            if lo < blo < hi:
+                hi = blo
+        if lo < hi:
+            lines.append(f"td_data_{lo:08X}\t{lo:08X}\t{sec[0]}\tdata\t{hi - lo:#x}\t"
+                         f"{swap_pattern(lo - sec[1], hi - lo, widths[sec[0]])}")
+    for a, o in tables.objects.items():
+        if o["name"].startswith("td_anon_"):
+            lines.append(f"{o['name']}\t{a:08X}\t{o['section'][0]}\town\t{o['count'] * o['pcsize']:#x}\t"
+                         f"{tables.fill(a)}")
+    for a, n in sorted(tables.entries.items()):
+        lines.append(f"{n}\t{a:08X}\tcode\tentry\t{n}\t-")
     for n, a, sec, extent, storage in rows:
         if storage.startswith("="):
             lines.append(f"{n}\t{a:08X}\t{sec[0] if sec else 'other'}\talias\t{storage[1:]}\t-")
@@ -386,6 +410,19 @@ def build_map(cc: str, jobs: int, out: Path) -> list[str]:
         elif storage == "block":
             swap = swap_pattern(a - sec[1], extent, widths[sec[0]]) if sec[3] is not None else "-"
             lines.append(f"{n}\t{a:08X}\t{sec[0]}\tblock\t{extent:#x}\t{swap}")
+        elif sec[3] is not None:
+            # An address table the N64 starts from the ROM: as TABLES describes it, and at least as big as each file's
+            # PC type for it.
+            o = tables.objects.get(a)
+            if o is None:
+                problems.append(f"{n}: holds addresses and the ROM starts it; describe its shape in TABLES")
+                continue
+            size = o["count"] * o["pcsize"]
+            for src, (pcv, _) in vs:
+                if pcv[0] is not None and pcv[0] > size:
+                    problems.append(f"{n}: {src}'s type is {pcv[0]:#x} bytes on PC, more than TABLES gives it "
+                                    f"({size:#x})")
+            lines.append(f"{n}\t{a:08X}\t{sec[0]}\town\t{size:#x}\t{tables.fill(a)}")
         else:
             # As big as the biggest PC view; an open array gets as many elements as its extent holds on the N64.
             size = 0
@@ -397,12 +434,302 @@ def build_map(cc: str, jobs: int, out: Path) -> list[str]:
                                         f"{extent:#x}")
                 else:
                     size = max(size, extent // n64v[1] * pcv[1])
-            lines.append(f"{n}\t{a:08X}\t{sec[0]}\town\t{size:#x}\t{'rom' if sec[3] is not None else '-'}")
+            lines.append(f"{n}\t{a:08X}\t{sec[0]}\town\t{size:#x}\t-")
     if problems:
         raise Fail("\n".join(problems))
     for n, real in old_names:
         lines.append(f"{n}\t{syms[n]:08X}\tcode\tfunction\t{real}\t-")
-    return lines
+    return sorted(lines, key=lambda line: (line.split("\t")[2] == "code", line.split("\t")[1], line))
+
+
+
+# ---- 6. Address tables ------------------------------------------------------------------------------------------------
+# The variables that hold addresses and that the N64 starts from the ROM. Each address must become a PC address when the
+# port fills them, and the PC layout of each must be known, so each is described here by hand: its shape, down to what
+# its addresses point at. The tool checks every description against the ROM's data (see Tables) and every file's PC
+# type for the variable, and writes the fill into the map.
+#
+# A shape is one of:
+#   an int 1, 2, 4 or 8      a value of that many bytes;
+#   [shape, shape, ...]      a struct of those fields, aligned as C aligns them on each machine;
+#   Arr(count, shape)        an array; count AUTO means "as many addresses as the data holds there": in main's data,
+#                            the run of words that splat marked as addresses, up to the next label (an array of
+#                            single addresses only);
+#   Ptr(target)              an address (4 bytes on the N64, 8 on PC) of:
+#     Data(w)                data that holds no address, read as w-byte values (1: bytes; also for textures and
+#                            palettes, which stay in the N64's byte order); it keeps its N64 offset in its section's
+#                            block, and is turned into the PC's byte order as w-byte values up to the next label;
+#     a shape                one object of that shape (an Arr for an array of them), which gets storage of its own;
+#     FUNC                   a function: the PC function of that N64 address;
+#     PORT                   a variable the port provides (a framebuffer);
+#     UNUSED                 nothing: an entry the game never reads, whose word is not an address (tables that the
+#                            game indexes from 1); PC gets NULL there.
+# A 0 word is NULL whatever the target.
+
+AUTO = "auto"
+FUNC = "func"
+PORT = "port"
+UNUSED = "unused"
+
+
+class Arr:
+    def __init__(self, count, elem):
+        self.count, self.elem = count, elem
+
+    def __repr__(self):
+        return f"Arr({self.count}, {self.elem!r})"
+
+
+class Ptr:
+    def __init__(self, target):
+        self.target = target
+
+    def __repr__(self):
+        return f"Ptr({self.target!r})"
+
+
+class Data:
+    def __init__(self, width):
+        self.width = width
+
+    def __repr__(self):
+        return f"Data({self.width})"
+
+
+# NameEntry, the PC view of a wrestler's name entry (buildWrestlerNameRecord): id, value, a word, the name's address.
+# On the N64 an entry is 0x1C bytes and also holds the addresses of the height and weight texts and two more words;
+# the developer program's files read none of them, so the PC entry is NameEntry's 16 bytes.
+NAME_ENTRY = [2, 1, 1, 4, Ptr(Data(1))]
+
+TABLES = {
+    # main's data
+    "D_8002EEB0": Arr(3, Ptr(PORT)),                                  # the three framebuffers
+    "nw2ResourceCacheHead": Ptr(Data(1)),                              # the resource cache's first entry: 0 at start
+    "D_800317F0": Arr(52, Ptr(Data(2))),                               # 52 tables of s16 (func_8000BDD0)
+    "D_80031998": Arr(10, Ptr(Data(2))),                               # 10 tables of u16, by bank (func_8000BDD0)
+    "D_80032B44": Arr(10, Ptr(Arr(AUTO, Ptr(Arr(AUTO, Ptr(Data(2))))))),  # bank -> index -> list of s16 tables
+    "D_800360F0": Arr(5, Ptr(Arr(AUTO, Ptr(Arr(AUTO, Ptr(Data(2))))))),   # the same shape, u16 (func_8000C1B8)
+    "D_80036710": Arr(10, Ptr(Arr(AUTO, Ptr(Data(2))))),               # group -> id -> u16 pairs (func_8000B630)
+    "D_80036C74": Arr(6, Ptr(Data(2))),                                # s16/u16 arrays that func_80007020 reads
+    "D_80036C94": Arr(6, Ptr(Data(2))),
+    "D_80036CB4": Arr(6, Ptr(Data(2))),
+    "D_80036CCC": Arr(6, Ptr(Data(2))),
+    "D_80036CE4": Arr(6, Ptr(Data(2))),
+    "D_80038A64": Arr(10, Ptr(Data(2))),                               # resource ids per character group (u16)
+    "D_8003A4F8": Arr(13, [Ptr(Arr(AUTO, Ptr(NAME_ENTRY))), 2, 2]),   # the 13 name tables: entries, count, id
+    "D_8003A594": Ptr(Data(1)),                                        # the name records' buffer: 0 at start
+    "D_8003A59C": NAME_ENTRY,                                          # the entry for an unknown id
+    # overlay 2's data
+    "D_800E2B84": Arr(6, Ptr(Data(1))),                                # s8 tables
+    "D_800E2BB4": Arr(6, Ptr(Data(1))),
+    "D_800E2BD4": Arr(6, Ptr(Data(1))),
+    # s16 tables (func_80096FE8 reads them with lh), indexed from 1
+    "D_800E2CF4": [Ptr(UNUSED), Arr(10, Ptr(Data(2)))],
+    "D_800E2D58": [Ptr(UNUSED), Arr(10, Ptr(Data(1)))],               # byte tables, indexed from 1
+    "D_800E2E80": Arr(6, Ptr(Data(1))),                                # textures for display lists: stay big-endian
+    "D_800E2FF0": Arr(146, Ptr(FUNC)),                                 # handlers (func_8009D8D0)
+    "D_800E3660": Arr(62, Ptr(FUNC)),                                  # handlers (startEntityAction)
+}
+
+
+def shape_layout(shape, ptr: int):
+    """(size, align, fields) of a shape on one machine; fields are (offset, kind, target): kind 1/2/4/8, or "p" with
+    the Ptr's target."""
+    if isinstance(shape, int):
+        return shape, shape, [(0, shape, None)]
+    if isinstance(shape, Ptr):
+        return ptr, ptr, [(0, "p", shape.target)]
+    if isinstance(shape, Arr):
+        es, ea, ef = shape_layout(shape.elem, ptr)
+        return es * shape.count, ea, [(k * es + o, kd, t) for k in range(shape.count) for o, kd, t in ef]
+    off, align, fields = 0, 1, []
+    for f in shape:
+        fs, fa, ff = shape_layout(f, ptr)
+        off = (off + fa - 1) // fa * fa
+        fields += [(off + o, kd, t) for o, kd, t in ff]
+        off += fs
+        align = max(align, fa)
+    return (off + align - 1) // align * align, align, fields
+
+
+class Tables:
+    """Resolves TABLES against the ROM: the objects (each table, and each array or record its addresses point at that
+    holds addresses itself), the data its addresses point at, and the functions they name. Checks, and stops with a
+    message when one fails: in main's data, a word is an address exactly where splat marked it as one (asm/data/*.s);
+    in overlay 2's data, which splat did not mark, every address word is 0 or an address the shape allows; an address of
+    data or of an object must not land inside another object; a function address must start a function the port
+    compiles; two readings of a byte must agree on its width. (splat writes the name tables as 16-bit values, so an
+    unmarked word in main's data passes when it is an address in a section the ROM fills.)"""
+
+    def __init__(self, rows, views, syms, functions, defined):
+        self.rom = (ROOT / "baserom.z64").read_bytes()
+        self.rows, self.views, self.functions, self.defined = rows, views, functions, defined
+        self.port = {r[1]: r[0] for r in rows if r[4] == "port"}
+        self.var_at = {r[1]: r[0] for r in rows if not r[4].startswith("=")}
+        self.relocs, self.labels = self._read_main_data()
+        self.labels |= set(syms.values())
+        self.objects = {}   # N64 address -> dict(name, section, n64size, pcsize, count, elem, fields)
+        self.claims = []    # (N64 address, width, why)
+        self.entries = {}   # N64 address -> function name
+
+    def _read_main_data(self):
+        relocs, labels = {}, set()
+        for path in sorted((ROOT / "asm" / "data").glob("*.s")):
+            lines = path.read_text(encoding="utf-8").splitlines()
+            for i, line in enumerate(lines):
+                m = re.match(r"\s*/\* [0-9A-F]+ ([0-9A-F]{8}) [0-9A-F]{8} \*/ \.word ([A-Za-z_]\w*)", line)
+                if m:
+                    relocs[int(m.group(1), 16)] = m.group(2)
+                m = re.match(r"\s*dlabel (\S+)", line)
+                n = re.match(r"\s*/\* [0-9A-F]+ ([0-9A-F]{8}) ", lines[i + 1]) if m and i + 1 < len(lines) else None
+                if n:
+                    labels.add(int(n.group(1), 16))
+        return relocs, labels
+
+    def word(self, a: int) -> int:
+        sec = section_of(a)
+        if sec is None or sec[3] is None:
+            raise Fail(f"{a:#010x}: not in a section the ROM fills")
+        o = sec[3] + a - sec[1]
+        return int.from_bytes(self.rom[o:o + 4], "big")
+
+    def next_label(self, a: int) -> int:
+        sec = section_of(a)
+        later = [b for b in (self.labels | set(self.var_at) | set(self.objects)) if a < b < sec[2]]
+        return min(later, default=sec[2])
+
+    def is_main(self, a: int) -> bool:
+        return section_of(a)[0] == "main.data"
+
+    def check_address_word(self, a: int, expect: bool, where: str):
+        if not self.is_main(a):
+            return
+        marked = a in self.relocs
+        w = self.word(a)
+        # splat writes some tables as 16-bit values (the name tables), so an unmarked word is accepted when it is an
+        # address in a section the ROM fills.
+        if expect and not marked and w != 0 and (section_of(w) is None or section_of(w)[3] is None):
+            raise Fail(f"{where}: the shape has an address at {a:#010x}, but the word there ({w:#010x}) is neither "
+                       f"marked as one by splat nor an address in a section the ROM fills")
+        if not expect and marked:
+            raise Fail(f"{where}: splat marked the word at {a:#010x} as the address {self.relocs[a]}, but the shape "
+                       f"has a value there")
+
+    def auto_count(self, a: int, where: str) -> int:
+        if not self.is_main(a):
+            raise Fail(f"{where}: AUTO counts only work in main's data, where splat marked the addresses")
+        end = self.next_label(a)
+        n = 0
+        while a + 4 * n < end and (a + 4 * n in self.relocs):
+            n += 1
+        if n == 0:
+            raise Fail(f"{where}: no address at {a:#010x}")
+        return n
+
+    def add(self, a: int, shape, name: str, where: str):
+        if isinstance(shape, Arr) and shape.count == AUTO:
+            shape = Arr(self.auto_count(a, where), shape.elem)
+        if a in self.objects:
+            o = self.objects[a]
+            if repr(o["shape"]) != repr(shape):
+                raise Fail(f"{where}: {a:#010x} is reached as {shape!r} and as {o['shape']!r}")
+            return
+        elem = shape.elem if isinstance(shape, Arr) else shape
+        count = shape.count if isinstance(shape, Arr) else 1
+        n64size, _, n64f = shape_layout(elem, 4)
+        pcsize, _, pcf = shape_layout(elem, 8)
+        sec = section_of(a)
+        self.objects[a] = dict(name=name, section=sec, shape=shape, count=count, n64size=n64size, pcsize=pcsize,
+                               fields=[(o4, o8, k) for (o4, k, _), (o8, _, _) in zip(n64f, pcf)])
+        for k in range(count):
+            for (o, kind, target) in n64f:
+                at = a + k * n64size + o
+                self.check_address_word(at, kind == "p", where)
+                if kind != "p":
+                    continue
+                w = self.word(at)
+                here = f"{where}[{k}]+{o:#x}"
+                if target == UNUSED:
+                    if section_of(w) is not None or w in self.functions:
+                        raise Fail(f"{here}: an unused entry, but its word {w:#010x} is an address")
+                    continue
+                if w == 0:
+                    continue
+                if target == FUNC:
+                    fn = self.functions.get(w)
+                    if fn is None or fn not in self.defined:
+                        raise Fail(f"{here}: {w:#010x} is not the start of a function the port compiles")
+                    self.entries[w] = fn
+                elif target == PORT:
+                    if w not in self.port:
+                        raise Fail(f"{here}: {w:#010x} is not a variable the port provides")
+                elif isinstance(target, Data):
+                    if section_of(w) is None or section_of(w)[3] is None:
+                        raise Fail(f"{here}: {w:#010x} is not in a section the ROM fills")
+                    self.claims.append((w, target.width, here))
+                else:
+                    self.add(w, target, self.var_at.get(w, f"td_anon_{w:08X}"), f"{here} -> {w:#010x}")
+
+    def resolve(self):
+        for name, shape in TABLES.items():
+            a = next((r[1] for r in self.rows if r[0] == name), None)
+            if a is None:
+                raise Fail(f"TABLES describes {name}, which no file of the port uses: remove it")
+            self.add(a, shape, name, name)
+        # No data or object may start inside another object.
+        spans = sorted((a, a + o["count"] * o["n64size"], o["name"]) for a, o in self.objects.items())
+        for w, _, why in self.claims:
+            for lo, hi, n in spans:
+                if lo <= w < hi:
+                    raise Fail(f"{why}: the data at {w:#010x} lies inside {n}")
+        for (lo, hi, n), (lo2, _, n2) in zip(spans, spans[1:]):
+            if lo2 < hi:
+                raise Fail(f"{n2} at {lo2:#010x} starts inside {n}")
+
+    def add_claims(self, widths):
+        """Puts the widths of the data the addresses point at into the sections' width maps; returns the swap-only
+        ranges (section, start, end) of claimed bytes, each from its address to the next label."""
+        ranges = []
+        seen: dict[int, tuple[int, str]] = {}
+        for w, width, why in sorted(set(self.claims)):
+            # Many addresses can name the same data (D_80036594 twelve times): one range, so it is swapped once.
+            if w in seen:
+                if seen[w][0] != width:
+                    raise Fail(f"{why}: reads {w:#x} as {width}-byte values; {seen[w][1]} as {seen[w][0]}-byte values")
+                continue
+            seen[w] = (width, why)
+            sec = section_of(w)
+            end = self.next_label(w)
+            wm = widths[sec[0]]
+            if width > 1:
+                for at in range(w - sec[1], end - sec[1] - width + 1, width):
+                    for b in range(at, at + width):
+                        old = wm.get(b)
+                        if old is not None and old[:2] != (at, width):
+                            raise Fail(f"{why}: reads {sec[1] + b:#x} as part of a {width}-byte value at "
+                                       f"{sec[1] + at:#x}; {old[2]} reads it as part of a {old[1]}-byte value at "
+                                       f"{sec[1] + old[0]:#x}")
+                        wm[b] = (at, width, why)
+            else:
+                for b in range(w - sec[1], end - sec[1]):
+                    old = wm.get(b)
+                    if old is not None and old[1] > 1:
+                        raise Fail(f"{why}: reads {sec[1] + b:#x} as bytes; {old[2]} reads it as part of a "
+                                   f"{old[1]}-byte value")
+            ranges.append((sec, w, end))
+        return ranges
+
+    def fill(self, a: int) -> str:
+        o = self.objects[a]
+        return (f"{o['count']:x}:{o['n64size']:x}:{o['pcsize']:x}:"
+                + ",".join(f"{o4:x}.{o8:x}.{k if k != 'p' else self._kind(o, o4)}" for o4, o8, k in o["fields"]))
+
+    def _kind(self, o, off):
+        elem = o["shape"].elem if isinstance(o["shape"], Arr) else o["shape"]
+        for o4, k, t in shape_layout(elem, 4)[2]:
+            if o4 == off:
+                return "f" if t == FUNC else "z" if t == UNUSED else "p"
+        raise AssertionError(off)
 
 
 HEADER = ("# Written by tools/port_data.py, which explains each column; do not edit by hand.\n"

@@ -375,20 +375,37 @@ How it works:
    type has the same layout on both machines, so labels inside records and arrays read as one keep working. A variable
    whose type holds an address gets storage of its own, as big as its PC type ("own"); an open array gets as many
    elements as its extent holds on the N64, each of its PC size.
-4. For the sections the ROM fills, each byte gets the width the files' types read it at, and each variable a swap
-   pattern; an open array, or a type smaller than its extent, repeats over the extent. Two files that read one byte at
-   different widths, a bit-field in a variable of these sections, or a type bigger on the N64 than its extent stop the
-   tool with a message.
-5. An old name of a function that some file still calls (`func_800E2400` for `tryBeginBlockReaction`) gets a
+4. The address tables: the variables that hold addresses and that the ROM starts (24) are described by hand in the
+   tool's `TABLES`: each one's shape, down to what its addresses point at (another table, data read at a given width,
+   a function, a framebuffer). The tool follows every address in the ROM and checks it against the description: in
+   main's data each word must be an address exactly where splat marked one in `asm/data/` (the name tables, which
+   splat wrote as 16-bit values, pass when the word is an address in a data section); in overlay 2's data each
+   address must be 0 or an address the shape allows; a function address must start a function the port compiles; no
+   address may land inside another table. Each table, and each array or record that holds addresses and that a table
+   reaches, gets its PC layout and a fill line; the data the addresses point at gets a swap range, up to the next
+   label.
+5. For the sections the ROM fills, each byte gets the width the files' types read it at, and each variable a swap
+   pattern; an open array, or a type smaller than its extent, repeats up to the next label of the game's data (a
+   `build.json` address, an `asm/data/` label, or a place a table points at), where another object begins. Two files
+   that read one byte at different widths, a bit-field in a variable of these sections, or a type bigger on the N64
+   than its extent stop the tool with a message.
+6. An old name of a function that some file still calls (`func_800E2400` for `tryBeginBlockReaction`) gets a
    "function" line; the port's linker gives the function that second name. Only names of the game's own form count:
    `build.json` also puts `sqrtf` at `nw2Sqrtf`'s address, but on PC `sqrtf` is the C library's.
 
 The columns, tab-separated: name, address, section (`main.data`, `main.bss`, `ovl1.data`, `ovl2.data`, `ovl2.bss`;
-`other` for the few the port provides; `code` for functions), storage (`block`, `own`, `alias` for a second name at
-the same address, `port`, `function`), bytes (the extent for `block`, the PC size for `own`, the other name for
-`alias` and `function`), and the swap pattern. `P:o.w,o.w` swaps a w-byte value at each offset o, again every P bytes
-(hex), as long as it fits in the extent; `-` means none (BSS, or not filled from the ROM). `rom` marks an own variable
-that the N64 starts from the ROM: its addresses must be turned into PC addresses, which the port does not do yet.
+`other` for the few the port provides; `code` for functions), storage, bytes, and the last column. The storages:
+
+- `block`: bytes is the extent; the last column is the swap pattern. `P:o.w,o.w` swaps a w-byte value at each offset
+  o, again every P bytes (hex), as long as it fits in the extent; `-` means none (BSS).
+- `data`: a range that a table points at, outside every block variable (named `td_data_` and its address): swapped
+  like a block variable, with no name of its own in the C.
+- `own`: bytes is the PC size. For an address table the last column is its fill, `count:N:P:o.p.k,...` (hex): count
+  elements of N bytes on the N64 and P bytes on PC, each field at N64 offset o and PC offset p, of kind k: 1, 2, 4 or
+  8 (a value of that width), `p` (an address), `f` (a function's address) or `z` (an entry the game never reads, NULL
+  on PC). Arrays and records that only tables reach are named `td_anon_` and their address.
+- `alias` (a second name at the same address; bytes is the first name), `port` (the port provides it), `function` (an
+  old name of a function; bytes is its name) and `entry` (a function that an address table holds).
 
 ## Checking a change for the port
 

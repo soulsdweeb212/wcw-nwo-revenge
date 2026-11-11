@@ -26,7 +26,13 @@ static inline void select(s32 n) {
     if (D_800F9AA2 != 0) {
         D_800F99B4 = n;
         D_800F9A9E = 0;
+#ifdef TARGET_PC
+        /* PC: the tables hold s16 values in the PC's byte order (func_80096FE8 reads them as s16), so the N64's byte 1
+         * of entry 0, its low byte, is the low byte of the s16. */
+        v = (s8)((u8)((s16 *)D_800E2CF4[(s8)n])[0] + 0x5C) / 2;
+#else
         v = (s8)(D_800E2CF4[(s8)n][1] + 0x5C) / 2;
+#endif
         D_800F9AF8 = v;
         D_800F99B5 = *D_800E2D58[(s8)n];
         if (v < 5) {
