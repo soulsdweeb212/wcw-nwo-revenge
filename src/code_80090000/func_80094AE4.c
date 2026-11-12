@@ -5,7 +5,11 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Gfx Gw4AE4; /* PC: a command is port.h's 16-byte Gfx */
+#else
 typedef struct { u32 w0, w1; } Gw4AE4;
+#endif
 
 typedef struct {
     u16 id;
@@ -18,12 +22,28 @@ typedef struct {
     s16 fE;
 } Sub4AE4;
 
+#ifdef TARGET_PC
+/* PC: Out4AE4 is a 0xDC-byte scene object (common.h's Nw2SceneObj), which keeps its N64 layout on PC: f1C is its local
+ * matrix. D_800DB3E0 is the label of +0x10 of the first of three objects at D_800DB348 + 0x88 (func_800900C0 sets
+ * them up), so its elements' f0 are those objects' display lists, which hold handles (port.h's PTR_TO_SLOT). f0 is
+ * 4 bytes, as on the N64. */
+typedef struct {
+    u32 f0;
+    u8 pad4[0x18];
+    f32 f1C[16];
+    u8 pad5C[0x80];
+} Out4AE4;
+_Static_assert(offsetof(Out4AE4, f1C) == offsetof(Nw2SceneObj, local) && sizeof(Out4AE4) == sizeof(Nw2SceneObj) &&
+                   sizeof(((Nw2SceneObj *)0)->dl) == sizeof(((Out4AE4 *)0)->f0),
+               "Out4AE4 must follow Nw2SceneObj");
+#else
 typedef struct {
     void *f0;
     u8 pad4[0x18];
     f32 f1C[16];
     u8 pad5C[0x80];
 } Out4AE4;
+#endif
 
 typedef struct {
     u8 pad0[0x18];
@@ -111,7 +131,13 @@ void func_80094AE4(Out4AE4 *arg0, Out4AE4 *arg1, s32 arg2) {
     Gw4AE4 *g;
     u32 tq;
 
+#ifdef TARGET_PC
+    /* PC: the frame bank's half of the command buffer: 0x3000 bytes hold 0x600 commands of 8 bytes on the N64, so the
+     * PC steps 0x600 commands of 16 bytes. */
+    D_800DB8AC = D_800DB8B0 + D_800C9094 * (0x3000 / 8);
+#else
     D_800DB8AC = (Gw4AE4 *)((u8 *)D_800DB8B0 + D_800C9094 * 0x3000);
+#endif
     switch (D_800DB688) {
     case 6:
         k = 0;
@@ -206,7 +232,12 @@ void func_80094AE4(Out4AE4 *arg0, Out4AE4 *arg1, s32 arg2) {
         guPositionF(arg0->f1C, D_800E7508.x, D_800E7508.y, D_800E7508.z, D_800E7504, D_800E74F8, D_800E74FC, D_800E7500);
         func_800948BC(arg2);
     }
+#ifdef TARGET_PC
+    /* PC: bit 0 of the address, through an integer as wide as a pointer (uptr). */
+    tq = (uptr)arg0 & 1;
+#else
     tq = (u32)arg0 & 1;
+#endif
     if (tq >> 1) {
         func_800948BC(0);
     }
@@ -218,16 +249,31 @@ void func_80094AE4(Out4AE4 *arg0, Out4AE4 *arg1, s32 arg2) {
     for (k = 0; k < 3; k++) {
         o = &D_800DB3E0[k];
         if (k == 1 && D_800E74CC.count != 0) {
+#ifdef TARGET_PC
+            /* PC: the object's display list is a handle (see Out4AE4), and the branch target goes into the command as
+             * the whole pointer (port.h's DL_ADDR). */
+            o->f0 = PTR_TO_SLOT(D_800DB8AC);
+            func_8009F800(&D_800DB8AC, D_800E74CC.count * 2 / 3, &D_800E74CC);
+            g = D_800DB8AC++;
+            g->w0 = 0xDE000000;
+            g->w1 = DL_ADDR(dl);
+#else
             o->f0 = D_800DB8AC;
             func_8009F800(&D_800DB8AC, D_800E74CC.count * 2 / 3, &D_800E74CC);
             g = D_800DB8AC++;
             g->w0 = 0xDE000000;
             g->w1 = (u32)dl;
+#endif
             g = D_800DB8AC++;
             g->w0 = 0xDF000000;
             g->w1 = 0;
         } else {
+#ifdef TARGET_PC
+            /* PC: the display list's handle, as above. */
+            o->f0 = PTR_TO_SLOT(dl);
+#else
             o->f0 = dl;
+#endif
         }
     }
     D_800C9094 ^= 1;

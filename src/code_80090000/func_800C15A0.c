@@ -17,11 +17,23 @@ extern Ch D_800E763C[];
 extern s32 D_800EA0B4, D_800DF318, D_800DF314, D_800DF308;
 extern Arena *D_800DF31C;
 extern s32 D_800E79C4;
+#ifdef TARGET_PC
+/* PC: D_800E81F8 holds the address of a resource, which func_800B600C returns, so it is a pointer, and so is
+ * func_800B600C's result (the address its cache entry holds; its PC definition is not written yet). */
+extern u8 *D_800E81F8;
+extern s32 D_800E81E4, D_800D5F28;
+#else
 extern s32 D_800E81F8, D_800E81E4, D_800D5F28;
+#endif
 extern s32 D_800DF328, D_800DF324;
 extern Mus *D_800DF320;
 extern s32 D_800E9F70, D_800E7504, D_800E74E8, D_800D28F0, D_800E74C4, D_800E7CD8, D_800D5E80;
+#ifdef TARGET_PC
+/* PC: func_800B600C returns an address, as above. */
+u8 *func_800B600C(s32, u16);
+#else
 s32 func_800B600C(s32, s32);
+#endif
 void func_800C0680(s32);
 s16 func_8000F6F4(void);
 void func_8000F620(s32);
@@ -30,7 +42,9 @@ void func_8000DE40(s32);
 void func_800B8050(void);
 void func_800B807C(s32, s32);
 void accumulateColorChannels(s32, s32, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_80010200 */
 void func_80010200(s32, s32, f32);
+#endif
 
 void func_800C15A0(s32 n) {
     Bg *b;

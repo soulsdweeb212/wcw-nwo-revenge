@@ -5,7 +5,12 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx. */
+typedef Gfx Cmd;
+#else
 typedef struct { u32 w0, w1; } Cmd;
+#endif
 extern u8 D_80038D80[], D_80038DB0[];
 
 /* Append the standard palette/texture setup commands to the display list pointed
@@ -14,8 +19,15 @@ extern u8 D_80038D80[], D_80038DB0[];
  * pointer. */
 void appendPaletteSetupDisplayList(Cmd **arg0) {
     Cmd *p = *arg0;
+#ifdef TARGET_PC
+    /* PC: the list's and the texture's addresses as the whole pointers (port.h's DL_ADDR); the N64 subtracts
+     * 0x80000000 in 32 bits. */
+    { Cmd *q = p++; q->w0 = 0xDE000000; q->w1 = DL_ADDR(D_80038D80); }
+    { Cmd *q = p++; q->w0 = 0xFD100000; q->w1 = DL_ADDR(D_80038DB0); }
+#else
     { Cmd *q = p++; q->w0 = 0xDE000000; q->w1 = (u32)(D_80038D80 - 0x80000000); }
     { Cmd *q = p++; q->w0 = 0xFD100000; q->w1 = (u32)(D_80038DB0 - 0x80000000); }
+#endif
     { Cmd *q = p++; q->w0 = 0xE8000000; q->w1 = 0; }
     { Cmd *q = p++; q->w0 = 0xF5000100; q->w1 = 0x07000000; }
     { Cmd *q = p++; q->w0 = 0xE6000000; q->w1 = 0; }

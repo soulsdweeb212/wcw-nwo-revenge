@@ -11,12 +11,26 @@
  * outside the 480x240 screen.  scaleX/scaleY map source pixels to destination
  * pixels. */
 
+#ifdef TARGET_PC
+/* PC: the display list at 0x800C95B8 by its own address (port.h's DL_ADDR turns it into the command word; D_C95B8 is
+ * its N64 physical address, a link constant). func_80096A6C takes the texture as a pointer, as its definition does. */
+extern u8 D_800C95B8[];
+void func_80096A6C(Nw2RdpCmd **, void *, s32, s32, s32, s32, s32, s32, s32);
+#else
 extern u8 D_C95B8[];
 void func_80096A6C(Nw2RdpCmd **, s32, s32, s32, s32, s32, s32, s32, s32);
+#endif
 #define EMIT_X(a, b) { Nw2RdpCmd *g = dl++; g->w0 = (a); g->w1 = ((unsigned short)b); }
 
+#ifdef TARGET_PC
+/* PC: the texture is an address, so a pointer: its callers pass the texture's own address, and an s32 would cut it to
+ * 32 bits. */
+void buildTiledTextureDisplayList(Nw2RdpCmd **out, void *texture, s32 format, s32 x, s32 y,
+                                  s32 width, s32 height, s32 drawWidth, s32 drawHeight, s32 mode) {
+#else
 void buildTiledTextureDisplayList(Nw2RdpCmd **out, s32 texture, s32 format, s32 x, s32 y,
                                   s32 width, s32 height, s32 drawWidth, s32 drawHeight, s32 mode) {
+#endif
     Nw2RdpCmd *dl = *out;
     register f32 scaleY = (f64)drawHeight / height;
     register f32 scaleX = (f64)drawWidth / width;
@@ -25,7 +39,12 @@ void buildTiledTextureDisplayList(Nw2RdpCmd **out, s32 texture, s32 format, s32 
     s32 tileY, tileX, right, bottom, loadLeft, loadTop, loadRight, loadBottom;
     if (format)
         tileHeight = 24;
+#ifdef TARGET_PC
+    /* PC: the branch target as the whole pointer (port.h's DL_ADDR). */
+    { Nw2RdpCmd *g = dl++; g->w0 = 0xDE000000; g->w1 = DL_ADDR(D_800C95B8); }
+#else
     { Nw2RdpCmd *g = dl++; g->w0 = 0xDE000000; g->w1 = (u32)D_C95B8; }
+#endif
     for (tileY = 0; tileY <= height; tileY += tileHeight) {
         for (tileX = 0; tileX <= width; tileX += tileWidth) {
             loadLeft = tileX - 1; if (loadLeft < 0) loadLeft = 0;

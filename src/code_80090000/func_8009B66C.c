@@ -5,11 +5,31 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Gfx G9B; /* PC: a command is port.h's 16-byte Gfx, which keeps a whole pointer in w1 */
+#else
 typedef struct {u32 w0,w1;} G9B;
+#endif
 typedef struct {s32 id; s16 value; u8 type,pad;} Item9B;
 typedef struct {Item9B *item; s16 tick; u8 pad[6];} Entry9B;
 typedef struct {u8 pad[0xEA];u16 tick;} State9B;
+#ifdef TARGET_PC
+/* PC: func_800B600C hands back an entry of the resource-name cache (it looks the name's address up through
+ * func_8002A2FC), so Image9B follows the entry's PC layout, Nw2ResourceEntryHashed in common.h: the allocation at +8
+ * and the sizes in reserved from +0x10 (N64: +4, +8, +0xC). The display list at 0x800C9620 and the palettes at
+ * 0x800C9788 and 0x800C9808 are named by their own addresses (common.h's D_C9620, D_C9788 and D_C9808 are their N64
+ * physical addresses, link constants). */
+typedef struct {ResKey f0;void *data;s32 f8;s16 w,h,x;} Image9B;
+_Static_assert(offsetof(Image9B, data) == offsetof(Nw2ResourceEntryHashed, allocation) &&
+                   offsetof(Image9B, f8) == offsetof(Nw2ResourceEntryHashed, reserved) &&
+                   offsetof(Image9B, w) == offsetof(Nw2ResourceEntryHashed, reserved) + 4 &&
+                   offsetof(Image9B, h) == offsetof(Nw2ResourceEntryHashed, reserved) + 6 &&
+                   offsetof(Image9B, x) == offsetof(Nw2ResourceEntryHashed, reserved) + 8,
+               "Image9B follows the PC layout of an entry of the resource-name cache");
+extern u8 D_800C9620[], D_800C9788[], D_800C9808[];
+#else
 typedef struct {s32 f0;void *data;s32 f8;s16 w,h,x;} Image9B;
+#endif
 extern Entry9B D_800E79D8[];
 extern s32 D_800C94E8;
 void appendPaletteSetupDisplayList(void *);
@@ -18,12 +38,21 @@ void func_80096D8C(void *,void *,s32,s32,s32,s32,s32,s32,s32);
 void func_8009A878(void *,void *,s32);
 
 #define NW_SHIFTL(v, s, w) ((unsigned int)(((unsigned int)(v) & ((0x01 << (w)) - 1)) << (s)))
+#ifdef TARGET_PC
+/* PC: w1 takes the whole address (the callers pass port.h's DL_ADDR); an (unsigned int) cast would cut it in half. */
+#define nwDma1p(pkt, c, s, l, p) { G9B *_g = (G9B *)(pkt); _g->w0 = (NW_SHIFTL((c), 24, 8) | NW_SHIFTL((p), 16, 8) | NW_SHIFTL((l), 0, 16)); _g->w1 = (uintptr_t)(s); }
+#else
 #define nwDma1p(pkt, c, s, l, p) { G9B *_g = (G9B *)(pkt); _g->w0 = (NW_SHIFTL((c), 24, 8) | NW_SHIFTL((p), 16, 8) | NW_SHIFTL((l), 0, 16)); _g->w1 = (unsigned int)(s); }
+#endif
 #define nwSPDisplayList(pkt, dl) nwDma1p(pkt, 0xDE, dl, 0, 0)
 #define nwSPSetOtherMode(pkt, cmd, sft, len, data) { G9B *_g = (G9B *)(pkt); _g->w0 = (NW_SHIFTL(cmd, 24, 8) | NW_SHIFTL(32 - (sft) - (len), 8, 8) | NW_SHIFTL((len) - 1, 0, 8)); _g->w1 = (unsigned int)(data); }
 #define nwDPSetColor(pkt, c, d) { G9B *_g = (G9B *)(pkt); _g->w0 = NW_SHIFTL(c, 24, 8); _g->w1 = (unsigned int)(d); }
 #define nwDPNoParam(pkt, cmd) { G9B *_g = (G9B *)(pkt); _g->w0 = NW_SHIFTL(cmd, 24, 8); _g->w1 = 0; }
+#ifdef TARGET_PC
+#define nwSetImage(pkt, cmd, fmt, siz, width, i) { G9B *_g = (G9B *)(pkt); _g->w0 = NW_SHIFTL(cmd, 24, 8) | NW_SHIFTL(fmt, 21, 3) | NW_SHIFTL(siz, 19, 2) | NW_SHIFTL((width) - 1, 0, 12); _g->w1 = (uintptr_t)(i); } /* PC: as above */
+#else
 #define nwSetImage(pkt, cmd, fmt, siz, width, i) { G9B *_g = (G9B *)(pkt); _g->w0 = NW_SHIFTL(cmd, 24, 8) | NW_SHIFTL(fmt, 21, 3) | NW_SHIFTL(siz, 19, 2) | NW_SHIFTL((width) - 1, 0, 12); _g->w1 = (unsigned int)(i); }
+#endif
 #define nwDPSetTile(pkt, fmt, siz, line, tmem, tile, palette, cmt, maskt, shiftt, cms, masks, shifts) { G9B *_g = (G9B *)(pkt); _g->w0 = NW_SHIFTL(0xF5, 24, 8) | NW_SHIFTL(fmt, 21, 3) | NW_SHIFTL(siz, 19, 2) | NW_SHIFTL(line, 9, 9) | NW_SHIFTL(tmem, 0, 9); _g->w1 = NW_SHIFTL(tile, 24, 3) | NW_SHIFTL(palette, 20, 4) | NW_SHIFTL(cmt, 18, 2) | NW_SHIFTL(maskt, 14, 4) | NW_SHIFTL(shiftt, 10, 4) | NW_SHIFTL(cms, 8, 2) | NW_SHIFTL(masks, 4, 4) | NW_SHIFTL(shifts, 0, 4); }
 #define nwDPLoadTLUTCmd(pkt, tile, count) { G9B *_g = (G9B *)pkt; _g->w0 = NW_SHIFTL(0xF0, 24, 8); _g->w1 = NW_SHIFTL((tile), 24, 3) | NW_SHIFTL((count), 14, 10); }
 #define nwDPLoadTLUT_pal16(pkt, pal, dram) { \
@@ -44,7 +73,11 @@ void func_8009B66C(G9B **arg0, State9B *arg1, s32 arg2) {
     u32 rgb = 0;
 
     dl = *arg0;
+#ifdef TARGET_PC
+    nwSPDisplayList(dl++, DL_ADDR(D_800C9620)); /* PC: the display list's address as the whole pointer */
+#else
     nwSPDisplayList(dl++, D_C9620);
+#endif
     nwSPSetOtherMode(dl++, 0xE3, 12, 2, 0x2000);
     appendPaletteSetupDisplayList(&dl);
     i = 0;
@@ -133,11 +166,19 @@ void func_8009B66C(G9B **arg0, State9B *arg1, s32 arg2) {
             }
             if (alpha) {
                 if ((u32)(e->item->type - 1) < 2) {
+#ifdef TARGET_PC
+                    nwDPLoadTLUT_pal16(dl++, 0, DL_ADDR(D_800C9808)); /* PC: the palette's address as the whole pointer */
+#else
                     nwDPLoadTLUT_pal16(dl++, 0, D_C9808);
+#endif
                     nwDPSetPrimColorZ(dl++, rgb, alpha);
                     image = func_800B600C(e->item->id, 0x108);
                 } else {
+#ifdef TARGET_PC
+                    nwDPLoadTLUT_pal16(dl++, 0, DL_ADDR(D_800C9788 + shade * 16)); /* PC: as above */
+#else
                     nwDPLoadTLUT_pal16(dl++, 0, D_C9788 + shade * 16);
+#endif
                     nwDPSetPrimColorZ(dl++, rgb, alpha);
                     image = func_800B600C(e->item->id, 0x8102);
                 }

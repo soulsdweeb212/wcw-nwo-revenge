@@ -11,8 +11,10 @@ extern s16 D_8007DFB0[];
 extern u16 D_80075440[][3];
 extern s16 D_80075442[][3], D_80075444[][3];
 extern void *D_8007C438[][23];
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_80073EB0 (whose label D_80073ECC has no PC symbol) and func_8000B884 */
 extern s32 D_80073ECC[][23][11];
 void func_8000B884(s32, s16, s16);
+#endif
 /* Set the entity's active animation slot: store the caller-supplied pair of
  * halfwords (arg2/arg3) plus the u16 attribute value looked up from the
  * animation tables (D_80032B44 group/index -> D_8007DFB0 record +0x16), then
@@ -29,12 +31,24 @@ void func_8000BB40(s16 arg0, s32 arg1, s8 arg2, s8 arg3) {
     part = 0;
     group = (animId >> 8) & 31;
     index = (animId & 31) - 1;
+#ifdef TARGET_PC
+    /* PC: D_80032B44's lists are arrays of pointers (8 bytes each; tools/port_data.py's TABLES), so the list's entry is
+     * taken by index, where the N64 steps 4 bytes per entry. */
+    attrValue = *(u16 *)(D_80032B44[group][index][D_8007DFB0[arg0]] + 0x16);
+#else
     attrValue = *(u16 *)((*(u8 ***)((u8 *)D_80032B44[group] + index * 4))[D_8007DFB0[arg0]] + 0x16);
+#endif
     D_80075442[arg0][0] = first;
     D_80075444[arg0][0] = second;
     D_80075440[arg0][0] = attrValue;
     do {
+#ifdef TARGET_PC
+        /* PC: D_80073ECC is the palette field (+0x1C, f1C) of the display records D_80073EB0[n][k], whose PC layout is
+         * Nw2Descr4BA8 (common.h); func_8000B884 takes the palette as a pointer. */
+        if (D_8007C438[arg0][part] != 0) func_8000B884(D_80073EB0[arg0][part].f1C, arg0, (s16)part);
+#else
         if (D_8007C438[arg0][part] != 0) func_8000B884(D_80073ECC[arg0][part][0], arg0, (s16)part);
+#endif
         part++;
     } while (part < 23);
 }

@@ -5,7 +5,12 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx, which the functions this one hands the list to also write on PC. */
+typedef Gfx G;
+#else
 typedef struct { u32 w0, w1; } G;
+#endif
 typedef struct { u8 pad0[0x10]; s16 f10; } Def;
 typedef struct {
     u8 pad0[0x16];
@@ -34,7 +39,14 @@ typedef struct {
 } Menu;
 
 extern u8 D_800E79B4, D_800E7542;
+#ifdef TARGET_PC
+/* PC: D_800E7CB4 holds the address of the next free vertex (the menu's vertex builders read it as a pointer), which an
+ * s32 would cut in half. */
+extern s32 D_800E8208, D_800DC73C;
+extern void *D_800E7CB4;
+#else
 extern s32 D_800E8208, D_800DC73C, D_800E7CB4;
+#endif
 extern u8 *D_800DC734, *D_800DC740;
 extern G *D_800DC738;
 extern Menu *D_800E7978;
@@ -61,8 +73,16 @@ s32 func_800A171C(void) {
     D_800E79B4 -= (D_800E79B4 & 0x80) ? D_800E8208 * 8 : D_800E8208 * 2;
     D_800E7542 = ((D_800E79B4 & 0x80) ? (u8)~D_800E79B4 : D_800E79B4) * 2;
     D_800DC73C ^= 1;
+#ifdef TARGET_PC
+    /* PC: the two halves of the display-list buffer D_800DC734 hold 0x1000 commands each, as on the N64 (0x8000 bytes
+     * of 8-byte commands), so the frame's half starts 0x1000 commands in, by sizeof(G). The vertex buffer's halves
+     * keep their 0x2000 bytes: a vertex is 16 bytes on both. D_800E7CB4 keeps the whole address. */
+    D_800DC738 = (G *)D_800DC734 + (D_800DC73C << 12);
+    D_800E7CB4 = D_800DC740 + (D_800DC73C << 13);
+#else
     D_800DC738 = (G *)(D_800DC734 + (D_800DC73C << 15));
     D_800E7CB4 = (s32)(D_800DC740 + (D_800DC73C << 13));
+#endif
     { G *d = D_800DC738++; d->w0 = 0xDF000000; d->w1 = 0; }
     func_800AC144();
     D_800E7978 = &D_800E8230[D_80038A90];

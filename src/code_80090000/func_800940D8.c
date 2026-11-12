@@ -135,7 +135,13 @@ void func_800940D8(void) {
                 break;
             case 0x500: {
                 s32 d = 1 << (s1 & 0xF);
+#ifdef TARGET_PC
+                /* PC: "register" with no type means "register int", which C99 dropped and clang refuses; the type is
+                 * written out. */
+                register s32 ang = (((s2 * 2) / d) & 0x3FF) * 0x168;
+#else
                 register ang = (((s2 * 2) / d) & 0x3FF) * 0x168;
+#endif
                 sv = sinf(ang * K_B8);
                 m = (f32)(d * 180) * sv;
                 if (s1 & 0x80) {

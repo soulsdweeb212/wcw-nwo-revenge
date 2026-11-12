@@ -8,6 +8,11 @@
 extern u8 D_800E7C60[][8];
 extern s32 D_800E7BF0[];
 extern s32 D_800E79A0[];
+#ifdef TARGET_PC
+/* PC: the definition's types (func_800996A0.c); the N64 calls it without a declaration, which the PC compilers
+ * refuse. */
+u8 func_800996A0(s32 arg0);
+#endif
 
 void func_800B3BCC(s32 i, s32 a) {
     if (a == 0) {

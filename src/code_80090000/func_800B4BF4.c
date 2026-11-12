@@ -17,7 +17,13 @@ extern s32 D_800E74D4, D_800EA348, D_800E79AC;
 extern s32 D_800E73A4[3];
 s16 func_8000B3DC(u32);
 s16 func_8000B41C(u32);
+#ifdef TARGET_PC
+/* PC: the types of func_8002B7E0's definition, which returns the address of a 0x2A-byte move record (its Nw2Move *);
+ * an s32 would cut the address in half. */
+void *func_8002B7E0(s32, u32);
+#else
 s32 func_8002B7E0(s32, s32);
+#endif
 void bcopy(void *, void *, s32);
 
 void func_800B4BF4(s32 a) {

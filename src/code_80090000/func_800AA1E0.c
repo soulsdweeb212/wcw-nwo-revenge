@@ -9,6 +9,16 @@ extern u8 D_8007EF30[];
 extern s32 D_800E74D8, D_800E6B7C;
 extern s32 D_800E8200[];
 extern u32 D_800EA2D0[];
+#ifdef TARGET_PC
+/* PC: the game functions this file calls, declared with their definitions' types (func_800B04BC.c,
+ * findIdSubTableIndex.c, func_80099148.c). D_8007EF30 keeps its N64 layout (game files read it at N64 offsets, up to
+ * +0xC90), so its +0x30, the address of the cup record that func_800B0DD4 stores, is 4 bytes and holds a handle
+ * (port.h's PTR_TO_SLOT); CUP_ID reads the cup's id (its first byte) through it. */
+s32 func_800B04BC(s32 id);
+s32 findIdSubTableIndex(s32 id);
+s32 func_80099148(s32 arg0, s16 arg1, s16 arg2, s32 arg3, s32 arg4);
+#define CUP_ID() (*(u8 *)SLOT_TO_PTR(*(u32 *)(D_8007EF30 + 0x30)))
+#endif
 
 s32 func_800AA1E0(s32 a, s32 b, u32 c, s32 d) {
     u32 r;
@@ -17,7 +27,12 @@ s32 func_800AA1E0(s32 a, s32 b, u32 c, s32 d) {
     if (a < 0) {
         if (c & 0x80) {
             if (func_800B04BC(b) != 0) {
+#ifdef TARGET_PC
+                /* PC: the cup's id through its handle, as above. */
+                r = c | (CUP_ID() * 16 + 4);
+#else
                 r = c | (**(u8 **)(D_8007EF30 + 0x30) * 16 + 4);
+#endif
             } else {
                 r = c & 0x7F;
             }
@@ -39,7 +54,12 @@ s32 func_800AA1E0(s32 a, s32 b, u32 c, s32 d) {
             }
             if (c & 0x80) {
                 if (func_800B04BC(b) != 0) {
+#ifdef TARGET_PC
+                    /* PC: the cup's id through its handle, as above. */
+                    r = c | (CUP_ID() * 16 + 4);
+#else
                     r = c | (**(u8 **)(D_8007EF30 + 0x30) * 16 + 4);
+#endif
                 } else {
                     r = c & 0x7F;
                 }

@@ -11,7 +11,9 @@ typedef struct { R r[4]; s32 chk; } Rec;
 typedef struct { s32 chk; u8 pad[0x98]; } Chk;
 extern u8 *D_800DCFB8;
 s32 func_800B9228(void *, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_8002B790 */
 u8 *func_8002B790(s32, s32);
+#endif
 void bcopy(void *, void *, s32);
 
 void func_800B8B44(void) {

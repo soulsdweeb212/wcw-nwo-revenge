@@ -65,7 +65,12 @@ void func_800B7C9C(s32 a) {
         s++;
         t++;
         c++;
+#ifdef TARGET_PC
+        /* PC: the two addresses compared as pointers; the N64 compares them as s32, which would cut them to 32 bits. */
+    } while (s < b + 6);
+#else
     } while ((s32)s < (s32)(b + 6));
+#endif
     if (a == 0) {
         func_800B8368(D_800DC930[0], D_800DC930[1], D_800DC930[2], D_800DC930[3], D_800DC930[4], D_800DC930[5]);
         if (D_800DC8E4 == 0) {

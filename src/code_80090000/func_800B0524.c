@@ -8,8 +8,16 @@
 
 
 extern u8 D_8007EF30[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_8002B5AC */
 s32 func_8002B5AC(s32);
+#endif
+#ifdef TARGET_PC
+/* PC: the types of func_8002B528's definition, which returns a u16: read as an s32, the PC result's upper bits would
+ * be unset. */
+u16 func_8002B528(s32);
+#else
 s32 func_8002B528(s32);
+#endif
 s32 func_800B0EC4(s32);
 #define H(o) (*(u16 *)(D_8007EF30 + (o)))
 

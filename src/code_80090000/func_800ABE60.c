@@ -8,6 +8,11 @@
 extern s32 D_800E7C90, D_800E7530;
 extern s16 D_80038A90, D_800E7CB8;
 extern u8 D_8007EF30[], D_8007E228[], D_800E7B67[];
+#ifdef TARGET_PC
+/* PC: the game functions this file calls, declared with their definitions' types (func_800BCD30.c, func_8000E55C.c). */
+s32 func_800BCD30(void);
+void func_8000E55C(s32 arg0, s16 arg1, s8 arg2);
+#endif
 
 void func_800ABE60(void) {
     s32 s = 8;

@@ -6,10 +6,30 @@
 #include "common.h"
 
 typedef struct { u16 off; u16 pad2; u16 len; u16 pad6; } Blk;
+#ifdef TARGET_PC
+/* PC: D_800DCFD8 is the SRAM transfer request, libultra's OSIoMesg, which on PC is port.h's PortIoMesg (its queue,
+ * buffer and handle as real pointers). The N64 code fills it through labels of its fields (D_800DCFDA pri,
+ * D_800DCFDC retQueue, D_800DCFE0 dramAddr, D_800DCFE4 devAddr, D_800DCFE8 size), which have no PC symbol, so the PC
+ * writes the fields by name. D_800DCFD4 holds the SRAM handle that func_80000A40 returns, a pointer, which an s32
+ * would cut in half. The functions are declared with their definitions' types (allocateHeap.c, releaseHeapBlock.c,
+ * func_800B9330.c) and the port's (osEPiStartDma, osRecvMesg and the cache functions). */
+extern PortIoMesg D_800DCFD8;
+extern u8 D_800DCFF8[];
+extern u8 *D_800DCFB8;
+extern void *D_800DCFD4;
+void *allocateHeap(u32 bytes);
+void releaseHeapBlock(u8 *arg0);
+s32 func_800B9330(s32 id);
+s32 osEPiStartDma(void *handle, PortIoMesg *mb, s32 direction);
+s32 osRecvMesg(void *mq, u32 *msg, s32 flag);
+void osInvalDCache(void *p, s32 size);
+void osWritebackDCache(void *p, s32 size);
+#else
 extern u8 D_800DCFD8[], D_800DCFF8[];
 extern u8 D_800DCFDA;
 extern u8 *D_800DCFDC, *D_800DCFE0, *D_800DCFB8;
 extern s32 D_800DCFD4, D_800DCFE4, D_800DCFE8;
+#endif
 extern Blk D_800D2900[];
 
 static inline u32 checksum(u8 *p, s32 len) {
@@ -31,6 +51,81 @@ static inline s32 valid(u8 *b) {
     return -1;
 }
 
+#ifdef TARGET_PC
+/* PC: the request's fields by name, as above; sp10 receives a 4-byte message, which the port's osRecvMesg writes as
+ * a u32. */
+void func_800BAD80(void) {
+    u8 *b;
+    u8 *q;
+    u8 *d;
+    u8 *c;
+    s32 j, n;
+    u8 *p;
+    u32 sum;
+    u32 sp10;
+
+    b = allocateHeap(0x100);
+    osInvalDCache(b, 0x20);
+    D_800DCFD8.retQueue = D_800DCFF8;
+    D_800DCFD8.pri = 0;
+    D_800DCFD8.devAddr = 0;
+    D_800DCFD8.dramAddr = b;
+    D_800DCFD8.size = 0x20;
+    while (osEPiStartDma(D_800DCFD4, &D_800DCFD8, 0) != 0) {
+    }
+    osRecvMesg(D_800DCFF8, &sp10, 1);
+    if (valid(b) == 0) {
+        d = D_800DCFB8;
+        for (n = 0; n < 4; n++) {
+            p = D_800DCFB8;
+            sum = checksum(p + (&D_800D2900[n])->off, (&D_800D2900[n])->len);
+            c = d + ((&D_800D2900[n])->off + (&D_800D2900[n])->len);
+            c[0] = sum >> 24;
+            c[1] = sum >> 16;
+            c[2] = sum >> 8;
+            c[3] = sum;
+        }
+        q = D_800DCFB8;
+        osWritebackDCache(q, 0x2D80);
+        D_800DCFD8.retQueue = D_800DCFF8;
+        D_800DCFD8.devAddr = 0x20;
+        D_800DCFD8.pri = 0;
+        D_800DCFD8.dramAddr = q;
+        D_800DCFD8.size = 0x2D80;
+        while (osEPiStartDma(D_800DCFD4, &D_800DCFD8, 1) != 0) {
+        }
+        osRecvMesg(D_800DCFF8, &sp10, 1);
+        for (j = 0; j < 0x20; j += 4) {
+            b[j] = 0x19;
+            b[j + 1] = 0x97;
+            b[j + 2] = 0x10;
+            b[j + 3] = 0x21;
+        }
+        osWritebackDCache(b, 0x20);
+        D_800DCFD8.retQueue = D_800DCFF8;
+        D_800DCFD8.pri = 0;
+        D_800DCFD8.devAddr = 0;
+        D_800DCFD8.dramAddr = b;
+        D_800DCFD8.size = 0x20;
+        while (osEPiStartDma(D_800DCFD4, &D_800DCFD8, 1) != 0) {
+        }
+        osRecvMesg(D_800DCFF8, &sp10, 1);
+    } else {
+        q = D_800DCFB8;
+        osInvalDCache(q, 0x2D80);
+        D_800DCFD8.retQueue = D_800DCFF8;
+        D_800DCFD8.devAddr = 0x20;
+        D_800DCFD8.pri = 0;
+        D_800DCFD8.dramAddr = q;
+        D_800DCFD8.size = 0x2D80;
+        while (osEPiStartDma(D_800DCFD4, &D_800DCFD8, 0) != 0) {
+        }
+        osRecvMesg(D_800DCFF8, &sp10, 1);
+        func_800B9330(-1);
+    }
+    releaseHeapBlock(b);
+}
+#else
 void func_800BAD80(void) {
     u8 *b;
     u8 *q;
@@ -103,3 +198,4 @@ void func_800BAD80(void) {
     }
     releaseHeapBlock(b);
 }
+#endif

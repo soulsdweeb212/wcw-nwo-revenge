@@ -15,6 +15,23 @@
 
 
 typedef struct { u8 f0; u8 pad1[0xD]; u16 fE; } Cup;
+#ifdef TARGET_PC
+/* PC: D_8007EF30 keeps its N64 layout (game files read it at N64 offsets, up to +0xC90), so its +0x30, the address of
+ * the cup record, is 4 bytes and holds a handle (port.h's PTR_TO_SLOT), as func_800AA1E0 reads it; CUP turns it back
+ * into the record's address. */
+typedef struct {
+    u8 pad0[4];
+    u8 f4;
+    u8 pad5[3];
+    u16 mode;
+    u8 padA[0x30 - 0xA];
+    u32 cup;
+    u8 pad34[0xC90 - 0x34];
+    u16 opp[2];
+} Game;
+_Static_assert(offsetof(Game, cup) == 0x30 && offsetof(Game, opp) == 0xC90, "Game keeps its N64 layout on PC");
+#define CUP ((Cup *)SLOT_TO_PTR(D_8007EF30.cup))
+#else
 typedef struct {
     u8 pad0[4];
     u8 f4;
@@ -25,6 +42,7 @@ typedef struct {
     u8 pad34[0xC90 - 0x34];
     u16 opp[2];
 } Game;
+#endif
 typedef struct { void *p; s16 f4; u8 pad6[6]; } Slot;
 typedef struct { u8 pad0[7]; u8 f7; } Demo;
 
@@ -58,8 +76,16 @@ s32 guRandom(void);
 void func_800B807C(s32, s32);
 void func_8000DFD0(s32);
 u16 func_8002AEE0(s32);
+#ifdef TARGET_PC
+/* PC: the result types of the definitions (func_8002AF9C.c returns a u8, func_800C2CAC.c an s16). The N64 lines read
+ * them as s32, which works there because the callee leaves the value extended in v0; on PC the upper bits of the
+ * result register are not set. */
+u8 func_8002AF9C(s32);
+s16 func_800C2CAC(s32);
+#else
 s32 func_8002AF9C(s32);
 s32 func_800C2CAC(s32);
+#endif
 s32 func_800BB5A4(s32);
 void func_800C3094(s32, s32, s32, s32, s32, s32);
 void func_800BC9AC(void);
@@ -77,7 +103,9 @@ s32 func_800AA1E0(s32, s32, s32, s32);
 void func_800B8050(void);
 void func_800B2588(void);
 s32 func_80099148(s32, s32, s32, s32, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_8002AD04, which returns the name record's address */
 s32 func_8002AD04(s32, s32);
+#endif
 s32 func_800C54FC(s32);
 void func_800BB440(void);
 void func_8002BBCC(s32);
@@ -439,9 +467,19 @@ void func_800BCDF4(void) {
                 if (s == 0x30) {
                     D_800E74C8 = 0xFF;
                 }
+#ifdef TARGET_PC
+                /* PC: the cup record through its handle (CUP above). */
+                findOrAddCacheEntryRaw(CUP->fE, 0xF0, 0xA0, 0, 0x400);
+#else
                 findOrAddCacheEntryRaw(D_8007EF30.cup->fE, 0xF0, 0xA0, 0, 0x400);
+#endif
             } else if (s >= 0x20) {
+#ifdef TARGET_PC
+                /* PC: as above. */
+                findOrAddCacheEntryRaw(CUP->fE, 0xF0 - ((0x30 - s) << 5), 0xA0, 0, 0x400);
+#else
                 findOrAddCacheEntryRaw(D_8007EF30.cup->fE, 0xF0 - ((0x30 - s) << 5), 0xA0, 0, 0x400);
+#endif
             }
         }
         if (D_800E74E0 < 0x20) {
@@ -511,10 +549,18 @@ void func_800BCDF4(void) {
         D_800E74D8 = -8;
         D_800E8204 = -8;
         D_800E8200 = -8;
+#ifdef TARGET_PC
+        /* PC: the cup record through its handle (CUP above). */
+        func_800AA1E0(0, D_8007E228.ids[0], D_8007E8C0.f70 | (u16)((CUP->f0 << 4) | 4), 6);
+        if (D_8007EF30.mode & 0x20) {
+            func_800AA1E0(1, D_8007E228.ids[1], D_8007E8C0.f74 | (u16)((CUP->f0 << 4) | 4), 6);
+        }
+#else
         func_800AA1E0(0, D_8007E228.ids[0], D_8007E8C0.f70 | (u16)((D_8007EF30.cup->f0 << 4) | 4), 6);
         if (D_8007EF30.mode & 0x20) {
             func_800AA1E0(1, D_8007E228.ids[1], D_8007E8C0.f74 | (u16)((D_8007EF30.cup->f0 << 4) | 4), 6);
         }
+#endif
         if (D_800E74E0 < 0x258) {
             func_800BCBB4(D_800E74E0 + 1);
         }
@@ -532,10 +578,18 @@ void func_800BCDF4(void) {
         D_800E74D8 = -8;
         D_800E8204 = -8;
         D_800E8200 = -8;
+#ifdef TARGET_PC
+        /* PC: the cup record through its handle (CUP above). */
+        func_800AA1E0(0, D_8007E228.ids[0], D_8007E8C0.f70 | (u16)((CUP->f0 << 4) | 4), 6);
+        if (D_8007EF30.mode & 0x20) {
+            func_800AA1E0(1, D_8007E228.ids[1], D_8007E8C0.f74 | (u16)((CUP->f0 << 4) | 4), 6);
+        }
+#else
         func_800AA1E0(0, D_8007E228.ids[0], D_8007E8C0.f70 | (u16)((D_8007EF30.cup->f0 << 4) | 4), 6);
         if (D_8007EF30.mode & 0x20) {
             func_800AA1E0(1, D_8007E228.ids[1], D_8007E8C0.f74 | (u16)((D_8007EF30.cup->f0 << 4) | 4), 6);
         }
+#endif
         if (D_800E74E0 < 0x20) {
             D_800E74C8 = -D_800E74E0 * 8;
         } else {

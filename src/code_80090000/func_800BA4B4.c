@@ -6,7 +6,9 @@
 #include "common.h"
 
 extern u8 *D_800DCFB8;
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_8002B790 */
 u8 *func_8002B790(s32, s32);
+#endif
 void bcopy(void *, void *, s32);
 
 s32 func_800BA4B4(void) {

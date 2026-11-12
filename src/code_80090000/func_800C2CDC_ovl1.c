@@ -16,7 +16,12 @@ void func_800C2CDC_ovl1(s32 a, f32 *o) {
     f32 *p = o;
     if (a & 4) {
         s32 i = a & 3;
+#ifdef TARGET_PC
+        /* PC: the records' address as a pointer-wide integer (port.h's uptr); an s32 would cut it in half. */
+        uptr b = (uptr)D_800E79B8;
+#else
         s32 b = (s32)D_800E79B8;
+#endif
         P *q = (P *)(i * sizeof(P) + b);
         o[1] = q->cam.y + 140.0f;
         o[0] = q->cam.x;

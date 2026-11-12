@@ -7,6 +7,26 @@
 
 extern s32 D_80038A98, D_800D5F18, D_800E7C8C, D_800E8208;
 extern u8 D_8007E228[], D_8007EF30[], D_800DF3E0[], D_800DF4C0[];
+#ifdef TARGET_PC
+/* PC: the functions this file calls, declared with their definitions' types (each in the file of its name;
+ * func_80094AE4's parameters are a record type of its own file); C99 has no implicit declarations. */
+void func_800C5718(void);
+s32 func_800C1C70(void);
+s32 func_800A171C(void);
+void func_80002C74(void);
+s32 func_800C54FC(s32 a);
+void func_800C1C4C(void);
+void func_800A16E0(void);
+void func_800B6278(void);
+void releaseResourcePool(void);
+void func_800BB358(void);
+void func_80098EC8(void);
+void func_80094054(void);
+void releaseAllResources1211C(void);
+void func_80094AE4(void *arg0, void *arg1, s32 arg2);
+void func_800B7C9C(s32 a);
+void func_800C5214(s32 a);
+#endif
 
 s32 func_800C594C(void) {
     s32 m = D_80038A98;
@@ -49,7 +69,12 @@ s32 func_800C594C(void) {
     } else {
         func_80094AE4(D_800DF4C0, D_800DF3E0, D_800D5F18);
         func_800B7C9C(0);
+#ifdef TARGET_PC
+        /* PC: func_800C5214 takes one argument (its definition); the N64 call also passes a 0, which it never reads. */
+        func_800C5214(m);
+#else
         func_800C5214(m, 0);
+#endif
     }
     D_800D5F18++;
     return r;

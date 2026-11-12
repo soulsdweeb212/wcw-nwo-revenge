@@ -5,8 +5,16 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx, as func_80096A6C writes them. The display list at 0x800C95B8 is named by its
+ * own address (port.h's DL_ADDR turns it into the command word; D_C95B8 is its N64 physical address, a link
+ * constant). */
+typedef Gfx G773;
+extern u8 D_800C95B8[];
+#else
 typedef struct { u32 w0, w1; } G773;
 extern u8 D_C95B8[];
+#endif
 f32 sinf(f32);
 /* 3.4088433159722225e-05 (0x3F01DF45A50DE271) is a double literal; the assembler's li.d puts each
  * copy in .rodata (0x800D6078, 0x800D6080). It is about pi/180/512, 1 ulp off 3.14159/92160. */
@@ -34,7 +42,12 @@ void func_8009773C(G773 **gfxp, void *tex, s32 fmt, s32 phase, s32 x, s32 y, s32
     sy = (f64)dh / h;
     sx = (f64)dw / w;
     t = 0;
+#ifdef TARGET_PC
+    /* PC: the branch target as the whole pointer (port.h's DL_ADDR). */
+    { G773 *g = gfx++; g->w0 = 0xDE000000; g->w1 = DL_ADDR(D_800C95B8); }
+#else
     { G773 *g = gfx++; g->w0 = 0xDE000000; g->w1 = (u32)D_C95B8; }
+#endif
     for (; t < h; t += rows) {
         ult = t - 1;
         if (ult < 0) ult = 0;

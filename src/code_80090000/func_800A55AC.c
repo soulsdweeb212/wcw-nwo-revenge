@@ -5,7 +5,11 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Gfx G; /* PC: a command is port.h's 16-byte Gfx, which keeps a whole pointer in w1 */
+#else
 typedef struct { u32 w0, w1; } G;
+#endif
 typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } V;
 typedef struct { u8 pad[0xE]; s16 h; s16 w; } T;
 typedef struct { u8 pad0[0x16]; u8 f16; u8 f17; u8 pad18[0xA]; u16 f22; } Item;
@@ -18,7 +22,9 @@ extern f64 D_800D6230;
 u32 osVirtualToPhysical(V *);
 T *func_800B75D4(G **, void *, s32);
 T *func_800B7A00(G **, s32, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_8002AD34 */
 void *func_8002AD34(s32, s32);
+#endif
 void *lookupPlayerNameById(void *, void *);
 void func_800B7260(G **, s32, s32, s32);
 
@@ -72,7 +78,12 @@ void func_800A55AC(G **dl, Item *it, u32 k) {
     } else {
         hw = 0x1A;
     }
+#ifdef TARGET_PC
+    /* PC: the vertices' address as the whole pointer (port.h's DL_ADDR); osVirtualToPhysical returns a u32. */
+    { G *_g = g++; _g->w0 = 0x01004018; _g->w1 = DL_ADDR(D_800E7CB4); }
+#else
     { G *_g = g++; _g->w0 = 0x01004018; _g->w1 = osVirtualToPhysical(D_800E7CB4); }
+#endif
     VTX(-hw, -6, 0, 0);
     VTX(hw, -6, t->w << 5, 0);
     VTX(-hw, 6, 0, t->h << 5);

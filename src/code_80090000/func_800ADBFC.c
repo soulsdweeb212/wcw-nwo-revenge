@@ -8,6 +8,13 @@
 extern u8 *D_800E85EC, *D_800E9AA4[];
 extern u8 D_8007EF30[], D_800E85D8[];
 extern s32 D_800D5F1C;
+#ifdef TARGET_PC
+/* PC: the functions this file calls, declared with their definitions' types (func_800ADD80.c, func_800B5300.c,
+ * func_800AD970.c, whose parameter is a record type of its own file); C99 has no implicit declarations. */
+s32 func_800ADD80(s32 a);
+void func_800B5300(s32 id);
+void func_800AD970(void *a);
+#endif
 
 s32 func_800ADBFC(void) {
     u8 *p = D_800E85EC;

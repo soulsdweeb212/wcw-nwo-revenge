@@ -38,7 +38,12 @@ void func_800B5AE0(S *s, f64 *out) {
     if (i > 0) {
         /* Placeholder: the ROM adds the scaled index first (addu s1,v0,s1) into out's own
            register, which a plain `out += i` (addu s1,s1,v0) does not give. */
+#ifdef TARGET_PC
+        /* PC: the same address, i entries on from out, by pointer arithmetic; an s32 would cut it in half. */
+        f64 *p = out + i;
+#else
         f64 *p = (f64 *)(i * 8 + (s32)out);
+#endif
         out = p;
         do {
             *out = (*out - h[i] * out[1]) / d[i];

@@ -5,22 +5,50 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Gfx G; /* PC: a command is port.h's 16-byte Gfx, which keeps a whole pointer in w1 */
+#else
 typedef struct {u32 w0,w1;} G;
+#endif
 typedef struct {u8 pad[0xEA];u16 tick;} State9B;
 extern u8 D_800C94CC[];
 extern s32 D_800E797C;
+#ifdef TARGET_PC
+/* PC: D_800E81F8 holds the address of a resource (func_800C12D0 stores func_800B600C's result there), so it is a
+ * pointer, as func_800B64EC takes it (its definition takes a u8 *). */
+extern u8 *D_800E81F8;
+u8 *func_800B600C(s32,s32);
+u8 *func_800B64EC(u8 *,s32);
+#else
 extern s32 D_800E81F8;
 u8 *func_800B600C(s32,s32);
 u8 *func_800B64EC(s32,s32);
+#endif
 s32 guRandom(void);
+#ifdef TARGET_PC
+/* PC: the display lists at 0x800C95F0 and 0x800C95B8 by their own addresses (D_C95F0 and D_C95B8 are their N64
+ * physical addresses, link constants). */
+extern u8 D_800C95F0[];
+extern u8 D_800C95B8[];
+#else
 extern u8 D_C95F0[];
 extern u8 D_C95B8[];
+#endif
 #define TIMER (*(s32*)(D_800C94CC+0x20))
 #define CUR (*(s32*)(D_800C94CC+0x1C))
+#ifdef TARGET_PC
+/* PC: w1 takes the whole value: the addresses below come from DL_ADDR, and a (u32) cast would cut one in half. */
+#define E(a,b) {G *_g=gfx++;_g->w0=(a);_g->w1=(b);}
+#else
 #define E(a,b) {G *_g=gfx++;_g->w0=(a);_g->w1=(u32)(b);}
+#endif
 #define XY(x,y) (((u32)((y)<<18)>>16)|((x)<<18))
 #define ST(s,t) (((u32)((t)<<21)>>16)|((s)<<21))
+#ifdef TARGET_PC
+#define PHYS(p) DL_ADDR(p) /* PC: a palette's or texture's address as the whole pointer (port.h's DL_ADDR) */
+#else
 #define PHYS(p) ((u32)(p)-0x80000000)
+#endif
 #define TLUT(p) {E(0xFD100000,PHYS(p));E(0xE8000000,0);E(0xF5000100,0x07000000);E(0xE6000000,0);E(0xF0000000,0x0703C000);E(0xE7000000,0);}
 #define TEX(p) {E(0xFD500000,PHYS(p));E(0xF5500000,0x07018060);E(0xE6000000,0);E(0xF3000000,0x073FF200);E(0xE7000000,0);E(0xF5400800,0x00018060);E(0xF2000000,0x000FC0FC);}
 void func_8009A878(G **arg0, State9B *arg1, s32 arg2)
@@ -37,8 +65,14 @@ void func_8009A878(G **arg0, State9B *arg1, s32 arg2)
     gfx = *arg0;
     t = state & 0xFF;
     n = t;
+#ifdef TARGET_PC
+    /* PC: the display lists' addresses as the whole pointers (port.h's DL_ADDR). */
+    E(0xDE000000, DL_ADDR(D_800C95F0));
+    E(0xDE000000, DL_ADDR(D_800C95B8));
+#else
     E(0xDE000000, D_C95F0);
     E(0xDE000000, D_C95B8);
+#endif
     switch (state >> 8) {
     case 0:
         TIMER = 0;

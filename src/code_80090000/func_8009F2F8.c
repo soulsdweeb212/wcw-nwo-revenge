@@ -5,14 +5,28 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx. */
+typedef Gfx G;
+#else
 typedef struct { u32 w0, w1; } G;
+#endif
 typedef struct { u32 f0; s32 f4; s32 f8; } Q;
 typedef struct { Q *list; u32 n; } P;
 typedef struct { P *p; s16 t; u16 f6; s32 f8; } E;
 
+#ifdef TARGET_PC
+/* PC: D_800DC660 and D_800DC66C are labels of the scene object D_800DC650 (its display list at +0x10 and its matrices
+ * from +0x1C), which have no PC symbol: the object keeps its N64 layout (Nw2SceneObj in common.h) and holds the list
+ * as a handle (port.h's PTR_TO_SLOT). The display list at 0x800C9538 by its own address (port.h's DL_ADDR turns it
+ * into the command word; D_C9538 is its N64 physical address, a link constant). */
+extern Nw2SceneObj D_800DC650;
+extern u8 D_800C9538[];
+#else
 extern G *D_800DC660;
 extern u8 D_800DC66C[];
 extern u8 D_C9538[];
+#endif
 extern E *D_800E7518;
 extern s32 D_800E8208, D_800E7BEC, D_800D5F28, D_800DBD64;
 extern u8 D_800E7BEF;
@@ -65,12 +79,23 @@ void func_8009F2F8(G **dl, s32 v) {
     Q *q;
 
     g = *dl;
+#ifdef TARGET_PC
+    /* PC: the object's fields by name, as above. */
+    D_800DC650.dl = PTR_TO_SLOT(g);
+    func_800B830C(D_800DC650.local);
+#else
     D_800DC660 = g;
     func_800B830C(D_800DC66C);
+#endif
     if (v >= 0x100) {
         v = 0xFF;
     }
+#ifdef TARGET_PC
+    /* PC: the branch target as the whole pointer (port.h's DL_ADDR). */
+    { G *d = g++; d->w0 = 0xDE000000; d->w1 = DL_ADDR(D_800C9538); }
+#else
     { G *d = g++; d->w0 = 0xDE000000; d->w1 = (u32)D_C9538; }
+#endif
     if (v < -0xFF) {
         fade(&g, -0xFF);
     } else if (v < 0) {
@@ -116,7 +141,12 @@ void func_8009F2F8(G **dl, s32 v) {
     }
     if (D_800E7BEC & 0xFF) {
         i = D_800E7BEC >> 8;
+#ifdef TARGET_PC
+        /* PC: as above. */
+        { G *d = g++; d->w0 = 0xDE000000; d->w1 = DL_ADDR(D_800C9538); }
+#else
         { G *d = g++; d->w0 = 0xDE000000; d->w1 = (u32)D_C9538; }
+#endif
         { G *d = g++; d->w0 = 0xE3000C00; d->w1 = 0x80000; }
         if ((D_8007EF30.mode & 0x10) && func_800AA05C(i + 2) >= 0) {
             func_80095884(&g, D_800E7BEF | 0x100, func_800AA070(i), teamName(func_800AA070(i + 2)));

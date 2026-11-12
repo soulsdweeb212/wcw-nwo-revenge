@@ -6,7 +6,11 @@
 #include "common.h"
 
 
+#ifdef TARGET_PC
+typedef Gfx G; /* PC: a command is port.h's 16-byte Gfx, which keeps a whole pointer in w1 */
+#else
 typedef struct { u32 w0, w1; } G;
+#endif
 typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } V;
 typedef struct {
     u8 pad0[0x16];
@@ -28,7 +32,11 @@ void func_800B7260(G **, s32, s32, s32);
 u8 *func_800B600C(s32, s32);
 
 #define EMIT(a, b) { G *_g = g++; _g->w0 = (a); _g->w1 = (b); }
+#ifdef TARGET_PC
+#define PHYS(x) DL_ADDR(x) /* PC: a palette's or texture's address as the whole pointer (port.h's DL_ADDR) */
+#else
 #define PHYS(x) ((u32)(x) - 0x80000000)
+#endif
 
 void func_800A6B24(G **dl, Obj *o) {
     G *g = *dl;
@@ -55,7 +63,12 @@ void func_800A6B24(G **dl, Obj *o) {
     EMIT(0xFA000000, o->f16);
     func_800B7260(&g, (m + 1) << 4, 0x10, 0x58);
     EMIT(0x07000206, 0x604);
+#ifdef TARGET_PC
+    /* PC: the vertices' address as the whole pointer (port.h's DL_ADDR); osVirtualToPhysical returns a u32. */
+    EMIT(0x0100600C, DL_ADDR(&p[(o->f22 & 0xF) * 3]));
+#else
     EMIT(0x0100600C, osVirtualToPhysical(&p[(o->f22 & 0xF) * 3]));
+#endif
     EMIT(0x02140004, 0x0BE00000);
     EMIT(0x02140006, 0x1E0);
     EMIT(0x0214000A, 0x0BE001E0);
@@ -65,7 +78,11 @@ void func_800A6B24(G **dl, Obj *o) {
         v = D_800E9F98[m * 16 + i];
         hi = v >> 4;
         lo = v & 0xF;
+#ifdef TARGET_PC
+        EMIT(0x0100600C, DL_ADDR(&p[i * 3])); /* PC: as above */
+#else
         EMIT(0x0100600C, osVirtualToPhysical(&p[i * 3]));
+#endif
         if (hi >= 2) {
             t = func_800B600C(D_800CCF6C[lo * 2 + 1], 0);
             if (t) {

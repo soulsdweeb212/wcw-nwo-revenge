@@ -6,7 +6,12 @@
 #include "common.h"
 
 
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx. */
+typedef Gfx G;
+#else
 typedef struct { u32 w0, w1; } G;
+#endif
 typedef struct { u8 pad[0x10]; u16 wh; u8 pad2[0xE]; u16 a; u16 b; } T;
 extern struct { u8 pad[0xA]; u16 f; u8 pad2[0x1C]; u16 g; } D_8007EF30;
 extern u16 D_800C9252;
@@ -21,7 +26,12 @@ void func_800A7C34(G **dl, T *t) {
     {
         G *p = g++;
         p->w0 = 0xDE000000;
+#ifdef TARGET_PC
+        /* PC: the branch target as the whole pointer (port.h's DL_ADDR). */
+        p->w1 = DL_ADDR(D_800C9C70);
+#else
         p->w1 = (u32)D_800C9C70;
+#endif
     }
     a = wh & 0xFF;
     w = a * 8;

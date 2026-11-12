@@ -11,6 +11,11 @@
  * dimensions and the given colour triple (c, c+1, c+2 scaled), and
  * advances *arg0 past the 8 generated commands. */
 extern u16 *D_800E9F80;
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx, which keeps a whole pointer in w1 and which the callers (func_80091908,
+ * func_80091C48, func_80091F50, func_80092230) write as well; common.h's Nw2GfxCommand is the N64's 8-byte command. */
+#define Nw2GfxCommand Gfx
+#endif
 void func_80091718(Nw2GfxCommand **arg0, s32 x, s32 y, s32 c, s32 offset) {
     Nw2GfxCommand *cmd = *arg0;
     s32 left, top, right, bottom;
@@ -18,7 +23,12 @@ void func_80091718(Nw2GfxCommand **arg0, s32 x, s32 y, s32 c, s32 offset) {
     top = y - 1; top = top & (~top >> 31);
     right = x + 81; if (right > 480) right = 480;
     bottom = y + 21; if (bottom > 240) bottom = 240;
+#ifdef TARGET_PC
+    /* PC: the texture's address as the whole pointer (port.h's DL_ADDR); the N64 subtracts 0x80000000 in 32 bits. */
+    { Nw2GfxCommand *cur = cmd++; cur->w0 = 0xFD1001DF; cur->w1 = DL_ADDR(D_800E9F80 + offset); }
+#else
     { Nw2GfxCommand *cur = cmd++; cur->w0 = 0xFD1001DF; cur->w1 = (u32)(D_800E9F80 + offset) - 0x80000000; }
+#endif
     { Nw2GfxCommand *cur = cmd++; cur->w0 = 0xF5100000 | (((((right - left) * 2 + 9) >> 3) & 0x1FF) << 9); cur->w1 = 0x07080200; }
     { Nw2GfxCommand *cur = cmd++; cur->w0 = 0xE6000000; cur->w1 = 0; }
     { Nw2GfxCommand *cur = cmd++; cur->w0 = 0xF4000000 | (((left * 4) & 0xFFF) << 12) | ((top * 4) & 0xFFF); cur->w1 = 0x07000000 | (((right * 4) & 0xFFF) << 12) | ((bottom * 4) & 0xFFF); }

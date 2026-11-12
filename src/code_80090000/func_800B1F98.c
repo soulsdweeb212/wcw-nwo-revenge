@@ -35,7 +35,12 @@ s32 func_800B1F98(s32 a) {
     bad = 0;
     if (n != 0) {
         do {
+#ifdef TARGET_PC
+            /* PC: the address as a pointer-wide integer (port.h's uptr); an s32 would cut it in half. */
+            s = (u8 *)(n + (uptr)t);
+#else
             s = (u8 *)(n + (s32)t);
+#endif
             if (s[-1] != D_800CD838) {
                 goto fail;
             }

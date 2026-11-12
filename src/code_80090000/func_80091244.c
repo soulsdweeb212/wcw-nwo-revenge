@@ -9,6 +9,16 @@ extern u8 D_800C5D48[];
 
 /* Emits a display-list pointer to D_800C5D48+0x48 into the command
  * buffer and advances the cursor. */
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx, as its callers' lists are, and the display list at 0x800C5D90 goes into it
+ * as the whole pointer (port.h's DL_ADDR); the N64 writes two u32 words, the second the 32-bit address. */
+void func_80091244(Gfx **arg0) {
+    Gfx *p = *arg0;
+    p->w0 = 0xDE000000;
+    p->w1 = DL_ADDR(D_800C5D48 + 0x48);
+    *arg0 = p + 1;
+}
+#else
 void func_80091244(u32 **arg0) {
     u32 *p = *arg0;
     u32 *start = p;
@@ -17,6 +27,7 @@ void func_80091244(u32 **arg0) {
     start[1] = (u32)D_800C5D48 + 0x48;
     *arg0 = p;
 }
+#endif
 
 extern u8 D_800D6E78[];
 void func_800948BC(s32);

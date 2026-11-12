@@ -8,10 +8,25 @@
 extern s16 D_8005A380[], D_8005A382[];
 extern f64 D_8003B250;
 void func_8000F4FC(s16);
+#ifdef TARGET_PC
+/* PC: func_800074A4 takes the display list to fill as a pointer (its definition's Gfx74A4 *, a type of its own file;
+ * the N64 line passes it as an s32), then the display records, the resource ids (u16) and the record count (s16). */
+void func_800074A4(void *, void *, u16 *, s16);
+#else
 void func_800074A4(s32, void *, void *, s32);
+#endif
 extern void *D_80036C74[], *D_80036C94[];
+#ifdef TARGET_PC
+/* PC: D_80036D04 is an array of 16-bit resource ids, which func_800074A4 reads as u16 (func_8000E920 declares it
+ * 16-bit too, for func_80007020): the PC sets game variables in its own byte order by the width their declarations
+ * give (port/game_vars.tsv). port_decls.h declares the three arrays of display records. */
+extern u16 D_80036D04[];
+#else
 extern u8 D_80036D04[], D_800587F0[], D_80058900[], D_80058988[];
+#endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares these three pointers (the display lists that func_80007020 returns) */
 extern s32 D_800587EC, D_800588F8, D_80058984;
+#endif
 extern s16 D_80059D82;
 /* Selects arena resource set arg0: rebinds the three descriptor arrays from the
  * corresponding source sets and records the selection. */

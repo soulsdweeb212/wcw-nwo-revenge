@@ -5,9 +5,23 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Gfx G; /* PC: a command is port.h's 16-byte Gfx */
+#else
 typedef struct { u32 w0, w1; } G;
+#endif
 typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } V;
+#ifdef TARGET_PC
+/* PC: T is the entry of the resource-name cache that func_800B75D4 returns (func_800B600C's record of a name, which
+ * func_8002A2FC made): its picture's height and width are the 16-bit sizes at +6 and +8 of reserved, which the N64
+ * reads at +0xE and +0x10. On PC the entry is common.h's Nw2ResourceEntryHashed, so T follows it. */
+typedef struct { u8 pad[0x16]; s16 h; s16 w; } T;
+_Static_assert(offsetof(T, h) == offsetof(Nw2ResourceEntryHashed, reserved) + 6 &&
+                   offsetof(T, w) == offsetof(Nw2ResourceEntryHashed, reserved) + 8,
+               "T must follow Nw2ResourceEntryHashed");
+#else
 typedef struct { u8 pad[0xE]; s16 h; s16 w; } T;
+#endif
 typedef struct { u8 pad0[0x16]; u8 f16; u8 f17; u8 pad18[8]; u16 f20; } Item;
 typedef struct { u8 on; u8 on2; u8 pad2[0x16]; } Slot;
 typedef struct { u8 pad0[0x628]; Slot slot[4]; s32 ids[4]; } Cfg;
@@ -22,7 +36,9 @@ extern f64 D_800D6208;
 u32 osVirtualToPhysical(V *);
 void func_800B6FE0(G **, s32);
 T *func_800B75D4(G **, void *, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_8002AD34 */
 void *func_8002AD34(s32, s32);
+#endif
 
 #define EMIT(a, b) { G *_g = g++; _g->w0 = (a); _g->w1 = (b); }
 
@@ -69,7 +85,12 @@ void func_800A4284(G **dl, Item *it) {
         } else {
             hw = t->w * 7 * D_800D6208;
         }
+#ifdef TARGET_PC
+        /* PC: the vertices' address as the whole pointer (port.h's DL_ADDR); osVirtualToPhysical returns a u32. */
+        { G *_g = g++; _g->w0 = 0x01004018; _g->w1 = DL_ADDR(D_800E7CB4); }
+#else
         { G *_g = g++; _g->w0 = 0x01004018; _g->w1 = osVirtualToPhysical(D_800E7CB4); }
+#endif
         {
             V *v = D_800E7CB4++;
             v->ob[0] = -hw; v->ob[1] = -0x4E; v->ob[2] = 0; v->flag = 0;

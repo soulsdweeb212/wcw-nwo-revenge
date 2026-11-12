@@ -37,7 +37,15 @@ void func_80092554(void **, s32, s16, s16);
 s32 loadResourceTexture4b(void **, void *, s32);
 void accumulateColorChannels(s32, s32, s32);
 
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx, as the functions this one calls write them (common.h's Nw2GfxCommand is the
+ * N64's 8 bytes). The vertices' addresses that the cases 5 and 3 below take from D_800C656C and D_800C657C are still
+ * the 32-bit words of overlay 1's data: those records (16 bytes from 0x800C6508, which func_800927B0, func_80092960,
+ * loadResourceTexture4b and func_800936DC also read) have no PC layout yet. */
+#define EMIT(a, b) { Gfx *q = p; p = q + 1; q->w0 = (a); q->w1 = (b); }
+#else
 #define EMIT(a, b) { Nw2GfxCommand *q = p; p = q + 1; q->w0 = (a); q->w1 = (b); }
+#endif
 
 void func_80092B20(void **out, S92B20 *s) {
     void *p;
@@ -81,7 +89,12 @@ void func_80092B20(void **out, S92B20 *s) {
     case 5:
         idx = s->f10;
         if (idx >= 0 && idx < D_800C6574[0]) {
+#ifdef TARGET_PC
+            /* PC: the display list's address as the whole pointer (port.h's DL_ADDR). */
+            EMIT(0xDE000000, DL_ADDR(D_800C5D90));
+#else
             EMIT(0xDE000000, (u32)D_800C5D90);
+#endif
             EMIT(0xFB000000, 0xFF0000FF);
             EMIT(0xFA000000, 0xFFFF00FF);
             { u32 hi = (D_800C6570[0] & 0xFF) << 12; u32 lo = ((D_800C6570[0] & 0x7F) << 1) | 0x01000000; EMIT(hi | lo, D_800C656C[0]); }
@@ -103,7 +116,11 @@ void func_80092B20(void **out, S92B20 *s) {
         }
     case 3:
 case3:
+#ifdef TARGET_PC
+        EMIT(0xDE000000, DL_ADDR(D_800C5D90)); /* PC: as above */
+#else
         EMIT(0xDE000000, (u32)D_800C5D90);
+#endif
         EMIT(0x01014028, D_800C657C[0]);
         func_80092554(&p, s->f10, s->f0->f8, s->f0->fC);
         break;

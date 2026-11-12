@@ -6,11 +6,23 @@
 #include "common.h"
 
 
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx, which func_800B75D4 also writes on PC. t is an entry of the resource-name
+ * cache (func_800B75D4 returns what func_800B600C hands back for a name), whose PC layout is Nw2ResourceEntryHashed in
+ * common.h: h, at the entry's +0x10 on the N64, is its reserved's +8 there, as the assert checks. */
+typedef Gfx G;
+typedef struct { u8 pad[0x18]; s16 h; } T;
+_Static_assert(offsetof(T, h) == offsetof(Nw2ResourceEntryHashed, reserved) + 8,
+               "T must follow the PC layout of Nw2ResourceEntryHashed");
+#else
 typedef struct { u32 w0, w1; } G;
 typedef struct { u8 pad[0x10]; s16 h; } T;
+#endif
 extern u8 D_8007EF30[], D_800CCCC0[];
 u8 *func_800B75D4(G **, void *, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_8002AD34, which returns the name's address */
 void *func_8002AD34(s32, s32);
+#endif
 void *lookupPlayerNameById(void *, void *);
 
 void func_800A5264(G **dl, s32 a) {

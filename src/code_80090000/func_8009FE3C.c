@@ -5,7 +5,12 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx, which the functions this one hands the list to also write on PC. */
+typedef Gfx G;
+#else
 typedef struct { u32 w0, w1; } G;
+#endif
 typedef struct { void *dl; void *addr; u16 n; u8 padA[6]; } VtxSet;
 typedef struct { u8 pad0[0xE]; u8 idx; } Def;
 typedef struct {
@@ -25,7 +30,13 @@ extern u8 D_800D6178[], D_8007E8C0[];
 void func_800A2158(G **, Obj *, s32);
 void func_800A2B5C(G **, Obj *, s32);
 void func_800A3500(G **, Obj *, void *, s32);
+#ifdef TARGET_PC
+/* PC: func_800AA070 returns the address of a name record (its PC definition, func_800AA070.c), which this file hands
+ * to func_800A3E00 as the name of the picture to draw; an s32 would cut it in half. */
+void func_800A3E00(G **, u8 *);
+#else
 void func_800A3E00(G **, s32);
+#endif
 void func_800B7260(G **, s32, s32, s32);
 void func_800A37FC_ovl1(G **, Obj *);
 void func_800A1C30(G **, Obj *);
@@ -46,9 +57,16 @@ void func_800A7C34(G **, Obj *);
 void func_800A7E9C(G **, Obj *);
 void func_800A83FC(G **, Obj *);
 void func_800A8BB0(G **, Obj *);
+#ifdef TARGET_PC
+/* PC: the name record's address, as above. */
+u8 *func_800AA070(s32);
+#else
 s32 func_800AA070(s32);
+#endif
 s32 func_800AA0D8(s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_8002AD04, which returns the name record's address */
 void *func_8002AD04(s32, s32);
+#endif
 
 void func_8009FE3C(G **dl, Obj *o) {
     G *g = *dl;
@@ -183,7 +201,12 @@ void func_8009FE3C(G **dl, Obj *o) {
     if (vs->dl != 0) {
         G *d = g++;
         d->w0 = 0xDE000000;
+#ifdef TARGET_PC
+        /* PC: the display list's address as the whole pointer (port.h's DL_ADDR). */
+        d->w1 = DL_ADDR(vs->dl);
+#else
         d->w1 = (u32)vs->dl - 0x80000000;
+#endif
     }
     *dl = g;
 }

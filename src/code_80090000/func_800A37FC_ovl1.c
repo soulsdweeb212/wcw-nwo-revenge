@@ -6,7 +6,11 @@
 #include "common.h"
 
 
+#ifdef TARGET_PC
+typedef Gfx G; /* PC: a command is port.h's 16-byte Gfx, which keeps a whole pointer in w1 */
+#else
 typedef struct { u32 w0, w1; } G;
+#endif
 typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } V;
 typedef struct { void *dl; V *addr; u16 n; u8 padA[6]; } VtxSet;
 typedef struct { u8 r, g, b; } Rgb;
@@ -28,7 +32,12 @@ u32 osVirtualToPhysical(V *);
 s32 func_800AA0D8(s32);
 
 #define SHL(v, s, w) ((u32)(((u32)(v) & ((0x01 << (w)) - 1)) << (s)))
+#ifdef TARGET_PC
+/* PC: the vertices' address as the whole pointer (port.h's DL_ADDR); osVirtualToPhysical returns a u32. */
+#define SPVERTEX(g, v, n, v0) { G *_g = (g); _g->w0 = SHL(1, 24, 8) | SHL((n), 12, 8) | SHL((v0) + (n), 1, 7); _g->w1 = DL_ADDR(v); }
+#else
 #define SPVERTEX(g, v, n, v0) { G *_g = (g); _g->w0 = SHL(1, 24, 8) | SHL((n), 12, 8) | SHL((v0) + (n), 1, 7); _g->w1 = osVirtualToPhysical(v); }
+#endif
 #define MODVTX(g, vtx, where, val) { G *_g = (g); _g->w0 = SHL(2, 24, 8) | SHL(where, 16, 8) | SHL((vtx) * 2, 0, 16); _g->w1 = (u32)(val); }
 #define TRI_W1(v0, v1, v2) (SHL((v0) * 2, 16, 8) | SHL((v1) * 2, 8, 8) | SHL((v2) * 2, 0, 8))
 #define SP2TRI(g, a0, a1, a2, b0, b1, b2) { G *_g = (g); _g->w0 = (SHL(7, 24, 8) | TRI_W1(a0, a1, a2)); _g->w1 = TRI_W1(b0, b1, b2); }
@@ -73,7 +82,14 @@ void func_800A37FC_ovl1(G **dl, Obj *o) {
     {
         G *d = g++;
         d->w0 = 0xDE000000;
+#ifdef TARGET_PC
+        /* PC: the display list's address as the whole pointer (port.h's DL_ADDR). D_800CB7B8 is overlay 1 data whose
+         * 16-byte records hold two addresses, and six files read it through views of their own: its PC layout is not
+         * decided yet, and this view reads it with real pointers. */
+        d->w1 = DL_ADDR(D_800CB7B8[14].dl);
+#else
         d->w1 = (u32)D_800CB7B8[14].dl - 0x80000000;
+#endif
     }
     if (n != 0) {
         SPVERTEX(g++, D_800E7CB4, n * 4, 0);

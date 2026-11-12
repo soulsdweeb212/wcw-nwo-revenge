@@ -5,7 +5,11 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Gfx Gfx0908; /* PC: a command is port.h's 16-byte Gfx */
+#else
 typedef struct { u32 w0; u32 w1; } Gfx0908;
+#endif
 
 typedef struct {
     u16 count;
@@ -23,9 +27,17 @@ typedef struct {
 } S0908;
 
 extern Gfx0908 *D_800DB68C;
+#ifdef TARGET_PC
+/* PC: D_800DB69C and D_800DB6A0 hold the addresses of heap blocks (func_800936DC allocates them), so they are
+ * pointers, as func_800B64EC takes them (its definition takes a u8 *). */
+extern u8 *D_800DB69C;
+extern u8 *D_800DB6A0;
+u8 *func_800B64EC(u8 *, s32);
+#else
 extern s32 D_800DB69C;
 extern s32 D_800DB6A0;
 u8 *func_800B64EC(s32, u16);
+#endif
 u32 osVirtualToPhysical(s32);
 
 #define EMIT(a, b) { Gfx0908 *_g = D_800DB68C++; _g->w0 = (a); _g->w1 = (b); }
@@ -54,7 +66,12 @@ u32 osVirtualToPhysical(s32);
     _g->w1 = _v; \
 }
 
+#ifdef TARGET_PC
+/* PC: arg1 is the address of the part's vertices (func_800936DC passes them), so a pointer. */
+void func_80090908(S0908 *s, u8 *arg1)
+#else
 void func_80090908(S0908 *s, s32 arg1)
+#endif
 {
     u8 *tri;
     u8 *pal;
@@ -69,13 +86,24 @@ void func_80090908(S0908 *s, s32 arg1)
     EMIT(0xE7000000, 0);
     EMIT(0xE3001001, 0x8000);
     if (s->f8.h & 0x8000) {
+#ifdef TARGET_PC
+        /* PC: the texture's address as the whole pointer (port.h's DL_ADDR); the N64 subtracts 0x80000000 in 32
+         * bits. */
+        EMIT(0xFD100000, DL_ADDR(tex));
+#else
         EMIT(0xFD100000, (u32)tex - 0x80000000);
+#endif
         EMIT(0xE8000000, 0);
         EMIT(0xF5000100, 0x07000000);
         EMIT(0xE6000000, 0);
         EMIT(0xF0000000, 0x073FC000);
         EMIT(0xE7000000, 0);
+#ifdef TARGET_PC
+        /* PC: the palette's address, as above. */
+        EMIT(0xFD500000, DL_ADDR(pal));
+#else
         EMIT(0xFD500000, (u32)pal - 0x80000000);
+#endif
         EMIT(0xF5500000, TILEW1(7, s));
         EMIT(0xE6000000, 0);
         LOADBLOCK(3, 1, 1);
@@ -83,13 +111,23 @@ void func_80090908(S0908 *s, s32 arg1)
         EMIT(0xF5480000 | ((((s->fC + 7) >> 3) & 0x1FF) << 9), TILEW1(0, s));
         EMIT(0xF2000000, ((((s->fC - 1) * 4) & 0xFFF) << 12) | (((s->fE - 1) * 4) & 0xFFF));
     } else {
+#ifdef TARGET_PC
+        /* PC: the texture's address, as above. */
+        EMIT(0xFD100000, DL_ADDR(tex));
+#else
         EMIT(0xFD100000, (u32)tex - 0x80000000);
+#endif
         EMIT(0xE8000000, 0);
         EMIT(0xF5000100, 0x07000000);
         EMIT(0xE6000000, 0);
         EMIT(0xF0000000, 0x0703C000);
         EMIT(0xE7000000, 0);
+#ifdef TARGET_PC
+        /* PC: the palette's address, as above. */
+        EMIT(0xFD500000, DL_ADDR(pal));
+#else
         EMIT(0xFD500000, (u32)pal - 0x80000000);
+#endif
         EMIT(0xF5500000, TILEW1(7, s));
         EMIT(0xE6000000, 0);
         LOADBLOCK(4, 3, 2);
@@ -104,7 +142,13 @@ void func_80090908(S0908 *s, s32 arg1)
         if (pr[1] == i) {
             Gfx0908 *gv = D_800DB68C++;
             gv->w0 = 0x01000000 | (pr[0] << 12) | ((pr[0] & 0x7F) << 1);
+#ifdef TARGET_PC
+            /* PC: the vertices' address as the whole pointer (port.h's DL_ADDR); osVirtualToPhysical returns a
+             * u32. */
+            gv->w1 = DL_ADDR(arg1 + k * 16);
+#else
             gv->w1 = osVirtualToPhysical(arg1 + k * 16);
+#endif
             k += pr[0];
             pr += 2;
         }

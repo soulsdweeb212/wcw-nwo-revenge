@@ -8,6 +8,20 @@
 extern u8 *D_800E79B8;
 extern s16 D_8006E440;
 extern s32 D_80038A98, D_800DF3C0;
+#ifdef TARGET_PC
+/* PC: the game functions this file calls, declared with their definitions' types (each in the src/main file of its
+ * name). */
+void func_80008810(void);
+void *allocateHeap(u32 bytes);
+void initializeMatchResources(void);
+void func_8000C91C(s16 arg0, u16 arg1, s16 arg2, s16 arg3, s32 arg4, s8 arg5, s8 arg6);
+void func_8000D238(s16 arg0, s8 arg1);
+void func_80012B38(s16 arg0, s16 arg1, s16 arg2);
+void initSideSlotTransforms(void);
+void func_8000E920(void *unused, s16 arg1);
+void func_8000DE40(s32 arg0);
+void func_8000F620(s16 arg0);
+#endif
 
 void func_800C5010(void) {
     s32 i;
@@ -62,7 +76,13 @@ void func_800C5010(void) {
         *(s32 *)(p + 0x68C) = 0x800;
     }
     initSideSlotTransforms();
+#ifdef TARGET_PC
+    /* PC: func_8000E920's first parameter is a pointer that it never reads (func_8000E920.c), so the PC passes NULL
+     * where the N64 passes 2. */
+    func_8000E920(NULL, 0);
+#else
     func_8000E920(2, 0);
+#endif
     func_8000DE40(1);
     func_8000F620(0);
 }

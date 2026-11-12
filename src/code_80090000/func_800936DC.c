@@ -5,7 +5,11 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Gfx Gw936; /* PC: a command is port.h's 16-byte Gfx, which keeps a whole pointer in w1 */
+#else
 typedef struct { u32 w0, w1; } Gw936;
+#endif
 
 typedef struct {
     u16 f0;
@@ -58,6 +62,33 @@ typedef struct {
     f32 f24;
 } Obj936;
 
+#ifdef TARGET_PC
+/* PC: Out936 is the game's 0xDC-byte scene object (Nw2SceneObj in common.h), which keeps its N64 layout on PC, so its
+ * vertices (fC), display list (f10) and work block (f14) are 4-byte handles (port.h's PTR_TO_SLOT): the code stores
+ * PTR_TO_SLOT(p) and reaches the work block (Nw2SceneWork, whose bias is Obj936's f24) through SLOT_TO_PTR. The asserts
+ * check the view against Nw2SceneObj. The vertices that the encounter objects take from their record of D_800C6508
+ * (out->fC = enc->f8->f4 below) are still that record's 32-bit word: those records of overlay 1's data have no PC
+ * layout yet. */
+typedef struct {
+    u8 pad0[0xC];
+    u32 fC;
+    u32 f10;
+    u32 f14;
+    u8 f18;
+    u8 pad19;
+    u8 f1A;
+    s8 f1B;
+    u8 f1C[0xC0];
+} Out936;
+_Static_assert(offsetof(Out936, fC) == offsetof(Nw2SceneObj, vtx) && offsetof(Out936, f10) == offsetof(Nw2SceneObj, dl) &&
+                   offsetof(Out936, f14) == offsetof(Nw2SceneObj, work) &&
+                   offsetof(Out936, f18) == offsetof(Nw2SceneObj, group) &&
+                   offsetof(Out936, f1A) == offsetof(Nw2SceneObj, lit) &&
+                   offsetof(Out936, f1B) == offsetof(Nw2SceneObj, vtxCount) &&
+                   offsetof(Out936, f1C) == offsetof(Nw2SceneObj, local) && sizeof(Out936) == sizeof(Nw2SceneObj),
+               "Out936 is the scene object's N64 layout");
+#define WORK936(o) ((Nw2SceneWork *)SLOT_TO_PTR((o)->f14))
+#else
 typedef struct {
     u8 pad0[0xC];
     s32 fC;
@@ -69,6 +100,7 @@ typedef struct {
     s8 f1B;
     u8 f1C[0xC0];
 } Out936;
+#endif
 
 typedef struct {
     Sub936 *f0;
@@ -96,7 +128,11 @@ extern Gw936 *D_800DB8AC;
 extern Enc936 D_800DB8C0[];
 extern s32 D_800DBD40;
 extern s32 D_800DBD44;
+#ifdef TARGET_PC
+extern u8 *D_800DBD48; /* PC: it holds an address (func_800914F0 sets it to D_800DB694), so a pointer */
+#else
 extern s32 D_800DBD48;
+#endif
 extern Anim936 D_800C6508[];
 extern u8 D_800C5E00[];
 extern u32 D_800C5D10[];
@@ -205,50 +241,102 @@ void func_800936DC(s32 arg0) {
                         out->fC = enc->f8->f4;
                         out->f1B = enc->f8->f8;
                     }
+#ifdef TARGET_PC
+                    /* PC: the display list's handle (see Out936). */
+                    out->f10 = PTR_TO_SLOT(D_800DB8AC);
+#else
                     out->f10 = D_800DB8AC;
+#endif
                     out->f1A = 0;
                     func_80092DE0(enc, 0, 0);
                     if (sub->f6 & 0x8000) {
+#ifdef TARGET_PC
+                        /* PC: the work block is a handle (see Out936). */
+                        WORK936(out)->bias = 0.0f;
+#else
                         out->f14->f24 = 0.0f;
+#endif
                     } else if ((sub->f6 & 0x7000) == 0x1000) {
+#ifdef TARGET_PC
+                        WORK936(out)->bias = -512.0f; /* PC: as above */
+#else
                         out->f14->f24 = -512.0f;
+#endif
                     } else {
+#ifdef TARGET_PC
+                        WORK936(out)->bias = -256.0f; /* PC: as above */
+#else
                         out->f14->f24 = -256.0f;
+#endif
                     }
                     D_800DBD40++;
                     enc++;
                 } else {
                     ent = &D_800DB6A8[sub->id];
+#ifdef TARGET_PC
+                    /* PC: the vertices' handle (see Out936). */
+                    out->fC = PTR_TO_SLOT(ent->f8);
+#else
                     out->fC = (s32)ent->f8;
+#endif
                     out->f1B = ent->f0->count;
                     if (sub->flags & 0x2000) {
+#ifdef TARGET_PC
+                        WORK936(out)->bias = sub->f6 << 8; /* PC: as above */
+#else
                         out->f14->f24 = sub->f6 << 8;
+#endif
                     } else {
+#ifdef TARGET_PC
+                        WORK936(out)->bias = 0.0f; /* PC: as above */
+#else
                         out->f14->f24 = 0.0f;
+#endif
                     }
+#ifdef TARGET_PC
+                    out->f10 = PTR_TO_SLOT(D_800DB8AC); /* PC: as above */
+#else
                     out->f10 = D_800DB8AC;
+#endif
                     e = &D_800DB6A8[sub->id];
                     g = D_800DB8AC++;
                     g->w0 = 0xDE000000;
+#ifdef TARGET_PC
+                    /* PC: the display list's address as the whole pointer (port.h's DL_ADDR). */
+                    g->w1 = DL_ADDR(D_800C5D10);
+#else
                     g->w1 = (u32)D_800C5D10;
+#endif
                     g = D_800DB8AC++;
                     g->w0 = 0xFA000000;
                     g->w1 = 0xFF;
                     for (j = 0; j < sub->count; j++, e++) {
                         D_800DB8AC->w0 = 0xDE000000;
+#ifdef TARGET_PC
+                        D_800DB8AC->w1 = DL_ADDR(e->fC); /* PC: as above */
+#else
                         D_800DB8AC->w1 = (u32)e->fC;
+#endif
                         D_800DB8AC++;
                     }
                     g = D_800DB8AC++;
                     g->w0 = 0xDE000000;
+#ifdef TARGET_PC
+                    g->w1 = DL_ADDR(D_800C5C50); /* PC: as above */
+#else
                     g->w1 = (u32)D_800C5C50;
+#endif
                     g = D_800DB8AC++;
                     g->w0 = 0xDF000000;
                     g->w1 = 0;
                 }
                 guPositionF(out->f1C, 0.0f, sub->fE, 0.0f, 1.0f, sub->f8, sub->fA, sub->fC);
                 if (arg0 < 6 && k == 0) {
+#ifdef TARGET_PC
+                    WORK936(out)->bias = 1024.0f; /* PC: as above */
+#else
                     out->f14->f24 = 1024.0f;
+#endif
                 }
                 out->f18 &= 0x7F;
                 func_800015AC(out, out->f1B);

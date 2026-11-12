@@ -25,12 +25,26 @@ typedef struct {
     u8 fF;
 } Nw2Prt914;
 
+#ifdef TARGET_PC
+/* PC: arg0 is a 0xDC-byte scene object (func_800936DC's out), which keeps its N64 layout on PC (Nw2SceneObj,
+ * common.h), so its vertices (+0xC) are a handle (port.h's PTR_TO_SLOT) and f1B is its vertex count. */
+typedef struct {
+    u8 pad0[0xC];
+    u32 f0C;
+    u8 pad10[0xB];
+    u8 f1B;
+} Nw2Obj914;
+_Static_assert(offsetof(Nw2Obj914, f0C) == offsetof(Nw2SceneObj, vtx) &&
+                   offsetof(Nw2Obj914, f1B) == offsetof(Nw2SceneObj, vtxCount),
+               "Nw2Obj914 must follow Nw2SceneObj");
+#else
 typedef struct {
     u8 pad0[0xC];
     void *f0C;
     u8 pad10[0xB];
     u8 f1B;
 } Nw2Obj914;
+#endif
 
 extern s32 D_800DB688;
 extern Nw2Prt914 *D_800DB694;
@@ -76,11 +90,21 @@ void func_800914F0(Nw2Obj914 *arg0, Nw2Rec914 *arg1, s32 arg2) {
         arg0->f1B = 4;
         break;
     }
+#ifdef TARGET_PC
+    /* PC: the object's vertex field holds a handle (see Nw2Obj914 above). */
+    arg0->f0C = PTR_TO_SLOT(start);
+#else
     arg0->f0C = start;
+#endif
     if (D_800DBD48 == NULL) {
         row = 0;
         y0 = start->f2;
+#ifdef TARGET_PC
+        /* PC: the address as a pointer-wide integer (port.h's uptr); a u32 would cut it in half. */
+        endP = (Nw2Rec914 *)((uptr)(count << 4) + (uptr)start);
+#else
         endP = (Nw2Rec914 *)((u32)(count << 4) + (u32)start);
+#endif
         x0 = start->f0;
         z0 = start->f4;
         dy = endP->f2 - y0;

@@ -12,8 +12,10 @@ typedef struct { u8 pad[0x600]; Rec recs[64]; } Save;
 extern u8 *D_800DCFB8;
 extern s32 D_800DCFC4, D_800DCFBC;
 extern Blk D_800D2900[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_8002B5AC and func_8002B790 */
 s32 func_8002B5AC(s32);
 u8 *func_8002B790(s32, s32);
+#endif
 void bcopy(void *, void *, s32);
 s32 func_8000424C(void);
 s32 func_800B9640(s32, s32);

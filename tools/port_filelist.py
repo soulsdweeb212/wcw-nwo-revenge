@@ -91,7 +91,15 @@ SETS = {
     # (func_8000082C); the port links overlay 2 in and calls its entry directly.
     "match": ("func_80001260", "func_80003120", "func_80003D20", "initializeAssetSizeTable", "func_8002B750",
               "func_80090000_ovl2"),
+    # The whole game from a natural boot: the boot loop, which loads overlay 1 (the logos, the title and the menus) and
+    # overlay 2 (the match) in turn and enters each through func_8000082C. Overlay 1's entry is reached that way, by
+    # name (func_80090000); overlay 2's entry has the same N64 address, so it is a root of its own. Overlay 1's files
+    # are part of this set, and its data is read for function addresses as overlay 1 sees memory.
+    "boot": ("func_80013108", "func_80090000_ovl2"),
 }
+
+# The sets that include overlay 1.
+SETS_WITH_OVERLAY1 = ("boot",)
 
 # The Nintendo SDK code that the port compiles from the decompilation, chosen by the "library" column of the table
 # "The functions" in docs/sdk_functions.md. The port replaces every other SDK function with its own code or LUS's.
@@ -1020,8 +1028,9 @@ class Target:
 class Decomp:
     """The decompilation's files that the tool reads, and what they say about functions, symbols and data."""
 
-    def __init__(self, root: Path):
+    def __init__(self, root: Path, with_overlay1: bool = False):
         self.root = root
+        self.with_overlay1 = with_overlay1           # the set compiles overlay 1 too (SETS_WITH_OVERLAY1)
         self.errors: list[str] = []                 # problems with the inputs, each an error line (exit status 2)
         self.files_read: set[Path] = set()          # every file read, so that --self-test can copy exactly these
         try:
@@ -1057,14 +1066,19 @@ class Decomp:
                 self.text[s["name"]] = (s["vram"], min(data + [end]))
         # where each function of main and overlay 2 starts: a 32-bit word in data with that value is its address
         self.starts: dict[int, str] = {}
+        self.starts1: dict[int, str] = {}   # the same as overlay 1 sees memory: main and overlay 1
         for name, v in self.func_vram.items():
             if self.overlay(self.func_seg[name]) in (None, 2) and self.func_seg[name] != "entry":
                 self.starts.setdefault(v, name)
+            if self.overlay(self.func_seg[name]) in (None, 1) and self.func_seg[name] != "entry":
+                self.starts1.setdefault(v, name)
         self.game_ld_note = self._check_game_ld(root / "build" / "game.ld")
         self._read_sdk_table()
         self._check_choices()
         self._read_asm_data()
         self._read_overlay2_data()
+        if self.with_overlay1:
+            self._read_overlay1_data()
 
     def read_text(self, path: Path, errors: str = "strict") -> str:
         """A text file (UTF-8) of the decompilation; notes it in files_read."""
@@ -1102,7 +1116,7 @@ class Decomp:
         return self._class[src]
 
     def _class_of(self, src: str) -> str:
-        if self.area(src) == "overlay 1":
+        if self.area(src) == "overlay 1" and not self.with_overlay1:
             return "overlay 1"
         kinds = set()
         for n in self.names_in_file[src]:
@@ -1279,6 +1293,37 @@ class Decomp:
                 if owner and data_at[w] != owner:
                     self.data_points_to[owner].append((data_at[w], where))   # data that points at other data
 
+    def _read_overlay1_data(self) -> None:
+        """Overlay 1's data (build.json segment 72240, assets/72240.bin), read as overlay 2's is, but as overlay 1 sees
+        memory: a word is a function pointer when it is the start of a function of main or overlay 1, and the labels
+        are the build.json symbols in the block that are not functions (overlay 2's functions have the same
+        addresses)."""
+        segs = [s for s in self.build["segments"] if s["kind"] == "raw" and s.get("overlay") == 1 and s.get("incbin")]
+        for s in segs:
+            path = self.root / s["incbin"]
+            if not path.exists():
+                raise InputError(f"{s['incbin']}: missing (build.py's first run extracts it from your ROM)")
+            blob = self.read_bytes(path)
+            base, end = s["vram"], s["vram"] + len(blob)
+            labels = sorted((a, n) for n, a in self.symbols.items() if base <= a < end and n not in self.func_src)
+            data_at = {a: n for a, n in labels}
+            li = 0
+            for off in range(0, len(blob) - 3, 4):
+                w = struct.unpack_from(">I", blob, off)[0]
+                if w not in self.starts1 and w not in data_at:
+                    continue
+                a = base + off
+                while li + 1 < len(labels) and labels[li + 1][0] <= a:
+                    li += 1
+                owner = labels[li][1] if labels and labels[li][0] <= a else None
+                if owner is None:
+                    continue
+                where = f"{s['incbin']} +0x{off:X}"
+                if w in self.starts1:
+                    self.data_points_to[owner].append((self.starts1[w], where))
+                elif data_at[w] != owner:
+                    self.data_points_to[owner].append((data_at[w], where))
+
     # -- the C files --------------------------------------------------------------------------------------------------
 
     def read_c(self, read_port_decls: bool = True) -> None:
@@ -1385,14 +1430,14 @@ class Decomp:
         if cands:
             mine = [c for c in cands if (self.area(c) == "overlay 1") == (area == "overlay 1")]
             if not mine:
-                return Target("overlay1", cands[0], name)
+                return Target("func" if self.with_overlay1 else "overlay1", cands[0], name)
             if len(mine) > 1:
                 self.errors.append(f"{name} is defined in more than one file: {mine}")
             return Target("func", mine[0], name)
         if name in self.global_vars:
             mine = [c for c in self.global_vars[name] if (self.area(c) == "overlay 1") == (area == "overlay 1")]
             if not mine:
-                return Target("overlay1-data", self.global_vars[name][0], name)
+                return Target("cdata" if self.with_overlay1 else "overlay1-data", self.global_vars[name][0], name)
             return Target("cdata", mine[0], name)
         if name in self.func_src and self.area(self.func_src[name]) != "overlay 1":
             # a function of build.json that its file does not define in C: only possible for code the port replaces
@@ -1409,7 +1454,7 @@ class Decomp:
             if seg and self.overlay(seg) is not None:
                 # inside overlay code but not where a function starts: overlay 1's data and BSS share these addresses
                 # with overlay 2's code
-                return Target("code-middle", None, name)
+                return Target("data" if self.with_overlay1 else "code-middle", None, name)
             return Target("main-code-area" if seg else "data", None, name)
         if name in self.asm_labels:
             return Target("data", None, name)
@@ -1510,9 +1555,9 @@ def walk(d: Decomp, roots: list[str], redirect: dict[str, str]) -> Result:
 
 
 def find_files(root: Path, roots: list[str], redirect: dict[str, str],
-               read_port_decls: bool = True) -> tuple[Decomp, Result]:
+               read_port_decls: bool = True, with_overlay1: bool = False) -> tuple[Decomp, Result]:
     """Reads the decompilation at `root` and walks from the roots. Raises InputError when the inputs stop it."""
-    d = Decomp(root)
+    d = Decomp(root, with_overlay1)
     d.read_c(read_port_decls)
     return d, walk(d, roots, redirect)
 
@@ -1937,7 +1982,8 @@ def main() -> int:
     roots = a.root or list(SETS[a.set])
     set_name = "custom (--root, --redirect)" if a.root or a.redirect else a.set
     try:
-        d, res = find_files(root, roots, dict(x.split("=", 1) for x in a.redirect), not a.skip_port_decls)
+        d, res = find_files(root, roots, dict(x.split("=", 1) for x in a.redirect), not a.skip_port_decls,
+                            a.set in SETS_WITH_OVERLAY1)
     except InputError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

@@ -5,8 +5,10 @@
  */
 #include "common.h"
 
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_8000327C and func_800032A4 */
 s32 func_8000327C(s32);
 s32 func_800032A4(s16,s32,s32,s32,s32);
+#endif
 s16 func_8000335C(s32);
 extern s16 D_80030D38[];
 extern s32 D_80036738, D_800566F0[], D_80056948;

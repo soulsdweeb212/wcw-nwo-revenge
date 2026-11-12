@@ -14,10 +14,22 @@ void guPositionF(void *, f32, f32, f32, f32, f32, f32, f32);
 void guMtxXFMF(void *, f32, f32, f32, f32 *, f32 *, f32 *);
 f32 nw2Sqrtf(f32);
 s32 func_800B5E18(s32, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares setupTiltedPerspectiveCamera, which takes the camera's record */
 void setupTiltedPerspectiveCamera(s32, f32, f32, f32, f32, f32, f32, f32);
+#endif
+#ifdef TARGET_PC
+/* PC: id is the camera's record (func_800C5214 passes &D_800DF3C8[n]), which this function only passes on to
+ * setupTiltedPerspectiveCamera or setCameraView, and they to func_800014AC and func_800014D0, which take it as a
+ * pointer (port_decls.h). An s32 would cut the address in half, so id is a pointer here, and setCameraView takes it
+ * as one, as setupTiltedPerspectiveCamera's PC definition does. */
+void setCameraView(void *, f32, f32, f32, f32, f32, f32, f32, f32, f32, f32, f32);
+
+void func_800B83D0(void *id) {
+#else
 void setCameraView(s32, f32, f32, f32, f32, f32, f32, f32, f32, f32, f32, f32);
 
 void func_800B83D0(s32 id) {
+#endif
     f32 m[16];
     f32 px, py, pz, qx, qy, qz;
     f32 x, y, z, a, b, f;

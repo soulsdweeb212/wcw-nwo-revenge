@@ -16,8 +16,15 @@ u16 func_8002B528(s32);
 void func_800A8EF0(s32);
 void func_800A8F60(u8 *);
 void func_8002BAB8(void);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_8002B790 */
 u8 *func_8002B790(s32, s32);
+#endif
+#ifdef TARGET_PC
+/* PC: bcopy as src/main/bcopy.c defines it, which returns a pointer. */
+void *bcopy(const void *, void *, s32);
+#else
 void bcopy(void *, void *, s32);
+#endif
 void func_800B9228(u8 *, s32);
 u8 *func_800B4BC8(s32);
 void bzero(void *, s32);

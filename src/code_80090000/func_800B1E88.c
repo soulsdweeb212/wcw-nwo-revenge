@@ -8,14 +8,25 @@
 extern u8 *D_800E9834;
 extern s32 D_800E7BF0, D_800E7BF4, D_800E7BF8, D_800E7BFC;
 extern u8 D_8007E8C0[];
+#ifdef TARGET_PC
+/* PC: func_80099694 returns an address (&D_800C9434) and takes no arguments: its definition reads none (see its asm),
+ * so the PC declares it as defined and calls it without the two values the N64 code passes. */
+s32 *func_80099694(void);
+#else
 s32 func_80099694(u16, u16);
+#endif
 void func_8002A820(u8 *, s32);
 void func_800B1E88(void) {
     u8 *p;
     u8 *q;
     u8 *buf;
     s32 k, n, i, c, r;
+#ifdef TARGET_PC
+    /* PC: without arguments, as declared above. */
+    p = (u8 *)func_80099694();
+#else
     p = (u8 *)func_80099694(*(u16 *)(D_800E9834 + 0x20), *(u16 *)(D_800E9834 + 0x22));
+#endif
     r = D_800E7BF4;
     c = D_800E7BF0;
     k = c + r * 20;
