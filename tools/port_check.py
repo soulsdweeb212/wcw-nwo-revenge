@@ -516,8 +516,13 @@ def check_view(ctx: Context | None, rel: str, head: bytes | None, work: bytes | 
         at = kept[j1] if j1 < len(kept) else (kept[-1] + 1 if kept else 1)
         was = head_kept[i1] if i1 < len(head_kept) else (head_kept[-1] + 1 if head_kept else 1)
         if first is None:
-            what = {"insert": f"added: {short(b[j1])!r}", "delete": f"removed: {short(a[i1])!r}",
-                    "replace": f"changed: {short(b[j1])!r}, was {short(a[i1])!r}"}[tag]
+            # Only the wording of this change: a line removed at the end has no line of the new view to name.
+            if tag == "insert":
+                what = f"added: {short(b[j1])!r}"
+            elif tag == "delete":
+                what = f"removed: {short(a[i1])!r}"
+            else:
+                what = f"changed: {short(b[j1])!r}, was {short(a[i1])!r}"
             first = f"the N64 view differs from HEAD's at line {at} (HEAD's line {was}): an N64 line {what}"
         details += [f"HEAD's line {head_kept[i]}: - {a[i]}" for i in range(i1, i2) if i < len(head_kept)]
         details += [f"line {kept[j]}: + {b[j]}" for j in range(j1, j2) if j < len(kept)]

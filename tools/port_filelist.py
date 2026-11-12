@@ -1874,8 +1874,26 @@ def self_test(tree: Path) -> int:
             return f"{len(files)} files listed, which differ from the {len(res.files)} of the decompilation itself"
         return None
 
+    # The decompilation's own PC-only names: what its walk cannot name without the tool's reading of port_decls.h
+    # (D_8007C5B8, for example, which only the PC has). Left unread, they give errors of their own beside the
+    # control's name, and only those may.
+    try:
+        own_pc_only = {name for _, _, name in find_files(tree, list(SETS["match"]), {}, False)[1].unresolved}
+    except InputError as exc:
+        print(f"self-test: the tool cannot run on {tree} without its reading of include/port_decls.h: {exc}")
+        return 2
+
     def pc_only_unread(copy: Path, status: int, files: list[str], errors: list[str], err: str) -> str | None:
-        return located_errors(copy, status, errors, pc_only, pc_only_file)
+        mine = [e for e in errors if (m := _LOCATED_ERROR.match(e)) is not None and m.group("name") == pc_only]
+        why = located_errors(copy, status, mine, pc_only, pc_only_file)
+        if why is not None:
+            return why
+        for e in errors:
+            m = _LOCATED_ERROR.match(e)
+            if e not in mine and (m is None or m.group("name") not in own_pc_only):
+                return (f"expected errors naming only '{pc_only}' and the decompilation's own PC-only names "
+                        f"({', '.join(sorted(own_pc_only)) or 'none'}), got: {e}")
+        return None
 
     table_sizes = " and ".join(f"{name} with {len(funcs)}" for name, funcs in tables.items())
     # (what the control does and must give, how it changes the copy, the check of the result)
@@ -1891,7 +1909,8 @@ def self_test(tree: Path) -> int:
         (f"{pc_only}, a PC-only name, declared in include/port_decls.h alone and used in {pc_only_file}: the same "
          "list as the decompilation itself, without an error", {"pc_only": True}, pc_only_found),
         (f"the same, with the tool's reading of include/port_decls.h left out ({SKIP_PORT_DECLS}): an error at the "
-         f"use of {pc_only} in {pc_only_file}", {"pc_only": True, "args": [SKIP_PORT_DECLS]}, pc_only_unread),
+         f"use of {pc_only} in {pc_only_file}, and none but at the decompilation's own PC-only names",
+         {"pc_only": True, "args": [SKIP_PORT_DECLS]}, pc_only_unread),
     ]
     inputs = sorted(d.files_read)
     script = str(Path(__file__).resolve())
