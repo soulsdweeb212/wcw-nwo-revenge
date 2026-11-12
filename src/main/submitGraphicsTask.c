@@ -58,16 +58,11 @@ void submitGraphicsTask(Nw2FrameBuffer *arg0, Nw2Gfx *dl, s16 arg2, s16 arg3) {
 
     if (arg2) {
         EmitCommand(0xE7000000, 0);
-        if (arg0->clear) {
-            EmitCommand(0xFF1001DF, DL_ADDR(SLOT_TO_PTR(arg0->buffer)));
-            EmitCommand(0xE3000A01, 0x300000);
-            EmitCommand(0xE200001C, 0);
-            EmitCommand(0xF7000000, 0x10001);
-            for (i = 0; i < 60; i++) {
-                EmitCommand(0xF677C000 | ((((i + 1) * 4 - 1) & 0x3FF) << 2), (i << 4) & 0xFF0);
-            }
-            EmitCommand(0xE7000000, 0);
-        }
+        /* PC: the N64 ends a frame's last task by clearing the next framebuffer (its colour image, then 60 fill
+         * rectangles), ready for the next frame. Fast3D has one picture, so that clear would wipe the frame just drawn,
+         * and Fast3D clears its picture itself at the start of every frame it draws. */
+        (void)arg0->clear;
+        (void)i;
     }
     EmitCommand(0xE9000000, 0);
     EmitCommand(0xDF000000, 0);

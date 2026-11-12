@@ -10,7 +10,15 @@ extern s8 D_800FADB8;
 extern u32 D_800F9B14;
 #endif
 extern u16 D_800FABE6;
+#ifdef TARGET_PC
+/* PC: D_800E3CFC is D_800E3D00 one entry back, which the code indexes from 1. Its own 4 bytes are the last two
+ * u16 entries of D_800E3CF0, the eight directions' bits, so on PC no file names it: an s32 there would make the
+ * port convert those bytes as one 32-bit value. Index 0 is the s32 the N64 reads there, made of those two
+ * entries. */
+extern s32 D_800E3D00[];
+#else
 extern s32 D_800E3CFC[];
+#endif
 extern u8 D_800FACF8[];
 extern u8 D_800EB578[];
 extern u8 D_800EB57C[];
@@ -170,7 +178,12 @@ inc:
         if (D_800FABE6 & 0x8000) {
             r = (s16)func_800D7A68(D_800FABE6);
             if (r != 0) {
+#ifdef TARGET_PC
+                /* PC: D_800E3D00, as above; r is not 0 here. */
+                d = func_800D3684(D_800FAF5C->heading, D_800E3D00[r - 1]);
+#else
                 d = func_800D3684(D_800FAF5C->heading, D_800E3CFC[r]);
+#endif
                 if (func_800D3550(d) >= 0xE3 &&
                     func_800D3550(d) < 0x71D) {
                     if (d >= 0) {

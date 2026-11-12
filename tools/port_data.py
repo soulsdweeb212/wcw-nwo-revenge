@@ -461,6 +461,8 @@ def build_map(cc: str, jobs: int, out: Path) -> list[str]:
 #     Data(w)                data that holds no address, read as w-byte values (1: bytes; also for textures and
 #                            palettes, which stay in the N64's byte order); it keeps its N64 offset in its section's
 #                            block, and is turned into the PC's byte order as w-byte values up to the next label;
+#     Data(w, to_zero=True)  the same, for a list that ends with a 0 value: up to the next label or, where that 0
+#                            lies past it, up to and with the 0;
 #     a shape                one object of that shape (an Arr for an array of them), which gets storage of its own;
 #     FUNC                   a function: the PC function of that N64 address;
 #     PORT                   a variable the port provides (a framebuffer);
@@ -491,11 +493,11 @@ class Ptr:
 
 
 class Data:
-    def __init__(self, width):
-        self.width = width
+    def __init__(self, width, to_zero=False):
+        self.width, self.to_zero = width, to_zero
 
     def __repr__(self):
-        return f"Data({self.width})"
+        return f"Data({self.width}{', to_zero=True' if self.to_zero else ''})"
 
 
 # NameEntry, the PC view of a wrestler's name entry (buildWrestlerNameRecord): id, value, a word, the name's address.
@@ -526,8 +528,10 @@ TABLES = {
     "D_800E2B84": Arr(6, Ptr(Data(1))),                                # s8 tables
     "D_800E2BB4": Arr(6, Ptr(Data(1))),
     "D_800E2BD4": Arr(6, Ptr(Data(1))),
-    # s16 tables (func_80096FE8 reads them with lh), indexed from 1
-    "D_800E2CF4": [Ptr(UNUSED), Arr(10, Ptr(Data(2)))],
+    # s16 tables (func_80096FE8 reads them with lh), indexed from 1. Each list ends with a 0, which the game reads up
+    # to: the last list, at 0x800E2CE8, ends with the value 0x2AF and that 0 in the table's own first word (unused as
+    # an address), so its values run past D_800E2CF4's label.
+    "D_800E2CF4": [Ptr(UNUSED), Arr(10, Ptr(Data(2, to_zero=True)))],
     "D_800E2D58": [Ptr(UNUSED), Arr(10, Ptr(Data(1)))],               # byte tables, indexed from 1
     "D_800E2E80": Arr(6, Ptr(Data(1))),                                # textures for display lists: stay big-endian
     "D_800E2FF0": Arr(146, Ptr(FUNC)),                                 # handlers (func_8009D8D0)
@@ -573,6 +577,7 @@ class Tables:
         self.labels |= set(syms.values())
         self.objects = {}   # N64 address -> dict(name, section, n64size, pcsize, count, elem, fields)
         self.claims = []    # (N64 address, width, why)
+        self.claim_ends = {}  # N64 address -> the end of a Data(w, to_zero=True) list
         self.entries = {}   # N64 address -> function name
 
     def _read_main_data(self):
@@ -589,12 +594,21 @@ class Tables:
                     labels.add(int(n.group(1), 16))
         return relocs, labels
 
-    def word(self, a: int) -> int:
+    def word(self, a: int, width: int = 4) -> int:
         sec = section_of(a)
         if sec is None or sec[3] is None:
             raise Fail(f"{a:#010x}: not in a section the ROM fills")
         o = sec[3] + a - sec[1]
-        return int.from_bytes(self.rom[o:o + 4], "big")
+        return int.from_bytes(self.rom[o:o + width], "big")
+
+    def zero_end(self, a: int, width: int, where: str) -> int:
+        """The end of the list of width-byte values at a, after its closing 0."""
+        sec = section_of(a)
+        while a + width <= sec[2]:
+            a += width
+            if self.word(a - width, width) == 0:
+                return a
+        raise Fail(f"{where}: the list has no closing 0 before the end of {sec[0]}")
 
     def next_label(self, a: int) -> int:
         sec = section_of(a)
@@ -672,6 +686,8 @@ class Tables:
                     if section_of(w) is None or section_of(w)[3] is None:
                         raise Fail(f"{here}: {w:#010x} is not in a section the ROM fills")
                     self.claims.append((w, target.width, here))
+                    if target.to_zero:
+                        self.claim_ends[w] = self.zero_end(w, target.width, here)
                 else:
                     self.add(w, target, self.var_at.get(w, f"td_anon_{w:08X}"), f"{here} -> {w:#010x}")
 
@@ -704,7 +720,7 @@ class Tables:
                 continue
             seen[w] = (width, why)
             sec = section_of(w)
-            end = self.next_label(w)
+            end = max(self.claim_ends.get(w, 0), self.next_label(w))
             wm = widths[sec[0]]
             if width > 1:
                 for at in range(w - sec[1], end - sec[1] - width + 1, width):

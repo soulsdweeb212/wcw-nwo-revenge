@@ -17,14 +17,27 @@ void func_800079D8(u16 *arg0, s32 arg1)
         switch (mode)
         {
         case 0:
+#ifdef TARGET_PC
+            /* PC: the palette stays in the N64's byte order, so its entries are read and written big-endian. */
+            c = (((u16) READ_BE16(p)) >> 8) & 0xF8;
+#else
             c = (((u16) (*p)) >> 8) & 0xF8;
+#endif
             break;
         case 1:
+#ifdef TARGET_PC
+            c = (((u16) READ_BE16(p)) >> 3) & 0xF8;
+#else
             c = (((u16) (*p)) >> 3) & 0xF8;
+#endif
             break;
         case 2:
         default:
+#ifdef TARGET_PC
+            c = (READ_BE16(p) * 4) & 0xF8;
+#else
             c = ((*p) * 4) & 0xF8;
+#endif
             break;
         }
         hi = c;
@@ -35,7 +48,11 @@ void func_800079D8(u16 *arg0, s32 arg1)
             c = 0xFF - ((u32)(c & 0xFFFF) >> 8);
         }
         c |= hi << 8;
+#ifdef TARGET_PC
+        WRITE_BE16(p, c);
+#else
         *p = c;
+#endif
         i++;
         p++;
     }

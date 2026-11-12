@@ -212,6 +212,15 @@ void port_heap_free(void *block);
 #define PORT_PRESENT_SYNC  2 /* func_80002C74: nothing to draw, wait for the next retrace */
 void port_present(s32 kind);
 
+/* Drawing on PC. The N64's render thread (func_80002CC4) turns each frame into graphics tasks and hands them to the
+ * RSP; on PC no thread runs it. At a frame's hand-off the port calls port_render_frame (func_80002CC4.c, game code),
+ * which does the render thread's work for that frame, and each task it submits reaches the port through
+ * port_gfx_submit (func_800005D0): the task's display list, its number of commands, and whether it is the frame's last
+ * task. The port copies the commands at once, because the game reuses its four task records, and draws the frame's
+ * commands with Fast3D. */
+void port_render_frame(void);
+void port_gfx_submit(const Gfx *list, u32 count, s32 last);
+
 /* PortIoMesg: a cartridge read request, the OSIoMesg that the game hands to osEPiStartDma (port_osEPiStartDma on PC).
  * On the N64 it is 0x18 bytes: type, pri, status, then retQueue, dramAddr, devAddr, size and piHandle as 4-byte words.
  * On PC retQueue, dramAddr and piHandle are host pointers and devAddr is a RomAddr, so the request is 0x28 bytes. The

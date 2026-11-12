@@ -40,14 +40,28 @@ void func_8000B884(u16 *out, s16 entity, s16 slot)
             {
                 src = D_8007C438[entity][slot];
                 mask = D_80030860[channel];
+#ifdef TARGET_PC
+                /* PC: palettes stay in the N64's byte order (docs/port.md, "Byte order on PC"), so the entries this function tests
+                 * and shifts are read big-endian (READ_BE16); the entries it copies (out[i] = ...) are copied as they are. */
+                if (!((READ_BE16(&src[16 + i]) & 0xFFFF) & (~mask)))
+#else
                 if (!((src[16 + i] & 0xFFFF) & (~mask)))
+#endif
                 {
+#ifdef TARGET_PC
+                    if ((READ_BE16(&src[16 + i]) & 0xFFFF) >= 2)
+#else
                     if ((src[16 + i] & 0xFFFF) >= 2)
+#endif
                     {
                         level = D_80075440[entity][channel];
                         if (level < 15)
                         {
+#ifdef TARGET_PC
+                            t = ((s32) (READ_BE16(&src[16 + i]) & mask)) >> D_80030868[channel];
+#else
                             t = ((s32) (src[16 + i] & mask)) >> D_80030868[channel];
+#endif
                             half = (u32)t >> 1;
                             t = 15 - half;
                             half = D_800485F0[(level * 16) + t];
@@ -76,7 +90,11 @@ void func_8000B884(u16 *out, s16 entity, s16 slot)
             for (i = 0; i < 16; i++)
             {
                 s2 = D_8007C438[entity][slot];
+#ifdef TARGET_PC
+                px = READ_BE16(&((volatile u16 *) s2)[i]);
+#else
                 px = ((volatile u16 *) s2)[i];
+#endif
                 mk = *((volatile u16 *) (&D_80030860[0]));
                 bt = px & 0xFFFF;
                 if (!(bt & (~mk)))

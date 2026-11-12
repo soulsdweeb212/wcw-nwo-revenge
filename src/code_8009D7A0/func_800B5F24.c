@@ -38,7 +38,13 @@ s32 func_800B5F24(Wrestler *w, Wrestler *other, u16 arg2) {
     f = func_800D3890(&w->jointA[1], sp10, 0);
     if (w->moveMode & 0x20) {
         if ((w->flags & WR_FLAG_SPECIAL) || !(other->flags & WR_FLAG_SPECIAL)) {
+#ifdef TARGET_PC
+            /* PC: the N64 code reads moveMode and the u16 after it as one big-endian u32, so bits 0x8880000 are moveMode's
+             * bits 0x888. A little-endian PC would test the u16 instead, so the PC tests moveMode. */
+            if ((w->moveMode & 0x888) != 0x8) {
+#else
             if ((*(u32 *)&w->moveMode & 0x8880000) != 0x80000) {
+#endif
                 return 0;
             }
             if (!(arg2 & 0xC030)) {

@@ -19,7 +19,15 @@ s8 func_800D26A0(Wrestler *w, Nw2DirectionResult *arg1, s8 ignoreId);
 #else
 s8 func_800D26A0(void *, void *, s32);
 #endif
+#ifdef TARGET_PC
+/* PC: D_800E3CFC is D_800E3D00 one entry back, which the code indexes from 1. Its own 4 bytes are the last two
+ * u16 entries of D_800E3CF0, the eight directions' bits, so on PC no file names it: an s32 there would make the
+ * port convert those bytes as one 32-bit value. Index 0 is the s32 the N64 reads there, made of those two
+ * entries. */
+extern s32 D_800E3D00[];
+#else
 extern s32 D_800E3CFC[]; 
+#endif
 s16 func_800D7A68(u16, s32); void func_800D37C0(s32, f32, void *); f32 func_800D3890(void *, void *, void *); void func_800E212C(void *);
 s32 func_800DF214(Wrestler *p, s32 flags) {
 #ifdef TARGET_PC
@@ -32,7 +40,12 @@ s32 func_800DF214(Wrestler *p, s32 flags) {
     input = flags; flags &= 4;
     if (flags) {
         index = func_800D7A68(input, flags);
+#ifdef TARGET_PC
+        /* PC: D_800E3D00, as above; index is not 0 here. */
+        if (index == 0) angle = p->heading; else angle = D_800E3D00[index - 1];
+#else
         if (index == 0) angle = p->heading; else angle = D_800E3CFC[index];
+#endif
         do { func_800D37C0(angle, 5.0f, vec); } while (0);
         i = 0;
         for (; i < 4; i++) {

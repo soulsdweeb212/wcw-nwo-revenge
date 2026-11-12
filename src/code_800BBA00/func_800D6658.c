@@ -5,7 +5,19 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: D_800E3CFC is D_800E3D00 one entry back, which the code indexes from 1. Its own 4 bytes are the last two
+ * u16 entries of D_800E3CF0, the eight directions' bits, so on PC no file names it: an s32 there would make the
+ * port convert those bytes as one 32-bit value. Index 0 is the s32 the N64 reads there, made of those two
+ * entries. */
+extern s32 D_800E3D00[];
+extern u16 D_800E3CF0[];
+static s32 headingE3CFC(s32 r) {
+    return r != 0 ? D_800E3D00[r - 1] : (s32)((u32)D_800E3CF0[6] << 16 | D_800E3CF0[7]);
+}
+#else
 extern s32 D_800E3CFC[];
+#endif
 extern u16 D_800E3F84[], D_800E3F8C[];
 extern f64 D_800E6D60, D_800E6D68, D_800E6D70;
 typedef struct { f32 x, y, z; s32 angle; } Nw2DirRes;
@@ -119,7 +131,12 @@ void func_800D6658(Wrestler *w, Wrestler *other, u16 arg2, s32 arg3, f32 arg4) {
                 off[2] *= D_800E6D68;
             }
             if (w->flags & 0x800000000ULL) {
+#ifdef TARGET_PC
+                /* PC: headingE3CFC, as above. */
+                if (func_800D3550(func_800D3684(w->heading, headingE3CFC(r))) < 0x101 && other->state == 0x2D) {
+#else
                 if (func_800D3550(func_800D3684(w->heading, D_800E3CFC[r])) < 0x101 && other->state == 0x2D) {
+#endif
                     off[0] *= D_800E6D70;
                     off[2] *= D_800E6D70;
                     moveAll(w, off);
@@ -138,7 +155,12 @@ void func_800D6658(Wrestler *w, Wrestler *other, u16 arg2, s32 arg3, f32 arg4) {
                     if (w->opponentId == cur && other->state == 0x2D && !(w->flags & 0x1000000000000ULL)) {
                         func_800D3890(&w->jointA[1], &other->jointA[1], &dir);
                         if (func_800D3550(func_800D3684(w->heading, dir.angle)) < 0x17
+#ifdef TARGET_PC
+                            /* PC: headingE3CFC, as above. */
+                            && func_800D3550(func_800D3684(w->heading, headingE3CFC(r))) < 0x101) {
+#else
                             && func_800D3550(func_800D3684(w->heading, D_800E3CFC[r])) < 0x101) {
+#endif
                             w->flags |= 0x800000000ULL;
                         }
                     }

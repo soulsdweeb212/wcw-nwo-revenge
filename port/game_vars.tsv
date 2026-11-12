@@ -1138,7 +1138,6 @@ D_8007FC10	8007FC10	main.bss	block	0x24	-
 D_8007FC34	8007FC34	main.bss	own	0x8	-
 D_8007FC38	8007FC38	main.bss	block	0x4	-
 D_8007FC3C	8007FC3C	main.bss	own	0x8	-
-D_8007FC4F	8007FC4F	main.bss	block	0x91	-
 D_800D6070	800D6070	ovl1.data	block	0xcc0	8:0.8
 D_800E2B10	800E2B10	ovl2.data	block	0xc	2:0.2
 D_800E2B1C	800E2B1C	ovl2.data	block	0x8	2:0.2
@@ -1175,6 +1174,7 @@ D_800E2C5C	800E2C5C	ovl2.data	block	0x8	2:0.2
 D_800E2C64	800E2C64	ovl2.data	block	0x8	2:0.2
 D_800E2C6C	800E2C6C	ovl2.data	block	0x88	88:4.2,6.2,8.2,a.2,c.2,e.2,10.2,12.2,14.2,16.2,18.2,1a.2,1c.2,1e.2,20.2,22.2,24.2,26.2,28.2,2a.2,2c.2,2e.2,30.2,32.2,34.2,36.2,38.2,3a.2,3c.2,3e.2,40.2,42.2,44.2,46.2,48.2,4a.2,4c.2,4e.2,50.2,52.2,54.2,56.2,58.2,5a.2,5c.2,5e.2,60.2,62.2,64.2,66.2,68.2,6a.2,6c.2,6e.2,70.2,72.2,74.2,76.2,78.2,7a.2,7c.2,7e.2,80.2,82.2,84.2,86.2
 D_800E2CF4	800E2CF4	ovl2.data	own	0x58	1:2c:58:0.0.z,4.8.p,8.10.p,c.18.p,10.20.p,14.28.p,18.30.p,1c.38.p,20.40.p,24.48.p,28.50.p
+td_data_800E2CF4	800E2CF4	ovl2.data	data	0x4	2:0.2
 td_data_800E2D20	800E2D20	ovl2.data	data	0x38	1:
 td_data_800E2D24	800E2D24	ovl2.data	data	0x34	1:
 td_data_800E2D2C	800E2D2C	ovl2.data	data	0x2c	1:
@@ -1338,8 +1338,7 @@ D_800E3CD0	800E3CD0	ovl2.data	block	0x8	2:0.2
 D_800E3CD8	800E3CD8	ovl2.data	block	0x8	2:0.2
 D_800E3CE0	800E3CE0	ovl2.data	block	0xe	2:0.2
 D_800E3CEE	800E3CEE	ovl2.data	block	0x2	2:0.2
-D_800E3CF0	800E3CF0	ovl2.data	block	0xc	2:0.2
-D_800E3CFC	800E3CFC	ovl2.data	block	0x4	4:0.4
+D_800E3CF0	800E3CF0	ovl2.data	block	0x10	2:0.2
 D_800E3D00	800E3D00	ovl2.data	block	0x14	4:0.4
 D_800E3D14	800E3D14	ovl2.data	block	0x1c	4:0.4
 D_800E3D30	800E3D30	ovl2.data	block	0xe0	4:0.4
@@ -1730,10 +1729,8 @@ D_800EB352	800EB352	ovl2.bss	block	0x2	-
 D_800EB354	800EB354	ovl2.bss	block	0x4	-
 D_800EB358	800EB358	ovl2.bss	block	0x8	-
 D_800EB360	800EB360	ovl2.bss	block	0x18	-
-D_800EB378	800EB378	ovl2.bss	block	0x1	-
-D_800EB379	800EB379	ovl2.bss	block	0x1	-
-D_800EB37A	800EB37A	ovl2.bss	block	0x1	-
-D_800EB37B	800EB37B	ovl2.bss	block	0x1	-
+D_800EB378	800EB378	ovl2.bss	block	0x2	-
+D_800EB37A	800EB37A	ovl2.bss	block	0x2	-
 D_800EB37C	800EB37C	ovl2.bss	block	0xc	-
 D_800EB388	800EB388	ovl2.bss	block	0xc	-
 D_800EB394	800EB394	ovl2.bss	block	0xc	-

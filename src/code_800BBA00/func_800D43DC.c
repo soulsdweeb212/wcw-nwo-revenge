@@ -61,7 +61,16 @@ void func_800D43DC(void)
             {
                 if (D_800F9D10[i].anim.loop == 0)
                 {
+#ifdef TARGET_PC
+                    /* PC: D_800EB6B8 holds each wrestler's animation mode as an s32 (func_800D427C stores it so), in
+                     * the PC's byte order. The N64 reads the s32's byte 3, which in its byte order is the low byte;
+                     * on PC the low byte is byte 0 and byte 3 is the high byte, always 0. So the PC reads the s32 and
+                     * keeps its low byte. Bit 0 of the mode keeps the body where it stands when a new animation
+                     * starts, moving the root instead; bit 1 eases the first frames from the old pose. */
+                    func_80008CE8(D_800F9D10[i].id, D_800F9D10[i].animId, D_800F9D10[i].animFrame, &D_800F9D10[i].x, mask, (u8)*(s32 *)&D_800EB6B8[i]);
+#else
                     func_80008CE8(D_800F9D10[i].id, D_800F9D10[i].animId, D_800F9D10[i].animFrame, &D_800F9D10[i].x, mask, (&D_800EB6B8[i])->b3);
+#endif
                     continue;
                 }
                 ent = &D_800F9D10[i];
@@ -69,7 +78,12 @@ void func_800D43DC(void)
                 ent->animId = -1;
                 func_800D427C(ent, old, 0);
             }
+#ifdef TARGET_PC
+            /* PC: the mode's low byte, as above. */
+            func_80008CE8(D_800F9D10[i].id, D_800F9D10[i].animId, D_800F9D10[i].animFrame, &D_800F9D10[i].x, mask, (u8)*(s32 *)&D_800EB6B8[i]);
+#else
             func_80008CE8(D_800F9D10[i].id, D_800F9D10[i].animId, D_800F9D10[i].animFrame, &D_800F9D10[i].x, mask, (&D_800EB6B8[i])->b3);
+#endif
             if (D_800F9D10[i].animFramesLeft > 0)
             {
                 D_800F9D10[i].animFrame++;

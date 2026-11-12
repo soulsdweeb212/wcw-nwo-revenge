@@ -42,7 +42,13 @@ void func_800C4C60(void) {
 
     switch (D_800FAF5C->step) {
     case 0:
+#ifdef TARGET_PC
+        /* PC: the N64 code reads moveMode and the u16 after it as one big-endian u32, so bits 0x280000 are moveMode's
+         * bits 0x28. A little-endian PC would test the u16 instead, so the PC tests moveMode. */
+        if (((D_800F9B00->flags & 0x100000ULL) && (D_800F9B00->moveMode & 0x28) == 0x28) || D_800F9B00->state == 0x14) {
+#else
         if (((D_800F9B00->flags & 0x100000ULL) && (*(u32 *)&D_800F9B00->moveMode & 0x280000) == 0x280000) || D_800F9B00->state == 0x14) {
+#endif
             v = 0xA5;
         } else {
             v = (D_800FAF5C->moveMode & 4) ? 0xA1 : 0xA3;

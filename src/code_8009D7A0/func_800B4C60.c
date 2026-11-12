@@ -136,7 +136,13 @@ s32 func_800B4C60(Wrestler *o, Wrestler *other, u16 inputFlags, s16 mode) {
                     }
                 }
             }
+#ifdef TARGET_PC
+            /* PC: the N64 code reads moveMode and the u16 after it as one big-endian u32, so bits 0xE0000 are moveMode's
+             * bits 0xE. A little-endian PC would test the u16 instead, so the PC tests moveMode. */
+            if ((o->moveMode & 0xE) == 0x4) {
+#else
             if ((*(u32 *)&o->moveMode & 0xE0000) == 0x40000) {
+#endif
                 for (i = 0; i < 2; i++) {
                     if ((res & D_800E37A0[i]) &&
                         (u32)(func_800D3550(func_800D3684(o->heading, D_800E37A8[i])) - 0x17) < 0x7D3) {
@@ -146,7 +152,13 @@ s32 func_800B4C60(Wrestler *o, Wrestler *other, u16 inputFlags, s16 mode) {
             }
         }
     }
+#ifdef TARGET_PC
+    /* PC: the N64 code reads moveMode and the u16 after it as one big-endian u32, so bits 0x280000 are moveMode's
+     * bits 0x28. A little-endian PC would test the u16 instead, so the PC tests moveMode. */
+    if ((o->moveMode & 0x28) == 0x8) {
+#else
     if ((*(u32 *)&o->moveMode & 0x280000) == 0x80000) {
+#endif
         q = findBoundaryQuadrant(o, 0, 2);
         if (q != -1 && q == o->dirIndex && (inputFlags & 4) && func_800E07DC(o)) {
             if (func_800DF924(o, other)) {

@@ -63,7 +63,13 @@ void func_800CBE28(void) {
         if (D_800FAF5C->pairSignals & 8) {
             D_800FAF5C->pairSignals &= 0xFFEF;
         }
+#ifdef TARGET_PC
+        /* PC: the N64 code reads pairSignals and the two bytes after it as one big-endian u32, so bits 0x180000 are pairSignals's
+         * bits 0x18. A little-endian PC would test the two bytes instead, so the PC tests pairSignals. */
+        if (D_800FAF5C->animFramesLeft <= 0 || (D_800FAF5C->pairSignals & 0x18) == 0x10) {
+#else
         if (D_800FAF5C->animFramesLeft <= 0 || (*(u32 *)&D_800FAF5C->pairSignals & 0x180000) == 0x100000) {
+#endif
             f = D_800FAF5C->pairSignals;
             if (f & 0x21F) {
                 f |= 0x20;

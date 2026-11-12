@@ -19,8 +19,19 @@ typedef s32 M2C_UNK32;
 #define M2C_OVERFLOW(a) (0)
 #endif
 
+#ifdef TARGET_PC
+/* PC: D_800FABD8 is an s32 (every other file declares it so, and the replay code sets its bit 0x10000). The N64
+ * reads its first two bytes as a u16, which in the N64's byte order are the upper half, so it tests bit 0x10000; on
+ * a PC the first two bytes are the lower half. The PC reads the s32 and tests that bit. */
+extern s32 D_800FABD8;
+#else
 extern u16 D_800FABD8;
+#endif
 
 s32 func_800D6350(void) {
+#ifdef TARGET_PC
+    return (D_800FABD8 >> 16) & 1;
+#else
     return D_800FABD8 & 1;
+#endif
 }

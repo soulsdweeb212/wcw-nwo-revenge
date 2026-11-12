@@ -35,7 +35,13 @@ void func_8000B630(u8 *out, u32 id, s16 variant) {
     out[1] = (s16)entry[0] >> 8;
     if (out[1]) out[1]--;
     out[2] = 15;
+#ifdef TARGET_PC
+    /* PC: the entries are u16s in the PC's byte order (the port converts D_80036710's tables). Byte 3 is entry[1]'s
+     * low byte in the N64's byte order and its high byte on a PC, so the PC takes the low byte of entry[1]. */
+    out[3] = (u8)entry[1] - 1;
+#else
     out[3] = ((u8 *)entry)[3] - 1;
+#endif
     out[4] = ((s16)entry[1] >> 8) - 1;
     i = 0;
     do { *(out + i + 2) &= 15; i++; } while (i < 3);

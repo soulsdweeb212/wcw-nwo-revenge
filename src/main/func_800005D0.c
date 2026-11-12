@@ -23,7 +23,12 @@ s32 osSendMesg(s32, s32, s32);
  * so). A message is 4 bytes in the game's queues (the port's queues keep the N64 size), so the task goes as a 32-bit
  * handle (port.h's PTR_TO_SLOT); the port's renderTaskThread, which receives it, turns it back with SLOT_TO_PTR. */
 void func_800005D0(void *arg0) {
-    osSendMesg(func_80000EE0(), PTR_TO_SLOT(arg0), 1);
+    /* PC: no scheduler runs the task; the port draws its list (port_gfx_submit in port.h). The task is a Nw2ScTask
+     * (common.h), whose flag 0x40 marks the frame's last task. */
+    Nw2ScTask *task = arg0;
+
+    (void)func_80000EE0;
+    port_gfx_submit((const Gfx *)task->list.input, task->list.inputSize / sizeof(Gfx), (task->flags & 0x40) != 0);
 }
 #else
 void func_800005D0(s32 arg0) {

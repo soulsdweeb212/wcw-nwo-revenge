@@ -2151,8 +2151,8 @@ _Static_assert(sizeof(Nw2ScMsg) == 0x20, "a scheduler message is 0x20 bytes, as 
  * is the display list and inputSize its length in bytes. framebuffer is a pointer: submitGraphicsTask turns the frame
  * record's handle of the framebuffer back into one (SLOT_TO_PTR). msg stays 4 bytes and holds a handle (port.h's
  * PTR_TO_SLOT) of the record's done message, because a message in the game's queues is 4 bytes. The task is 0xA0
- * bytes on PC. The port's stand-in for the scheduler reads this layout; the port's src/game.h mirrors it, and
- * src/game_check.c checks the two. */
+ * bytes on PC. On PC no scheduler gets the task: func_800005D0 hands its display list (list.input, list.inputSize)
+ * and whether it ends the frame (flags 0x40) to the port, port_gfx_submit (port.h). */
 typedef struct Nw2ScTask {
     struct Nw2ScTask *next; /* N64 +0x00: the scheduler's link; the game clears it */
     u32 state;              /* N64 +0x04: the scheduler's own */
@@ -2166,7 +2166,7 @@ _Static_assert(sizeof(((Nw2ScTask *)0)->msg) == 4, "the done message is a 4-byte
 _Static_assert(offsetof(Nw2ScTask, next) == 0 && offsetof(Nw2ScTask, framebuffer) == 0x10 &&
                    sizeof(Nw2RspTask) == 0x78 && offsetof(Nw2ScTask, list) == 0x18 &&
                    offsetof(Nw2ScTask, msgQ) == 0x90 && offsetof(Nw2ScTask, msg) == 0x98 && sizeof(Nw2ScTask) == 0xA0,
-               "the PC layout of a scheduler task on a 64-bit PC, which src/game.h in the port mirrors");
+               "the PC layout of a scheduler task on a 64-bit PC");
 
 /* Nw2RenderList: one of the four render-list records whose addresses D_80044590 holds (0x4078 bytes on the N64), in
  * its PC layout: the display list, 0x800 commands of port.h's 16-byte Gfx; the task that submitGraphicsTask fills and

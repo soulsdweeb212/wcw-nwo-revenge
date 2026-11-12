@@ -141,9 +141,20 @@ void func_80099F70(void) {
     }
     D_800EB37A = 0xFF;
     initializeTransformNode(&D_800F99C0, 5, 0.0f, 0.0f, 0.0f);
+#ifdef TARGET_PC
+    /* PC: D_800EB37B and D_800EB379 are the second bytes of the s16s D_800EB37A and D_800EB378, their low bytes in the
+     * N64's byte order; on a PC the second byte is the high byte. The PC takes the s16s' low bytes. */
+    buildColorOverlayDisplayList(&D_800F99C0, 0xFF, 0xFF, 0xFF, (u8)D_800EB37A);
+#else
     buildColorOverlayDisplayList(&D_800F99C0, 0xFF, 0xFF, 0xFF, D_800EB37B);
+#endif
     func_80001DC4(&D_800F99C0);
     func_8000E644();
+#ifdef TARGET_PC
+    /* PC: D_800EB378's low byte, as above. */
+    func_800922C0((u8)D_800EB378);
+#else
     func_800922C0(D_800EB379);
+#endif
     func_800982AC();
 }

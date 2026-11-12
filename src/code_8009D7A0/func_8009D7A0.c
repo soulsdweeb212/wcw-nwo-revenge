@@ -24,7 +24,13 @@ s32 func_8009D7A0(s32 arg0, s32 arg1, s32 arg2) {
         if (temp_v0 >= 0x100) {
             D_800EB37A = 0xFF;
         }
+#ifdef TARGET_PC
+        /* PC: D_800EB37B is the second byte of the s16 D_800EB37A, its low byte in the N64's byte order; on a PC the
+         * second byte is the high byte. The PC takes D_800EB37A's low byte, the overlay's alpha. */
+        buildColorOverlayDisplayList(&D_800F99C0, arg0 & 0xFF, arg1 & 0xFF, arg2 & 0xFF, (s32)(u8)D_800EB37A);
+#else
         buildColorOverlayDisplayList(&D_800F99C0, arg0 & 0xFF, arg1 & 0xFF, arg2 & 0xFF, (s32) D_800EB37B);
+#endif
 #ifdef TARGET_PC
         /* PC: D_800F99C0 keeps its N64 layout (Nw2SceneObj), so its work (+0x14, the N64 label D_800F99D4) is the
          * handle (port.h's PTR_TO_SLOT) of its work block (Nw2SceneWork), whose kind is the N64's flags word. */

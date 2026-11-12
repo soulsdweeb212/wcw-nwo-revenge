@@ -38,6 +38,43 @@ extern s32 bcopy(void *, void *, s32);
 extern void func_80002CC4(void);
 static __inline__ void initRenderQueue(u8 *q) {osCreateMesgQueue(q,D_80046780,16);func_80000580(D_80046760,q);}
 static __inline__ void setVideoModeFromWidth(s32 *width) {osViSetMode((u8 *)width-8);}
+#ifdef TARGET_PC
+/* PC: the segment-1 block. On the N64 func_80001260 copies it from the ROM (ROM_SEG1_INIT, 0xA0 bytes) into a buffer
+ * at 0x8007FC40: the viewport (eight s16) at +0, then from +0x10 the display list that every frame's first task runs
+ * (buildSceneSetupDisplayList branches to it): the viewport, clipping, the scissor and the render modes, as the N64's
+ * 8-byte commands. Both are big-endian, and Fast3D needs the viewport in the PC's byte order and the list as port.h's
+ * 16-byte commands, which take twice the room. So the PC builds the block in a buffer of its own: the viewport, then
+ * the commands. The list's only address is the viewport's (G_MOVEMEM, segment 1 offset 0), which Fast3D would take for
+ * a pointer as it stands, so it becomes the block's own address; another address would stop the program. */
+static u8 *makeSegment1Block(void) {
+    u8 raw[ROM_SEG1_INIT_END - ROM_SEG1_INIT];
+    u32 count = (sizeof(raw) - 0x10) / 8;
+    u8 *block = allocateHeap(0x10 + count * sizeof(Gfx));
+    s16 *vp = (s16 *)block;
+    Gfx *dl = (Gfx *)(block + 0x10);
+    u32 i;
+
+    readRomSynchronousChunks(ROM_SEG1_INIT, raw, sizeof(raw));
+    for (i = 0; i < 8; i++) {
+        vp[i] = (s16)READ_BE16(raw + 2 * i);
+    }
+    for (i = 0; i < count; i++) {
+        u32 w0 = READ_BE32(raw + 0x10 + 8 * i);
+        u32 w1 = READ_BE32(raw + 0x10 + 8 * i + 4);
+        u32 op = w0 >> 24;
+
+        dl[i].w0 = w0;
+        if (op == 0xDC && (w1 >> 24) == 0x01) {
+            dl[i].w1 = DL_ADDR(block + (w1 & 0xFFFFFF)); /* G_MOVEMEM from segment 1 */
+        } else if (op == 0xDC || op == 0xDE || op == 0x01 || op == 0xFD || op == 0xFF) {
+            port_fatal("func_80001260: segment-1 command %08X %08X has an address the port does not convert", w0, w1);
+        } else {
+            dl[i].w1 = w1;
+        }
+    }
+    return block;
+}
+#endif
 void func_80001260(void) {
     s32 t; u8 *v; u32 *p; u32 i; s16 two; s32 *width; u8 *q;
     if(D_8002EEC4) {
@@ -46,17 +83,11 @@ void func_80001260(void) {
         /* PC: D_8007E228 is the first word of a block that 42 of the developer program's files (74 across src/) name,
          * and most of them read its other fields at their N64 offsets (some through labels of their own, such as
          * D_8007E280 for +0x58). So it keeps its 4 bytes, and holds the segment-1 buffer as a 32-bit handle (port.h's
-         * PTR_TO_SLOT) instead of the buffer's address, which 32 bits would cut in half. The buffer starts at
-         * D_8007FC4F's address rounded down to a multiple of 16 (0x8007FC40 on the N64). */
-        D_8007E228=PTR_TO_SLOT(((uptr)&D_8007FC4F>>4)<<4);
+         * PTR_TO_SLOT) instead of the buffer's address, which 32 bits would cut in half. The buffer is a PC block of
+         * its own (makeSegment1Block, above), which Fast3D can draw from. */
+        D_8007E228=PTR_TO_SLOT(makeSegment1Block());
 #else
         D_8007E228=(s32)(((u32)&D_8007FC4F>>4)<<4);
-#endif
-#ifdef TARGET_PC
-        /* PC: the ROM symbols D_3C6D0/D_3C770 are not linked; the same block is read by its ROM address, into the
-         * buffer that D_8007E228's handle stands for. */
-        readRomSynchronousChunks(ROM_SEG1_INIT,SLOT_TO_PTR(D_8007E228),ROM_SEG1_INIT_END-ROM_SEG1_INIT);
-#else
         readRomSynchronousChunks(D_3C6D0,(void *)D_8007E228,D_3C770-D_3C6D0);
 #endif
         q=D_80046768;

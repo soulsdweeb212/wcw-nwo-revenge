@@ -166,3 +166,42 @@ void func_80002CC4(void)
         D_8002EECA ^= 1;
     }
 }
+#ifdef TARGET_PC
+/* PC: the render thread's work for one frame (port.h's port_render_frame). No thread runs func_80002CC4 on PC; at a
+ * frame's hand-off the port calls this instead, while the game waits. It does what the loop above does for a frame,
+ * without the queues: rotate the framebuffers, take the bank's draw lists (func_80002324), build the frame's tasks one
+ * after another and submit each (submitGraphicsTask, whose list reaches the port through func_800005D0), then flip
+ * the bank. The N64 keeps up to four tasks in flight and waits for retraces between them; on PC the port copies each
+ * task's list as it comes and paces the frames itself. A hand-off without a frame (D_800467FC NULL) draws nothing. */
+void port_render_frame(void) {
+    Task2CC4 *task = D_800467FC;
+    u16 cur;
+    u16 buf;
+    u16 bank;
+    s16 index;
+    s32 next;
+    s32 key;
+
+    if (task == NULL) {
+        return;
+    }
+    cur = D_8002EEC8;
+    buf = (u16)(cur + 1) % 3;
+    task->fb0 = PTR_TO_SLOT(D_8002EEB0[cur]);
+    task->fb1 = PTR_TO_SLOT(D_8002EEB0[buf]);
+    D_8002EEC8 = buf;
+    func_80002324(D_8002EECA);
+    index = 0;
+    while (index < D_80047066) {
+        Gfx2CC4 *gfx;
+
+        bank = D_8002EECA;
+        gfx = buildSceneSetupDisplayList(task, index == 0);
+        key = ((Obj2CC4 *)D_80047070[(s16)bank][index])->key;
+        next = (s16)func_80002454(&gfx, bank, index);
+        submitGraphicsTask(task, gfx, next >= D_80047066, key);
+        index = next;
+    }
+    D_8002EECA ^= 1;
+}
+#endif

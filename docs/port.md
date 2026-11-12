@@ -211,6 +211,18 @@ little-endian, with the least significant byte first. On PC the game's data is k
 - Where the N64 code reads a value through a view of another width, such as a `u64` as two `u32`, or a `u16` and the
   `u16` after it as one `u32`, its PC version is written for the PC's byte order (`func_800B955C`, `func_8009EDBC`).
   `port.h` stops the build on a big-endian CPU.
+- The same holds where two files declare one variable at different widths: one writes an `s32` and the other reads
+  its byte 3 (`func_800D43DC`, the animation mode `func_800D427C` stores), or its first two bytes as a `u16`
+  (`func_800D6350`), or a label names the second byte of an `s16` (`D_800EB37B`, read in `func_8009D7A0`). In the
+  N64's byte order those are the value's low byte or upper half; on PC the reading file takes the same part of the
+  value by arithmetic (`(u8)x`, `x >> 16`). Turnbuckle Dive's byte-order check (its docs/TESTING.md, "The byte-order
+  check") runs a match and lists every read whose value differs from the N64's.
+- A table that `tools/port_data.py` converts gets its widths from the files' types, so a file that declares a label
+  inside a table at another width changes how those bytes are converted. `D_800E3CFC`, which three files declare as
+  an `s32` array and index from 1 (it is `D_800E3D00` one entry back), sits on the last two `u16` entries of
+  `D_800E3CF0`; on PC those three files read `D_800E3D00` instead, so no file names `D_800E3CFC` and the two entries
+  are converted as `u16`. A list that runs past the next label is described in TABLES with `Data(w, to_zero=True)`
+  (`D_800E2CF4`'s last list ends in the table's own first word).
 
 ## Display lists on PC
 
@@ -249,10 +261,12 @@ of the objects in a bank), `buildSceneSetupDisplayList` (the setup at the start 
 textured quad). `func_8000486C`, which decodes a mesh's vertices, needs no PC code: its 16-byte vertex records hold no
 pointer, and the CPU writes them in its own byte order, which is the order LUS reads vertices in.
 
-Still open: `buildSceneSetupDisplayList` branches to a display list 0x10 bytes into the segment-1 block, which
-`func_80001260` copies from the ROM (`ROM_SEG1_INIT`). That list is the N64's 8-byte commands in the ROM's byte order,
-which Fast3D cannot run as it is; the port has to convert it. `func_80002454` takes a list's address from a record
-that has no PC layout yet (see "Shared records on PC").
+`buildSceneSetupDisplayList` branches to a display list 0x10 bytes into the segment-1 block. On the N64,
+`func_80001260` copies that block from the ROM (`ROM_SEG1_INIT`): 8 `s16` of viewport, then 18 commands of 8 bytes in
+the ROM's byte order. On PC it builds the block instead (`makeSegment1Block`): the viewport's values in the PC's byte
+order, then the same commands as 16-byte `Gfx`, and the one address among them, the viewport's (a `G_MOVEMEM` from
+segment 1, offset 0), as the block's own address. `func_80002454` takes each object's list from its work block,
+whose fields hold handles on PC (`Nw2SceneWork` in `common.h`).
 
 ## Shared records on PC
 
@@ -303,9 +317,8 @@ The records:
    developer program's files (74 across `src/`) name the block, and most of them read its other fields at their N64
    offsets (some through labels of their own, such as `D_8007E280` for +0x58). So the word keeps its 4 bytes on PC and
    holds a handle of the address, `PTR_TO_SLOT(buffer)`: `func_80001260` sets it, and code that needs the address
-   takes `SLOT_TO_PTR(D_8007E228)` (`buildSceneSetupDisplayList`). `func_80001260` finds the buffer as `D_8007FC4F`'s
-   address rounded down to a multiple of 16, on PC as on the N64, so the port must place that data as the N64 does: a
-   0xA0-byte buffer that starts at a multiple of 16, with `D_8007FC4F` 0xF bytes into it.
+   takes `SLOT_TO_PTR(D_8007E228)` (`buildSceneSetupDisplayList`). On the N64 the buffer is `D_8007FC4F`'s address
+   rounded down to a multiple of 16; on PC it is a heap block that `func_80001260` builds (see "Display lists on PC").
 4. **The scheduler's queue and the graphics task.** `func_80000580` registers a client with the scheduler, which keeps
    the client's message queue in a 4-byte field (+4 of the client record), and `func_800005D0` sends the address of a
    graphics task as a 4-byte message. On PC both go as handles, `PTR_TO_SLOT(queue)` and `PTR_TO_SLOT(task)`, so the
