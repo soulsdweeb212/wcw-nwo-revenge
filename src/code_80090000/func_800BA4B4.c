@@ -24,7 +24,13 @@ s32 func_800BA4B4(void) {
             d[0x24] = s[0x22];
             d[0x25] = s[0x23];
             d[0x26] = 0;
+#ifdef TARGET_PC
+            /* PC: +0x24 is a 16-bit value that func_800BA1A4 and func_800B8C4C write as a u16. The N64 takes its
+             * low byte at +0x25, its second byte; on PC the low byte comes first, so the u16 is read whole. */
+            d[0x27] = *(u16 *)(s + 0x24) & 0x1F;
+#else
             d[0x27] = s[0x25] & 0x1F;
+#endif
             d[0x28] = (*(u16 *)(s + 0x24) >> 5) & 0x1F;
         }
     }

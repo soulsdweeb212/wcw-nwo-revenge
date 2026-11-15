@@ -14,6 +14,30 @@ typedef struct { u8 pad[0x1A]; B b[2]; } T;
 extern T *D_800DCFB8;
 extern u8 D_8007EF30[];
 
+#ifdef TARGET_PC
+/* PC: the options are 16-bit values that func_800BA760 builds with shifts: bits 0-2 the first option, bit 3, 4, 5, 6
+ * single options, bits 7-9 another, bits 10-13 single options again, and the next u16 with three bits of its own.
+ * The N64 reads them through the bit-fields of B, laid out from the top bit down, and their low bytes at +0x1B, +0x1D
+ * (+0x1F, +0x21), the second byte of each u16. A PC lays bit-fields out from the bottom bit up and keeps a u16's low
+ * byte first, so the same bits are taken from the whole u16 with shifts. */
+s32 func_800BA59C(s32 a) {
+    u8 *t = (u8 *)D_800DCFB8 + (a == 0 ? 0x1A : 0x1E);
+    u16 v = *(u16 *)t;
+
+    D_8007EF30[0x1A2] = (v >> 3) & 1;
+    D_8007EF30[0x1A3] = (v >> 4) & 1;
+    D_8007EF30[0x1A4] = (v >> 5) & 1;
+    D_8007EF30[0x1A5] = (v >> 6) & 1;
+    D_8007EF30[0x1A1] = (v >> 7) & 7;
+    D_8007EF30[0x1A6] = (v >> 10) & 1;
+    D_8007EF30[0x1A7] = (v >> 11) & 1;
+    D_8007EF30[0x1A8] = (v >> 12) & 1;
+    D_8007EF30[0x1A9] = (v >> 13) & 1;
+    D_8007EF30[0x1A0] = v & 7;
+    D_8007EF30[0x1AA] = *(u16 *)(t + 2) & 7;
+    return 0;
+}
+#else
 s32 func_800BA59C(s32 a) {
     T *t;
     u8 x;
@@ -51,3 +75,4 @@ s32 func_800BA59C(s32 a) {
     }
     return 0;
 }
+#endif

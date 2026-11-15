@@ -241,6 +241,13 @@ little-endian, with the least significant byte first. On PC the game's data is k
   copies a mesh's vertex records out of a pack into vertices for the display list, reads their 16-bit fields with
   `READ_BE16`. The N64 builds the count from its four bytes in reverse order (a pack of 0x28 entries counts as
   0x28000000), and the PC does the same with the same bytes, so the test against it turns the same indexes away.
+- The save buffer (`D_800DCFB8`, the copy of the cartridge's save memory that the menus keep) holds its 16-bit values
+  in the PC's byte order: the menus write them as `u16` and read them back as `u16`, and the checksums go over the
+  same bytes on both sides. Three readers take part of such a value differently, and their PC versions read the whole
+  `u16`: `func_800BA4B4` (the wrestlers' outfits, the low byte at `+0x25`), `func_800BA058` (`+0x3B`) and
+  `func_800BA59C`, which also reads the options through C bit-fields. A big-endian compiler lays bit-fields out from
+  the top bit down and a PC from the bottom bit up, so its PC version takes the same bits with shifts. A save made on
+  an N64 has these values in the other byte order.
 
 ## Display lists on PC
 
