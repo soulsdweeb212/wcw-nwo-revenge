@@ -6,6 +6,69 @@
 #include "common.h"
 
 /* identical to findOrAddCacheEntryRaw (matched), with its names changed by decomp.wtf */
+#ifdef TARGET_PC
+/* PC: the key is a MenuKey (port.h): a number, which gets the tag 0x10000000 when its top four bits are 0 as on the
+ * N64, or a key of the resource-name cache (a name's address, or MENU_KEY_ID), which the N64 tells apart by its top
+ * bits and the PC by MENU_KEY_IS_RES, and which is stored as it is. D_800E7CE0 is 0x40 of common.h's Nw2MenuPicSlot
+ * (port_decls.h): the picture's fields by name, and the request's key is the entry's picture list, whose address
+ * func_80098EEC takes as a pointer (the N64 passes the entry's address, where its list lies). */
+s32 func_80099148(MenuKey arg0, s16 arg1, s16 arg2, s32 arg3, s32 arg4) {
+    Nw2MenuPicSlot *e;
+    s32 i;
+    s32 j;
+    MenuKey key;
+    s32 r;
+
+    key = arg0;
+    if (!MENU_KEY_IS_RES(key) && (key & 0xF0000000) == 0) {
+        key |= 0x10000000;
+    }
+
+    if (arg4 & 0x8000) {
+        for (i = 0, e = D_800E7CE0; i < 0x40; i++, e++) {
+            if (e->pic.key == key) {
+                goto write;
+            }
+        }
+        for (i = 0, e = D_800E7CE0; i < 0x40; i++, e++) {
+            if (e->pic.key == 0) {
+                e->pic.key = key;
+                goto write;
+            }
+        }
+        e = NULL;
+        goto done;
+
+write:
+        e->pic.match = arg3;
+        e->pic.x = arg1;
+        e->pic.y = arg2;
+        goto done;
+    }
+
+    for (j = 0, e = D_800E7CE0; j < 0x40; j++, e++) {
+        if (e->pic.key == key && e->pic.match == arg3) {
+            e->pic.x = arg1;
+            e->pic.y = arg2;
+            goto done;
+        }
+    }
+    for (j = 0, e = D_800E7CE0; j < 0x40; j++, e++) {
+        if (e->pic.key == 0) {
+            e->pic.key = key;
+            goto write;
+        }
+    }
+    e = NULL;
+
+done:
+    r = 0;
+    if (e != NULL) {
+        r = func_80098EEC(&e->list, arg4);
+    }
+    return r;
+}
+#else
 typedef struct {
     s32 f0;
     s32 f4;
@@ -75,3 +138,4 @@ done:
     }
     return r;
 }
+#endif

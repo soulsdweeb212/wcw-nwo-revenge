@@ -19,7 +19,9 @@ typedef struct { u32 w0, w1; } G;
 typedef struct { u8 pad[0x10]; s16 h; } T;
 #endif
 extern u8 D_8007EF30[], D_800CCCC0[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800B75D4, which takes a name as a key (port.h's MENU_KEY_NAME) */
 u8 *func_800B75D4(G **, void *, s32);
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_8002AD34, which returns the name's address */
 void *func_8002AD34(s32, s32);
 #endif
@@ -31,9 +33,15 @@ void func_800A5264(G **dl, s32 a) {
     T *t;
     void *p, *x;
 
+#ifdef TARGET_PC
+    func_800B75D4(&g, MENU_KEY_NAME(D_800CCCC0 + n * 8), 8); /* PC: the names' addresses as keys, as above */
+    { G *d = g++; d->w0 = 0x07000206; d->w1 = 0x604; }
+    func_800B75D4(&g, MENU_KEY_NAME(D_800CCCC0 + 0x48), 8);
+#else
     func_800B75D4(&g, D_800CCCC0 + n * 8, 8);
     { G *d = g++; d->w0 = 0x07000206; d->w1 = 0x604; }
     func_800B75D4(&g, D_800CCCC0 + 0x48, 8);
+#endif
     { G *d = g++; d->w0 = 0x0714161A; d->w1 = 0x141A18; }
     if (a & 0x20) {
         u16 v = *(u16 *)(D_8007EF30 + 0xC90 + n * 4);
@@ -48,7 +56,11 @@ void func_800A5264(G **dl, s32 a) {
         a = v & 0xFFF;
         p = func_8002AD34(a, (v >> 12) & 3);
     }
+#ifdef TARGET_PC
+    t = (T *)func_800B75D4(&g, MENU_KEY_NAME(p), 8); /* PC: as above */
+#else
     t = (T *)func_800B75D4(&g, p, 8);
+#endif
     if (t->h >= 0x80) {
         G *d = g;
         d[0].w0 = 0x0214000E;

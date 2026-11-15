@@ -11,12 +11,11 @@ extern s32 D_800E8200[];
 extern u32 D_800EA2D0[];
 #ifdef TARGET_PC
 /* PC: the game functions this file calls, declared with their definitions' types (func_800B04BC.c,
- * findIdSubTableIndex.c, func_80099148.c). D_8007EF30 keeps its N64 layout (game files read it at N64 offsets, up to
+ * findIdSubTableIndex.c; port_decls.h declares func_80099148, whose key is a MenuKey, port.h). D_8007EF30 keeps its N64 layout (game files read it at N64 offsets, up to
  * +0xC90), so its +0x30, the address of the cup record that func_800B0DD4 stores, is 4 bytes and holds a handle
  * (port.h's PTR_TO_SLOT); CUP_ID reads the cup's id (its first byte) through it. */
 s32 func_800B04BC(s32 id);
 s32 findIdSubTableIndex(s32 id);
-s32 func_80099148(s32 arg0, s16 arg1, s16 arg2, s32 arg3, s32 arg4);
 #define CUP_ID() (*(u8 *)SLOT_TO_PTR(*(u32 *)(D_8007EF30 + 0x30)))
 #endif
 

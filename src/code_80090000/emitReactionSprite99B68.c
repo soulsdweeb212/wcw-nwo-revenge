@@ -53,10 +53,20 @@ extern u8 D_800C9620[];
 #else
 extern u8 D_C9620[];
 #endif
+#ifdef TARGET_PC
+/* PC: the three quad entries in overlay 1's data at D_800C94CC + 0x23C are D_800C9708, by its own label: each holds the
+ * address of its text, so on PC it is a Nw2QuadEntry with a pointer (0x10 bytes; N64: 0xC), read by index. The text's
+ * address is the picture's key in the resource-name cache (port.h's MENU_KEY_NAME), as func_800B600C takes it
+ * (port_decls.h). */
+extern Nw2QuadEntry D_800C9708[3];
+#else
 extern u8 D_800C94CC[];
+#endif
 void appendPaletteSetupDisplayList(void *);
 void func_8000DEE4(s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800B600C */
 void *func_800B600C(void *, s32);
+#endif
 s32 func_80029C40(void *, u16, s32);
 void func_80096D8C(void *, void *, s32, s32, s32, s32, s32, s32, s32);
 
@@ -116,7 +126,11 @@ void emitReactionSprite99B68(u32 **arg0, Nw2SpriteOwner *arg1)
     p = dl;
     i = 0;
 
+#ifdef TARGET_PC
+    entry = D_800C9708; /* PC: the entries by their label, as above */
+#else
     entry = (Nw2QuadEntry *)(D_800C94CC + 0x23C);
+#endif
 #ifdef TARGET_PC
     /* PC: two Gfx commands, as above. */
     p[0].w0 = 0xFA000000;
@@ -135,7 +149,11 @@ void emitReactionSprite99B68(u32 **arg0, Nw2SpriteOwner *arg1)
 
     do {
         if (row >= entry->start) {
+#ifdef TARGET_PC
+            sprite = func_800B600C(MENU_KEY_NAME(entry->data), 8); /* PC: the text's address as the key, as above */
+#else
             sprite = func_800B600C(entry->data, 8);
+#endif
             if (row < entry->start + entry->len) {
                 u32 raw = func_80029C40(entry->data, 8, row - entry->start);
                 color = (raw & 0xFFFF) + ((raw >> 16) & 0xFF);

@@ -5,10 +5,23 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: the menus and their elements hold addresses, so they are common.h's Nw2Menu and Nw2MenuEl, which El follows
+ * (the assert checks). D_800E8E74 is D_800E8230[10].el: the label has no PC symbol, and the PC reads the menu by field
+ * name. */
+typedef struct { u8 pad0[0x22]; u16 f22; u8 pad24[sizeof(Nw2MenuEl) - 0x24]; } El;
+_Static_assert(offsetof(El, f22) == offsetof(Nw2MenuEl, f22) && sizeof(El) == sizeof(Nw2MenuEl),
+               "El must follow common.h's Nw2MenuEl");
+#else
 typedef struct { u8 pad0[0x22]; u16 f22; u8 pad24[0x148 - 0x24]; } El;
+#endif
 typedef struct { u8 pad0[0x48]; u8 name[4][9]; } Names;
 typedef struct { u8 pad0[6]; u16 btn; u8 pad8[4]; } Pad;
+#ifdef TARGET_PC
+extern Nw2Menu D_800E8230[];
+#else
 extern El *D_800E8E74;
+#endif
 extern s16 D_80038A90;
 extern s32 D_800E9F98[4][16];
 extern Names D_8007E8C0;
@@ -32,7 +45,11 @@ s32 func_800AE680(void) {
     s32 *p;
     u16 b;
 
+#ifdef TARGET_PC
+    e = (El *)D_800E8230[10].el; /* PC: by name (see above) */
+#else
     e = D_800E8E74;
+#endif
     ret = D_80038A90;
     for (i = 0; i < 4; i++, e++) {
         ok[i] = 0;

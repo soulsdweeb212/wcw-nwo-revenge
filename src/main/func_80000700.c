@@ -5,6 +5,17 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: both overlays' code is compiled into the program, so the N64's copy of the overlay's code and data from the ROM
+ * and the zeroing of its BSS become a fresh start of its variables (port.h's port_overlay_load); the caches have
+ * nothing to do. The record arrives as the boot loop passes it, as its first four words and its last five (common.h's
+ * Nw2InitRect and Nw2InitBig): on the N64 that is the same as one 36-byte record, on the PC's calling convention it
+ * is not, so the PC version takes the two halves. */
+void func_80000700(Nw2InitRect rect, Nw2InitBig regions) {
+    (void)regions;
+    port_overlay_load(port_overlay_of(rect.srcStart, rect.srcEnd));
+}
+#else
 extern s32 D_8003DD98;
 extern u8 D_8003DDA0;
 extern s8 D_8003DDA2;
@@ -64,3 +75,4 @@ void func_80000700(Cfg c) {
     }
     bzero(c.f1C, c.f20 - c.f1C);
 }
+#endif

@@ -6,6 +6,41 @@
 #include "common.h"
 
 typedef struct { u8 pad0[0x12]; s16 f12; } Sub;
+#ifdef TARGET_PC
+/* PC: the menus and their elements hold addresses, so they are common.h's Nw2Menu and Nw2MenuEl, which these views
+ * follow (the asserts check). */
+typedef struct {
+    u8 pad0[8];
+    s16 f8;
+    u16 flags;
+    u8 padC[8];
+    s16 f14;
+    u8 pad16[0xA];
+    s16 f20;
+    u16 f22;
+    Sub *f24;
+    u8 pad30[sizeof(Nw2MenuEl) - 0x30];
+} El;
+_Static_assert(offsetof(El, f8) == offsetof(Nw2MenuEl, f8) && offsetof(El, flags) == offsetof(Nw2MenuEl, fA) &&
+                   offsetof(El, f14) == offsetof(Nw2MenuEl, f14) && offsetof(El, f20) == offsetof(Nw2MenuEl, f20) &&
+                   offsetof(El, f22) == offsetof(Nw2MenuEl, f22) && offsetof(El, f24) == offsetof(Nw2MenuEl, def) &&
+                   sizeof(El) == sizeof(Nw2MenuEl),
+               "El must follow common.h's Nw2MenuEl");
+typedef struct {
+    void *items;
+    s16 cur;
+    u8 pad6[8];
+    s16 fE;
+    u8 pad10[2];
+    s16 f12;
+    El *el;
+    u8 pad20[sizeof(Nw2Menu) - 0x20];
+} Menu;
+_Static_assert(offsetof(Menu, cur) == offsetof(Nw2Menu, cur) && offsetof(Menu, fE) == offsetof(Nw2Menu, fE) &&
+                   offsetof(Menu, f12) == offsetof(Nw2Menu, f12) && offsetof(Menu, el) == offsetof(Nw2Menu, el) &&
+                   sizeof(Menu) == sizeof(Nw2Menu),
+               "Menu must follow common.h's Nw2Menu");
+#else
 typedef struct {
     u8 pad0[8];
     s16 f8;
@@ -28,6 +63,7 @@ typedef struct {
     El *el;
     u8 pad18[0x138 - 0x18];
 } Menu;
+#endif
 typedef struct { s16 f4C; s16 f4E; u8 f50; u8 pad51; u8 f52; u8 pad53; u8 b[8]; } Pl;
 typedef struct { u8 pad0[6]; u16 f6; } Opt;
 typedef struct { u8 *p; u16 n; u16 c; } L;
@@ -42,8 +78,16 @@ typedef struct {
     s16 f10;
     s16 f12;
     u8 pad14[0x18];
+#ifdef TARGET_PC
+    u32 f2C; /* PC: D_8007EF30 keeps its N64 layout, so its addresses are handles (port.h) */
+#else
     L *f2C;
+#endif
+#ifdef TARGET_PC
+    u32 f30;
+#else
     Opt *f30;
+#endif
     u8 pad34[0x18];
     Pl pl[0xCB];
 } Game;
@@ -182,12 +226,20 @@ s32 func_800AA508(Menu *m) {
             }
         }
         p = &D_800E8230[cur];
+#ifdef TARGET_PC
+        if ((D_8007EF30.mode & 0x8000) && (((Nw2Cup *)SLOT_TO_PTR(D_8007EF30.f30))->flags & 0x2000)) {
+#else
         if ((D_8007EF30.mode & 0x8000) && (D_8007EF30.f30->f6 & 0x2000)) {
+#endif
             setId((s16)(D_8007EF30.pl[D_8007FC30].f4E | 0x1000));
         } else {
             setId(D_8007EF30.pl[D_8007FC30].f4E);
         }
+#ifdef TARGET_PC
+        D_8007EF30.f2C = PTR_TO_SLOT(&lookupSubTables[D_8007EF30.f10]);
+#else
         D_8007EF30.f2C = &lookupSubTables[D_8007EF30.f10];
+#endif
         if (D_8007FC30 == 0) {
             func_800A9108();
         } else if (D_8007EF30.pl[D_8007FC30].f4E > 0) {

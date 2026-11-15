@@ -22,14 +22,22 @@ typedef struct {
 
 extern s32 D_800D5F1C;
 extern u16 D_800C9200[];
+#ifdef TARGET_PC
+/* PC: vertices in overlay 1's data (the G_VTX commands below load them), so port.h's Vtx: the PC turns their 16-bit
+ * values into its byte order when it loads overlay 1. V has the same layout. */
+extern Vtx D_800CCD48[];
+#else
 extern V D_800CCD48[][3];
+#endif
 extern s32 D_800E9F98[]; /* [4][16], indexed m * 16 + i */
 extern u16 D_800CCF6C[]; /* pairs {a, b}; read as [lo * 2] / [lo * 2 + 1] */
 extern u16 D_800CCF58[];
 u32 osVirtualToPhysical(void *);
 void func_800B6FE0(G **, s32);
 void func_800B7260(G **, s32, s32, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800B600C, which returns the picture's heap block (resource ids here) */
 u8 *func_800B600C(s32, s32);
+#endif
 
 #define EMIT(a, b) { G *_g = g++; _g->w0 = (a); _g->w1 = (b); }
 #ifdef TARGET_PC
@@ -42,7 +50,11 @@ void func_800A6B24(G **dl, Obj *o) {
     G *g = *dl;
     s32 m = (o->f20 >> 4) & 3;
     s32 i, v, hi, lo;
+#ifdef TARGET_PC
+    V *p = (V *)D_800CCD48; /* PC: the vertices, as above */
+#else
     V *p = D_800CCD48[0];
+#endif
     u8 *t;
 
     EMIT(0xE7000000, 0);

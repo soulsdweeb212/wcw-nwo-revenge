@@ -5,7 +5,11 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Gfx G; /* PC: a command is port.h's 16-byte Gfx */
+#else
 typedef struct { u32 w0, w1; } G;
+#endif
 typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } V;
 extern V *D_800E7CB4;
 extern u16 D_800C91FC[], D_800C91CC[], D_800C9252[];
@@ -18,7 +22,12 @@ void func_800B6FE0(G **, s32);
 void func_800A77C4(G **dl, s32 x, s32 y, s32 w, s32 h, s32 f, s32 mode) {
     G *g = *dl;
 
+#ifdef TARGET_PC
+    /* PC: the vertices' address as the whole pointer (port.h's DL_ADDR); osVirtualToPhysical returns a u32. */
+    EMIT(0x01004008, DL_ADDR(D_800E7CB4));
+#else
     EMIT(0x01004008, osVirtualToPhysical(D_800E7CB4));
+#endif
     switch (mode) {
     case 0x1001:
         VTX(-0x34, -0x1C, 0, 0, 0xFF);

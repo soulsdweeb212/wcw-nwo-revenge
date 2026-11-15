@@ -10,7 +10,13 @@ typedef struct { s32 x; s32 y; s32 page; s32 len; } Kb;
 extern Kb D_800E7BF0;
 extern s32 D_800E7BFC;
 extern u16 D_800EA0C0[];
+#ifdef TARGET_PC
+/* PC: D_800E9824 is D_800E8230[18].cur. The menus hold addresses, so they are common.h's Nw2Menu on PC, read by field
+ * name: the label has no PC symbol. */
+extern Nw2Menu D_800E8230[];
+#else
 extern s16 D_800E9824;
+#endif
 extern s32 D_800EA318;
 extern u8 D_8007E8C0[];
 extern u8 D_800CD838;
@@ -78,14 +84,22 @@ s32 func_800B20A4(void) {
             }
         } else if (D_800E7BF0.y == 6) {
             if (D_800E7BF0.x >= 9) {
+#ifdef TARGET_PC
+                D_800E8230[18].cur = 1; /* PC: by name (see above) */
+#else
                 D_800E9824 = 1;
+#endif
                 if (b2 & 0x8000) {
                     r = 0x200;
                 } else if (b2 & 0x4000) {
                     r = 0x200;
                 }
             } else {
+#ifdef TARGET_PC
+                D_800E8230[18].cur = 2; /* PC: by name (see above) */
+#else
                 D_800E9824 = 2;
+#endif
                 if (b2 & 0x8000) {
                     r = func_800B1F98(0x12);
                 } else if (b2 & 0x4000) {
@@ -93,7 +107,11 @@ s32 func_800B20A4(void) {
                 }
             }
         } else {
+#ifdef TARGET_PC
+            D_800E8230[18].cur = 0; /* PC: by name (see above) */
+#else
             D_800E9824 = 0;
+#endif
             if (b2 & 0x8000) {
                 func_800B1E88();
                 D_800EA318 = 0x408;

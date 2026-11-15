@@ -7,7 +7,11 @@
 
 typedef struct { s32 f0; u16 f4; u8 f6[4]; u16 fA; u8 fC[4]; } Ent;
 typedef struct { u8 pad0[8]; u16 f8; } Pl;
+#ifdef TARGET_PC
+typedef struct { u8 pad0[8]; u16 mode; u8 padA[0x30 - 0xA]; u32 f30; } Game;
+#else
 typedef struct { u8 pad0[8]; u16 mode; u8 padA[0x30 - 0xA]; Pl *f30; } Game;
+#endif
 typedef struct { s32 f0[4]; u8 pad10[0x60]; s32 f70[4]; } Cfg2;
 typedef struct { u8 pad0[0x688]; s32 ids[4]; } Cfg;
 
@@ -81,7 +85,11 @@ void func_800B3D58(void) {
         break;
     }
     if (D_8007EF30.mode & 0x8000) {
+#ifdef TARGET_PC
+        m = ((Nw2Cup *)SLOT_TO_PTR(D_8007EF30.f30))->f8;
+#else
         m = D_8007EF30.f30->f8;
+#endif
     } else {
         switch (D_8007EF30.mode & 0xF0) {
         case 0x20:

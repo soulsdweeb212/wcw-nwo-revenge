@@ -25,8 +25,20 @@ typedef struct {
     s32 ids[4];
 } Cfg;
 typedef struct { s32 f0[4]; u8 pad10[0x60]; s32 f70[4]; } Cfg2;
+#ifdef TARGET_PC
+/* PC: the menus and their elements hold addresses, so they are common.h's Nw2Menu and Nw2MenuEl, which these views
+ * follow (the asserts check). */
+typedef struct { u8 pad0[0xA]; u16 flags; u8 padC[sizeof(Nw2MenuEl) - 0xC]; } El;
+_Static_assert(offsetof(El, flags) == offsetof(Nw2MenuEl, fA) && sizeof(El) == sizeof(Nw2MenuEl),
+               "El must follow common.h's Nw2MenuEl");
+typedef struct { void *items; s16 cur; u8 pad6[0xE]; El *el; u8 pad20[sizeof(Nw2Menu) - 0x20]; } Menu;
+_Static_assert(offsetof(Menu, cur) == offsetof(Nw2Menu, cur) && offsetof(Menu, el) == offsetof(Nw2Menu, el) &&
+                   sizeof(Menu) == sizeof(Nw2Menu),
+               "Menu must follow common.h's Nw2Menu");
+#else
 typedef struct { u8 pad0[0xA]; u16 flags; u8 padC[0x148 - 0xC]; } El;
 typedef struct { void *items; s16 cur; u8 pad6[0xE]; El *el; u8 pad18[0x138 - 0x18]; } Menu;
+#endif
 
 extern Game D_8007EF30;
 extern Cfg D_8007E228;

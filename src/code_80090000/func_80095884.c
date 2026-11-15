@@ -17,17 +17,25 @@ typedef struct {
     u16 f8;
     u16 fA;
 } PartRec;
+#ifdef TARGET_PC
+/* PC: a piece of the scene's title (common.h's Nw2EncTitle), which holds no address: the same layout on both. */
+_Static_assert(sizeof(PartRec) == sizeof(Nw2EncTitle) && offsetof(PartRec, f2) == offsetof(Nw2EncTitle, logW) &&
+                   offsetof(PartRec, f4) == offsetof(Nw2EncTitle, x) &&
+                   offsetof(PartRec, fA) == offsetof(Nw2EncTitle, h),
+               "PartRec must follow Nw2EncTitle");
+#endif
 
 #ifdef TARGET_PC
 /* PC: the N64 code reaches its variables and constants through the names of overlay 2's functions at the same
  * addresses (func_800DB4FC + 0x18C and so on) and through the absolute address 0x800D6060. On PC those names are
  * overlay 2's code and that address is nothing, so the PC reads the labels that the asm loads: the menu state
- * D_800DB688, the address of the parts record D_800DB680, the address of the menu's picture pack D_800DB69C (a
- * pointer: func_800B64EC takes and returns u8 *), the f64 constants D_800D6050, D_800D6058 and D_800D6060, and the
- * display list D_800C9098 (updateEntityAttackState + 0x84). func_800B600C hands back the address of a cached
- * picture, which func_800953F4 takes as a pointer (its definition's Obj953 *). */
+ * D_800DB688, the address of the scene D_800DB680 (common.h's Nw2EncScene, read by field name: its title's address
+ * is at +0x18 on PC), the address of the menu's picture pack D_800DB69C (a pointer: func_800B64EC takes and returns
+ * u8 *), the f64 constants D_800D6050, D_800D6058 and D_800D6060, and the display list D_800C9098
+ * (updateEntityAttackState + 0x84). func_800B600C hands back the address of a cached picture, which func_800953F4
+ * takes as a pointer (its definition's Obj953 *). */
 extern s32 D_800DB688;
-extern u8 *D_800DB680;
+extern Nw2EncScene *D_800DB680;
 extern u8 *D_800DB69C;
 extern f64 D_800D6050;
 extern f64 D_800D6058;
@@ -44,9 +52,8 @@ extern f32 sinf(f32);
 extern f32 cosf(f32);
 #ifdef TARGET_PC
 /* PC: addresses as pointers: func_800B64EC takes and returns u8 * (its definition), func_800953F4 takes the picture
- * as a pointer (its definition's Obj953 *), and func_800B600C takes the address of a name (arg2 and arg3 below) and
- * returns the address of the cached picture. */
-extern void *func_800B600C(void *, s32);
+ * as a pointer (its definition's Obj953 *), and func_800B600C (port_decls.h) takes the name (arg2 and arg3 below) as
+ * a key of the resource-name cache (port.h's MENU_KEY_NAME) and returns that cache's entry for it. */
 extern u8 *func_800B64EC(u8 *, s32);
 extern void func_800953F4(Gfx **, void *, s32, s32, s32, s32);
 #else
@@ -112,6 +119,19 @@ static inline void drawTitle(Gfx **gdl, s32 alpha, s32 arg1, s32 arg2, s32 arg3,
 #else
     GG(0xDE000000, (u32)(updateEntityAttackState + 0x84));
 #endif
+#ifdef TARGET_PC
+    /* PC: the names' addresses as keys of the resource-name cache, as above. */
+    if (arg3 != 0) {
+        if (!big) {
+            func_800953F4(&g, func_800B600C(MENU_KEY_NAME(arg3), flags | 0x8000), x, y + 6, 0xC0, 0x10);
+        } else {
+            func_800953F4(&g, func_800B600C(MENU_KEY_NAME(arg3), flags), x, y + 6, 0xC0, 0xC);
+        }
+        func_800953F4(&g, func_800B600C(MENU_KEY_NAME(arg2), flags | 0x8000), x, y - 10, 0xC0, 0x10);
+    } else {
+        func_800953F4(&g, func_800B600C(MENU_KEY_NAME(arg2), flags | 0x8000), x, y, 0xC0, 0x18);
+    }
+#else
     if (arg3 != 0) {
         if (!big) {
             func_800953F4(&g, func_800B600C(arg3, flags | 0x8000), x, y + 6, 0xC0, 0x10);
@@ -122,6 +142,7 @@ static inline void drawTitle(Gfx **gdl, s32 alpha, s32 arg1, s32 arg2, s32 arg3,
     } else {
         func_800953F4(&g, func_800B600C(arg2, flags | 0x8000), x, y, 0xC0, 0x18);
     }
+#endif
     GG(0xE7000000, 0);
     *gdl = g;
 }
@@ -160,7 +181,11 @@ void func_80095884(Gfx **arg0, s32 arg1, s32 arg2, s32 arg3)
     if ((u32)gState >= 6) {
         return;
     }
+#ifdef TARGET_PC
+    rec = (PartRec *)gPartsHolder->title; /* PC: by field name, as above */
+#else
     rec = *(PartRec **)(gPartsHolder + 0x10);
+#endif
     switch (gState) {
     case 2:
     case 3:

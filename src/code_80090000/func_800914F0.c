@@ -51,6 +51,12 @@ extern Nw2Prt914 *D_800DB694;
 extern void *D_800DBD48;
 extern u8 func_800C61D8[];
 extern u8 D_800C6418[];
+#ifdef TARGET_PC
+/* PC: the four vertex lists this function copies from, by their own names as port.h's Vtx, so the PC turns their
+ * 16-bit values into its byte order: the N64 reaches them as func_800C61D8 (a label in overlay 1's data that shares
+ * an address with a function of overlay 2) + 0x38, + 0x138, + 0x238 and D_800C6418 + 0x38. */
+extern Vtx D_800C6210[], D_800C6310[], D_800C6410[], D_800C6450[];
+#endif
 
 /* Builds the vertex grid for a skinned part. Depending on the mode in
  * D_800DB688 it re-points the part at a canned control-point block and picks a
@@ -70,23 +76,39 @@ void func_800914F0(Nw2Obj914 *arg0, Nw2Rec914 *arg1, s32 arg2) {
     count = arg2;
     switch (D_800DB688) {
     case 3:
+#ifdef TARGET_PC
+        start = (Nw2Rec914 *)D_800C6210;
+#else
         start = (Nw2Rec914 *)(func_800C61D8 + 0x38);
+#endif
         count = 0xF;
         arg0->f1B = 4;
         break;
     case 1:
+#ifdef TARGET_PC
+        start = (Nw2Rec914 *)D_800C6310;
+#else
         start = (Nw2Rec914 *)(func_800C61D8 + 0x138);
+#endif
         count = 0xF;
         arg0->f1B = 4;
         break;
     case 4:
+#ifdef TARGET_PC
+        start = (Nw2Rec914 *)D_800C6410;
+#else
         start = (Nw2Rec914 *)(func_800C61D8 + 0x238);
+#endif
         count = 3;
         arg0->f1B = 4;
         break;
     case 5:
         count = 4;
+#ifdef TARGET_PC
+        start = (Nw2Rec914 *)D_800C6450;
+#else
         start = (Nw2Rec914 *)(D_800C6418 + 0x38);
+#endif
         arg0->f1B = 4;
         break;
     }

@@ -8,8 +8,16 @@
 extern u8 *D_800DCFB8;
 extern u8 D_8007EF30[], D_8007E8C0[];
 extern u16 D_800D2900, D_800D2902;
+#ifdef TARGET_PC
+/* PC: D_800DCFC4 holds the address of the controllers' message queue that func_8000424C returns (its definition
+ * returns an s32 *), which an s32 would cut in half. */
+extern s32 *D_800DCFC4;
+extern s32 D_800DCFBC;
+s32 *func_8000424C(void);
+#else
 extern s32 D_800DCFC4, D_800DCFBC;
 s32 func_8000424C(void);
+#endif
 s32 func_800B9640(u16, u16);
 void func_80004290(void);
 

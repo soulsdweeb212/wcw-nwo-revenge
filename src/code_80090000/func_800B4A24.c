@@ -6,9 +6,19 @@
 #include "common.h"
 
 extern s16 D_80038A90;
+#ifdef TARGET_PC
+/* PC: D_800E95C4 and D_800E95B4 are the el and cur of D_800E8230[16], D_800E96FC and D_800E96EC those of [17]; the
+ * offsets into the elements (0x148 bytes each on the N64) are their f22 (+0x22) and the flags fA (+0xA) of elements 12
+ * (+0xF6A) and 13 (+0x10B2). The menus and their elements hold addresses, so they are common.h's Nw2Menu and
+ * Nw2MenuEl on PC, read by field name: the labels have no PC symbol. */
+extern Nw2Menu D_800E8230[];
+#else
 extern u8 *D_800E95C4[], *D_800E96FC[];
+#endif
 extern u8 D_8007EF30[];
+#ifndef TARGET_PC /* on PC, the cur of D_800E8230[17] and [16] (see above) */
 extern s16 D_800E96EC, D_800E95B4;
+#endif
 extern s32 D_800EA0B8;
 extern s32 D_800DC830[], D_800DC840[], D_800EA098[];
 extern u16 D_800CD89C[];
@@ -18,7 +28,11 @@ s32 func_800B48CC(s32 k);
 #endif
 
 s32 func_800B4A24(void) {
+#ifdef TARGET_PC
+    Nw2MenuEl *p = D_800E8230[16].el; /* PC: by name (see above) */
+#else
     u8 *p = D_800E95C4[0];
+#endif
     s32 r, i, n;
     u16 f;
 
@@ -52,18 +66,32 @@ s32 func_800B4A24(void) {
         r = func_800B48CC(n);
         for (i = 0; i < 4; i++) {
             if (D_800EA098[i] >= 0) {
+#ifdef TARGET_PC
+                p[D_800EA098[i]].f22 = D_800CD89C[D_800DC830[D_800DC840[i]]]; /* PC: by name (see above) */
+#else
                 *(u16 *)(p + D_800EA098[i] * 0x148 + 0x22) = D_800CD89C[D_800DC830[D_800DC840[i]]];
+#endif
             }
         }
     } else {
         D_800EA0B8 = 0;
         r = func_800B48CC(0);
     }
+#ifdef TARGET_PC
+    /* PC: by name (see above) */
+    D_800E8230[17].cur = 0xA;
+    D_800E8230[16].cur = 0xA;
+    D_800E8230[16].el[12].fA |= 1;
+    D_800E8230[16].el[13].fA |= 1;
+    D_800E8230[17].el[12].fA |= 1;
+    D_800E8230[17].el[13].fA |= 1;
+#else
     D_800E96EC = 0xA;
     D_800E95B4 = 0xA;
     *(u16 *)(D_800E95C4[0] + 0xF6A) |= 1;
     *(u16 *)(D_800E95C4[0] + 0x10B2) |= 1;
     *(u16 *)(D_800E96FC[0] + 0xF6A) |= 1;
     *(u16 *)(D_800E96FC[0] + 0x10B2) |= 1;
+#endif
     return r;
 }

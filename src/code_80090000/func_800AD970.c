@@ -5,8 +5,18 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: A is a menu and R one of its elements, which hold addresses, so they are common.h's Nw2Menu and Nw2MenuEl,
+ * which these views follow (the asserts check): the element list's address before i is 8 bytes on PC. */
+typedef struct { u8 pad[0xA]; u16 f; u8 pad2[sizeof(Nw2MenuEl) - 0xC]; } R;
+typedef struct { void *items; s16 i; u8 pad2[0xE]; R *r; } A;
+_Static_assert(offsetof(R, f) == offsetof(Nw2MenuEl, fA) && sizeof(R) == sizeof(Nw2MenuEl) &&
+                   offsetof(A, i) == offsetof(Nw2Menu, cur) && offsetof(A, r) == offsetof(Nw2Menu, el),
+               "R and A must follow common.h's Nw2MenuEl and Nw2Menu");
+#else
 typedef struct { u8 pad[0xA]; u16 f; u8 pad2[0x13C]; } R;
 typedef struct { u8 pad[4]; s16 i; u8 pad2[0xE]; R *r; } A;
+#endif
 extern struct { u8 pad[8]; u16 b; } D_8007EF30;
 extern s32 D_800D5F1C;
 s16 func_800AAB64(A *, s32);

@@ -5,22 +5,42 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: the menus and their elements hold addresses, so they are common.h's Nw2Menu and Nw2MenuEl, which El follows
+ * (the assert checks). D_800E948C is D_800E8230[15].el and D_800E947C D_800E8230[15].cur: the labels have no PC
+ * symbol, and the PC reads the menu by field name. */
+typedef struct { u8 pad0[0xA]; u16 flags; u8 padC[0x14]; u16 f20; u16 f22; u8 pad24[sizeof(Nw2MenuEl) - 0x24]; } El;
+_Static_assert(offsetof(El, flags) == offsetof(Nw2MenuEl, fA) && offsetof(El, f20) == offsetof(Nw2MenuEl, f20) &&
+                   offsetof(El, f22) == offsetof(Nw2MenuEl, f22) && sizeof(El) == sizeof(Nw2MenuEl),
+               "El must follow common.h's Nw2MenuEl");
+#else
 typedef struct { u8 pad0[0xA]; u16 flags; u8 padC[0x14]; u16 f20; u16 f22; u8 pad24[0x148 - 0x24]; } El;
+#endif
 typedef struct { s32 w[11]; } Ent;
 typedef struct { u8 on; u8 pad1[0x17]; } Slot;
 typedef struct { u8 pad0[0x628]; Slot slot[4]; } Cfg;
 
+#ifdef TARGET_PC
+extern Nw2Menu D_800E8230[];
+#else
 extern El *D_800E948C;
+#endif
 extern Ent D_800EA220[];
 extern struct { u8 pad0[8]; u16 mode; } D_8007EF30;
 extern u16 D_800CD83C[][8];
 extern s32 D_8007E8C0[];
 extern Cfg D_8007E228;
+#ifndef TARGET_PC /* on PC, D_800E8230[15].cur (see above) */
 extern s16 D_800E947C;
+#endif
 void func_800B19A0(void);
 
 void func_800B2588(void) {
+#ifdef TARGET_PC
+    El *e = (El *)D_800E8230[15].el; /* PC: by name (see above) */
+#else
     El *e = D_800E948C;
+#endif
     u16 *t;
     s32 i, j, k, b;
     u16 m;
@@ -60,7 +80,11 @@ void func_800B2588(void) {
     for (j = 10; j < 0x12; j++, t++) {
         e[j].f20 = *t;
     }
+#ifdef TARGET_PC
+    e = (El *)D_800E8230[15].el; /* PC: by name (see above) */
+#else
     e = D_800E948C;
+#endif
     m = D_8007EF30.mode;
     if (m & 0x800) {
         if (!(m & 0x20)) {
@@ -149,5 +173,9 @@ skip:
         }
         e[9].flags &= ~1;
     }
+#ifdef TARGET_PC
+    D_800E8230[15].cur = 0x12; /* PC: by name (see above) */
+#else
     D_800E947C = 0x12;
+#endif
 }

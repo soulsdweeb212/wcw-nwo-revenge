@@ -11,11 +11,14 @@ extern u8 D_800C5D48[];
  * buffer and advances the cursor. */
 #ifdef TARGET_PC
 /* PC: a command is port.h's 16-byte Gfx, as its callers' lists are, and the display list at 0x800C5D90 goes into it
- * as the whole pointer (port.h's DL_ADDR); the N64 writes two u32 words, the second the 32-bit address. */
+ * as the whole pointer (port.h's DL_ADDR); the N64 writes two u32 words, the second the 32-bit address. The N64 code
+ * reaches that list as D_800C5D48 + 0x48 (D_800C5D48 is the last two commands of D_800C5D10); on PC the lists are
+ * copies made of 16-byte commands, where that sum lands in the middle of one, so the PC names the list. */
+extern u8 D_800C5D90[];
 void func_80091244(Gfx **arg0) {
     Gfx *p = *arg0;
     p->w0 = 0xDE000000;
-    p->w1 = DL_ADDR(D_800C5D48 + 0x48);
+    p->w1 = DL_ADDR(D_800C5D90);
     *arg0 = p + 1;
 }
 #else

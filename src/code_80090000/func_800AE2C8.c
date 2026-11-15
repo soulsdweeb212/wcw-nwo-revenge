@@ -5,31 +5,67 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: the menus and their elements hold addresses, so they are common.h's Nw2Menu and Nw2MenuEl, which these views
+ * follow (the asserts check). */
+typedef struct {
+    u8 pad0[0xA];
+    u16 flags;
+    u8 fC;
+    u8 fD;
+    s8 fE;
+    u8 padF;
+    s16 f10;
+    u8 pad12[sizeof(Nw2MenuEl) - 0x12];
+} El;
+_Static_assert(offsetof(El, flags) == offsetof(Nw2MenuEl, fA) && offsetof(El, fE) == offsetof(Nw2MenuEl, fE) &&
+                   offsetof(El, f10) == offsetof(Nw2MenuEl, f10) && sizeof(El) == sizeof(Nw2MenuEl),
+               "El must follow common.h's Nw2MenuEl");
+typedef struct { void *items; s16 cur; u8 pad6[0xE]; El *el; u8 pad20[sizeof(Nw2Menu) - 0x20]; } Menu;
+_Static_assert(offsetof(Menu, cur) == offsetof(Nw2Menu, cur) && offsetof(Menu, el) == offsetof(Nw2Menu, el) &&
+                   sizeof(Menu) == sizeof(Nw2Menu),
+               "Menu must follow common.h's Nw2Menu");
+#else
 typedef struct { u8 pad0[0xA]; u16 flags; u8 fC; u8 fD; s8 fE; u8 padF; s16 f10; u8 pad12[0x148 - 0x12]; } El;
 typedef struct { void *items; s16 cur; u8 pad6[0xE]; El *el; u8 pad18[0x138 - 0x18]; } Menu;
+#endif
 typedef struct {
     u8 pad0[8];
     u16 mode;
     u8 padA[0x26];
+#ifdef TARGET_PC
+    u32 p30; /* PC: the cup's handle: D_8007EF30 keeps its N64 layout */
+#else
     u8 *p30;
+#endif
     u8 pad34[0x16C];
     u8 b[11];
 } Game;
 
 extern Game D_8007EF30;
 extern Menu D_800E8230[];
+#ifndef TARGET_PC /* on PC the label D_800E8FAC has no symbol: it is D_800E8230[11].el, by name */
 extern El *D_800E8FAC; /* D_800E8230[11].el, by its own name in the inlined func_800AE1E4 */
+#endif
 void func_800A8EF0(s32);
 s16 func_800A06F8(El *, s8);
 
 /* func_800AE1E4, inlined (it is a separate function too) */
 static inline void setup(void) {
     u16 f = D_8007EF30.mode;
+#ifdef TARGET_PC
+    El *p = D_800E8230[11].el; /* PC: by name (see the declarations) */
+#else
     El *p = D_800E8FAC;
+#endif
     s32 a;
 
     if (f & 0x8000) {
+#ifdef TARGET_PC
+        a = ((Nw2Cup *)SLOT_TO_PTR(D_8007EF30.p30))->id;
+#else
         a = *D_8007EF30.p30;
+#endif
         a += 2;
     } else if (f & 0x80) {
         a = 8;

@@ -1077,6 +1077,10 @@ class Decomp:
         self._check_choices()
         self._read_asm_data()
         self._read_overlay2_data()
+        self.ovl1_data: list[tuple[int, int]] = []   # overlay 1's data blocks: (first address, end)
+        # main's data: from its first piece of data to its BSS (build.json's segment "main")
+        main = next(sg for sg in self.build["segments"] if sg["name"] == "main")
+        self.main_data = (min(pc["vram"] for pc in main["pieces"]), main["bss_vram"])
         if self.with_overlay1:
             self._read_overlay1_data()
 
@@ -1305,6 +1309,7 @@ class Decomp:
                 raise InputError(f"{s['incbin']}: missing (build.py's first run extracts it from your ROM)")
             blob = self.read_bytes(path)
             base, end = s["vram"], s["vram"] + len(blob)
+            self.ovl1_data.append((base, end))
             labels = sorted((a, n) for n, a in self.symbols.items() if base <= a < end and n not in self.func_src)
             data_at = {a: n for a, n in labels}
             li = 0
@@ -1457,6 +1462,14 @@ class Decomp:
                 return Target("data" if self.with_overlay1 else "code-middle", None, name)
             return Target("main-code-area" if seg else "data", None, name)
         if name in self.asm_labels:
+            return Target("data", None, name)
+        if re.fullmatch(r"D_[0-9A-F]{8}", name) and (
+                (area == "overlay 1" and any(lo <= int(name[2:], 16) < hi for lo, hi in self.ovl1_data))
+                or self.main_data[0] <= int(name[2:], 16) < self.main_data[1]):
+            # A place in data the ROM fills that has no label of its own: overlay 1's data is one block of the ROM
+            # (assets/72240.bin) without splat's labels inside it, and PC code names a place inside one of main's
+            # labelled blocks by its own address where the N64 code reaches it from another label (the overlay table's
+            # entries, D_80036E30 inside D_80036E1C's block). port_data.py reads the address from the name.
             return Target("data", None, name)
         if name in self.header_funcs:
             return Target("inline", None, name)

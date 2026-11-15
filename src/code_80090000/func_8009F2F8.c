@@ -11,9 +11,27 @@ typedef Gfx G;
 #else
 typedef struct { u32 w0, w1; } G;
 #endif
+#ifdef TARGET_PC
+/* PC: the requests and their picture lists are common.h's Nw2ResourceRequest, Nw2MenuPicList and Nw2MenuPic, which hold
+ * addresses and a MenuKey (port.h), so they are larger than on the N64. Q, P and E keep this file's field names and
+ * follow those types, as the asserts check; D_800E7518 holds the requests' address (port_decls.h). */
+typedef struct { MenuKey f0; s16 x; s16 y; s32 f8; } Q;
+typedef struct { Q *list; u32 n; } P;
+typedef struct { P *p; s16 t; u16 f6; s32 f8; } E;
+_Static_assert(sizeof(Q) == sizeof(Nw2MenuPic) && offsetof(Q, x) == offsetof(Nw2MenuPic, x) &&
+                   offsetof(Q, f8) == offsetof(Nw2MenuPic, match),
+               "Q must follow Nw2MenuPic");
+_Static_assert(sizeof(P) == sizeof(Nw2MenuPicList) && offsetof(P, n) == offsetof(Nw2MenuPicList, count),
+               "P must follow Nw2MenuPicList");
+_Static_assert(sizeof(E) == sizeof(Nw2ResourceRequest) && offsetof(E, t) == offsetof(Nw2ResourceRequest, amount) &&
+                   offsetof(E, f6) == offsetof(Nw2ResourceRequest, flags) &&
+                   offsetof(E, f8) == offsetof(Nw2ResourceRequest, active),
+               "E must follow Nw2ResourceRequest");
+#else
 typedef struct { u32 f0; s32 f4; s32 f8; } Q;
 typedef struct { Q *list; u32 n; } P;
 typedef struct { P *p; s16 t; u16 f6; s32 f8; } E;
+#endif
 
 #ifdef TARGET_PC
 /* PC: D_800DC660 and D_800DC66C are labels of the scene object D_800DC650 (its display list at +0x10 and its matrices
@@ -27,7 +45,9 @@ extern G *D_800DC660;
 extern u8 D_800DC66C[];
 extern u8 D_C9538[];
 #endif
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800E7518 */
 extern E *D_800E7518;
+#endif
 extern s32 D_800E8208, D_800E7BEC, D_800D5F28, D_800DBD64;
 extern u8 D_800E7BEF;
 extern struct { u8 pad0[8]; u16 mode; } D_8007EF30;
@@ -38,7 +58,13 @@ void func_80098C40(G **, P *, s32, s32);
 s32 func_800AA05C(s32);
 s32 func_800AA0D8(s32);
 u8 *func_800AA070(s32);
+#ifdef TARGET_PC
+/* PC: func_80028D18's keys are a name's address and a number here, so as wide as a pointer: the declaration its PC
+ * definition must have (lookupPlayerNameById.c says why; its definition still takes s32 keys). */
+u8 *func_80028D18(uintptr_t, uintptr_t);
+#else
 u8 *func_80028D18(u8 *, s32);
+#endif
 u8 *func_80028B5C(u8 *, u8 *);
 void func_80095884(G **, s32, u8 *, u8 *);
 void emitFullscreenOverlay99908(G **, s32);
@@ -60,7 +86,11 @@ static inline u8 *teamName(u8 *name) {
     if (*name == 0) {
         return D_800C9530;
     }
+#ifdef TARGET_PC
+    t = func_80028D18((uintptr_t)name, 3); /* PC: the name's address as the key, as above */
+#else
     t = func_80028D18(name, 3);
+#endif
     if (t == 0) {
         return D_800C9530;
     }
@@ -101,7 +131,11 @@ void func_8009F2F8(G **dl, s32 v) {
     } else if (v < 0) {
         fade(&g, v);
     }
+#ifdef TARGET_PC
+    e = (E *)D_800E7518; /* PC: the requests through this file's view, as above */
+#else
     e = D_800E7518;
+#endif
     for (i = 0; i < 0x60; i++, e++) {
         if (e->p != 0) {
             if (e->t > 0) {
@@ -126,7 +160,12 @@ void func_8009F2F8(G **dl, s32 v) {
                     p = e->p;
                     q = p->list;
                     for (j = 0; j < p->n; j++, q++) {
+#ifdef TARGET_PC
+                        /* PC: a key of the resource-name cache, or a tagged number (port.h's MenuKey). */
+                        if (MENU_KEY_IS_RES(q->f0) || (q->f0 & 0xF0000000)) {
+#else
                         if (q->f0 & 0xF0000000) {
+#endif
                             q->f8 = 0;
                             q->f0 = 0;
                         }

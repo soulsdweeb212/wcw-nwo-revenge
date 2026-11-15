@@ -13,11 +13,12 @@ typedef struct {
 
 #ifdef TARGET_PC
 /* PC: the display list at 0x800C95F0 by its own address (port.h's DL_ADDR turns it into the command word; D_C95F0 is
- * its N64 physical address, a link constant). func_800B6F88 hands back the texture's and the palette's addresses
- * through pointers to pointers (its definition takes u8 **), and buildTiledTextureDisplayList takes the texture as a
- * pointer (its PC definition). */
+ * its N64 physical address, a link constant). func_800B6F88 takes the picture's key as a MenuKey (port.h: id is a
+ * resource id, a number as on the N64), returns the picture's address and hands back the texture's and the palette's
+ * addresses through pointers to pointers (its definition takes u8 **), and buildTiledTextureDisplayList takes the
+ * texture as a pointer (its PC definition). */
 extern u8 D_800C95F0[];
-Nw2Tex97E1C *func_800B6F88(s32, u8 **, u8 **);
+u8 *func_800B6F88(MenuKey, u8 **, u8 **);
 void buildTiledTextureDisplayList(void **, void *, s32, s32, s32, s32, s32, s32, s32, s32);
 #else
 extern u8 D_C95F0[];
@@ -40,7 +41,7 @@ void func_80097E1C(void **out, s32 id, s32 x, s32 y, s32 alpha, s32 flags, s32 m
     s32 h;
 
     p = *out;
-    tex = func_800B6F88(id, &sp28, &sp2C);
+    tex = (Nw2Tex97E1C *)func_800B6F88((MenuKey)id, &sp28, &sp2C);
     if (tex != NULL) {
         if (alpha != 0) {
             { Gfx *q = p; p = q + 1; q->w0 = 0xDE000000; q->w1 = DL_ADDR(D_800C95F0); }

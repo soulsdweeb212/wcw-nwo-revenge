@@ -9,6 +9,30 @@ extern s32 D_800E8210;
 extern s32 D_800E74C4;
 extern f32 D_800E7504;
 extern s32 D_800DBD40;
+#ifdef TARGET_PC
+/* PC: the N64 reads the address of the current scene (common.h's Nw2EncScene) at D_800DB4FC + 0x184, which is the
+ * label D_800DB680; on PC no label lies inside another variable, so the PC reads D_800DB680 and the scene's phase
+ * lists by name. The records of D_800DB8C0 are encounters (common.h's Nw2Encounter), whose spot, scene object and
+ * picture shape are pointers on PC, so the fields after them move; this view follows that struct, as the assert
+ * checks. The scene object keeps its N64 layout (Nw2SceneObj), so its world matrix is at +0x5C on both. */
+extern Nw2EncScene *D_800DB680;
+
+typedef struct {
+    void *ent;
+    void *node;
+    void *shape;
+    u16 kind;
+    u16 off;
+    s16 phase;
+    u8 padx[6];
+} Nw2Rec940D8;
+_Static_assert(sizeof(Nw2Rec940D8) == sizeof(Nw2Encounter) &&
+                   offsetof(Nw2Rec940D8, node) == offsetof(Nw2Encounter, obj) &&
+                   offsetof(Nw2Rec940D8, kind) == offsetof(Nw2Encounter, kind) &&
+                   offsetof(Nw2Rec940D8, off) == offsetof(Nw2Encounter, off) &&
+                   offsetof(Nw2Rec940D8, phase) == offsetof(Nw2Encounter, frames),
+               "Nw2Rec940D8 must follow Nw2Encounter");
+#else
 extern u8 D_800DB4FC[];
 
 typedef struct {
@@ -20,6 +44,7 @@ typedef struct {
     s16 phase;
     u8 padx[6];
 } Nw2Rec940D8;
+#endif
 extern Nw2Rec940D8 D_800DB8C0[];
 
 void func_800B82B8(void *, void *, void *, void *, void *, void *);
@@ -61,7 +86,11 @@ void func_800940D8(void) {
     p = D_800DB8C0;
     func_800B82B8(&buf[0], &buf[1], &buf[2], &buf[3], &buf[4], &buf[5]);
     if (D_800E8210 >= 0) {
+#ifdef TARGET_PC
+        s0 = D_800DB680->phases[D_800E8210]; /* PC: by name, as above */
+#else
         s0 = *(u16 **)(*(u8 **)(D_800DB4FC + 0x184) + D_800E8210 * 4 + 0x1C);
+#endif
     }
     for (i = 0; i < D_800DBD40; i++, p++) {
         ent = p->ent;

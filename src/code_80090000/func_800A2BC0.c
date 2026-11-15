@@ -5,9 +5,26 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Gfx G; /* PC: a command is port.h's 16-byte Gfx */
+#else
 typedef struct { u32 w0, w1; } G;
+#endif
 typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } V;
+#ifdef TARGET_PC
+/* PC: r is the picture that func_800B600C hands back (func_800A3500, func_800A6498), an entry of the resource-name
+ * cache: img is its allocation, the texture, and width, height and h are the 16-bit sizes at +4, +6 and +8 of
+ * reserved, which the N64 reads at +0xC, +0xE and +0x10. On PC the entry is common.h's Nw2ResourceEntryHashed, so Spr
+ * follows it, with the texture as a pointer. */
+typedef struct { u8 pad0[8]; void *img; u8 pad10[4]; s16 width; s16 height; s16 h; } Spr;
+_Static_assert(offsetof(Spr, img) == offsetof(Nw2ResourceEntryHashed, allocation) &&
+                   offsetof(Spr, width) == offsetof(Nw2ResourceEntryHashed, reserved) + 4 &&
+                   offsetof(Spr, height) == offsetof(Nw2ResourceEntryHashed, reserved) + 6 &&
+                   offsetof(Spr, h) == offsetof(Nw2ResourceEntryHashed, reserved) + 8,
+               "Spr must follow Nw2ResourceEntryHashed");
+#else
 typedef struct { u8 pad0[4]; u32 img; u8 pad8[4]; s16 width; s16 height; s16 h; } Spr;
+#endif
 
 extern V *D_800E7CB4;
 u32 osVirtualToPhysical(V *);
@@ -17,10 +34,19 @@ void appendPaletteSetupDisplayList(G **);
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
+#ifdef TARGET_PC
+/* PC: the texture's address goes into the command as the whole pointer: the calls below pass DL_ADDR(r->img), which
+ * an unsigned int would cut to 32 bits. */
+#define gSetImage(pkt, cmd, fmt, siz, width, i) \
+{ G *_g = (G *)(pkt); \
+  _g->w0 = _SHIFTL(cmd, 24, 8) | _SHIFTL(fmt, 21, 3) | _SHIFTL(siz, 19, 2) | _SHIFTL((width) - 1, 0, 12); \
+  _g->w1 = (uintptr_t)(i); }
+#else
 #define gSetImage(pkt, cmd, fmt, siz, width, i) \
 { G *_g = (G *)(pkt); \
   _g->w0 = _SHIFTL(cmd, 24, 8) | _SHIFTL(fmt, 21, 3) | _SHIFTL(siz, 19, 2) | _SHIFTL((width) - 1, 0, 12); \
   _g->w1 = (unsigned int)(i); }
+#endif
 #define gDPSetTextureImage(pkt, f, s, w, i) gSetImage(pkt, 0xFD, f, s, w, i)
 #define gDPSetTile(pkt, fmt, siz, line, tmem, tile, palette, cmt, maskt, shiftt, cms, masks, shifts) \
 { G *_g = (G *)(pkt); \
@@ -66,7 +92,12 @@ void appendPaletteSetupDisplayList(G **);
   gDPSetTileSize(pkt, 0, (uls) << 2, (ult) << 2, (lrs) << 2, (lrt) << 2); \
 }
 
+#ifdef TARGET_PC
+/* PC: the vertices' address as the whole pointer (port.h's DL_ADDR); osVirtualToPhysical returns a u32. */
+#define SPVERTEX(g, v, n, v0) { G *_g = (g); _g->w0 = _SHIFTL(1, 24, 8) | _SHIFTL((n), 12, 8) | _SHIFTL((v0) + (n), 1, 7); _g->w1 = DL_ADDR(v); }
+#else
 #define SPVERTEX(g, v, n, v0) { G *_g = (g); _g->w0 = _SHIFTL(1, 24, 8) | _SHIFTL((n), 12, 8) | _SHIFTL((v0) + (n), 1, 7); _g->w1 = osVirtualToPhysical(v); }
+#endif
 #define TRI_W1(v0, v1, v2) (_SHIFTL((v0) * 2, 16, 8) | _SHIFTL((v1) * 2, 8, 8) | _SHIFTL((v2) * 2, 0, 8))
 #define SP2TRI(g, a0, a1, a2, b0, b1, b2) { G *_g = (g); _g->w0 = (_SHIFTL(7, 24, 8) | TRI_W1(a0, a1, a2)); _g->w1 = TRI_W1(b0, b1, b2); }
 #define VTX(X, Y, S, T) { V *v = D_800E7CB4++; v->ob[0] = (X); v->ob[1] = (Y); v->ob[2] = 0; v->flag = 0; v->tc[0] = (S); v->tc[1] = (T); v->cn[0] = 0xFF; v->cn[1] = 0xFF; v->cn[2] = 0xFF; v->cn[3] = 0xFF; }
@@ -92,9 +123,16 @@ void func_800A2BC0(G **dl, Spr *r, s32 *x, s32 *y, s32 n, s32 h) {
         VTX(x[2], y[2], 0, 0x1C0);
         VTX(x1, y1, 0x2000, 0x1C0);
         VTX(x[3], y[3], w << 5, 0x1C0);
+#ifdef TARGET_PC
+        /* PC: the texture's address as the whole pointer (port.h's DL_ADDR). */
+        gDPLoadTextureTile_4b(g++, DL_ADDR(r->img), 2, r->width, r->height, 0, 0, 0x100, 14, 0, 0, 0, 0, 0, 0, 0);
+        SP2TRI(g++, n, n + 1, n + 4, n, n + 4, n + 3);
+        gDPLoadTextureTile_4b(g++, DL_ADDR(r->img), 2, r->width, r->height, 0x100, 0, r->width, 14, 0, 0, 0, 0, 0, 0, 0);
+#else
         gDPLoadTextureTile_4b(g++, r->img, 2, r->width, r->height, 0, 0, 0x100, 14, 0, 0, 0, 0, 0, 0, 0);
         SP2TRI(g++, n, n + 1, n + 4, n, n + 4, n + 3);
         gDPLoadTextureTile_4b(g++, r->img, 2, r->width, r->height, 0x100, 0, r->width, 14, 0, 0, 0, 0, 0, 0, 0);
+#endif
         SP2TRI(g++, n + 1, n + 2, n + 5, n + 1, n + 5, n + 4);
     } else {
         SPVERTEX(g++, D_800E7CB4, 4, n);
@@ -102,7 +140,12 @@ void func_800A2BC0(G **dl, Spr *r, s32 *x, s32 *y, s32 n, s32 h) {
         VTX(x[1], y[1], w << 5, 0);
         VTX(x[2], y[2], 0, 0x1C0);
         VTX(x[3], y[3], w << 5, 0x1C0);
+#ifdef TARGET_PC
+        /* PC: as above. */
+        gDPLoadTextureBlock_4b(g++, DL_ADDR(r->img), 2, r->width, r->height, 0, 0, 0, 0, 0, 0, 0);
+#else
         gDPLoadTextureBlock_4b(g++, r->img, 2, r->width, r->height, 0, 0, 0, 0, 0, 0, 0);
+#endif
         SP2TRI(g++, n, n + 1, n + 3, n, n + 3, n + 2);
     }
     *dl = g;

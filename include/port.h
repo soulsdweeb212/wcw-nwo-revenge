@@ -101,6 +101,19 @@ typedef struct Gfx {
     uintptr_t w1;
 } Gfx;
 _Static_assert(sizeof(Gfx) == 16, "Gfx must be 16 bytes, like LUS's Gfx on a 64-bit PC");
+
+/* Vtx: one vertex as a display list loads it (G_VTX), PC only. 16 bytes, laid out as on the N64 and as LUS's Vtx_t:
+ * x, y, z, a flag, the texture coordinates s and t, then four bytes of colour (or a normal) and alpha. The PC keeps
+ * the 16-bit values in its own byte order, the order LUS reads them in. The vertices in the ROM's data that game files
+ * name (overlay 1's D_800C5AD0) are declared with this type on PC, which tells tools/port_data.py the width of each of
+ * their bytes. */
+typedef struct Vtx {
+    s16 ob[3];
+    u16 flag;
+    s16 tc[2];
+    u8 cn[4];
+} Vtx;
+_Static_assert(sizeof(Vtx) == 16, "Vtx must be 16 bytes, as on the N64");
 #endif
 
 /* DL_ADDR(p): the address of display-list data (another display list, vertices, a texture) as it is written into a
@@ -203,6 +216,16 @@ void port_res_loaded(u32 id, void *buf, s32 size);
 void *port_heap_alloc(u32 bytes);
 void port_heap_free(void *block);
 
+/* The overlays on PC, implemented by the port. The boot loop (func_80013108) loads one overlay at a time with
+ * func_80000700, from an entry of the overlay table D_80036E30 (the ROM range of the overlay's code and data, its
+ * address, and the ranges of its code, data and BSS), and then calls its entry with func_8000082C. On PC both
+ * overlays' code is compiled into the program, so loading one only starts its variables afresh, as the N64's copy of
+ * its data from the ROM and the zeroing of its BSS do. port_overlay_of gives the overlay (1 or 2) whose code and data
+ * the ROM holds from rom_start to rom_end; any other range stops the program. port_overlay_load starts the variables
+ * of that overlay. */
+s32 port_overlay_of(RomAddr rom_start, RomAddr rom_end);
+void port_overlay_load(s32 overlay);
+
 /* The frame hand-off on PC, implemented by the port. On the N64 the game thread hands each frame to the render thread
  * (func_80002CC4) through two message queues and waits for its answer: func_80002BC0 hands over a frame to draw,
  * func_80002C0C asks for nothing, func_80002C74 waits for the next retrace. On PC the three call port_present instead,
@@ -268,6 +291,46 @@ static inline ResKey port_res_key_name(const void *name) {
     return (ResKey)name;
 }
 #define RES_KEY_NAME(p) port_res_key_name((const void *)(p))
+
+/* ---- PC only: the menus' picture keys ----
+ * Overlay 1 (the menus) finds its pictures in two caches by a key that is a number or an address in one 32-bit word:
+ * - D_800E6BA0 (func_800B600C): a resource id (1 to 0x1DE9), -1 for none, or a key of the resource-name cache: a
+ *   name's address, or a resource id tagged 0xC0000000. The N64 tells them apart by the sign: an N64 address, and the
+ *   tag, are negative as an s32.
+ * - D_800E7CE0 (func_80099148, findOrAddCacheEntryRaw): a number (a resource id or a code, which gets the tag
+ *   0x10000000 when its top four bits are 0) or such a key of the resource-name cache.
+ * On PC the key is a MenuKey, as wide as a pointer. A number stays below 0x40000000, as on the N64. A key of the
+ * resource-name cache is a ResKey: a name's address (MENU_KEY_NAME) or RES_KEY_ID (bit 62). Both are 0x40000000 or
+ * more: a 64-bit PC program's data lies above 4 GiB on the systems the port runs on (position-independent executables
+ * on Linux, any program on macOS, and the default image base and heap of 64-bit Windows programs), and
+ * MENU_KEY_NAME stops the program on a name's address below 0x40000000, rather than take it for a number.
+ * -1 (none) is (MenuKey)-1, which counts as a key of the resource-name cache, as it is negative on the N64.
+ * - MENU_KEY_IS_RES(k): whether key k is a key of the resource-name cache, or -1 (N64: (s32)k < 0).
+ * - MENU_KEY_NAME(p): the key of the name at p (N64: (s32)p).
+ * - MENU_KEY_ID(id): the key of resource id in the resource-name cache (N64: id | 0xC0000000). */
+typedef uintptr_t MenuKey;
+#define MENU_KEY_NUMBER_END 0x40000000u
+#define MENU_KEY_IS_RES(k) ((MenuKey)(k) >= MENU_KEY_NUMBER_END)
+#define MENU_KEY_ID(id) ((MenuKey)RES_KEY_ID(id))
+static inline MenuKey port_menu_key_name(const void *name) {
+    if ((MenuKey)name < MENU_KEY_NUMBER_END || ((MenuKey)name & RES_KEY_ID_TAG)) {
+        port_fatal("MENU_KEY_NAME: the name at %p could be taken for a number or an id (docs/port.md)", name);
+    }
+    return (MenuKey)name;
+}
+#define MENU_KEY_NAME(p) port_menu_key_name((const void *)(p))
+
+/* ---- PC only: a word that holds a number or an address ----
+ * Some records of the ROM's data hold, in one 32-bit word, either a number (0 or more as an s32: a resource id) or the
+ * address of data (negative as an s32, as every N64 address is), and the code tells them apart by the sign (overlay
+ * 1's scene records D_800D4ED8, +0xC to +0x18). On PC such a word is an IdOrAddr, as wide as a pointer: a number stays
+ * as it is, below 0x80000000; an address is the PC's address of the data, 0x80000000 or more on the systems the port
+ * runs on (see MenuKey), which the port checks when it fills the records (tools/port_data.py's IdOr). -1 stays -1 (all
+ * ones), so a comparison with -1 holds as on the N64, and ID_OR_ADDR_IS_ADDR(-1) is true as (s32)-1 < 0 is: code
+ * that tests for -1 must do it first, as the N64 code must.
+ * - ID_OR_ADDR_IS_ADDR(w): whether w holds an address (N64: (s32)w < 0). */
+typedef uintptr_t IdOrAddr;
+#define ID_OR_ADDR_IS_ADDR(w) ((IdOrAddr)(w) >= 0x80000000u)
 
 /* ---- PC only: SDK functions the port replaces ----
  * Each name is renamed in every game file: calls, declarations and the game's own definitions alike (src/main/sinf.c

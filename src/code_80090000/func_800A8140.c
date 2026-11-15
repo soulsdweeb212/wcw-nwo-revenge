@@ -6,12 +6,27 @@
 #include "common.h"
 
 typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } V;
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx, which func_800B75D4 also writes on PC, and the vertices' address goes into
+ * its command as the whole pointer (port.h's DL_ADDR); osVirtualToPhysical returns a u32. func_800A9F30 returns the
+ * address of a name (its PC definition), which func_800B75D4 takes as a key of the resource-name cache (port_decls.h;
+ * port.h's MENU_KEY_NAME). T is the cache's entry that it returns, common.h's Nw2ResourceEntryHashed: h and w, at +0xE
+ * and +0x10 on the N64, are reserved's +6 and +8 there, as the assert checks. */
+typedef Gfx G;
+typedef struct { u8 pad[0x16]; s16 h; s16 w; } T;
+_Static_assert(offsetof(T, h) == offsetof(Nw2ResourceEntryHashed, reserved) + 6 &&
+                   offsetof(T, w) == offsetof(Nw2ResourceEntryHashed, reserved) + 8,
+               "T must follow the PC layout of Nw2ResourceEntryHashed");
+extern V *D_800E7CB4;
+u8 *func_800A9F30(s32);
+#else
 typedef struct { u32 w0, w1; } G;
 typedef struct { u8 pad[0xE]; s16 h; s16 w; } T;
 extern V *D_800E7CB4;
 u32 osVirtualToPhysical(V *);
 s32 func_800A9F30(s32);
 T *func_800B75D4(G **, s32, s32);
+#endif
 
 void func_800A8140(G **dl, s32 k, s32 a, s32 b) {
     G *g = *dl;
@@ -24,7 +39,11 @@ void func_800A8140(G **dl, s32 k, s32 a, s32 b) {
     r = g++;
     r->w0 = 0xE7000000;
     r->w1 = 0;
+#ifdef TARGET_PC
+    t = func_800B75D4(&g, MENU_KEY_NAME(func_800A9F30(k)), 8); /* PC: the name's address as the key, as above */
+#else
     t = func_800B75D4(&g, func_800A9F30(k), 8);
+#endif
     if (t != 0) {
         n = 0x40;
         if (t->w < 0x40) {
@@ -37,7 +56,11 @@ void func_800A8140(G **dl, s32 k, s32 a, s32 b) {
         y0 = (b - 10) * 12 / 20;
         x1 = (a + m) * 0x30 / 68;
         y1 = (b + 10) * 12 / 20;
+#ifdef TARGET_PC
+        p->w1 = DL_ADDR(D_800E7CB4); /* PC: as above */
+#else
         p->w1 = osVirtualToPhysical(D_800E7CB4);
+#endif
         v = D_800E7CB4++;
         v->ob[0] = x0; v->ob[1] = y0; v->ob[2] = 0; v->flag = 0;
         v->tc[0] = 0; v->tc[1] = 0;

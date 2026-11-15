@@ -9,6 +9,51 @@
 
 typedef struct { u8 pad0[6]; u8 up; u8 down; u8 left; u8 right; u8 padA[0xC]; } Item;
 typedef struct { u8 pad0[0xF]; u8 fF; u8 pad10[2]; s16 f12; } Sub;
+#ifdef TARGET_PC
+/* PC: the menus and their elements hold addresses, so they are common.h's Nw2Menu and Nw2MenuEl, which these views
+ * follow (the asserts check). Item is an element's description (common.h's Nw2MenuDef, no address), and items' first
+ * field is the address of the menu's descriptions on both machines. The N64's labels inside the menus have no PC
+ * symbol: D_800E9212 and D_800E934A are D_800E8230[13].fA and [14].fA, D_800E8D2C, D_800E8F9C, D_800E90D4,
+ * D_800E947C, D_800E95B4, D_800E995C and D_800E9E3C the cur of menus 9, 11, 12, 15, 16, 19 and 23, and D_800E9AA4 is
+ * D_800E8230[20].el. */
+typedef struct {
+    u8 pad0[8];
+    s16 f8;
+    u16 flags;
+    s8 fC;
+    s8 fD;
+    s8 fE;
+    u8 fF;
+    s16 f10;
+    s16 f12;
+    u8 pad14[2];
+    u8 f16;
+    u8 pad17[9];
+    u16 f20;
+    u16 f22;
+    Sub *f24;
+    u8 pad30[sizeof(Nw2MenuEl) - 0x30];
+} El;
+_Static_assert(offsetof(El, f8) == offsetof(Nw2MenuEl, f8) && offsetof(El, flags) == offsetof(Nw2MenuEl, fA) &&
+                   offsetof(El, fC) == offsetof(Nw2MenuEl, fC) && offsetof(El, fF) == offsetof(Nw2MenuEl, fF) &&
+                   offsetof(El, f12) == offsetof(Nw2MenuEl, f12) && offsetof(El, f16) == offsetof(Nw2MenuEl, f16) &&
+                   offsetof(El, f20) == offsetof(Nw2MenuEl, f20) && offsetof(El, f22) == offsetof(Nw2MenuEl, f22) &&
+                   offsetof(El, f24) == offsetof(Nw2MenuEl, def) && sizeof(El) == sizeof(Nw2MenuEl),
+               "El must follow common.h's Nw2MenuEl");
+typedef struct {
+    Item **items;
+    s16 cur;
+    u8 pad6[4];
+    u16 fA;
+    u8 padC[8];
+    El *el;
+    u8 pad20[sizeof(Nw2Menu) - 0x20];
+} Menu;
+_Static_assert(offsetof(Menu, cur) == offsetof(Nw2Menu, cur) && offsetof(Menu, fA) == offsetof(Nw2Menu, fA) &&
+                   offsetof(Menu, el) == offsetof(Nw2Menu, el) && sizeof(Menu) == sizeof(Nw2Menu) &&
+                   sizeof(Item) == sizeof(Nw2MenuDef) && offsetof(Item, up) == offsetof(Nw2MenuDef, up),
+               "Menu must follow common.h's Nw2Menu");
+#else
 typedef struct {
     u8 pad0[8];
     s16 f8;
@@ -36,8 +81,18 @@ typedef struct {
     El *el;
     u8 pad18[0x138 - 0x18];
 } Menu;
+#endif
 typedef struct { s16 f4C; s16 f4E; u8 f50; u8 pad51; u8 f52; u8 pad53[9]; } Pl;
+#ifdef TARGET_PC
+/* PC: lookupSubTables is D_8003A4F8, the 13 name tables (common.h's Nw2IdSubTable: the entries' address, the count),
+ * 16 bytes each on PC, so &lookupSubTables[n] steps by that record. D_8007EF30 keeps its N64 layout (game files read
+ * it at N64 offsets), so its +0x2C, the address of the current name table, is 4 bytes and holds a handle (port.h's
+ * PTR_TO_SLOT), as its +0x30 does (func_800AA1E0). */
+typedef Nw2IdSubTable L;
+#define SET_GAME_TABLE(p) (D_8007EF30.f2C = PTR_TO_SLOT(p))
+#else
 typedef struct { u8 pad0[8]; } L;
+#endif
 typedef struct {
     u8 pad0[2];
     u8 f2;
@@ -53,13 +108,21 @@ typedef struct {
     u8 pad14[6];
     s16 f1A;
     u8 pad1C[0x10];
+#ifdef TARGET_PC
+    u32 f2C; /* PC: a handle, as above */
+#else
     L *f2C;
+#endif
     u8 pad30[0x1C];
     Pl pl[4];
     u8 pad8C[0x14E - 0x8C];
     u16 f14E[5];
     u16 f158;
 } Game;
+#ifdef TARGET_PC
+_Static_assert(offsetof(Game, f2C) == 0x2C && offsetof(Game, pl) == 0x4C && offsetof(Game, f158) == 0x158,
+               "Game keeps D_8007EF30's N64 layout");
+#endif
 
 extern s16 D_80038A90;
 extern s32 D_80038A98, D_80038A9C, D_80038A8C, D_80038AA8;
@@ -68,16 +131,27 @@ extern s32 D_8007FC30;
 extern struct { u8 pad0[0x688]; s32 f688; s32 f68C; s32 f690; s32 f694; } D_8007E228;
 extern struct { u8 pad0[8]; s32 f8; s32 fC; u8 pad10[0x68]; s32 f78; s32 f7C; } D_8007E8C0;
 extern Menu D_800E8230[];
+#ifndef TARGET_PC /* on PC the label D_800E9AA4 is D_800E8230[20].el (see above) */
 extern El *D_800E9AA4;
+#endif
 extern s32 D_800E74D8, D_800E7C90, D_800E74E0, D_800D5F1C, D_800E7B58, D_800E7908, D_800E7934;
 extern s32 D_800EA318, D_800E6B90, D_800E752C, D_800E6B7C, D_800E9F70, D_800EA31C;
 extern s32 D_800EA348, D_800E74D4, D_800E7920, D_800E8214;
 extern s32 D_800E8200[], D_800E73A8[];
 extern u16 D_800EA0C0, D_800EA0C2, D_800EA0C4;
+#ifdef TARGET_PC
+/* PC: without the labels inside D_800E8230, which are its fields (see above). D_800CC8F5 is D_800CC8EC + 9, a field
+ * of the element lists (common.h's Nw2MenuItems, 0x10 bytes on PC, where they hold addresses): D_800CC8EC[r].f9. */
+extern s16 D_800E9F7C, D_800E7CB8;
+extern Nw2MenuItems D_800CC8EC[];
+#else
 extern s16 D_800E9212, D_800E934A, D_800E9F7C, D_800E7CB8, D_800E947C, D_800E95B4, D_800E8D2C;
 extern s16 D_800E8F9C, D_800E995C, D_800E90D4, D_800E9E3C;
+#endif
 extern s16 D_800E7B68[];
+#ifndef TARGET_PC /* on PC, D_800CC8EC[r].f9 (see above) */
 extern s8 D_800CC8F5[];
+#endif
 extern L lookupSubTables[];
 
 void func_800ABE60(void);
@@ -86,7 +160,9 @@ void func_800C12D0(s32);
 void func_800B58EC(El *);
 s32 func_800B807C(s32, s32);
 void func_800A9210(s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares findOrAddCacheEntryRaw */
 void findOrAddCacheEntryRaw(s32, s32, s32, s32, s32);
+#endif
 s16 func_800033F8(void);
 void func_800AD970(Menu *);
 s32 func_800AF3A8(void);
@@ -116,7 +192,11 @@ s32 func_800AA1E0(s32, s32, s32, s32);
 void func_800C3094(s32, s32, s32, s32, s32, s32);
 s32 func_800B0EC4(s32);
 void func_800ABFC8(Menu *);
+#ifdef TARGET_PC
+u16 func_8002B1D0(s32); /* PC: returns func_8002B528's u16, which the N64 leaves in v0 (func_8002B1D0.c) */
+#else
 s32 func_8002B1D0(s32);
+#endif
 void func_800AFEF0(s32);
 
 static inline void push(s32 id, s32 n) {
@@ -215,6 +295,16 @@ static inline void scroll(void) {
             }
         }
     }
+#ifdef TARGET_PC
+    /* PC: by name (see above) */
+    if (D_800E7908 != 0) {
+        D_800E8230[13].fA = 1;
+        D_800E8230[14].fA = 1;
+    } else {
+        D_800E8230[13].fA = 0;
+        D_800E8230[14].fA = 0;
+    }
+#else
     if (D_800E7908 != 0) {
         D_800E9212 = 1;
         D_800E934A = 1;
@@ -222,6 +312,7 @@ static inline void scroll(void) {
         D_800E9212 = 0;
         D_800E934A = 0;
     }
+#endif
     func_800A9210(D_800E7934);
 }
 
@@ -384,7 +475,11 @@ void func_800AC144(void) {
         case 0xE:
             r = func_800AF3A8();
             if (r != D_80038A90) {
+#ifdef TARGET_PC
+                D_800E8230[20].el[3].flags &= ~0x20; /* PC: by name (see above) */
+#else
                 D_800E9AA4[3].flags &= ~0x20;
+#endif
             }
             break;
         }
@@ -414,7 +509,11 @@ void func_800AC144(void) {
             if (d != 0) {
                 D_800E7934 = 1;
                 r = func_800A946C(d);
+#ifdef TARGET_PC
+                SET_GAME_TABLE(&lookupSubTables[D_8007EF30.f10]); /* PC: as a handle, as above */
+#else
                 D_8007EF30.f2C = &lookupSubTables[D_8007EF30.f10];
+#endif
                 m = &D_800E8230[D_80038A90];
                 e = &m->el[m->cur];
                 D_800E9F7C = 1;
@@ -498,7 +597,11 @@ void func_800AC144(void) {
             switch (D_80038A90) {
             case 0xF:
                 if (m->cur == 0x13) {
+#ifdef TARGET_PC
+                    D_800E8230[15].cur = 0x14; /* PC: by name (see above) */
+#else
                     D_800E947C = 0x14;
+#endif
                 } else if (m->cur == 0x14) {
                     r = func_800A9780();
                 }
@@ -506,7 +609,11 @@ void func_800AC144(void) {
             case 0x10:
             case 0x11:
                 if (m->cur == 0xC) {
+#ifdef TARGET_PC
+                    D_800E8230[16].cur = 0xD; /* PC: by name (see above) */
+#else
                     D_800E95B4 = 0xD;
+#endif
                 } else if (m->cur == 0xD) {
                     r = func_800A9780();
                 } else {
@@ -517,7 +624,11 @@ void func_800AC144(void) {
                 if (m->cur == 0x10) {
                     r = 0x200;
                 } else {
+#ifdef TARGET_PC
+                    D_800E8230[9].cur = 0x10; /* PC: by name (see above) */
+#else
                     D_800E8D2C = 0x10;
+#endif
                     D_800EA318 = 0x401;
                 }
                 break;
@@ -525,7 +636,11 @@ void func_800AC144(void) {
                 if (m->cur == 0x16 || m->cur == 0x17) {
                     r = 0x200;
                 } else {
+#ifdef TARGET_PC
+                    D_800E8230[11].cur = 0x16; /* PC: by name (see above) */
+#else
                     D_800E8F9C = 0x16;
+#endif
                     D_800EA318 = 0x401;
                 }
                 break;
@@ -536,7 +651,11 @@ void func_800AC144(void) {
                     }
                     r = 0x200;
                 } else {
+#ifdef TARGET_PC
+                    D_800E8230[19].cur = 0xA; /* PC: by name (see above) */
+#else
                     D_800E995C = 0xA;
+#endif
                     D_800EA318 = 0x401;
                 }
                 break;
@@ -584,7 +703,11 @@ void func_800AC144(void) {
     }
     if (r >= 0 && r != D_80038A90) {
         p = &D_800E8230[r];
+#ifdef TARGET_PC
+        func_800B511C(D_800CC8EC[r].f9); /* PC: by name (see above) */
+#else
         func_800B511C(D_800CC8F5[r * 12]);
+#endif
         if (D_800E9F7C != 0) {
             switch (r) {
             case 1:
@@ -593,10 +716,18 @@ void func_800AC144(void) {
                 break;
             case 0xD:
             case 0xE:
+#ifdef TARGET_PC
+                SET_GAME_TABLE(&lookupSubTables[D_8007EF30.f10]); /* PC: as a handle, as above */
+#else
                 D_8007EF30.f2C = &lookupSubTables[D_8007EF30.f10];
+#endif
                 func_800B1484(r, 0);
                 if (D_80038A90 != 0xD && D_80038A90 != 0xE) {
+#ifdef TARGET_PC
+                    D_800E8230[20].el[3].f20 = D_8007FC30 | 0x1200; /* PC: by name (see above) */
+#else
                     D_800E9AA4[3].f20 = D_8007FC30 | 0x1200;
+#endif
                     if (r == 0xD) {
                         D_800E7B58 = -0x30;
                     } else {
@@ -628,13 +759,21 @@ void func_800AC144(void) {
                 func_800AE5C4();
                 break;
             case 0xC:
+#ifdef TARGET_PC
+                D_800E8230[20].el[3].flags |= 0x20; /* PC: by name (see above) */
+#else
                 D_800E9AA4[3].flags |= 0x20;
+#endif
                 if (D_800E8230[12].cur == 5) {
                     func_800AF218();
                 }
                 break;
             case 0x17:
+#ifdef TARGET_PC
+                D_800E8230[23].cur = 0; /* PC: by name (see above) */
+#else
                 D_800E9E3C = 0;
+#endif
                 break;
             case 2:
                 D_800E9F70 = D_8007EF30.f4;

@@ -6,6 +6,35 @@
 #include "common.h"
 
 typedef struct { u8 pad0[4]; u16 f4; } Info;
+#ifdef TARGET_PC
+/* PC: the menus and their elements hold addresses, so they are common.h's Nw2Menu and Nw2MenuEl, which these views
+ * follow (the asserts check). */
+typedef struct {
+    f32 x, y;
+    s16 f8;
+    u16 flags;
+    u8 padC[3];
+    u8 fF;
+    u8 pad10[6];
+    u8 f16;
+    u8 pad17[5];
+    f32 f1C;
+    u16 f20;
+    s16 f22;
+    Info *f24;
+    u8 pad30[sizeof(Nw2MenuEl) - 0x30];
+} El;
+_Static_assert(offsetof(El, f8) == offsetof(Nw2MenuEl, f8) && offsetof(El, flags) == offsetof(Nw2MenuEl, fA) &&
+                   offsetof(El, fF) == offsetof(Nw2MenuEl, fF) && offsetof(El, f16) == offsetof(Nw2MenuEl, f16) &&
+                   offsetof(El, f1C) == offsetof(Nw2MenuEl, f1C) && offsetof(El, f20) == offsetof(Nw2MenuEl, f20) &&
+                   offsetof(El, f22) == offsetof(Nw2MenuEl, f22) && offsetof(El, f24) == offsetof(Nw2MenuEl, def) &&
+                   sizeof(El) == sizeof(Nw2MenuEl) && offsetof(Info, f4) == offsetof(Nw2MenuDef, f4),
+               "El must follow common.h's Nw2MenuEl");
+typedef struct { void *items; s16 cur; u8 pad6[0xE]; El *el; u8 pad20[sizeof(Nw2Menu) - 0x20]; } Menu;
+_Static_assert(offsetof(Menu, cur) == offsetof(Nw2Menu, cur) && offsetof(Menu, el) == offsetof(Nw2Menu, el) &&
+                   sizeof(Menu) == sizeof(Nw2Menu),
+               "Menu must follow common.h's Nw2Menu");
+#else
 typedef struct {
     f32 x, y;
     s16 f8;
@@ -22,6 +51,7 @@ typedef struct {
     u8 pad28[0x148 - 0x28];
 } El;
 typedef struct { void *items; s16 cur; u8 pad6[0xE]; El *el; u8 pad18[0x138 - 0x18]; } Menu;
+#endif
 
 extern Menu D_800E8230[];
 extern struct { u8 pad0[8]; u16 mode; } D_8007EF30;

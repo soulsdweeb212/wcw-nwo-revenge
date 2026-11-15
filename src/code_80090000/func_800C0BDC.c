@@ -5,16 +5,29 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: the scenes, their camera tracks and the picture sets hold addresses, so they have their PC layouts (common.h's
+ * Nw2MenuScene, Nw2MenuSceneTrack with its Nw2MenuCamKey keys, and Nw2MenuShot); the code indexes the sets by that
+ * size. */
+typedef Nw2MenuScene Scene;
+typedef Nw2MenuCamKey Key;
+typedef Nw2MenuShot Shot;
+#else
 typedef struct { u8 pad0[2]; u16 flags; u16 n; } Scene;
 typedef struct { u16 n; u16 pad2; s16 v[6]; } Key;
 typedef struct { u8 pad0[0x20]; } Shot;
+#endif
 
 extern Shot D_800D4930[];
 extern s32 D_800E79C4, D_800DF3AC, D_800DF3B0, D_80038A8C, D_800E74C8;
 extern Scene *D_800DF31C;
 extern s32 D_800DF314, D_800DF308, D_800DF310;
 extern s32 D_800E9F70, D_800DF328, D_800DF324, D_800E74E8;
+#ifdef TARGET_PC
+extern Nw2MenuSceneTrack *D_800DF320; /* PC: the current camera track (see above) */
+#else
 extern Key **D_800DF320;
+#endif
 extern f32 D_800E74F8[7];
 extern f64 D_800D6C58;
 void func_800BF9B8(Shot *);
@@ -84,7 +97,11 @@ void func_800C0BDC(void) {
         D_800E74C8 = D_800DF3AC;
     }
     if ((u32)D_800E9F70 < 9) {
+#ifdef TARGET_PC
+        e = &D_800DF320->keys[D_800DF328]; /* PC: the track's keys by name */
+#else
         e = &(*D_800DF320)[D_800DF328];
+#endif
         if (e->n != 0) {
             D_800E74F8[0] = e[0].v[0] + (f64)((e[1].v[0] - e[0].v[0]) * D_800DF324) / e->n;
             D_800E74F8[1] = e[0].v[1] + (f64)((e[1].v[1] - e[0].v[1]) * D_800DF324) / e->n;

@@ -10,7 +10,14 @@
 
 extern u8 *D_800DCFB8;
 extern u8 D_8007EF30[], D_8007E8C0[];
+#ifdef TARGET_PC
+/* PC: the cups (common.h's Nw2Cup), 0x18 bytes each on PC. The N64 reads their bytes through labels inside the table
+ * at its 20-byte stride: D_8003A486 + m and D_8003A488 + m are cup m / 20's +2 and +4, D_8003A4AF and D_8003A4B1 are
+ * cup 2's +3 and +5. The PC reads the fields. */
+extern Nw2Cup D_8003A484[];
+#else
 extern u8 D_8003A486[], D_8003A488[], D_8003A4AF, D_8003A4B1;
+#endif
 extern u8 D_800CCAFC[];
 u16 func_8002B528(s32);
 void func_800A8EF0(s32);
@@ -44,12 +51,23 @@ void func_800B8C4C(s32 mode) {
         D_800DCFB8[1] = 0;
         D_800DCFB8[0] = 0;
         for (i = 0, m = 0; i < 5; i++, m += 20) {
+#ifdef TARGET_PC
+            *(u16 *)(D_800DCFB8 + i * 2 + 2) = func_8002B528(D_8003A484[i].f2);
+            *(u16 *)(D_800DCFB8 + (i << 1) + 0xE) = func_8002B528(D_8003A484[i].f4);
+            (void)m;
+#else
             *(u16 *)(D_800DCFB8 + i * 2 + 2) = func_8002B528(D_8003A486[m]);
             /* `i << 1` (not `i * 2`) keeps D_800DCFB8 as the first addu operand */
             *(u16 *)(D_800DCFB8 + (i << 1) + 0xE) = func_8002B528(D_8003A488[m]);
+#endif
         }
+#ifdef TARGET_PC
+        *(u16 *)(D_800DCFB8 + 0xC) = func_8002B528(D_8003A484[2].f3);
+        *(u16 *)(D_800DCFB8 + 0x18) = func_8002B528(D_8003A484[2].f5);
+#else
         *(u16 *)(D_800DCFB8 + 0xC) = func_8002B528(D_8003A4AF);
         *(u16 *)(D_800DCFB8 + 0x18) = func_8002B528(D_8003A4B1);
+#endif
         func_800A8EF0(0);
         *(u16 *)(D_800DCFB8 + 0x1A) = OPTS();
         *(u16 *)(D_800DCFB8 + 0x1C) = D_8007EF30[0x1AA] & 7;

@@ -7,12 +7,22 @@
 
 typedef struct { s16 f0; s16 id; u8 f4; u8 pad5[0xB]; } Pl;
 typedef struct { u8 pad0[0x4C]; Pl pl[4]; } Game;
+#ifdef TARGET_PC
+/* PC: the menus D_800E8230 and their elements hold addresses, so they are common.h's Nw2Menu and Nw2MenuEl, read by
+ * field name (the labels D_800E9962, D_800E995C and D_800E996C inside the menus have no PC symbol). p + k * 0x148
+ * is element k; +0xA is fA, +0xC fC, +0x20 f20 and +0x22 f22. */
+typedef Nw2Menu Menu;
+extern Game D_8007EF30;
+extern u8 D_8007E8C0[];
+extern Menu D_800E8230[];
+#else
 typedef struct { void *items; s16 cur; u8 pad6[4]; s16 fA; u8 padC[8]; u8 *el; u8 pad18[0x138 - 0x18]; } Menu;
 extern Game D_8007EF30;
 extern u8 D_8007E8C0[];
 extern Menu D_800E8230[];
 extern s16 D_800E9962[], D_800E995C;
 extern u8 *D_800E996C;
+#endif
 extern s32 D_800E74D4, D_800EA348, D_800E79AC;
 extern s32 D_800E73A4[3];
 s16 func_8000B3DC(u32);
@@ -29,10 +39,18 @@ void bcopy(void *, void *, s32);
 void func_800B4BF4(s32 a) {
     Menu *mn = &D_800E8230[19];
     s32 id;
+#ifdef TARGET_PC
+    Nw2MenuEl *p; /* PC: the elements by name (see above) */
+#else
     u8 *p;
+#endif
     u8 *e;
     s32 n, i, m;
+#ifdef TARGET_PC
+    Nw2MenuEl *r; /* PC: as above */
+#else
     u8 *r;
+#endif
     u16 x, y;
 
     mn->fA = a;
@@ -48,6 +66,31 @@ void func_800B4BF4(s32 a) {
     D_800E73A4[2] = e[0x28];
     n = func_8000B3DC(id) - 1;
     m = func_8000B41C(id) - 1;
+#ifdef TARGET_PC
+    /* PC: by name (see above) */
+    p[4].f22 = n;
+    if (m != 0) {
+        p[6].f22 = m;
+        x = p[6].fA & 0xFFBF;
+        y = p[7].fA & 0xFFBF;
+    } else {
+        p[6].f22 = 0;
+        x = p[6].fA | 0x40;
+        y = p[7].fA | 0x40;
+    }
+    p[6].fA = x;
+    p[7].fA = y;
+    x = D_800EA348 | 0x5B00;
+    y = D_800E74D4 | 0x5A00;
+    p[4].f20 = x;
+    p[6].f20 = y;
+    r = &mn->el[8];
+    for (i = 0; i < 2; i++) {
+        r->fC = D_800E73A4[i + 1];
+        r->fA |= 0x40;
+        r++;
+    }
+#else
     *(s16 *)(p + 0x542) = n;
     if (m != 0) {
         *(s16 *)(p + 0x7D2) = m;
@@ -70,6 +113,7 @@ void func_800B4BF4(s32 a) {
         *(u16 *)r |= 0x40;
         r += 0x148;
     }
+#endif
     D_800E79AC = 0;
     D_800E8230[19].cur = 0;
 }

@@ -8,7 +8,8 @@
 #ifdef TARGET_PC
 /* PC: a command is port.h's 16-byte Gfx. D_800DB69C holds the address of a heap block (func_800936DC allocates it),
  * so it is a pointer, as func_800B64EC takes it (its definition takes a u8 *). */
-typedef Gfx G91F;extern u8 *D_800DB69C;extern u8 *D_800DBD48;extern u8 D_800C6410[];u8 *func_800B64EC(u8 *,s32);void func_80091718(G91F**,s32,s32,s32,s32);
+typedef Gfx G91F;extern u8 *D_800DB69C;extern u8 *D_800DBD48;extern Vtx D_800C6410[]; /* PC: vertices, port.h's Vtx */
+u8 *func_800B64EC(u8 *,s32);void func_80091718(G91F**,s32,s32,s32,s32);
 #define E91F(a,b) {G91F*g=dl++;g->w0=(u32)(a);g->w1=(b);}
 #else
 typedef struct{u32 w0,w1;}G91F;extern s32 D_800DB69C;extern u8 *D_800DBD48;extern u8 D_800C6410[];u8 *func_800B64EC(s32,s32);void func_80091718(G91F**,s32,s32,s32,s32);

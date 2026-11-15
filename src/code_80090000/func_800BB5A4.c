@@ -5,12 +5,27 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: the type of func_8002AEE0's definition, which takes the id to look up and returns a u16. */
+u16 func_8002AEE0(s32 arg0);
+#else
 s32 func_8002AEE0(void);
+#endif
 s32 guRandom(void);
 
+#ifdef TARGET_PC
+/* PC: on the N64 this function does not touch a0 before it calls func_8002AEE0 (asm: the jal is its third
+ * instruction), so func_8002AEE0 looks up the caller's first argument: the wrestler id that func_800BCDF4 passes (it
+ * declares s32 func_800BB5A4(s32)). On PC an argument reaches only a parameter that is declared, so the PC definition
+ * takes the id and passes it on. */
+s32 func_800BB5A4(s32 id) {
+    s32 t;
+    switch (func_8002AEE0(id) & 0xF0) {
+#else
 s32 func_800BB5A4(void) {
     s32 t;
     switch (func_8002AEE0() & 0xF0) {
+#endif
     case 0x00:
         return 1;
     case 0x10:

@@ -5,6 +5,28 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx. */
+typedef Gfx NwGfx;
+
+/* PC: o is the picture that func_800B600C hands back (func_80095884), an entry of the resource-name cache: f4 is its
+ * allocation, the texture, and fC, fE and f10 are the 16-bit sizes at +4, +6 and +8 of reserved, which the N64 reads at
+ * +0xC, +0xE and +0x10. On PC the entry is common.h's Nw2ResourceEntryHashed, so Obj953 follows it, with the texture
+ * as a pointer. */
+typedef struct {
+    u8 pad0[8];
+    void *f4;
+    u8 pad10[4];
+    u16 fC;
+    s16 fE;
+    s16 f10;
+} Obj953;
+_Static_assert(offsetof(Obj953, f4) == offsetof(Nw2ResourceEntryHashed, allocation) &&
+                   offsetof(Obj953, fC) == offsetof(Nw2ResourceEntryHashed, reserved) + 4 &&
+                   offsetof(Obj953, fE) == offsetof(Nw2ResourceEntryHashed, reserved) + 6 &&
+                   offsetof(Obj953, f10) == offsetof(Nw2ResourceEntryHashed, reserved) + 8,
+               "Obj953 must follow Nw2ResourceEntryHashed");
+#else
 typedef struct {
     u32 w0;
     u32 w1;
@@ -18,6 +40,7 @@ typedef struct {
     s16 fE;
     s16 f10;
 } Obj953;
+#endif
 
 #define NW_SHIFTL(v, s, w) ((unsigned int)(((unsigned int)(v) & ((0x01 << (w)) - 1)) << (s)))
 
@@ -29,10 +52,19 @@ typedef struct {
 #define nwDPNoParam(pkt, cmd) \
     { NwGfx *_g = (NwGfx *)(pkt); _g->w0 = NW_SHIFTL(cmd, 24, 8); _g->w1 = 0; }
 
+#ifdef TARGET_PC
+/* PC: the texture's address goes into the command as the whole pointer: the call below passes DL_ADDR(o->f4), which
+ * an unsigned int would cut to 32 bits. */
+#define nwSetImage(pkt, cmd, fmt, siz, width, i) \
+    { NwGfx *_g = (NwGfx *)(pkt); \
+      _g->w0 = NW_SHIFTL(cmd, 24, 8) | NW_SHIFTL(fmt, 21, 3) | NW_SHIFTL(siz, 19, 2) | NW_SHIFTL((width) - 1, 0, 12); \
+      _g->w1 = (uintptr_t)(i); }
+#else
 #define nwSetImage(pkt, cmd, fmt, siz, width, i) \
     { NwGfx *_g = (NwGfx *)(pkt); \
       _g->w0 = NW_SHIFTL(cmd, 24, 8) | NW_SHIFTL(fmt, 21, 3) | NW_SHIFTL(siz, 19, 2) | NW_SHIFTL((width) - 1, 0, 12); \
       _g->w1 = (unsigned int)(i); }
+#endif
 
 #define nwDPSetTile(pkt, fmt, siz, line, tmem, tile, palette, cmt, maskt, shiftt, cms, masks, shifts) \
     { NwGfx *_g = (NwGfx *)(pkt); \
@@ -100,7 +132,12 @@ void func_800953F4(NwGfx **gpp, Obj953 *o, s32 x, s32 y, s32 w, s32 h)
         if (lrs >= o->f10) {
             lrs = o->f10 - 1;
         }
+#ifdef TARGET_PC
+        /* PC: the texture's address as the whole pointer (port.h's DL_ADDR). */
+        nwDPLoadTextureTile_4b(gp++, DL_ADDR(o->f4), 2, (s16)o->fC, 0, uls, 0, lrs, o->fE - 1, 0, 0, 0, 0, 0, 0);
+#else
         nwDPLoadTextureTile_4b(gp++, o->f4, 2, (s16)o->fC, 0, uls, 0, lrs, o->fE - 1, 0, 0, 0, 0, 0, 0);
+#endif
         nwSP1Quadrangle(gp++, v, v + 2, v + 3, v + 1);
         i += step;
     }

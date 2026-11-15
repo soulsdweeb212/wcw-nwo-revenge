@@ -8,9 +8,18 @@
 typedef struct { s32 a; u16 b; u8 c[4]; u16 d; u8 e[4]; } E;
 extern u8 *D_800DCFB8;
 extern u16 D_800D2908, D_800D290A;
+#ifdef TARGET_PC
+/* PC: D_800DCFC4 holds the address of the controllers' message queue that func_8000424C returns (its definition
+ * returns an s32 *), which an s32 would cut in half. */
+extern s32 *D_800DCFC4;
+extern s32 D_800DCFBC, D_800DCFBC_alias;
+void bcopy(void *, void *, s32);
+s32 *func_8000424C(void);
+#else
 extern s32 D_800DCFC4, D_800DCFBC, D_800DCFBC_alias;
 void bcopy(void *, void *, s32);
 s32 func_8000424C(void);
+#endif
 s32 func_800B9640(u16, u16);
 void func_80004290(void);
 

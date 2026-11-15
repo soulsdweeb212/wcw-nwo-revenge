@@ -5,7 +5,12 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx, which the functions this one hands the list to also write on PC. */
+typedef Gfx G;
+#else
 typedef struct { u32 w0, w1; } G;
+#endif
 typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } V;
 typedef struct { s32 x0, y0, x1, y1; } Box;
 typedef struct { u8 pad0[8]; s16 f8; u8 padA[0x16]; u16 f20; u16 f22; } Obj;
@@ -18,11 +23,22 @@ extern struct { u8 pad0[0xA]; u16 fA; } D_8007EF30;
 u32 osVirtualToPhysical(V *);
 void func_800B6FE0(G **, s32);
 void func_800B7260(G **, s32, s32, s32);
+#ifdef TARGET_PC
+/* PC: func_800A9F64's definition returns a u8; read as an s32, the PC would leave the upper bits unset. */
+u8 func_800A9F64(s32);
+#else
 s32 func_800A9F64(s32);
+#endif
 void func_800A8140(G **, s32, s32, s32);
 
 #define EMIT(a, b) { G *_g = g++; _g->w0 = (a); _g->w1 = (b); }
+#ifdef TARGET_PC
+/* PC: the vertices' address goes into the command as the whole pointer (port.h's DL_ADDR); osVirtualToPhysical
+ * returns a u32, which would cut it in half. */
+#define SPVERTEX(n, v0) { G *_g = g++; _g->w0 = 0x01000000 | ((n) << 12) | (((v0) + (n)) << 1); _g->w1 = DL_ADDR(D_800E7CB4); }
+#else
 #define SPVERTEX(n, v0) { G *_g = g++; _g->w0 = 0x01000000 | ((n) << 12) | (((v0) + (n)) << 1); _g->w1 = osVirtualToPhysical(D_800E7CB4); }
+#endif
 #define VTX(x, y, s, t) {                   \
     V *v = D_800E7CB4++;                    \
     v->ob[0] = (x);                         \

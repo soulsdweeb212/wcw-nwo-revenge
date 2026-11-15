@@ -5,27 +5,55 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx, which the functions this one hands the list to also write on PC, and the
+ * texture's and the vertices' addresses go into the commands as the whole pointers (port.h's DL_ADDR); the N64 writes
+ * u32 words. The keyboard picture is the entry of the resource-name cache that func_800B600C (port_decls.h) hands back
+ * for its name, common.h's Nw2ResourceEntryHashed: the texture, at +4 on the N64, is its allocation at +8, and width
+ * is reserved's +4, as the assert checks. */
+typedef Gfx G;
+typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } V;
+typedef struct { u8 pad0[8]; void *img; u8 pad10[4]; s16 width; } Spr;
+_Static_assert(offsetof(Spr, img) == offsetof(Nw2ResourceEntryHashed, allocation) &&
+                   offsetof(Spr, width) == offsetof(Nw2ResourceEntryHashed, reserved) + 4,
+               "Spr must follow the PC layout of Nw2ResourceEntryHashed");
+#else
 typedef struct { u32 w0, w1; } G;
 typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } V;
 typedef struct { u8 pad0[4]; u32 img; u8 pad8[4]; s16 width; } Spr;
+#endif
 typedef struct { u8 pad0[0x16]; u8 f16; u8 f17; u8 pad18[8]; u16 f20; u16 f22; } Item;
 typedef struct { s32 x; s32 y; s32 page; s32 len; } Kb;
 
 extern V *D_800E7CB4;
 extern s32 D_800CCD40;
 extern Kb D_800E7BF0;
+#ifdef TARGET_PC
+/* PC: func_80099694 takes nothing and returns the address of the keyboard's name, D_800C9434 (its definition), which
+ * this file hands to func_800B600C as a key of the resource-name cache (port.h's MENU_KEY_NAME). */
+s32 *func_80099694(void);
+#else
 u32 osVirtualToPhysical(V *);
 s32 func_80099694(u16, u16);
 Spr *func_800B600C(s32, s32);
+#endif
 void appendPaletteSetupDisplayList(G **);
 void func_800B6FE0(G **, s32);
 
 #define _SHIFTL(v, s, w) ((unsigned int)(((unsigned int)(v) & ((0x01 << (w)) - 1)) << (s)))
 
+#ifdef TARGET_PC
+/* PC: the texture's address as the whole pointer, as above. */
+#define gSetImage(pkt, cmd, fmt, siz, width, i) \
+{ G *_g = (G *)(pkt); \
+  _g->w0 = _SHIFTL(cmd, 24, 8) | _SHIFTL(fmt, 21, 3) | _SHIFTL(siz, 19, 2) | _SHIFTL((width) - 1, 0, 12); \
+  _g->w1 = DL_ADDR(i); }
+#else
 #define gSetImage(pkt, cmd, fmt, siz, width, i) \
 { G *_g = (G *)(pkt); \
   _g->w0 = _SHIFTL(cmd, 24, 8) | _SHIFTL(fmt, 21, 3) | _SHIFTL(siz, 19, 2) | _SHIFTL((width) - 1, 0, 12); \
   _g->w1 = (unsigned int)(i); }
+#endif
 #define gDPSetTextureImage(pkt, f, s, w, i) gSetImage(pkt, 0xFD, f, s, w, i)
 #define gDPSetTile(pkt, fmt, siz, line, tmem, tile, palette, cmt, maskt, shiftt, cms, masks, shifts) \
 { G *_g = (G *)(pkt); \
@@ -106,7 +134,11 @@ void func_800A5A30(G **dl, Item *it) {
         x--;
         y = D_800E7BF0.y * 12;
         EMIT(0xFA000000, it->f16 >> 1);
+#ifdef TARGET_PC
+        EMIT(0x01008038, DL_ADDR(D_800E7CB4)); /* PC: the vertices' address, as above */
+#else
         EMIT(0x01008038, osVirtualToPhysical(D_800E7CB4));
+#endif
         VTX(x - 6, y - 6, 0, 0);
         VTX(x + 6, y - 6, 0, 0);
         VTX(x - 6, y + 6, 0, 0);
@@ -118,7 +150,11 @@ void func_800A5A30(G **dl, Item *it) {
         QUAD(g++, 20, 21, 23, 22);
     }
     EMIT(0xFA000000, it->f16);
+#ifdef TARGET_PC
+    spr = func_800B600C(MENU_KEY_NAME(func_80099694()), 0x88); /* PC: the name's address as the key, as above */
+#else
     spr = func_800B600C(func_80099694(it->f20, it->f22), 0x88);
+#endif
     if (spr == NULL) {
         return;
     }

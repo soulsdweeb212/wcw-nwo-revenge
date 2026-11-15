@@ -5,6 +5,16 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: the menus, their elements, the elements' descriptions and the element lists hold addresses, so they are
+ * common.h's PC records ("The menus' records"), whose field names this file's views have. The scene objects inside
+ * a menu and an element (obj; this file's node) keep their N64 layout and hold handles (port.h's PTR_TO_SLOT),
+ * because the renderer walks them (func_80001DC4): the work block's +0x24, which pos->z writes, is its bias. */
+typedef Nw2MenuDef Def;
+typedef Nw2MenuItems Items;
+typedef Nw2MenuEl El;
+typedef Nw2Menu Menu;
+#else
 typedef struct { u8 pad0[0x24]; f32 z; } Pos;
 typedef struct {
     void *parent;
@@ -77,6 +87,7 @@ typedef struct {
     Node node;
     u8 pad134[4];
 } Menu;
+#endif
 
 typedef struct { void *dl; void *addr; s16 n; u8 padA[4]; s16 fE; } VtxSet;
 typedef struct { u16 menu; u16 idx; s16 c; u8 pad6[2]; } Tint;
@@ -120,10 +131,18 @@ void func_8009F9A0(void) {
         el = &D_800DC730[D_800DC824];
         m->el = el;
         d = it->defs;
+#ifdef TARGET_PC
+        /* PC: the scene objects by name, their links as handles (see above). */
+        initializeTransformNode(&m->obj, 3, 0.0f, 0.0f, 0.0f);
+        m->obj.child = PTR_TO_SLOT(&el->obj);
+        guPositionF(m->obj.local, D_800CC8A8[3], D_800CC8A8[4], D_800CC8A8[5], 1.0f,
+                                             D_800CC8A8[0], D_800CC8A8[1], D_800CC8A8[2]);
+#else
         initializeTransformNode(&m->node, 3, 0.0f, 0.0f, 0.0f);
         m->node.child = &el->node;
         guPositionF(m->node.mtx, D_800CC8A8[3], D_800CC8A8[4], D_800CC8A8[5], 1.0f,
                                              D_800CC8A8[0], D_800CC8A8[1], D_800CC8A8[2]);
+#endif
         for (j = 0; j < it->n; j++, el++, d++) {
             v = &D_800CB7B8[d->idx];
             el->f8 = 0;
@@ -148,6 +167,24 @@ void func_8009F9A0(void) {
             } else {
                 el->parent = 0;
             }
+#ifdef TARGET_PC
+            /* PC: as above: the vertices, the display list, the draw group (0x80 hides the element), the work
+             * block's bias and the links. */
+            initializeTransformNode(&el->obj, 3, 0.0f, 0.0f, 0.0f);
+            el->obj.vtx = PTR_TO_SLOT(v->addr);
+            el->obj.dl = PTR_TO_SLOT(D_800CCB80);
+            func_800015AC(&el->obj, v->n);
+            func_80001544(&el->obj);
+            el->obj.group |= 0x80;
+            ((Nw2SceneWork *)SLOT_TO_PTR(el->obj.work))->bias = v->fE << 10;
+            if (el->def->flags & 0x400) {
+                ((Nw2SceneWork *)SLOT_TO_PTR(el->obj.work))->bias -= 3192.0f;
+            }
+            el->obj.parent = PTR_TO_SLOT(&m->obj);
+            if (j < it->n - 1) {
+                el->obj.next = PTR_TO_SLOT(&el[1].obj);
+            }
+#else
             initializeTransformNode(&el->node, 3, 0.0f, 0.0f, 0.0f);
             el->node.dl = v->addr;
             el->node.f10 = D_800CCB80;
@@ -162,6 +199,7 @@ void func_8009F9A0(void) {
             if (j < it->n - 1) {
                 el->node.next = &el[1].node;
             }
+#endif
             D_800DC824++;
         }
     }

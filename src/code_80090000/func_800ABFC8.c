@@ -5,8 +5,20 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: A is a menu and P one of its elements, which hold addresses, so they are common.h's Nw2Menu and Nw2MenuEl,
+ * which these views follow (the asserts check): the element list's address before k is 8 bytes on PC. */
+typedef struct { u8 pad0[0xA]; u16 a; s8 c; s8 d; s8 e; u8 pad1; s16 f; u8 pad2[sizeof(Nw2MenuEl) - 0x12]; } P;
+typedef struct { void *items; u16 k; u8 pad1[0xE]; P *p; } A;
+_Static_assert(offsetof(P, a) == offsetof(Nw2MenuEl, fA) && offsetof(P, c) == offsetof(Nw2MenuEl, fC) &&
+                   offsetof(P, d) == offsetof(Nw2MenuEl, fD) && offsetof(P, e) == offsetof(Nw2MenuEl, fE) &&
+                   offsetof(P, f) == offsetof(Nw2MenuEl, f10) && sizeof(P) == sizeof(Nw2MenuEl) &&
+                   offsetof(A, k) == offsetof(Nw2Menu, cur) && offsetof(A, p) == offsetof(Nw2Menu, el),
+               "P and A must follow common.h's Nw2MenuEl and Nw2Menu");
+#else
 typedef struct { u8 pad0[0xA]; u16 a; s8 c; s8 d; s8 e; u8 pad1; s16 f; u8 pad2[0x136]; } P;
 typedef struct { u8 pad0[4]; u16 k; u8 pad1[0xE]; P *p; } A;
+#endif
 s16 func_800A06F8(P *, s8);
 
 void func_800ABFC8(A *a) {

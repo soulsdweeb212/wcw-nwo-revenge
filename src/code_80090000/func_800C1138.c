@@ -11,7 +11,9 @@
  * PTR_TO_SLOT) followed by the picture's fields. The N64's N names the object's fields by offset: f0 the parent, f8
  * the next sibling, fC the vertices, f10 the display list, f14 the work block (a Nw2SceneWork, whose +0x24 is bias),
  * pad18 + 4 the local matrix. a and b are the addresses of objects (initPairedTransformNodes passes pointers), so they
- * are pointers. The callees are declared with their definitions' types (func_800015AC.c, func_80001544.c, bcopy.c). */
+ * are pointers. The callees are declared with their definitions' types (func_800015AC.c, func_80001544.c, bcopy.c).
+ * D_800D5758 is a vertex (port.h's Vtx, so the PC turns its 16-bit values into its byte order when it loads overlay
+ * 1), and D_800D5768 a display list of the ROM's data (one G_ENDDL), whose PC copy (16-byte commands) has its name. */
 typedef struct {
     Nw2SceneObj obj;
     u8 padDC[8];
@@ -19,7 +21,8 @@ typedef struct {
 } N;
 _Static_assert(offsetof(N, fE4) == 0xE4 && sizeof(N) == 0xEC, "a record of D_800E7558 keeps its N64 layout on PC");
 extern N D_800E7558[];
-extern u8 D_800D5758[], D_800D5768[];
+extern Vtx D_800D5758[];
+extern u8 D_800D5768[];
 extern u8 *D_800E81F8;
 extern s32 D_800E81E4, D_800E79C4;
 void guPositionF(void *, f32, f32, f32, f32, f32, f32, f32);

@@ -18,7 +18,11 @@ extern s32 D_800E7BF0[];
 extern u8 D_800E7C60[][8];
 extern u16 D_800EA0C8[];
 extern s32 D_800EA318;
+#ifdef TARGET_PC
+u8 func_800996A0(s32); /* PC: the definition's type (the N64 passes a second argument it does not read) */
+#else
 s32 func_800996A0(s32, s32);
+#endif
 void func_800B3BCC(s32, s32);
 void func_800B3D58(void);
 void func_8000DEE4(s32);
@@ -51,7 +55,11 @@ s32 func_800B43C0(void) {
         }
         t = D_8006E178[i].unk6;
         if (t & 0x8000) {
+#ifdef TARGET_PC
+            switch (func_800996A0(D_800E79A0[i]) & 0xFF) {
+#else
             switch (func_800996A0(D_800E79A0[i], i * 2) & 0xFF) {
+#endif
             case 0xC6:
                 if (D_800E7BF0[i] != 0) {
                     D_800E7C60[i][D_800E7BF0[i]] = 0;

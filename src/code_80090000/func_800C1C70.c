@@ -5,7 +5,11 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Gfx G; /* PC: a command is port.h's 16-byte Gfx, which func_8009F2F8 and func_8009F8BC also write on PC */
+#else
 typedef struct { u32 w0, w1; } G;
+#endif
 extern s32 D_80038A8C, D_80038A98, D_800D5744, D_800D5748, D_800D574C, D_800D5750, D_800D5F28;
 extern s32 D_800DF218, D_800DF304, D_800DF3AC, D_800E74C8, D_800E7C90;
 extern u8 *D_800DF210;
@@ -25,7 +29,14 @@ s32 func_800C1C70(void) {
     G *p;
     s32 x;
     D_800DF218 ^= 1;
+#ifdef TARGET_PC
+    /* PC: the two halves of the display-list buffer D_800DF210 hold 0x1000 commands each, as on the N64 (0x8000 bytes
+     * of 8-byte commands), so the frame's half starts 0x1000 commands in, by sizeof(G); the buffer must then hold
+     * 0x2000 * sizeof(Gfx) bytes (func_800C1B24 allocates it). */
+    p = (G *)D_800DF210 + (D_800DF218 << 12);
+#else
     p = (G *)(D_800DF210 + (D_800DF218 << 15));
+#endif
     D_800DF214 = p + 1;
     p->w0 = 0xDF000000;
     p->w1 = 0;

@@ -5,7 +5,11 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Gfx G; /* PC: a command is port.h's 16-byte Gfx */
+#else
 typedef struct { u32 w0, w1; } G;
+#endif
 extern u16 D_800C9210[], D_800C9224[];
 void func_800A5264(G **, s32);
 u8 *func_800B6FE0(G **, s32);

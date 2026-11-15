@@ -5,6 +5,24 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: D_800E9AA4 is the N64's label of D_800E8230[20].el, which has no PC symbol; the menus and their elements hold
+ * addresses, so they are common.h's Nw2Menu and Nw2MenuEl, read by field name. p + k * 0x148 is element k; +0xA is
+ * fA, +0x16 f16, +0x20 f20 and +0x22 f22. */
+extern Nw2Menu D_800E8230[];
+
+void func_800B50CC(void) {
+    Nw2MenuEl *p = D_800E8230[20].el;
+    s32 i;
+    p[0].f16 = 0;
+    p[0].f20 = 0x1000;
+    p[0].f22 = 0;
+    p[9].f16 = 0;
+    for (i = 1; i < 9; i++) {
+        p[i].fA |= 0x20;
+    }
+}
+#else
 typedef struct { u8 p[0xA]; u16 f; u8 q[0x13C]; } P;
 extern u8 *D_800E9AA4;
 
@@ -23,3 +41,4 @@ void func_800B50CC(void) {
         q += 0xA4;
     }
 }
+#endif

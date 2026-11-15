@@ -26,7 +26,9 @@ _Static_assert(offsetof(Spr, img) == offsetof(Nw2ResourceEntryHashed, allocation
 #endif
 
 extern V *D_800E7CB4;
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800B600C */
 Spr *func_800B600C(s32, s32);
+#endif
 void appendPaletteSetupDisplayList(G **);
 u32 osVirtualToPhysical(V *);
 
@@ -60,7 +62,13 @@ u32 osVirtualToPhysical(V *);
 #define SPVERTEX(g, v, n, v0) { G *_g = (g); _g->w0 = SHL(1, 24, 8) | SHL((n), 12, 8) | SHL((v0) + (n), 1, 7); _g->w1 = osVirtualToPhysical(v); }
 #endif
 
+#ifdef TARGET_PC
+/* PC: the picture's key is a MenuKey (port.h), as func_800B600C takes it (port_decls.h): func_8009FE3C passes a name
+ * record's address as MENU_KEY_NAME. */
+void func_800A3E00(G **dl, MenuKey id) {
+#else
 void func_800A3E00(G **dl, s32 id) {
+#endif
     G *g = *dl;
     Spr *s = func_800B600C(id, 0x8008);
     V *v;

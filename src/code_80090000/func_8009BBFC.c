@@ -5,10 +5,14 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Gfx NwGfx; /* PC: a command is port.h's 16-byte Gfx */
+#else
 typedef struct {
     u32 w0;
     u32 w1;
 } NwGfx;
+#endif
 
 #define NW_SHIFTL(v, s, w) ((unsigned int)(((unsigned int)(v) & ((0x01 << (w)) - 1)) << (s)))
 

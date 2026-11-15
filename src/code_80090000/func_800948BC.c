@@ -5,6 +5,11 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: D_800DB680 points at a scene of D_800C8E84 (common.h's Nw2EncScene), whose addresses before f14 are pointers on
+ * PC, so f14 to f1A lie 0xC bytes later than on the N64; the shared struct has the same field names. */
+typedef Nw2EncScene Nw2Cfg948BC;
+#else
 typedef struct {
     u8 pad0[0x14];
     u16 f14;
@@ -12,6 +17,7 @@ typedef struct {
     u16 f18;
     u16 f1A;
 } Nw2Cfg948BC;
+#endif
 
 typedef struct {
     u8 pad0[0x160];

@@ -10,14 +10,26 @@ typedef struct { u16 off; u16 pad2; u16 len; u16 pad6; } Blk;
 typedef struct { u8 e[4][0x26]; s32 sum; } Rec;
 typedef struct { u8 pad[0x600]; Rec recs[64]; } Save;
 extern u8 *D_800DCFB8;
+#ifdef TARGET_PC
+/* PC: D_800DCFC4 holds the address of the controllers' message queue that func_8000424C returns, which an s32 would
+ * cut in half. */
+extern s32 *D_800DCFC4;
+extern s32 D_800DCFBC;
+#else
 extern s32 D_800DCFC4, D_800DCFBC;
+#endif
 extern Blk D_800D2900[];
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_8002B5AC and func_8002B790 */
 s32 func_8002B5AC(s32);
 u8 *func_8002B790(s32, s32);
 #endif
 void bcopy(void *, void *, s32);
+#ifdef TARGET_PC
+/* PC: func_8000424C's definition returns the queue's address, an s32 *. */
+s32 *func_8000424C(void);
+#else
 s32 func_8000424C(void);
+#endif
 s32 func_800B9640(s32, s32);
 void func_80004290(void);
 

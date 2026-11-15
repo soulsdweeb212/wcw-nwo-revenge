@@ -11,6 +11,22 @@ typedef Gfx Gw936; /* PC: a command is port.h's 16-byte Gfx, which keeps a whole
 typedef struct { u32 w0, w1; } Gw936;
 #endif
 
+#ifdef TARGET_PC
+/* PC: Rec936 is a scene of D_800C8E84 (common.h's Nw2EncScene), whose addresses are pointers, so it is 0x58 bytes on
+ * PC; this view keeps the file's field names and follows that struct, as the asserts below check. */
+typedef struct {
+    u16 f0;
+    u16 f2;
+    u16 f4;
+    u16 pad6;
+    void **f8;
+    struct Sub936 *fC;
+    Nw2EncTitle *f10;
+    u16 f14[4];
+    u16 *f1C[5];
+    u32 f30;
+} Rec936;
+#else
 typedef struct {
     u16 f0;
     u16 f2;
@@ -20,6 +36,7 @@ typedef struct {
     struct Sub936 *fC;
     u8 pad10[0x24];
 } Rec936;
+#endif
 
 typedef struct {
     u16 f0, f2, f4, f6, f8, fA;
@@ -50,12 +67,16 @@ typedef struct Sub936 {
     s16 fE;
 } Sub936;
 
+#ifdef TARGET_PC
+typedef Nw2PicShape Anim936; /* PC: a record of D_800C6508 (common.h), 0x18 bytes, its addresses pointers */
+#else
 typedef struct {
     u8 pad0[4];
     s32 f4;
     u16 f8;
     u8 padA[6];
 } Anim936;
+#endif
 
 typedef struct {
     u8 pad0[0x24];
@@ -67,8 +88,7 @@ typedef struct {
  * vertices (fC), display list (f10) and work block (f14) are 4-byte handles (port.h's PTR_TO_SLOT): the code stores
  * PTR_TO_SLOT(p) and reaches the work block (Nw2SceneWork, whose bias is Obj936's f24) through SLOT_TO_PTR. The asserts
  * check the view against Nw2SceneObj. The vertices that the encounter objects take from their record of D_800C6508
- * (out->fC = enc->f8->f4 below) are still that record's 32-bit word: those records of overlay 1's data have no PC
- * layout yet. */
+ * (common.h's Nw2PicShape) are a pointer there, stored as the object's handle. */
 typedef struct {
     u8 pad0[0xC];
     u32 fC;
@@ -112,6 +132,32 @@ typedef struct {
     u16 f12;
     u8 f14, f15, f16, pad17;
 } Enc936;
+#ifdef TARGET_PC
+/* PC: the records follow common.h's layouts, in which their addresses are pointers: Rec936 a scene (Nw2EncScene),
+ * Sub936 a spot (Nw2EncSpot), Ent936 an entry of D_800DB6A8 (Nw2EncPartDraw) and Enc936 an encounter of D_800DB8C0
+ * (Nw2Encounter). */
+_Static_assert(sizeof(Rec936) == sizeof(Nw2EncScene) && offsetof(Rec936, f8) == offsetof(Nw2EncScene, parts) &&
+                   offsetof(Rec936, fC) == offsetof(Nw2EncScene, spots) &&
+                   offsetof(Rec936, f10) == offsetof(Nw2EncScene, title) &&
+                   offsetof(Rec936, f14) == offsetof(Nw2EncScene, f14) &&
+                   offsetof(Rec936, f1C) == offsetof(Nw2EncScene, phases),
+               "Rec936 must follow Nw2EncScene");
+_Static_assert(sizeof(Sub936) == sizeof(Nw2EncSpot) && offsetof(Sub936, flags) == offsetof(Nw2EncSpot, flags) &&
+                   offsetof(Sub936, f6) == offsetof(Nw2EncSpot, f6) &&
+                   offsetof(Sub936, f8) == offsetof(Nw2EncSpot, x) &&
+                   offsetof(Sub936, fE) == offsetof(Nw2EncSpot, pitch),
+               "Sub936 must follow Nw2EncSpot");
+_Static_assert(sizeof(Ent936) == sizeof(Nw2EncPartDraw) && offsetof(Ent936, f8) == offsetof(Nw2EncPartDraw, vtx) &&
+                   offsetof(Ent936, fC) == offsetof(Nw2EncPartDraw, dl),
+               "Ent936 must follow Nw2EncPartDraw");
+_Static_assert(sizeof(Enc936) == sizeof(Nw2Encounter) && offsetof(Enc936, f4) == offsetof(Nw2Encounter, obj) &&
+                   offsetof(Enc936, f8) == offsetof(Nw2Encounter, shape) &&
+                   offsetof(Enc936, fC) == offsetof(Nw2Encounter, kind) &&
+                   offsetof(Enc936, f10) == offsetof(Nw2Encounter, frames) &&
+                   offsetof(Enc936, f12) == offsetof(Nw2Encounter, color) &&
+                   offsetof(Enc936, f14) == offsetof(Nw2Encounter, r),
+               "Enc936 must follow Nw2Encounter");
+#endif
 
 extern Rec936 D_800C8E84[];
 extern Rec936 *D_800DB680;
@@ -127,7 +173,9 @@ extern Out936 *D_800DB674;
 extern Gw936 *D_800DB8AC;
 extern Enc936 D_800DB8C0[];
 extern s32 D_800DBD40;
+#ifndef TARGET_PC /* on PC, port_decls.h declares D_800DBD44 */
 extern s32 D_800DBD44;
+#endif
 #ifdef TARGET_PC
 extern u8 *D_800DBD48; /* PC: it holds an address (func_800914F0 sets it to D_800DB694), so a pointer */
 #else
@@ -151,8 +199,20 @@ void func_80003684(void *, u16, void *);
 Vtx936 *func_800B64EC(void *, u16);
 void func_80090908(Part936 *, Vtx936 *);
 s32 guRandom(void);
+#ifdef TARGET_PC
+/* PC: the parameters of func_800914F0's definition: the object, then a control-point block and its count, which it
+ * reads only when D_800DB688 is none of 1, 3, 4 and 5 (each of those picks a block of its own). */
+void func_800914F0(Out936 *, void *, s32);
+#else
 void func_800914F0(Out936 *);
+#endif
+#ifdef TARGET_PC
+/* PC: the parameters of func_80092DE0's definition, an encounter and a number. The N64 passes a third argument, which
+ * it does not read. */
+void func_80092DE0(Enc936 *, s32);
+#else
 void func_80092DE0(Enc936 *, s32, s32);
+#endif
 void guPositionF(void *, f32, f32, f32, f32, f32, f32, f32);
 void func_800015AC(Out936 *, s32);
 void relinkEntityList(void);
@@ -236,10 +296,22 @@ void func_800936DC(s32 arg0) {
                     enc->f16 = D_800C5E00[enc->f12 * 3 + 2];
                     enc->f10 = 0;
                     if (enc->fC == 0xA) {
+#ifdef TARGET_PC
+                        /* PC: the N64 call leaves a1 and a2 as the last function called left them (here guRandom,
+                         * which does not touch them), so a block and count are only defined for the four modes that
+                         * pick their own. The PC passes none: another mode would read through NULL. */
+                        func_800914F0(out, NULL, 0);
+#else
                         func_800914F0(out);
+#endif
                     } else {
+#ifdef TARGET_PC
+                        out->fC = PTR_TO_SLOT(enc->f8->vtx); /* PC: a handle (see Out936) */
+                        out->f1B = enc->f8->count;
+#else
                         out->fC = enc->f8->f4;
                         out->f1B = enc->f8->f8;
+#endif
                     }
 #ifdef TARGET_PC
                     /* PC: the display list's handle (see Out936). */
@@ -248,7 +320,11 @@ void func_800936DC(s32 arg0) {
                     out->f10 = D_800DB8AC;
 #endif
                     out->f1A = 0;
+#ifdef TARGET_PC
+                    func_80092DE0(enc, 0); /* PC: as declared above */
+#else
                     func_80092DE0(enc, 0, 0);
+#endif
                     if (sub->f6 & 0x8000) {
 #ifdef TARGET_PC
                         /* PC: the work block is a handle (see Out936). */

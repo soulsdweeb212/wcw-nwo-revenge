@@ -6,6 +6,27 @@
 #include "common.h"
 
 typedef struct { u8 pad0[2]; u16 w; u16 h; u8 pad6[2]; u16 w2; } Pic;
+#ifdef TARGET_PC
+/* PC: D_800E7558 holds four 0xEC-byte layers, which func_8009F8BC steps by 0xEC: a 0xDC-byte scene object (common.h's
+ * Nw2SceneObj, which keeps its N64 layout on PC and holds handles), then the picture's fields (func_8009EC58's P). So a
+ * layer keeps its N64 layout too, and the address of its picture at +0xDC is a 4-byte handle (port.h's PTR_TO_SLOT),
+ * which func_8009EC58 and func_8009C218 turn back with SLOT_TO_PTR. The picture sets D_800D4930 hold addresses, so
+ * they have their PC layout (common.h's Nw2MenuShot). */
+typedef struct {
+    Nw2SceneObj obj;
+    u32 pic;
+    s16 x;
+    s16 y;
+    u16 scale;
+    s16 alpha;
+    u16 flags;
+    s16 fEA;
+} Layer;
+_Static_assert(offsetof(Layer, pic) == 0xDC && offsetof(Layer, x) == 0xE0 && offsetof(Layer, fEA) == 0xEA &&
+                   sizeof(Layer) == 0xEC,
+               "a layer of D_800E7558 keeps its N64 layout on PC");
+typedef Nw2MenuShot Shot;
+#else
 typedef struct {
     u8 pad0[0xDC];
     Pic *pic;
@@ -17,6 +38,7 @@ typedef struct {
     s16 fEA;
 } Layer;
 typedef struct { Pic *pic[4]; u16 n[4]; u8 pad18[8]; } Shot;
+#endif
 
 extern Layer D_800E7558[];
 extern Shot D_800D4930[];
@@ -41,7 +63,11 @@ void func_800C0680(s32 a) {
             c->flags = 0;
             continue;
         }
+#ifdef TARGET_PC
+        c->pic = PTR_TO_SLOT(p); /* PC: as a handle (see above) */
+#else
         c->pic = p;
+#endif
         if (t->n[i] > D_800EA0B4) {
             c->flags |= 2;
         } else {
@@ -128,8 +154,14 @@ void func_800C0680(s32 a) {
         case 17:
         case 22:
             c->scale = a * 8;
+#ifdef TARGET_PC
+            /* PC: p is the layer's picture, which c->pic holds as a handle (above). */
+            c->x = (480 - c->scale * (p->w * 480 / 320) / 256) / 2;
+            c->y = (240 - c->scale * p->h / 256) / 4;
+#else
             c->x = (480 - c->scale * (c->pic->w * 480 / 320) / 256) / 2;
             c->y = (240 - c->scale * c->pic->h / 256) / 4;
+#endif
             c->alpha = 0;
             break;
         case 18:
@@ -167,8 +199,14 @@ void func_800C0680(s32 a) {
                 break;
             case 3:
                 c->scale = a;
+#ifdef TARGET_PC
+                /* PC: as above. */
+                c->x = (480 - c->scale * p->w2 / 256) / 2;
+                c->y = (240 - c->scale * p->h / 256) / 2;
+#else
                 c->x = (480 - c->scale * c->pic->w2 / 256) / 2;
                 c->y = (240 - c->scale * c->pic->h / 256) / 2;
+#endif
                 break;
             }
             break;

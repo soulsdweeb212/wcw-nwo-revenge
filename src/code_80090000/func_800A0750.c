@@ -15,6 +15,36 @@ typedef struct {
     u16 flags;
 } Def;
 
+#ifdef TARGET_PC
+/* PC: a menu element holds addresses, so it is common.h's Nw2MenuEl, which this view follows (the asserts check):
+ * def at +0x28, parent at +0x150, 0x158 bytes. */
+typedef struct El {
+    f32 x, y;
+    s16 f8;
+    u16 fA;
+    s8 fC, fD, fE;
+    u8 fF;
+    s16 f10;
+    s16 f12;
+    s16 f14;
+    u8 f16;
+    u8 pad17;
+    u8 f18, f19;
+    s16 f1A;
+    f32 f1C;
+    u16 f20;
+    s16 f22;
+    Def *def;
+    u8 pad30[offsetof(Nw2MenuEl, parent) - 0x30];
+    struct El *parent;
+} El;
+_Static_assert(offsetof(El, f8) == offsetof(Nw2MenuEl, f8) && offsetof(El, fA) == offsetof(Nw2MenuEl, fA) &&
+                   offsetof(El, fE) == offsetof(Nw2MenuEl, fE) && offsetof(El, f14) == offsetof(Nw2MenuEl, f14) &&
+                   offsetof(El, f19) == offsetof(Nw2MenuEl, f19) && offsetof(El, f1C) == offsetof(Nw2MenuEl, f1C) &&
+                   offsetof(El, f22) == offsetof(Nw2MenuEl, f22) && offsetof(El, def) == offsetof(Nw2MenuEl, def) &&
+                   offsetof(El, parent) == offsetof(Nw2MenuEl, parent) && sizeof(El) == sizeof(Nw2MenuEl),
+               "El must follow common.h's Nw2MenuEl");
+#else
 typedef struct El {
     f32 x, y;
     s16 f8;
@@ -35,9 +65,27 @@ typedef struct El {
     u8 pad28[0x144 - 0x28];
     struct El *parent;
 } El;
+#endif
 
 typedef struct { f32 x, y, z; f32 rx, ry, rz; f32 s; } Pos;
 
+#ifdef TARGET_PC
+/* PC: a menu is common.h's Nw2Menu, which this view follows: 0x140 bytes, el at +0x18. */
+typedef struct {
+    void *items;
+    s16 cur;
+    u8 pad6[6];
+    s16 fC;
+    s16 fE;
+    s16 f10;
+    s16 f12;
+    El *el;
+    u8 pad20[sizeof(Nw2Menu) - 0x20];
+} Menu;
+_Static_assert(offsetof(Menu, fC) == offsetof(Nw2Menu, fC) && offsetof(Menu, f12) == offsetof(Nw2Menu, f12) &&
+                   offsetof(Menu, el) == offsetof(Nw2Menu, el) && sizeof(Menu) == sizeof(Nw2Menu),
+               "Menu must follow common.h's Nw2Menu");
+#else
 typedef struct {
     void *items;
     s16 cur;
@@ -49,6 +97,7 @@ typedef struct {
     El *el;
     u8 pad18[0x138 - 0x18];
 } Menu;
+#endif
 
 extern s32 D_800E7C8C;
 extern s16 D_800E9F7C;

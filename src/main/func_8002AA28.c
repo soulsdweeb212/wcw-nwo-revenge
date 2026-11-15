@@ -87,7 +87,11 @@ void func_8002AA28(void)
         rp--;
     } while (i >= 0);
 
+#ifdef TARGET_PC
+    e = allocateHeap(40 * sizeof(Nw2KeyedBufferEntry)); /* PC: 0x50-byte entries (common.h), 0x48 on the N64 */
+#else
     e = allocateHeap(0xB40);
+#endif
     D_8007FC3C = e;
     i = 0;
     do {

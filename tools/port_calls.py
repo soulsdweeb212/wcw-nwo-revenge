@@ -852,7 +852,14 @@ def call_findings(call: dict, d: dict, float_externs: dict | None = None) -> lis
     params = [promote(k) for k in d["param_classes"]] if d["knr"] else d["param_classes"]
     args = [a["class"] for a in call["args"]]
     out = []
+    # A struct passed by value travels as the PC compiler places it at both ends when the caller's declaration gives
+    # every parameter the type the definition gives it (func_80013108's calls of func_80000700, whose PC definition
+    # takes the caller's Nw2InitRect and Nw2InitBig where the N64's takes one 36-byte record).
+    view = split_parameters(split_function_type(call["view"])[1]) if call["view"] else None
+    same_types = view is not None and not d["knr"] and view == [t for t, _, _ in d["params"]]
     for j, code, words in compare(args, params, [a["constant"] for a in call["args"]]):
+        if code == "struct" and same_types:
+            continue
         t, _, name = d["params"][j]
         what = f"parameter {j + 1} ({declaration(t, name)})"
         i = sources(args, params, sysv_places)[j]          # the argument the PC function reads it from

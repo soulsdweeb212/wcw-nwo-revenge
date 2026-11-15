@@ -6,7 +6,13 @@
 #include "common.h"
 
 s32 func_800A06F8(u8 *a, s32 b) {
+#ifdef TARGET_PC
+    /* PC: a is a menu element (common.h's Nw2MenuEl), whose description's address sits at +0x28 on PC, as a pointer
+     * (an s32 would cut it in half); fF is the description's slide kind. */
+    switch (((Nw2MenuEl *)a)->def->fF & 0xF) {
+#else
     switch (*(u8 *)(*(s32 *)(a + 0x24) + 0xF) & 0xF) {
+#endif
     case 6:
     case 7:
     case 8:

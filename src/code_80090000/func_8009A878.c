@@ -15,9 +15,9 @@ extern u8 D_800C94CC[];
 extern s32 D_800E797C;
 #ifdef TARGET_PC
 /* PC: D_800E81F8 holds the address of a resource (func_800C12D0 stores func_800B600C's result there), so it is a
- * pointer, as func_800B64EC takes it (its definition takes a u8 *). */
+ * pointer, as func_800B64EC takes it (its definition takes a u8 *). port_decls.h declares func_800B600C, which returns
+ * the picture's heap block for the resource ids this file passes. */
 extern u8 *D_800E81F8;
-u8 *func_800B600C(s32,s32);
 u8 *func_800B64EC(u8 *,s32);
 #else
 extern s32 D_800E81F8;
@@ -34,8 +34,16 @@ extern u8 D_800C95B8[];
 extern u8 D_C95F0[];
 extern u8 D_C95B8[];
 #endif
+#ifdef TARGET_PC
+/* PC: the two s32 at D_800C94CC + 0x20 and + 0x1C by their own labels, so they are read as s32 (D_800C94CC is bytes,
+ * which keep the N64's byte order on PC). */
+extern s32 D_800C94E8, D_800C94EC;
+#define TIMER D_800C94EC
+#define CUR D_800C94E8
+#else
 #define TIMER (*(s32*)(D_800C94CC+0x20))
 #define CUR (*(s32*)(D_800C94CC+0x1C))
+#endif
 #ifdef TARGET_PC
 /* PC: w1 takes the whole value: the addresses below come from DL_ADDR, and a (u32) cast would cut one in half. */
 #define E(a,b) {G *_g=gfx++;_g->w0=(a);_g->w1=(b);}

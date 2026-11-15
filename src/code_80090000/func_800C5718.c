@@ -5,7 +5,13 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: the controller seats D_8006E178 keep their N64 layout (docs/port.md), so the address at +0 is a handle (port.h's
+ * PTR_TO_SLOT); D_800EA0BC is a copy of one seat (bcopy of 0xC bytes), whose fields D_800EA0C0 ... are read by label. */
+typedef struct { u32 p; u16 a; u16 b; u8 c[4]; } P;
+#else
 typedef struct { u8 *p; u16 a; u16 b; u8 c[4]; } P;
+#endif
 extern P D_8006E178[];
 extern u8 D_800E7C18[][0x10];
 extern u16 D_800EA0C8[], D_800EA0C0[], D_800EA0C2, D_800EA0C4;
@@ -39,7 +45,11 @@ void func_800C5718(void) {
     f = 4;
     c = D_800E7C18[0];
     for (; i < 4; i++) {
+#ifdef TARGET_PC
+        if (((u8 *)SLOT_TO_PTR(D_8006E178[i].p))[3] == 0 && D_800D5F1C == i) {
+#else
         if (D_8006E178[i].p[3] == 0 && D_800D5F1C == i) {
+#endif
             D_800D5F1C = i + 1;
         }
         D_800EA0C8[i] = 0;

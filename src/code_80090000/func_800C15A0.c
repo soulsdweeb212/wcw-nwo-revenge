@@ -5,9 +5,22 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: the scenes D_800D4ED8, the picture sets D_800D4930 and the camera tracks D_800D4E40 hold addresses, so they have
+ * their PC layouts (common.h's Nw2MenuScene, Nw2MenuShot and Nw2MenuSceneTrack), and the code indexes them by those
+ * sizes. Bg names a set's res and max f18 and f1A. D_800E763C is +0xE4 of the layers D_800E7558, which keep their N64
+ * layout on PC (see func_800C0680), so it reaches the same bytes as on the N64. */
+typedef Nw2MenuScene Arena;
+typedef struct { void *pic[4]; u16 n[4]; u16 f18; u16 f1A; u8 f1C[4]; } Bg;
+_Static_assert(offsetof(Bg, f18) == offsetof(Nw2MenuShot, res) && offsetof(Bg, f1A) == offsetof(Nw2MenuShot, max) &&
+                   sizeof(Bg) == sizeof(Nw2MenuShot),
+               "Bg follows common.h's Nw2MenuShot");
+typedef Nw2MenuSceneTrack Mus;
+#else
 typedef struct { u16 f0; u16 flags; u16 f4; u16 f6; s16 f8; s16 fA; u8 padC[0x10]; } Arena;
 typedef struct { u8 pad0[0x18]; u16 f18; u16 f1A; u8 pad1C[4]; } Bg;
 typedef struct { u8 pad0[4]; s16 f4; u16 f6; } Mus;
+#endif
 typedef struct { s16 f0, f2, f4, f6; u8 pad8[0xEC - 8]; } Ch;
 
 extern Arena D_800D4ED8[];
@@ -18,8 +31,8 @@ extern s32 D_800EA0B4, D_800DF318, D_800DF314, D_800DF308;
 extern Arena *D_800DF31C;
 extern s32 D_800E79C4;
 #ifdef TARGET_PC
-/* PC: D_800E81F8 holds the address of a resource, which func_800B600C returns, so it is a pointer, and so is
- * func_800B600C's result (the address its cache entry holds; its PC definition is not written yet). */
+/* PC: D_800E81F8 holds the address of a resource, which func_800B600C returns (port_decls.h: the picture's heap block
+ * for a resource id, as b->f18 is), so it is a pointer. */
 extern u8 *D_800E81F8;
 extern s32 D_800E81E4, D_800D5F28;
 #else
@@ -28,10 +41,7 @@ extern s32 D_800E81F8, D_800E81E4, D_800D5F28;
 extern s32 D_800DF328, D_800DF324;
 extern Mus *D_800DF320;
 extern s32 D_800E9F70, D_800E7504, D_800E74E8, D_800D28F0, D_800E74C4, D_800E7CD8, D_800D5E80;
-#ifdef TARGET_PC
-/* PC: func_800B600C returns an address, as above. */
-u8 *func_800B600C(s32, u16);
-#else
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800B600C, which returns an address, as above */
 s32 func_800B600C(s32, s32);
 #endif
 void func_800C0680(s32);

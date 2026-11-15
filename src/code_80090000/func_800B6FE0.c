@@ -5,10 +5,18 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx, which func_800B6548 writes on PC (its PC definition takes a Gfx ** and the
+ * texture and palette as pointers), so the cursor is a Gfx ** here too; the N64 steps u32 words. The picture is the
+ * heap block that func_800B600C (port_decls.h) hands back for a resource id: its header, then the palette at +0x10 and
+ * the texture after it. */
+void func_800B6548(Gfx **, s32, s32, s32, u8 *, u8 *);
+#else
 u8 *func_800B600C(s32, s32);
 void func_800B6938(u32 **, s32, s32, u8 *, u8 *);
 void func_800B6548(u32 **, s32, s32, s32, u8 *, u8 *);
 void func_800B6B5C(u32 **, s32, s32, s32, u8 *, u8 *);
+#endif
 
 static inline u8 *load(s32 x, u8 **b, u8 **c) {
     u8 *q;
@@ -23,10 +31,17 @@ static inline u8 *load(s32 x, u8 **b, u8 **c) {
     return q;
 }
 
+#ifdef TARGET_PC
+u8 *func_800B6FE0(Gfx **dl, s32 a) {
+    u8 *b;
+    u8 *c;
+    Gfx *g = *dl;
+#else
 u8 *func_800B6FE0(u32 **dl, s32 a) {
     u8 *b;
     u8 *c;
     u32 *g = *dl;
+#endif
     u8 *v;
     v = load(a, &b, &c);
     if (v == 0) {

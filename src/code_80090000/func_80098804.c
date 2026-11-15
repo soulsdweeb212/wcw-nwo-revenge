@@ -10,19 +10,32 @@
  * name's address up through func_8002A2FC), so S988 follows the entry's PC layout, Nw2ResourceEntryHashed in common.h:
  * the allocation at +8 and the sizes in reserved from +0x10 (N64: +4, +8, +0xC). The display lists at 0x800C95F0,
  * 0x800C95B8, 0x800C9678 and 0x800C9620 are named by their own addresses (D_C95F0 and the others are their N64
- * physical addresses, link constants). port_decls.h declares func_8002AD34, which returns the name's address. */
+ * physical addresses, link constants). port_decls.h declares func_8002AD34, which returns the name's address.
+ * func_8002AD68 and func_8002AE24 return the addresses of the height and weight texts (their PC definitions), and the
+ * three texts are drawn by name: draw988 takes the name's address and makes it a key of the resource-name cache
+ * (port.h's MENU_KEY_NAME), as func_800B600C takes it (port_decls.h). appendPaletteSetupDisplayList and func_80096D8C
+ * take the cursor as a Gfx ** (their definitions). */
 typedef Gfx G988;typedef struct{ResKey f0;void*data;s32 f8;s16 w,h,x;}S988;
 _Static_assert(offsetof(S988,data)==offsetof(Nw2ResourceEntryHashed,allocation)&&offsetof(S988,f8)==offsetof(Nw2ResourceEntryHashed,reserved)&&offsetof(S988,w)==offsetof(Nw2ResourceEntryHashed,reserved)+4&&offsetof(S988,h)==offsetof(Nw2ResourceEntryHashed,reserved)+6&&offsetof(S988,x)==offsetof(Nw2ResourceEntryHashed,reserved)+8,"S988 follows the PC layout of an entry of the resource-name cache");
 extern u8 D_800C95F0[],D_800C95B8[],D_800C9678[],D_800C9620[];
-s32 func_8002AD68(s32);s32 func_8002AE24(s32);S988*func_800B600C(s32,s32);void appendPaletteSetupDisplayList(void*);void func_80096D8C(void*,void*,s32,s32,s32,s32,s32,s32,s32);
+u8 *func_8002AD68(s32);u8 *func_8002AE24(s32);void appendPaletteSetupDisplayList(Gfx **);void func_80096D8C(Gfx **,void*,s32,s32,s32,s32,s32,s32,s32);
 #else
 typedef struct{u32 w0,w1;}G988;typedef struct{s32 f0;void*data;s32 f8;s16 w,h,x;}S988;
 extern u8 D_C95F0[],D_C95B8[],D_C9678[],D_C9620[];
 s32 func_8002AD68(s32);s32 func_8002AE24(s32);s32 func_8002AD34(s32,s32);S988*func_800B600C(s32,s32);void appendPaletteSetupDisplayList(void*);void func_80096D8C(void*,void*,s32,s32,s32,s32,s32,s32,s32);
 #endif
+#ifdef TARGET_PC
+/* PC: the picture's name by its address, as above. */
+static __inline__ void draw988(G988**out,u8*resource,s32 x,s32 y,s32 alpha,s32 just){G988*work=*out;S988*s=func_800B600C(MENU_KEY_NAME(resource),8);if(s){appendPaletteSetupDisplayList(&work);if(just==1)x-=s->x;else if(just==2){u16 width=s->x;x-=(s16)width/2;}func_80096D8C(&work,s->data,0,x,y,s->w,s->h,s->w,s->h*(512-alpha)/255);*out=work;}}
+#else
 static __inline__ void draw988(G988**out,s32 resource,s32 x,s32 y,s32 alpha,s32 just){G988*work=*out;S988*s=func_800B600C(resource,8);if(s){appendPaletteSetupDisplayList(&work);if(just==1)x-=s->x;else if(just==2){u16 width=s->x;x-=(s16)width/2;}func_80096D8C(&work,s->data,0,x,y,s->w,s->h,s->w,s->h*(512-alpha)/255);*out=work;}}
+#endif
 #define EMIT988(a,b) {G988*q=(G988*)(p++);q->w0=(a);q->w1=(b);}
+#ifdef TARGET_PC
+void func_80098804(G988**out,s32 id,s32 mode,s32 x,s32 y,s32 alpha){s32 yy;u8*resource;f64 base;G988*p=*out;s32 t0,t1; /* PC: resource is the height text's address, as above */
+#else
 void func_80098804(G988**out,s32 id,s32 mode,s32 x,s32 y,s32 alpha){s32 yy,resource;f64 base;G988*p=*out;s32 t0,t1;
+#endif
 #ifdef TARGET_PC
     /* PC: the display lists' addresses as the whole pointers (port.h's DL_ADDR). */
     EMIT988(0xDE000000,DL_ADDR(D_800C95F0));EMIT988(0xDE000000,DL_ADDR(D_800C95B8));EMIT988(0xFA000000,(alpha/2)&255);

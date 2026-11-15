@@ -18,9 +18,17 @@ extern u16 D_8007FBC0[]; /* D_8007EF30 + 0xC90, the roster: its own symbol, or C
 extern s32 D_80038AA8;
 extern u8 D_8003A560[];
 extern u16 D_8003A4FC[][4];
+#ifdef TARGET_PC
+/* PC: the types of the definitions of func_8002B528 and func_8002B668, which return a u16: read as an s32, the PC
+ * result's upper bits would be unset. */
+u16 func_8002B528(s32);
+s32 func_800B0EC4(s32);
+u16 func_8002B668(u32, s32);
+#else
 s32 func_8002B528(s32);
 s32 func_800B0EC4(s32);
 s32 func_8002B668(s32, s32);
+#endif
 s32 guRandom(void);
 
 void func_800AEB68(void) {

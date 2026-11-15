@@ -5,9 +5,19 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Gfx G; /* PC: a command is port.h's 16-byte Gfx */
+#else
 typedef struct { u32 w0, w1; } G;
+#endif
 typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } V;
+#ifdef TARGET_PC
+/* PC: an entry of D_800CB7B8 (0x10 bytes on the N64: the addresses of a display list and of vertices, then the vertex
+ * count) holds pointers, as func_8009FE3C's view of it has them. */
+typedef struct { void *dl; V *addr; u16 n; u8 padA[6]; } VtxSet;
+#else
 typedef struct { u8 pad0[4]; V *addr; u16 n; u8 padA[6]; } VtxSet;
+#endif
 typedef struct { u8 pad0[0xE]; u8 idx; } Def;
 typedef struct {
     u8 pad0[0x14];
@@ -24,7 +34,12 @@ extern s32 D_800CCBF8[];
 u32 osVirtualToPhysical(V *);
 
 #define SHL(v, s, w) ((u32)(((u32)(v) & ((0x01 << (w)) - 1)) << (s)))
+#ifdef TARGET_PC
+/* PC: the vertices' address as the whole pointer (port.h's DL_ADDR); osVirtualToPhysical returns a u32. */
+#define SPVERTEX(g, v, n, v0) { G *_g = (g); _g->w0 = SHL(1, 24, 8) | SHL((n), 12, 8) | SHL((v0) + (n), 1, 7); _g->w1 = DL_ADDR(v); }
+#else
 #define SPVERTEX(g, v, n, v0) { G *_g = (g); _g->w0 = SHL(1, 24, 8) | SHL((n), 12, 8) | SHL((v0) + (n), 1, 7); _g->w1 = osVirtualToPhysical(v); }
+#endif
 #define VTX(s, dx, dy) {                    \
     V *v = D_800E7CB4++;                    \
     v->ob[0] = (s)->ob[0] + (dx);           \

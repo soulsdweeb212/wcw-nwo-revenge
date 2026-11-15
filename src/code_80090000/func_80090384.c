@@ -20,7 +20,14 @@ typedef struct
     s16 angle;
     f32 scale;
 } Nw2Effect;
+#ifdef TARGET_PC
+/* PC: the four f64 constants by the labels the asm loads (D_800D5D1C + 0x244, + 0x24C, + 0x254 and + 0x25C), so that
+ * the PC turns each into its own byte order as an f64 when it loads overlay 1; bytes of D_800D5D1C would stay in the
+ * N64's (docs/port.md, "Byte order on PC"). */
+extern f64 D_800D5F60, D_800D5F68, D_800D5F70, D_800D5F78;
+#else
 extern u8 D_800D5D1C[];
+#endif
 extern u8 D_800D6658[];
 void guPositionF(void *, f32, f32, f32, f32, f32, f32, f32);
 void guMtxXFMF(void *, f32, f32, f32, f32 *, f32 *, f32 *);
@@ -32,9 +39,16 @@ void func_80090384(s32 arg0, s32 arg1, s32 arg2)
     f32 z;
     f32 r;
     f32 zero = 0.0f;
+#ifdef TARGET_PC
+    /* PC: the labels named above. */
+    f64 c3 = D_800D5F60;
+    f64 c2 = D_800D5F68;
+    f64 c4 = D_800D5F70;
+#else
     f64 c3 = *((f64 *) (D_800D5D1C + 0x244));
     f64 c2 = *((f64 *) (D_800D5D1C + 0x24C));
     f64 c4 = *((f64 *) (D_800D5D1C + 0x254));
+#endif
     s32 col;
     s32 i = 0;
     Nw2Effect *p = (Nw2Effect *) (D_800D6658 + 0x6F8);
@@ -75,7 +89,11 @@ void func_80090384(s32 arg0, s32 arg1, s32 arg2)
                 if (arg2 == 0)
                 {
                     a = q->scale;
+#ifdef TARGET_PC
+                    if (a < D_800D5F78) /* PC: the label named above */
+#else
                     if (a < (*((f64 *) (D_800D5D1C + 0x25C))))
+#endif
                     {
                         alpha = (s32) (((a - c2) * c4) * 2.0);
                     }
@@ -87,9 +105,23 @@ void func_80090384(s32 arg0, s32 arg1, s32 arg2)
                     {
                         alpha = 196;
                     }
+#ifdef TARGET_PC
+                    /* PC: each list of the record is 4 of port.h's 16-byte Gfx (func_800900C0 builds them), so the
+                     * colour command (0xFA) is the list's second Gfx, at +0x10, where the N64's is at +8. The record
+                     * starts with a scene object (common.h's Nw2SceneObj), which keeps its N64 layout and holds its
+                     * display list as a handle (port.h's PTR_TO_SLOT): an 8-byte pointer at +0x10 would overwrite
+                     * the work block's handle at +0x14. */
+                    {
+                        Gfx *c = (Gfx *) (((u8 *) p) + off) + 1;
+                        c->w0 = 0xFA000000;
+                        c->w1 = (u32) (col | (alpha & 255));
+                    }
+                    ((Nw2SceneObj *) base)->dl = PTR_TO_SLOT(((u8 *) p) + off);
+#else
                     *((s32 *) ((((u8 *) p) + off) + 8)) = 0xFA000000;
                     *((s32 *) ((((u8 *) p) + off) + 12)) = col | (alpha & 255);
                     *((void **) (base + 0x10)) = ((u8 *) p) + off;
+#endif
                     r = (f32) ((q->radius * q->active) / q->limit);
                     angle = (q->angle * 360) / 4096;
                     guPositionF(m, zero, angle, zero, 1.0f, (f32) q->x, (f32) ((s16) (q->height / 12)), (f32) q->z);

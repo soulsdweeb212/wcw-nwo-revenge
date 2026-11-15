@@ -5,8 +5,28 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: the menus and their elements hold addresses, so they are common.h's Nw2Menu and Nw2MenuEl, which these views
+ * follow (the asserts check). The N64's labels D_800E8D2C and D_800E995C, inside the menus, have no PC symbol: they
+ * are D_800E8230[9].cur and D_800E8230[19].cur. */
+typedef struct {
+    u8 pad0[0xA];
+    u16 flags;
+    u8 padC[0x16];
+    u16 f22;
+    u8 pad24[sizeof(Nw2MenuEl) - 0x24];
+} El;
+_Static_assert(offsetof(El, flags) == offsetof(Nw2MenuEl, fA) && offsetof(El, f22) == offsetof(Nw2MenuEl, f22) &&
+                   sizeof(El) == sizeof(Nw2MenuEl),
+               "El must follow common.h's Nw2MenuEl");
+typedef struct { void *items; s16 cur; u8 pad6[0xE]; El *el; u8 pad20[sizeof(Nw2Menu) - 0x20]; } Menu;
+_Static_assert(offsetof(Menu, cur) == offsetof(Nw2Menu, cur) && offsetof(Menu, el) == offsetof(Nw2Menu, el) &&
+                   sizeof(Menu) == sizeof(Nw2Menu),
+               "Menu must follow common.h's Nw2Menu");
+#else
 typedef struct { u8 pad0[0xA]; u16 flags; u8 padC[0x16]; u16 f22; u8 pad24[0x148 - 0x24]; } El;
 typedef struct { void *items; s16 cur; u8 pad6[0xE]; El *el; u8 pad18[0x138 - 0x18]; } Menu;
+#endif
 typedef struct { s16 f4C; s16 f4E; u8 f50; u8 pad51; u8 f52; u8 pad53[9]; } Pl;
 typedef struct {
     u8 pad0[8];
@@ -24,7 +44,9 @@ extern s16 D_80038A90;
 extern s16 D_800E7CB8;
 extern s16 D_800E7B68[];
 extern s32 D_800EA318, D_800E6B90, D_800E7C90, D_800E74E0, D_800E7934;
+#ifndef TARGET_PC /* on PC these labels are fields of D_800E8230 (see above) */
 extern s16 D_800E8D2C, D_800E995C;
+#endif
 extern u16 D_800EA0C0;
 extern struct { u8 pad0[6]; u16 f6; } D_8006E178;
 extern Game D_8007EF30;
@@ -67,7 +89,11 @@ s32 func_800AAF5C(Menu *m, s32 ev) {
             push(D_80038A90, 0x10);
             r = 0x420;
         } else {
+#ifdef TARGET_PC
+            D_800E8230[9].cur = 0x10; /* PC: by name (see above) */
+#else
             D_800E8D2C = 0x10;
+#endif
             D_800EA318 = 0x401;
         }
         break;
@@ -76,7 +102,11 @@ s32 func_800AAF5C(Menu *m, s32 ev) {
             push(D_80038A90, 0xA);
             r = 0x425;
         } else {
+#ifdef TARGET_PC
+            D_800E8230[19].cur = 0xA; /* PC: by name (see above) */
+#else
             D_800E995C = 0xA;
+#endif
             D_800EA318 = 0x401;
         }
         break;

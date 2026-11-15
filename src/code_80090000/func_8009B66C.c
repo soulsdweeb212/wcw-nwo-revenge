@@ -10,7 +10,15 @@ typedef Gfx G9B; /* PC: a command is port.h's 16-byte Gfx, which keeps a whole p
 #else
 typedef struct {u32 w0,w1;} G9B;
 #endif
+#ifdef TARGET_PC
+/* PC: a credits line of D_800D34C8 in overlay 1's data: the address of its text (the N64's id, a negative s32),
+ * which is the picture's key in the resource-name cache (port.h's MENU_KEY_NAME), so a pointer, and the record is
+ * 0x10 bytes on PC (func_800BCDF4's Demo is the same record). An entry of D_800E79D8 is then 0x10 bytes too
+ * (func_800BCDF4's Slot). */
+typedef struct {u8 *id; s16 value; u8 type,pad;} Item9B;
+#else
 typedef struct {s32 id; s16 value; u8 type,pad;} Item9B;
+#endif
 typedef struct {Item9B *item; s16 tick; u8 pad[6];} Entry9B;
 typedef struct {u8 pad[0xEA];u16 tick;} State9B;
 #ifdef TARGET_PC
@@ -33,7 +41,9 @@ typedef struct {s32 f0;void *data;s32 f8;s16 w,h,x;} Image9B;
 extern Entry9B D_800E79D8[];
 extern s32 D_800C94E8;
 void appendPaletteSetupDisplayList(void *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800B600C */
 Image9B *func_800B600C(s32,s32);
+#endif
 void func_80096D8C(void *,void *,s32,s32,s32,s32,s32,s32,s32);
 void func_8009A878(void *,void *,s32);
 
@@ -172,7 +182,11 @@ void func_8009B66C(G9B **arg0, State9B *arg1, s32 arg2) {
                     nwDPLoadTLUT_pal16(dl++, 0, D_C9808);
 #endif
                     nwDPSetPrimColorZ(dl++, rgb, alpha);
+#ifdef TARGET_PC
+                    image = func_800B600C(MENU_KEY_NAME(e->item->id), 0x108); /* PC: the text's address as the key */
+#else
                     image = func_800B600C(e->item->id, 0x108);
+#endif
                 } else {
 #ifdef TARGET_PC
                     nwDPLoadTLUT_pal16(dl++, 0, DL_ADDR(D_800C9788 + shade * 16)); /* PC: as above */
@@ -180,7 +194,11 @@ void func_8009B66C(G9B **arg0, State9B *arg1, s32 arg2) {
                     nwDPLoadTLUT_pal16(dl++, 0, D_C9788 + shade * 16);
 #endif
                     nwDPSetPrimColorZ(dl++, rgb, alpha);
+#ifdef TARGET_PC
+                    image = func_800B600C(MENU_KEY_NAME(e->item->id), 0x8102); /* PC: as above */
+#else
                     image = func_800B600C(e->item->id, 0x8102);
+#endif
                 }
                 if (image) {
                     func_80096D8C(&dl, image->data, 0, 240 - image->x / 2, y - image->h / 2, image->w, image->h, image->w, image->h);
@@ -194,7 +212,11 @@ void func_8009B66C(G9B **arg0, State9B *arg1, s32 arg2) {
             }
         }
         i++;
+#ifdef TARGET_PC
+        tick = (s16 *)((u8 *)tick + sizeof(Entry9B)); /* PC: the entries' stride on PC, as above */
+#else
         tick = (s16 *)((u8 *)tick + 12);
+#endif
         e++;
     } while (i < 32);
     if (!arg2) {

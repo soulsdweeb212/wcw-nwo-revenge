@@ -13,7 +13,14 @@
 extern Nw2ResourceRequest *D_800E7518;
 extern s32 D_800E8208;
 
+#ifdef TARGET_PC
+/* PC: the key is the address of a picture list (the list of an entry of D_800E7CE0, which func_80099148 and
+ * findOrAddCacheEntryRaw pass), so a pointer, as common.h's PC Nw2ResourceRequest holds it; an s32 would cut it in
+ * half. */
+s32 func_80098EEC(Nw2MenuPicList *key, s32 flags) {
+#else
 s32 func_80098EEC(s32 key, s32 flags) {
+#endif
     s32 i;
     Nw2ResourceRequest *p;
 

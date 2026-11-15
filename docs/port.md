@@ -54,6 +54,16 @@ These exist only under `TARGET_PC`:
 - `RomAddr`: a ROM address, that is an offset into the cartridge image. Never a host pointer.
 - `ResDesc`: the 16-byte resource descriptor (start and end ROM addresses, size once loaded, packed size).
 - `ResKey` and the `RES_KEY_` macros: the key of the resource-name cache (see "Shared records on PC").
+- `Vtx`: one vertex as a display list loads it, 16 bytes as on the N64; vertices in the ROM's data that code names are
+  declared with it (see "Display lists on PC").
+- `MenuKey` and the `MENU_KEY_` macros: the key of the menus' picture caches, a number below 0x40000000 or a key of
+  the resource-name cache, as wide as a pointer.
+- `IdOrAddr` and `ID_OR_ADDR_IS_ADDR`: a word of the ROM's records that holds either a number or the address of data,
+  which the N64 code tells apart by the sign; on PC as wide as a pointer, a number staying below 0x80000000 (-1 as all
+  ones) and an address being the PC's (overlay 1's scene records `D_800D4ED8`).
+- `port_overlay_of` and `port_overlay_load`, which the overlay loader `func_80000700` and `func_8000082C` call on PC:
+  both overlays' code is compiled into the program, so loading one only starts its variables afresh from the ROM, and
+  the entry called is the loaded overlay's (`func_80090000` or `func_80090000_ovl2`).
 - A check that the CPU is little-endian, as the PCs the port runs on are: the PC code is written for that byte order
   where the N64 code reads a value through a view of another width (see "Byte order on PC").
 - `ROM_RES_BASE`, `ROM_RES_TABLE`, `ROM_SEG1_INIT` and the other `ROM_` names: the ROM addresses of the decomp's ROM
@@ -268,6 +278,20 @@ order, then the same commands as 16-byte `Gfx`, and the one address among them, 
 segment 1, offset 0), as the block's own address. `func_80002454` takes each object's list from its work block,
 whose fields hold handles on PC (`Nw2SceneWork` in `common.h`).
 
+Some lists are not built by code but lie ready-made in the ROM's data, mostly in overlay 1's (`D_800C5C50`,
+`D_800C9538`; in main's data `D_80038D80`), with the vertices, textures and palettes they load. The code hands such a
+list to the graphics chip by its address, in a `G_DL` command it writes. On PC the port makes a copy of each list when
+it loads the list's section (`tools/port_data.py`, "gfx" storage): the same commands as 16-byte `Gfx`, each address in
+them turned into the PC address of what it names (the list it calls, the vertices, the texture). So on PC:
+
+- Code names a list by its own label, `DL_ADDR(D_800C95F0)`, never as another label plus a byte offset: the N64's
+  `D_800C5D48 + 0x48` is the list `D_800C5D90`, and on PC the sum would land in the middle of a 16-byte command
+  (`func_80091244`, `func_800927B0`). A place in overlay 1's data that `build.json` does not name is named by its
+  address (`D_800C95B8`): overlay 1's data is one block of the ROM without labels inside it.
+- Vertices that code names (the address in a `G_VTX`, a node's vertex pointer) are declared with `port.h`'s `Vtx` on
+  PC, so the tool gives their bytes the widths of a vertex: x, y, z, the flag, s and t as 16-bit values, then four
+  bytes (`func_800900C0`'s `D_800C5AD0`). Textures and palettes stay bytes: LUS reads them in the N64's byte order.
+
 ## Shared records on PC
 
 Some records that many files read hold addresses, which are 4 bytes on the N64 and 8 on a 64-bit PC. Each such record
@@ -309,8 +333,9 @@ The records:
    new entry to `func_80028F3C`, `func_800295B4`, `slantNibbleBitmapRows`, `fillNibblePixelLevels` and
    `func_8002A1C4` (and through the last two to `countNibblePixelNeighbors`), which read it through views of their
    own; on PC those views follow `Nw2ResourceEntryHashed`, as an assert in each of the first five checks.
-   `D_8007FC3C` holds the address of a heap block of 40 name buffers (`Nw2KeyedBufferEntry`); they hold no address
-   and keep their layout. `freeCachedResource`, `func_8002A820` and `func_8002A658` (which steps through the entries
+   `D_8007FC3C` holds the address of a heap block of 40 name buffers (`Nw2KeyedBufferEntry`). Their two keys can be
+   names' addresses (`lookupPlayerNameById` passes two), so on PC they are as wide as a pointer: an entry is 0x50
+   bytes, and `func_8002AA28` allocates the 40 by that size. `freeCachedResource`, `func_8002A820` and `func_8002A658` (which steps through the entries
    by 0x18), which are not among the developer program's files, need the same changes when they are compiled for the
    PC.
 3. **The segment-1 block `D_8007E228`.** Its first word holds the address of the segment-1 buffer. 42 of the
@@ -395,35 +420,51 @@ by the table's own label (`func_800D5438` reads the u16 table at `D_80030560 + 0
 
 How it works:
 
-1. It compiles the developer program's files (`tools/port_filelist.py`) and the asset viewer's two overlay-1 files for
-   the PC with debug information, and reads each file's type for every variable it declares with `extern`. A name
+1. It compiles the boot set's files (`tools/port_filelist.py --set boot`: everything the game runs from its boot, the
+   menus of overlay 1 and the match of overlay 2) and the asset viewer's two overlay-1 files for the PC with debug
+   information, and reads each file's type for every variable it declares with `extern`. A name
    that the files use and none defines is a game variable. (clang leaves extern declarations out of its debug
    information, so the tool uses gcc.)
-2. A variable's N64 address comes from `build.json` (its symbols and functions) or a label of `asm/data/`; the address
-   gives its section, and the next variable's address its extent. Names that share an address are one variable.
+2. A variable's N64 address comes from `build.json` (its symbols and functions), a label of `asm/data/` or the address
+   in its `D_XXXXXXXX` name; the address gives its section, and the next variable's address its extent. Names that
+   share an address in one section are one variable. The two overlays share addresses (overlay 1's BSS lies on overlay
+   2's code, data and BSS), and only one is loaded at a time: an address there is a variable of overlay 1 for overlay
+   1's files and of overlay 2 for overlay 2's, each with the widths its own overlay's files read it at. On PC both
+   overlays' sections share one area of memory by N64 address, as on the N64. A name that both overlays use is one
+   name in that area, so it must hold no address in either; where one of them needs storage of its own, the PC gives
+   that overlay's variable a name of its own, `D_800E6BA0_ovl1` (declared in `include/port_decls.h`).
 3. A variable whose type holds no address keeps its N64 offset in one block of PC memory per section ("block"): such a
    type has the same layout on both machines, so labels inside records and arrays read as one keep working. A variable
    whose type holds an address gets storage of its own, as big as its PC type ("own"); an open array gets as many
    elements as its extent holds on the N64, each of its PC size.
 4. The address tables: the variables that hold addresses and that the ROM starts (24) are described by hand in the
    tool's `TABLES`: each one's shape, down to what its addresses point at (another table, data read at a given width,
-   a function, a framebuffer). The tool follows every address in the ROM and checks it against the description: in
-   main's data each word must be an address exactly where splat marked one in `asm/data/` (the name tables, which
-   splat wrote as 16-bit values, pass when the word is an address in a data section); in overlay 2's data each
-   address must be 0 or an address the shape allows; a function address must start a function the port compiles; no
-   address may land inside another table. Each table, and each array or record that holds addresses and that a table
-   reaches, gets its PC layout and a fill line; the data the addresses point at gets a swap range, up to the next
-   label.
+   a function, a framebuffer, a display list (`GFX`), vertices (`VTX`)). The tool follows every address in the ROM
+   and checks it against the description: in main's data each word must be an address exactly where splat marked one
+   in `asm/data/` (the name tables, which splat wrote as 16-bit values, pass when the word is an address in a data
+   section); in the overlays' data each address must be 0 or an address the shape allows; a function address must
+   start a function the port compiles; no address may land inside another table. Each table, and each array or record
+   that holds addresses and that a table reaches, gets its PC layout and a fill line; the data the addresses point at
+   gets a swap range, up to the next label.
 5. For the sections the ROM fills, each byte gets the width the files' types read it at, and each variable a swap
    pattern; an open array, or a type smaller than its extent, repeats over the extent, but not past a place a table
    points at, where other data begins (splat's labels inside a table, such as `D_8003A4FE`, do not stop it). Two files
    that read one byte at different widths, a bit-field in a variable of these sections, or a type bigger on the N64
    than its extent stop the tool with a message.
-6. An old name of a function that some file still calls (`func_800E2400` for `tryBeginBlockReaction`) gets a
+6. The display lists in the ROM's data: the tool's `DISPLAY_LISTS` names those that code uses, and it reads each from
+   the ROM command by command up to its end, with every list it calls or branches to and every list an address table
+   points at (`GFX`). A command it does not know, an address outside the sections the ROM fills, or a segment address
+   stops it. Each list gets storage of its own on PC, 16 bytes per command; lists that overlap are one list with more
+   than one entry point (`D_800C5D48` is the last two commands of `D_800C5D10`), whose entry gets the PC command of the
+   same number. The vertices the lists load get the widths of a vertex; textures and palettes stay bytes; the viewport
+   that a `G_MOVEMEM` loads is eight 16-bit values. The files' own types for a list's bytes do not count: the PC draws
+   the copy.
+7. An old name of a function that some file still calls (`func_800E2400` for `tryBeginBlockReaction`) gets a
    "function" line; the port's linker gives the function that second name. Only names of the game's own form count:
    `build.json` also puts `sqrtf` at `nw2Sqrtf`'s address, but on PC `sqrtf` is the C library's.
 
-The columns, tab-separated: name, address, section (`main.data`, `main.bss`, `ovl1.data`, `ovl2.data`, `ovl2.bss`;
+The columns, tab-separated: name, address, section (`main.data`, `main.bss`, `ovl1.data`, `ovl1.bss`, `ovl2.data`,
+`ovl2.bss`;
 `other` for the few the port provides; `code` for functions), storage, bytes, and the last column. The storages:
 
 - `block`: bytes is the extent; the last column is the swap pattern. `P:o.w,o.w` swaps a w-byte value at each offset
@@ -432,8 +473,12 @@ The columns, tab-separated: name, address, section (`main.data`, `main.bss`, `ov
   like a block variable, with no name of its own in the C.
 - `own`: bytes is the PC size. For an address table the last column is its fill, `count:N:P:o.p.k,...` (hex): count
   elements of N bytes on the N64 and P bytes on PC, each field at N64 offset o and PC offset p, of kind k: 1, 2, 4 or
-  8 (a value of that width), `p` (an address), `f` (a function's address) or `z` (an entry the game never reads, NULL
-  on PC). Arrays and records that only tables reach are named `td_anon_` and their address.
+  8 (a value of that width), `p` (an address), `f` (a function's address), `k` (a word that holds a number or an
+  address, `port.h`'s `IdOrAddr`: an N64 address, negative as an s32, becomes the PC address, any other value stays a
+  number, -1 as all ones) or `z` (an entry the game never reads, NULL on PC). Arrays and records that only tables reach are named `td_anon_` and their address.
+- `gfx`: a display list of the ROM's data; bytes is the size of its PC copy, the last column its number of commands
+  (hex). Lists that no file names are named `td_gfx_` and their address. `gfxentry`: an entry point inside a list;
+  bytes names the list, the last column is the entry's offset in the PC copy (hex).
 - `alias` (a second name at the same address; bytes is the first name), `port` (the port provides it), `function` (an
   old name of a function; bytes is its name) and `entry` (a function that an address table holds).
 
@@ -794,7 +839,9 @@ Crash and wrong value block: they give exit status 1. The classes:
   matter: converted back to its own width or narrower, masked with a constant within that width, or shifted left so far
   that only those bits are left, perhaps after `+`, `-`, `*`, `&`, `|`, `^` or `~` with other values.
 - **G**: a call through a function pointer made from an integer or read from a table of integers.
-- **H**: a struct passed by value, which the two conventions split differently.
+- **H**: a struct passed by value, which the two conventions split differently. Not flagged when the caller's
+  declaration gives every parameter the definition's own type: the PC compiler then places the struct alike at both
+  ends.
 - **O**: another difference in how a value travels (64-bit and 32-bit integers, a float where a double is read).
 - **Z**: a difference without effect: a literal 0 for a pointer passed in a register, more arguments than the function
   reads, a parameter the function never reads, an integer cast to a pointer and read back as an integer.

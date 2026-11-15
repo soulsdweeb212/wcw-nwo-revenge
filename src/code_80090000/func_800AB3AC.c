@@ -6,6 +6,41 @@
 #include "common.h"
 
 typedef struct { u8 pad0[7]; u8 next; u8 pad8[0xE]; } Item;
+#ifdef TARGET_PC
+/* PC: the menus and their elements hold addresses, so they are common.h's Nw2Menu and Nw2MenuEl, which these views
+ * follow (the asserts check). Item is an element's description (common.h's Nw2MenuDef, no address), and items' first
+ * field is the address of the menu's descriptions on both machines. The N64's labels inside the menus have no PC
+ * symbol: D_800E8D2C, D_800E90D4, D_800E8F9C and D_800E995C are the cur of menus 9, 12, 11 and 19. */
+typedef struct {
+    u8 pad0[0xA];
+    u16 flags;
+    u8 padC[2];
+    s8 fE;
+    u8 padF[3];
+    s16 f12;
+    u8 pad14[0xC];
+    u16 f20;
+    u16 f22;
+    u8 pad24[sizeof(Nw2MenuEl) - 0x24];
+} El;
+_Static_assert(offsetof(El, flags) == offsetof(Nw2MenuEl, fA) && offsetof(El, fE) == offsetof(Nw2MenuEl, fE) &&
+                   offsetof(El, f12) == offsetof(Nw2MenuEl, f12) && offsetof(El, f20) == offsetof(Nw2MenuEl, f20) &&
+                   offsetof(El, f22) == offsetof(Nw2MenuEl, f22) && sizeof(El) == sizeof(Nw2MenuEl),
+               "El must follow common.h's Nw2MenuEl");
+typedef struct {
+    Item **items;
+    s16 cur;
+    u8 pad6[4];
+    u16 fA;
+    u8 padC[8];
+    El *el;
+    u8 pad20[sizeof(Nw2Menu) - 0x20];
+} Menu;
+_Static_assert(offsetof(Menu, cur) == offsetof(Nw2Menu, cur) && offsetof(Menu, fA) == offsetof(Nw2Menu, fA) &&
+                   offsetof(Menu, el) == offsetof(Nw2Menu, el) && sizeof(Menu) == sizeof(Nw2Menu) &&
+                   sizeof(Item) == sizeof(Nw2MenuDef) && offsetof(Item, next) == offsetof(Nw2MenuDef, down),
+               "Menu must follow common.h's Nw2Menu");
+#else
 typedef struct {
     u8 pad0[0xA];
     u16 flags;
@@ -26,6 +61,7 @@ typedef struct {
     u8 padC[8];
     El *el;
 } Menu;
+#endif
 
 typedef struct { s16 f4C; s16 f4E; u8 f50; u8 pad51; u8 f52; u8 pad53[9]; } Pl;
 typedef struct {
@@ -55,7 +91,11 @@ extern s16 D_800E7CB8;
 extern u8 D_800E7B67[];
 extern s32 D_800EA318, D_800E74D8, D_800E8204, D_800E8200, D_800E7934, D_800E7C90, D_800E9F90, D_800E74E0;
 extern s32 D_800E9F8C, D_800E7B58, D_800E6B90, D_800E798C;
+#ifdef TARGET_PC
+extern Menu D_800E8230[]; /* PC: without the labels inside it, which are its fields (see above) */
+#else
 extern s16 D_800E8F9C, D_800E995C, D_800E8D2C, D_800E90D4;
+#endif
 
 s32 func_8002B4A4(s32);
 void func_800B5300(s32);
@@ -244,6 +284,17 @@ s32 func_800AB3AC(Menu *m, s32 ev) {
         break;
     case 0x41B:
         switch (D_80038A90) {
+#ifdef TARGET_PC
+        case 0xB: /* PC: by name (see above) */
+            D_800E8230[11].cur = 0x16;
+            break;
+        case 0x13:
+            D_800E8230[19].cur = 0xA;
+            break;
+        default:
+            D_800E8230[9].cur = 0x10;
+            break;
+#else
         case 0xB:
             D_800E8F9C = 0x16;
             break;
@@ -253,6 +304,7 @@ s32 func_800AB3AC(Menu *m, s32 ev) {
         default:
             D_800E8D2C = 0x10;
             break;
+#endif
         }
         D_800EA318 = 0x401;
         if (D_800E7CB8 > 0) {
@@ -305,7 +357,11 @@ s32 func_800AB3AC(Menu *m, s32 ev) {
         func_800AEF28(0);
         func_800AFEF0(0);
         r = 0xC;
+#ifdef TARGET_PC
+        D_800E8230[12].cur = 2; /* PC: by name (see above) */
+#else
         D_800E90D4 = 2;
+#endif
         D_800EA318 = 0x42A;
         break;
     case 0x433:

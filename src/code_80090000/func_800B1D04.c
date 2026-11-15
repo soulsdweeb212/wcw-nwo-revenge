@@ -6,6 +6,60 @@
 #include "common.h"
 
 
+#ifdef TARGET_PC
+/* PC: the menus D_800E8230 and their elements hold addresses, so they are common.h's Nw2Menu and Nw2MenuEl, read by
+ * field name; the N64's labels inside the menus have no PC symbol: D_800E9820 is D_800E8230[18], D_800E9824 its cur
+ * and D_800E9834 its el. p + k * 0x148 is element k; +0xA is fA and +0x20 f20. bzero and bcopy are declared as
+ * defined (bzero.c, bcopy.c): C99 has no implicit declarations. */
+extern Nw2Menu D_800E8230[];
+extern u8 D_8007E8C0[];
+extern s32 D_800E7BF0, D_800E7BF4, D_800E7BF8, D_800E7BFC;
+void bzero(void *dst, s32 len);
+void *bcopy(const void *src, void *dst, s32 len);
+
+void func_800B1D04(s32 a) {
+    Nw2MenuEl *p = D_800E8230[18].el;
+    Nw2Menu *q = &D_800E8230[18];
+    s32 i, k;
+    u8 *r;
+
+    p[3].fA &= 0xFFFE;
+    p[4].fA &= 0xFFFE;
+    if (a == 2) {
+        p[3].f20 = 0x7D02;
+        p[4].f20 = 0x7D00;
+        bzero(D_8007E8C0 + 0x80, 0x19);
+        bcopy(D_8007E8C0 + 0x80 + 0x38, D_8007E8C0 + 0x80, 0x19);
+        D_800E7BF8 = 0;
+    } else {
+        p[3].f20 = 0x7D03;
+        p[4].f20 = 0x7D01;
+        bzero(D_8007E8C0 + 0x80, 0xB);
+        bcopy(D_8007E8C0 + 0x80 + 0x5A, D_8007E8C0 + 0x80, 0xB);
+        D_800E7BF8 = 1;
+    }
+    p = q->el;
+    for (i = 0; i < 3; i++, p++) {
+        p->fA &= 0xFFFE;
+    }
+    D_800E7BF0 = 0;
+    D_800E7BF4 = 0;
+    D_800E7BFC = 0;
+    q->el->f20 = 0x7C02;
+    q->cur = 0;
+    for (k = 0; k < 0x57; k++) {
+        i = k * 8;
+        r = D_8007E8C0 + 0x80 + i;
+        *(s32 *)(r + 0x80) = 0;
+        *(s32 *)(D_8007E8C0 + 0xFC + i) = 0;
+        *(s32 *)(r + 0x338) = 0;
+        *(s32 *)(D_8007E8C0 + 0x3B4 + i) = 0;
+    }
+    D_800E7BF4 = 6;
+    D_800E7BF0 = 0;
+    q->cur = 2;
+}
+#else
 typedef struct { u8 pad0[4]; s16 c; u8 pad1[0xE]; u8 *p; } Q;
 extern Q D_800E9820;
 extern u8 *D_800E9834;
@@ -55,3 +109,4 @@ void func_800B1D04(s32 a) {
     D_800E7BF0 = 0;
     D_800E9824 = 2;
 }
+#endif

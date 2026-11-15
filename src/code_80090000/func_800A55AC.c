@@ -11,7 +11,17 @@ typedef Gfx G; /* PC: a command is port.h's 16-byte Gfx, which keeps a whole poi
 typedef struct { u32 w0, w1; } G;
 #endif
 typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } V;
+#ifdef TARGET_PC
+/* PC: T is the entry of the resource-name cache that func_800B75D4 and func_800B7A00 return, common.h's
+ * Nw2ResourceEntryHashed: h and w, at +0xE and +0x10 on the N64, are reserved's +6 and +8 there, as the assert checks.
+ * func_800B75D4 takes the picture's name as a key of the resource-name cache (port_decls.h; port.h's MENU_KEY_NAME). */
+typedef struct { u8 pad[0x16]; s16 h; s16 w; } T;
+_Static_assert(offsetof(T, h) == offsetof(Nw2ResourceEntryHashed, reserved) + 6 &&
+                   offsetof(T, w) == offsetof(Nw2ResourceEntryHashed, reserved) + 8,
+               "T must follow the PC layout of Nw2ResourceEntryHashed");
+#else
 typedef struct { u8 pad[0xE]; s16 h; s16 w; } T;
+#endif
 typedef struct { u8 pad0[0x16]; u8 f16; u8 f17; u8 pad18[0xA]; u16 f22; } Item;
 typedef struct { s32 f0; u16 f4; u8 f6[4]; u16 fA; u8 fC[4]; } Ent;
 
@@ -20,7 +30,9 @@ extern struct { u8 pad0[0xA]; u16 fA; } D_8007EF30;
 extern Ent D_800EA0D8[2][10];
 extern f64 D_800D6230;
 u32 osVirtualToPhysical(V *);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800B75D4 */
 T *func_800B75D4(G **, void *, s32);
+#endif
 T *func_800B7A00(G **, s32, s32);
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_8002AD34 */
 void *func_8002AD34(s32, s32);
@@ -55,12 +67,22 @@ void func_800A55AC(G **dl, Item *it, u32 k) {
     }
     EMIT(0xFA000000, (it->f17 << 24) | (it->f17 << 16) | (it->f17 << 8) | it->f16);
     e = &D_800EA0D8[(k >> 4) & 1][k & 0xF];
+#ifdef TARGET_PC
+    if (e->fA) { /* PC: the names' addresses as keys, as above */
+        t = func_800B75D4(&g, MENU_KEY_NAME(lookupPlayerNameById(func_8002AD34(e->f4 & 0xFFF, (e->f4 >> 12) & 3),
+                                                                 func_8002AD34(e->fA & 0xFFF, (e->fA >> 12) & 3))),
+                          f | 8);
+    } else {
+        t = func_800B75D4(&g, MENU_KEY_NAME(func_8002AD34(e->f4 & 0xFFF, (e->f4 >> 12) & 3)), f | 8);
+    }
+#else
     if (e->fA) {
         t = func_800B75D4(&g, lookupPlayerNameById(func_8002AD34(e->f4 & 0xFFF, (e->f4 >> 12) & 3),
                                                    func_8002AD34(e->fA & 0xFFF, (e->fA >> 12) & 3)), f | 8);
     } else {
         t = func_800B75D4(&g, func_8002AD34(e->f4 & 0xFFF, (e->f4 >> 12) & 3), f | 8);
     }
+#endif
     if (t->w >= 0x80) {
         EMIT(0x02140002, t->w << 21);
         EMIT(0x02140006, (t->w << 21) | 0x1C0);
@@ -72,7 +94,11 @@ void func_800A55AC(G **dl, Item *it, u32 k) {
     } else {
         name = e->f6;
     }
+#ifdef TARGET_PC
+    t = func_800B75D4(&g, MENU_KEY_NAME(name), f | 8); /* PC: as above */
+#else
     t = func_800B75D4(&g, name, f | 8);
+#endif
     if (t->w <= 0x50) {
         hw = t->w * 7 * D_800D6230;
     } else {

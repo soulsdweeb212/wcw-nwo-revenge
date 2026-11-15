@@ -5,17 +5,36 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx, which func_800B75D4 and func_800B7A00 also write on PC. T is the entry of the
+ * resource-name cache that they return (func_800B600C's record of a picture by name or by MENU_KEY_ID), common.h's
+ * Nw2ResourceEntryHashed: h and w, at +0xE and +0x10 on the N64, are reserved's +6 and +8 there, as the assert checks.
+ * func_800B75D4 takes the picture's name as a key of the resource-name cache (port_decls.h; port.h's MENU_KEY_NAME),
+ * and func_800995EC returns a name's address. */
+typedef Gfx G;
+typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } V;
+typedef struct { u8 pad[0x16]; s16 h; s16 w; } T;
+_Static_assert(offsetof(T, h) == offsetof(Nw2ResourceEntryHashed, reserved) + 6 &&
+                   offsetof(T, w) == offsetof(Nw2ResourceEntryHashed, reserved) + 8,
+               "T must follow the PC layout of Nw2ResourceEntryHashed");
+#else
 typedef struct { u32 w0, w1; } G;
 typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } V;
 typedef struct { u8 pad[0xE]; s16 h; s16 w; } T;
+#endif
 typedef struct { s16 x; s16 y; u8 pad4[0x1C]; } Row;
 
 extern V *D_800E7CB4;
 extern u8 D_800D6210[], D_800D6214[];
+#ifdef TARGET_PC
+T *func_800B7A00(G **, s32, s32);
+u8 *func_800995EC(u32);
+#else
 u32 osVirtualToPhysical(V *);
 T *func_800B75D4(G **, void *, s32);
 T *func_800B7A00(G **, s32, s32);
 void *func_800995EC(s32);
+#endif
 
 #define SHL(v, s, w) ((u32)(((u32)(v) & ((0x01 << (w)) - 1)) << (s)))
 #define MODVTX(g, vtx, where, val) { G *_g = (g); _g->w0 = SHL(2, 24, 8) | SHL(where, 16, 8) | SHL((vtx) * 2, 0, 16); _g->w1 = (u32)(val); }
@@ -29,15 +48,28 @@ void func_800A46EC(G **dl, u32 k, s32 n, Row *r) {
     s32 w;
 
     if ((s32)k > 0 && (k & 0x1000000)) {
+#ifdef TARGET_PC
+        /* PC: the vertices' address as the whole pointer (port.h's DL_ADDR); osVirtualToPhysical returns a u32. */
+        { G *_g = g++; _g->w0 = 0x01004040; _g->w1 = DL_ADDR(D_800E7CB4); }
+#else
         { G *_g = g++; _g->w0 = 0x01004040; _g->w1 = osVirtualToPhysical(D_800E7CB4); }
+#endif
         VTX(-3, r[n + 1].y, 0, 0);
         VTX(-3, r[n + 2].y, 0x1C0, 0);
         VTX(3, r[n + 1].y, 0, 0x1C0);
         VTX(3, r[n + 2].y, 0x1C0, 0x1C0);
+#ifdef TARGET_PC
+        func_800B75D4(&g, MENU_KEY_NAME(D_800D6210), 0x80000008); /* PC: the names as keys, as above */
+#else
         func_800B75D4(&g, D_800D6210, 0x80000008);
+#endif
         { G *_g = g++; _g->w0 = 0x07383C3E; _g->w1 = 0x00383E3A; }
         if (n == 9) {
+#ifdef TARGET_PC
+            u = func_800B75D4(&g, MENU_KEY_NAME(func_800995EC(k & 0x3FFFF)), 0x80000018); /* PC: as above */
+#else
             u = func_800B75D4(&g, func_800995EC(k & 0x3FFFF), 0x80000018);
+#endif
         } else {
             u = func_800B7A00(&g, k & 0x3F, 0x80000018);
         }
@@ -51,7 +83,11 @@ void func_800A46EC(G **dl, u32 k, s32 n, Row *r) {
         MODVTX(g++, 29, 0x14, 0x1C0);
         SP2TRI(g++, n * 2 + 2, 28, 29, n * 2 + 2, 29, n * 2 + 4);
         if (n == 9) {
+#ifdef TARGET_PC
+            u = func_800B75D4(&g, MENU_KEY_NAME(func_800995EC((k >> 6) & 0x3FFFF)), 0x80000018); /* PC: as above */
+#else
             u = func_800B75D4(&g, func_800995EC((k >> 6) & 0x3FFFF), 0x80000018);
+#endif
         } else {
             u = func_800B7A00(&g, (k >> 6) & 0x3F, 0x80000018);
         }
@@ -66,11 +102,19 @@ void func_800A46EC(G **dl, u32 k, s32 n, Row *r) {
         SP2TRI(g++, 30, n * 2 + 3, n * 2 + 5, 30, n * 2 + 5, 31);
     } else {
         if ((s32)k < 0) {
+#ifdef TARGET_PC
+            u = func_800B75D4(&g, MENU_KEY_NAME(D_800D6214), 0x80000018); /* PC: as above */
+#else
             u = func_800B75D4(&g, D_800D6214, 0x80000018);
+#endif
             w = u->w;
         } else {
             if (n == 9) {
+#ifdef TARGET_PC
+                u = func_800B75D4(&g, MENU_KEY_NAME(func_800995EC(k)), 0x80000018); /* PC: as above */
+#else
                 u = func_800B75D4(&g, func_800995EC(k), 0x80000018);
+#endif
             } else {
                 u = func_800B7A00(&g, k, 0x80000018);
             }

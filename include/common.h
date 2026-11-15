@@ -133,10 +133,12 @@ s32 func_800D3684(s32, s32);
 
 /* Two-key 0x48-byte buffer/cache records used by func_80028D18.
  * D_8007FC3C points to 40 entries; key0==0 marks an unused record. */
+#ifndef TARGET_PC /* on PC, its section below "A wrestler's name entry" defines it, with keys as wide as a pointer */
 typedef struct {
     u8 buffer[64];
     s32 key0, key1;
 } Nw2KeyedBufferEntry;
+#endif
 /* Lookup in the zero-terminated two-byte Shift-JIS table at 0x80038BB8. */
 u8 *findSjisCodeEntry(u8 *);
 /* Wrapper reserves 256 s32 results and returns results[index]. */
@@ -944,12 +946,14 @@ typedef struct {
  * active +8. s32 func_80098EEC(s32 key,s32 flags); flags stays full-width
  * for first-loop equality, but is truncated on storage for new entries.
  * Keep extern/prototype declarations local for legacy compatibility. */
+#ifndef TARGET_PC /* on PC, defined at the end of this file: its list address is 8 bytes there */
 typedef struct {
     s32 key;
     s16 amount;
     u16 flags;
     s32 active;
 } Nw2ResourceRequest;
+#endif
 
 /* Matched B728: copies arrays of eight-byte graphics unions, indexed (not
  * pointer-postincrement) loops; D_80070458/45C are pointer fields at stride8,
@@ -2193,6 +2197,431 @@ _Static_assert(offsetof(Nw2AnimatedCi4State, slot) == 0x18 && offsetof(Nw2Animat
                    offsetof(Nw2AnimatedCi4State, frame) == 0x1A && offsetof(Nw2AnimatedCi4State, countdown) == 0x1B &&
                    sizeof(Nw2AnimatedCi4State) == 0x20,
                "an animation-command record is 0x20 bytes on a 64-bit PC");
+
+/* ---- The menus' picture caches (overlay 1): D_800E6BA0_ovl1, D_800E7CE0, D_800E7518 ---- */
+
+/* Nw2MenuResSlot: one of the 0x80 entries of overlay 1's table of loaded pictures (D_800E6BA0 on the N64, 0x10 bytes
+ * each; func_800B600C finds or adds one). key is a MenuKey (port.h): -1 for a free entry, a resource id, or a key of
+ * the resource-name cache. data is the picture: a heap block (allocateHeap) for a resource id, the resource-name
+ * cache's entry (func_8002A2FC) for a key. refs counts its users (func_800B600C adds one); flags bit 0: still to load,
+ * bit 1: in use. On PC key and data are 8 bytes, so the entry is 0x18 bytes. Overlay 2 has a variable of its own at
+ * the same N64 address (an f64), so on PC overlay 1's table has the name D_800E6BA0_ovl1. */
+typedef struct {
+    MenuKey key;
+    void *data;
+    s32 refs;
+    s32 flags;
+} Nw2MenuResSlot;
+_Static_assert(sizeof(Nw2MenuResSlot) == 0x18, "a loaded-picture entry is 0x18 bytes on a 64-bit PC");
+
+/* Nw2MenuPic: one picture to draw, as overlay 1's picture lists hold it (N64: 0xC bytes, key +0, x +4, y +6,
+ * match +8). key is a MenuKey (port.h): 0 for a free entry, a number (tagged 0x10000000 as on the N64), or a key of
+ * the resource-name cache. On PC 0x10 bytes. */
+typedef struct {
+    MenuKey key;
+    s16 x;
+    s16 y;
+    s32 match;
+} Nw2MenuPic;
+_Static_assert(sizeof(Nw2MenuPic) == 0x10, "a picture of a picture list is 0x10 bytes on a 64-bit PC");
+
+/* Nw2MenuPicList: a list of count pictures (N64: 8 bytes). */
+typedef struct {
+    Nw2MenuPic *pics;
+    u32 count;
+} Nw2MenuPicList;
+
+/* Nw2MenuPicSlot: one of the 0x40 entries of D_800E7CE0 (N64: 0x14 bytes): a list of one picture, the picture itself
+ * (func_80098E1C points list.pics at pic and sets count to 1). func_80099148 and findOrAddCacheEntryRaw find or add an
+ * entry by its picture's key. The N64 code reaches the fields through the labels D_800E7CE4, D_800E7CE8 and D_800E7CF0
+ * too; on PC code reaches them by name. 0x20 bytes on PC. */
+typedef struct {
+    Nw2MenuPicList list;
+    Nw2MenuPic pic;
+} Nw2MenuPicSlot;
+_Static_assert(offsetof(Nw2MenuPicSlot, pic) == 0x10 && sizeof(Nw2MenuPicSlot) == 0x20,
+               "a picture-list entry is 0x20 bytes on a 64-bit PC");
+
+/* Nw2ResourceRequest (N64 definition above): one of the 0x60 requests to draw a picture list, in the heap block whose
+ * address D_800E7518 holds (func_80098E1C allocates 0x60 of them; N64: 0xC bytes, the list's address +0, amount +4,
+ * flags +6, active +8). func_80098EEC adds one; func_8009F2F8 draws and fades them. On PC 0x10 bytes. */
+typedef struct {
+    Nw2MenuPicList *key;
+    s16 amount;
+    u16 flags;
+    s32 active;
+} Nw2ResourceRequest;
+_Static_assert(sizeof(Nw2ResourceRequest) == 0x10, "a picture request is 0x10 bytes on a 64-bit PC");
+
+/* ---- The menus' picture shapes (overlay 1): D_800C6508[12] ----
+ * Each is a display list and the vertices it draws, the number of vertices, the first tile of the picture in the
+ * texture pack (resource 0x3B), a byte, and the picture's width and height as powers of two. 16 bytes on the N64,
+ * with the two addresses at +0 and +4; on PC they are pointers, and tools/port_data.py builds the table in this layout
+ * when overlay 1 loads (its TABLES). The N64 reaches records 6 to 9 by labels inside the table (D_800C6568 is
+ * D_800C6508 + 0x60, D_800C656C its vertices ...); the PC indexes the table. The N64 offset of each field is in its
+ * comment. Readers: func_800936DC (Anim936), func_80092DE0 (Sub2DE0b), func_80092B20, func_800927B0, func_80092960,
+ * loadResourceTexture4b. */
+typedef struct {
+    Gfx *dl;      /* +0 */
+    Vtx *vtx;     /* +4 */
+    u16 count;    /* +8 */
+    u16 tile;     /* +0xA */
+    u8 fC;        /* +0xC */
+    u8 logW;      /* +0xD */
+    u8 logH;      /* +0xE */
+    u8 fF;        /* +0xF */
+} Nw2PicShape;
+_Static_assert(offsetof(Nw2PicShape, count) == 0x10 && sizeof(Nw2PicShape) == 0x18,
+               "a picture shape is 0x18 bytes on a 64-bit PC");
+
+/* ---- The cups (the menus' title tournaments): D_8003A484[5] ----
+ * 0x14 bytes on the N64, with the address of the cup's list at +0x10; on PC it is a pointer, and tools/port_data.py
+ * builds the table in this layout when the game starts (its TABLES). The game state D_8007EF30 keeps its N64 layout,
+ * so its +0x30, the current cup, holds a handle (port.h's PTR_TO_SLOT). The N64 offset of each field is in its
+ * comment. */
+typedef struct {
+    u8 id;        /* +0 */
+    u8 f1;        /* +1 */
+    u8 f2;        /* +2, func_800B8C4C (the N64 reads it as D_8003A486 + 20 * i) */
+    u8 f3;        /* +3 */
+    u8 f4;        /* +4, func_800B8C4C (D_8003A488 + 20 * i) */
+    u8 f5;        /* +5 */
+    u16 flags;    /* +6 */
+    u16 f8;       /* +8, func_800B3640, func_800B3D58 */
+    u8 fA[4];     /* +0xA */
+    u16 fE;       /* +0xE, the cup's picture */
+    u8 *list;     /* +0x10 */
+} Nw2Cup;
+_Static_assert(offsetof(Nw2Cup, list) == 0x10 && sizeof(Nw2Cup) == 0x18, "a cup is 0x18 bytes on a 64-bit PC");
+
+/* ---- The name buffers: the 40 entries at D_8007FC3C (func_80028D18) ----
+ * A buffer for a text and the two keys it was made for. A key can be a name's address (lookupPlayerNameById passes
+ * two), so on PC the keys are as wide as a pointer, and an entry is 0x50 bytes (0x48 on the N64); func_8002AA28
+ * allocates the 40 by this size. */
+typedef struct {
+    u8 buffer[64];  /* +0 */
+    uintptr_t key0; /* +0x40 */
+    uintptr_t key1; /* +0x44 */
+} Nw2KeyedBufferEntry;
+_Static_assert(sizeof(Nw2KeyedBufferEntry) == 0x50, "a name buffer is 0x50 bytes on a 64-bit PC");
+
+/* ---- A wrestler's name entry: the entries of the name tables D_8003A4F8, and D_8003A59C ----
+ * 0x1C bytes on the N64, with the addresses of the wrestler's name, height and weight texts at +8, +0xC and +0x10. On
+ * PC those are pointers, so the fields after them move; tools/port_data.py builds the entries in this layout when the
+ * game starts (its NAME_ENTRY). The N64 offset of each field is in its comment. Files that read only the first
+ * fields (buildWrestlerNameRecord, func_8002AD68, func_8002AE24) keep views of their own that end earlier. */
+typedef struct {
+    u16 id;       /* +0 */
+    u8 value;     /* +2 */
+    u8 f3;        /* +3 */
+    s32 f4;       /* +4 */
+    u8 *name;     /* +8 */
+    u8 *height;   /* +0xC */
+    u8 *weight;   /* +0x10 */
+    u8 f14;       /* +0x14, func_8002AF9C */
+    u8 f15;       /* +0x15, func_8002B1D0 */
+    u16 f16;      /* +0x16, func_8002AEE0 */
+    s32 f18;      /* +0x18 */
+} Nw2NameEntry;
+_Static_assert(offsetof(Nw2NameEntry, f14) == 0x20 && sizeof(Nw2NameEntry) == 0x28,
+               "a name entry is 0x28 bytes on a 64-bit PC");
+
+/* ---- The menus' records (overlay 1): the menus D_800E8230, their elements, the element lists D_800CC8EC ----
+ * Overlay 1 shows 24 menus (D_800E8230, in its BSS). Each menu draws a list of elements (a picture, a text, a name,
+ * a value), which sit one after the other in the heap block whose address D_800DC730 holds (0x100 elements;
+ * func_800A167C allocates it). func_8009F9A0 sets both up from D_800CC8EC, 24 lists in overlay 1's data that each
+ * give the address of the descriptions of a menu's elements and their number. A menu and each of its elements own a
+ * scene object (Nw2SceneObj, which keeps its N64 layout and holds handles), because the renderer walks them
+ * (func_80001DC4): the menus' objects are siblings, each element's object is a child of its menu's.
+ * On PC the records hold real pointers, so they grow: code steps through them by sizeof and reaches their fields by
+ * name. The N64 reaches many fields through labels of its own inside D_800E8230 (D_800E837C is D_800E8230[1].el,
+ * D_800E8288 is D_800E8230[0].obj, D_800E8D2C is D_800E8230[9].cur, and so on); on PC no label exists, and code reads
+ * D_800E8230[n] by field name. Files keep views of their own with their own field names; on PC each view places its
+ * fields by these structs, as asserts check. The N64 offset of each field is in its comment. */
+
+/* Nw2MenuDef: the description of one element, 0x16 bytes in overlay 1's data, of 16-bit values and bytes only (no
+ * address), so the same layout on both machines. */
+typedef struct {
+    s16 x;      /* +0x0 the element's place */
+    s16 y;      /* +0x2 */
+    u16 f4;     /* +0x4 its scale, 1024 for 1.0 */
+    u8 up;      /* +0x6 the element the cursor moves to (func_800AC144, func_800AAB64) */
+    u8 down;    /* +0x7 */
+    u8 left;    /* +0x8 */
+    u8 right;   /* +0x9 */
+    u16 fA;     /* +0xA the element's first f20: what it draws */
+    u16 fC;     /* +0xC 0 in every description */
+    u8 idx;     /* +0xE its shape, an index into D_800CB7B8 */
+    u8 fF;      /* +0xF its slide: the low 4 bits the kind, bits 0x40 and 0x80 the axes */
+    s16 parent; /* +0x10 the element it follows, an index into its menu's elements, or -1 */
+    s16 f12;    /* +0x12 */
+    u16 flags;  /* +0x14 */
+} Nw2MenuDef;
+_Static_assert(offsetof(Nw2MenuDef, idx) == 0xE && offsetof(Nw2MenuDef, flags) == 0x14 && sizeof(Nw2MenuDef) == 0x16,
+               "an element's description holds no address: the N64's 0x16 bytes on PC too");
+
+/* Nw2MenuItems: one of the 24 element lists D_800CC8EC in overlay 1's data, 0xC bytes on the N64: the address of
+ * the menu's n descriptions, then bytes. tools/port_data.py builds the lists in this layout when overlay 1 loads (its
+ * TABLES). 0x10 bytes on PC, the bytes from +8. */
+typedef struct {
+    Nw2MenuDef *defs; /* +0x0 */
+    u8 f4;            /* +0x4 the menu's first f6 (func_800A1590) */
+    u8 n;             /* +0x5 the number of elements */
+    u8 f6;            /* +0x6 */
+    u8 f7;            /* +0x7 */
+    u8 cur;           /* +0x8 the element the cursor starts on */
+    s8 f9;            /* +0x9 what func_800B511C gets when the menu opens (the N64 reads it through the label
+                       * D_800CC8F5, D_800CC8EC + 9, stepped by 12) */
+    u8 fA[2];         /* +0xA */
+} Nw2MenuItems;
+_Static_assert(offsetof(Nw2MenuItems, f4) == 8 && offsetof(Nw2MenuItems, cur) == 0xC && sizeof(Nw2MenuItems) == 0x10,
+               "an element list is 0x10 bytes on a 64-bit PC");
+
+/* Nw2MenuEl: one element of a menu, 0x148 bytes on the N64, in the heap block whose address D_800DC730 holds
+ * (func_800A167C allocates 0x100 of them, by this size on PC). func_8009F9A0 fills it from its description; each
+ * frame func_800A0750 moves it and func_800A0420 builds its display list, which func_8009FE3C picks by f20's high
+ * byte. def, at +0x24 on the N64, is 8 bytes at +0x28 on PC, so the fields after it sit 8 bytes later (the scene
+ * object at +0x70, as func_800A0420's and func_800A171C's views have it), and parent, the element's last field, at
+ * +0x150: 0x158 bytes on PC. */
+typedef struct Nw2MenuEl {
+    f32 x;                    /* +0x00 */
+    f32 y;                    /* +0x04 */
+    s16 f8;                   /* +0x08 a tilt that springs back (func_800A0750) */
+    u16 fA;                   /* +0x0A flags: 1 hidden, 8 tilting, 0x20 fading out, 0x40 half shown; the cursor
+                               * skips an element with any of 0x53 */
+    u8 fC;                    /* +0x0C the two values a slide from one choice to another goes through */
+    u8 fD;                    /* +0x0D (func_800A0750) */
+    u8 fE;                    /* +0x0E the choice the element shows */
+    u8 fF;                    /* +0x0F */
+    s16 f10;                  /* +0x10 the slide's position */
+    s16 f12;                  /* +0x12 the slide's speed */
+    s16 f14;                  /* +0x14 brightness */
+    u8 f16;                   /* +0x16 alpha */
+    u8 f17;                   /* +0x17 */
+    u8 f18;                   /* +0x18 the brightness's speed */
+    u8 f19;                   /* +0x19 the alpha's speed */
+    s16 f1A;                  /* +0x1A */
+    f32 f1C;                  /* +0x1C scale */
+    u16 f20;                  /* +0x20 what it draws (the high byte picks func_8009FE3C's case) */
+    s16 f22;                  /* +0x22 a value of the element (a wrestler, a number) */
+    Nw2MenuDef *def;          /* +0x24 its description */
+    u8 pad28[0x40];           /* +0x28 */
+    Nw2SceneObj obj;          /* +0x68 its scene object: parent the menu's, next the next element's */
+    struct Nw2MenuEl *parent; /* +0x144 the element it follows (its description's parent), or NULL */
+} Nw2MenuEl;
+_Static_assert(offsetof(Nw2MenuEl, f22) == 0x22 && offsetof(Nw2MenuEl, def) == 0x28 &&
+                   offsetof(Nw2MenuEl, obj) == 0x70 && offsetof(Nw2MenuEl, parent) == 0x150 &&
+                   sizeof(Nw2MenuEl) == 0x158,
+               "a menu element is 0x158 bytes on a 64-bit PC, its scene object at +0x70");
+
+/* Nw2Menu: one of the 24 menus D_800E8230 (overlay 1's BSS), 0x138 bytes on the N64. func_8009F9A0 sets it up,
+ * func_800A1590 links the menus' scene objects to each other. items, at +0 on the N64, is 8 bytes on PC, so the
+ * 16-bit fields after it sit 4 bytes later, el at +0x18 and the scene object at +0x60: 0x140 bytes on PC. */
+typedef struct {
+    Nw2MenuItems *items; /* +0x00 its element list (D_800CC8EC[n]) */
+    s16 cur;             /* +0x04 the element under the cursor */
+    s16 f6;              /* +0x06 */
+    s16 f8;              /* +0x08 */
+    u16 fA;              /* +0x0A */
+    s16 fC;              /* +0x0C the menu's offset x, */
+    s16 fE;              /* +0x0E y, which slides it in and out, */
+    s16 f10;             /* +0x10 and z */
+    s16 f12;             /* +0x12 the slide's speed */
+    Nw2MenuEl *el;       /* +0x14 its first element */
+    u8 pad18[0x40];      /* +0x18 */
+    Nw2SceneObj obj;     /* +0x58 its scene object: child its first element's, while the menu is drawn */
+    u8 pad134[4];        /* +0x134 */
+} Nw2Menu;
+_Static_assert(offsetof(Nw2Menu, cur) == 8 && offsetof(Nw2Menu, f12) == 0x16 && offsetof(Nw2Menu, el) == 0x18 &&
+                   offsetof(Nw2Menu, obj) == 0x60 && sizeof(Nw2Menu) == 0x140,
+               "a menu is 0x140 bytes on a 64-bit PC, its elements' address at +0x18");
+#define NW2_MENU_COUNT 24     /* D_800E8230's menus */
+#define NW2_MENU_EL_COUNT 0x100 /* the elements of the heap block D_800DC730 */
+
+/* ---- The menus' encounter records (overlay 1): the scenes D_800C8E84[10], D_800DB6A8, D_800DB8C0 ----
+ * A scene of the menus' background (func_80093DAC sets up its 72 scene objects, func_800936DC builds scene n,
+ * func_800945E0 draws it each frame) is a record of D_800C8E84 (Nw2EncScene), whose address D_800DB680 holds. Its spot
+ * list (Nw2EncSpot, D_800DB684 holds its address) places the scene objects D_800DB674[0..71], one per spot: a spot
+ * draws some of the scene's parts (Nw2EncPartDraw, D_800DB6A8), or, when its flag 0x8000 is set, it is an encounter,
+ * a picture of D_800C6508 that moves and changes colour (Nw2Encounter, D_800DB8C0; D_800DBD40 counts them). The
+ * scenes and their lists are overlay 1's data, which tools/port_data.py builds in these layouts when overlay 1 loads
+ * (its TABLES). The N64 offset of each field is in its comment. */
+
+/* Nw2EncSpot: an entry of a scene's spot list, 16 bytes on both machines (it holds no address). The list ends with an
+ * entry whose count is 0. tools/port_data.py converts the list as 16-bit values, so where the N64 reads the low byte
+ * of f6 as a byte at +7 (func_80092DE0, func_80092B20), the PC takes (u8)f6. */
+typedef struct {
+    u16 id;    /* +0x0 an encounter's picture (an index of D_800C6508), or the first of the parts drawn */
+    u16 count; /* +0x2 the number of parts drawn; 0 ends the list */
+    u16 flags; /* +0x4 0x8000: an encounter; 0x2000: the depth bias of the parts is f6 << 8 */
+    u16 f6;    /* +0x6 bits that func_800936DC, func_800940D8 and func_800945E0 test, and a byte (see above) */
+    s16 x;     /* +0x8 */
+    s16 y;     /* +0xA */
+    s16 z;     /* +0xC */
+    s16 pitch; /* +0xE guPositionF's rotation */
+} Nw2EncSpot;
+_Static_assert(sizeof(Nw2EncSpot) == 0x10, "a spot is 16 bytes on both machines");
+
+/* Nw2EncTitle: a piece of a scene's title (func_80095884 draws the pieces), 12 bytes on both machines; the list ends
+ * with a piece whose pic is 0. */
+typedef struct {
+    u16 pic;   /* +0x0 its picture in the scene's picture pack (D_800DB69C) */
+    u8 logW;   /* +0x2 log2 of the picture's width */
+    u8 logH;   /* +0x3 log2 of its height */
+    s16 x;     /* +0x4 */
+    s16 y;     /* +0x6 */
+    u16 w;     /* +0x8 the width drawn */
+    u16 h;     /* +0xA the height drawn */
+} Nw2EncTitle;
+_Static_assert(sizeof(Nw2EncTitle) == 0xC, "a title piece is 12 bytes on both machines");
+
+/* Nw2EncScene: a record of D_800C8E84 (0x34 bytes on the N64). Its addresses are pointers on PC, so it is 0x58 bytes
+ * there: code steps through the scenes by sizeof and reads them by field name. A part (parts) is a record of 16-bit
+ * values and byte pairs, of its own length, read through views of its own (func_80090908, func_800936DC);
+ * tools/port_data.py converts it as 16-bit values. Scenes 6 to 9 have no title and no phase lists. */
+typedef struct {
+    u16 meshRes;        /* +0x00 resource id of the parts' vertices and triangles (loaded into D_800DB6A0) */
+    u16 picRes;         /* +0x02 resource id of the picture pack (loaded into D_800DB69C) */
+    u16 partCount;      /* +0x04 */
+    u16 f6;             /* +0x06 func_800966B8 returns it */
+    void **parts;       /* +0x08 the addresses of its partCount parts */
+    Nw2EncSpot *spots;  /* +0x0C */
+    Nw2EncTitle *title; /* +0x10 or NULL */
+    u16 f14;            /* +0x14 func_800948BC: an effect every f14 frames, */
+    u16 f16;            /* +0x16 its swing, */
+    u16 f18;            /* +0x18 */
+    u16 f1A;            /* +0x1A and its curve */
+    u16 *phases[5];     /* +0x1C lists of a u16 per encounter (func_800940D8); D_800E8210 picks one */
+    u32 f30;            /* +0x30 */
+} Nw2EncScene;
+_Static_assert(offsetof(Nw2EncScene, parts) == 0x08 && offsetof(Nw2EncScene, spots) == 0x10 &&
+                   offsetof(Nw2EncScene, title) == 0x18 && offsetof(Nw2EncScene, f14) == 0x20 &&
+                   offsetof(Nw2EncScene, phases) == 0x28 && offsetof(Nw2EncScene, f30) == 0x50 &&
+                   sizeof(Nw2EncScene) == 0x58,
+               "a scene is 0x58 bytes on a 64-bit PC, its addresses from +8 on");
+#define NW2_ENC_SCENE_COUNT 10 /* D_800C8E84's scenes */
+
+/* Nw2EncPartDraw: an entry of D_800DB6A8 (0x10 bytes on the N64, room for 32), one per part of the current scene
+ * (func_800936DC fills them). 0x20 bytes on PC. */
+typedef struct {
+    void *part; /* +0x0 the part, from its scene's parts */
+    u32 f4;     /* +0x4 */
+    Vtx *vtx;   /* +0x8 its vertices, copied into the heap block D_800DB698 */
+    Gfx *dl;    /* +0xC its display list, in the heap block D_800DB690 (func_80090908 builds it) */
+} Nw2EncPartDraw;
+_Static_assert(offsetof(Nw2EncPartDraw, vtx) == 0x10 && offsetof(Nw2EncPartDraw, dl) == 0x18 &&
+                   sizeof(Nw2EncPartDraw) == 0x20,
+               "a part's entry is 0x20 bytes on a 64-bit PC");
+
+/* Nw2Encounter: an encounter, an entry of D_800DB8C0 (0x18 bytes on the N64, room for 48), one per spot with flag
+ * 0x8000 (func_800936DC fills them; func_80092DE0 draws one). Its scene object keeps its N64 layout (Nw2SceneObj), so
+ * its links and display list are handles. 0x28 bytes on PC. */
+typedef struct {
+    Nw2EncSpot *spot;   /* +0x00 */
+    Nw2SceneObj *obj;   /* +0x04 its scene object, one of D_800DB674's */
+    Nw2PicShape *shape; /* +0x08 &D_800C6508[spot->id] */
+    u16 kind;           /* +0x0C spot->id */
+    u16 off;            /* +0x0E 1 while it is not drawn (func_800945E0) */
+    u16 frames;         /* +0x10 frames it has been drawn (func_800945E0 counts them) */
+    u16 color;          /* +0x12 an index of the seven colours D_800C5E00 */
+    u8 r, g, b, a;      /* +0x14 the colour drawn */
+} Nw2Encounter;
+_Static_assert(offsetof(Nw2Encounter, kind) == 0x18 && offsetof(Nw2Encounter, frames) == 0x1C &&
+                   offsetof(Nw2Encounter, r) == 0x20 && sizeof(Nw2Encounter) == 0x28,
+               "an encounter is 0x28 bytes on a 64-bit PC");
+
+/* ---- The menus' scene records (overlay 1): D_800D4ED8[77], D_800D4E40[19], D_800D4930[27], D_800DF330[4] ----
+ * The menus play a timed sequence of scenes: func_800C1B24 starts at scene 0, func_800C15A0 sets up scene n,
+ * func_800C0BDC counts its frames and moves on to the next, and func_800BF9B8 does what the scene's kind asks. A scene
+ * (Nw2MenuScene) names a set of up to four pictures (Nw2MenuShot), a camera track (Nw2MenuSceneTrack) and, for each of
+ * the four wrestlers, what the wrestler does (Nw2MenuSceneCast). The three tables of the ROM's data hold addresses, which
+ * are pointers on PC (port.h's IdOrAddr where a word holds a number or an address), so their fields move, and
+ * tools/port_data.py builds them in these layouts when overlay 1 loads (its TABLES). Code steps through them by sizeof
+ * and reads them by field name. The N64 offset of each field is in its comment. */
+
+/* Nw2MenuCamKey: one key of a camera track, 0x10 bytes on both machines (it holds no address). It lasts n frames (0:
+ * the last key), the low two bits of f2 pick which pictures of the set are in front (D_800EA0B4, func_800BF9B8), and v
+ * holds six camera values, which func_800C0BDC moves from this key's to the next key's over n frames (D_800E74F8). */
+typedef struct {
+    u16 n;        /* +0 */
+    u16 f2;       /* +2 */
+    s16 v[6];     /* +4 */
+} Nw2MenuCamKey;
+_Static_assert(sizeof(Nw2MenuCamKey) == 0x10, "a camera key is 0x10 bytes");
+
+/* Nw2MenuSceneTrack: one of the 19 camera tracks of D_800D4E40 (N64: 8 bytes, the address of its keys at +0). f4
+ * becomes D_800E9F70 (func_800C15A0), and f6's bits set D_800E74E8, D_800D28F0, D_800E74C4 and D_800E7CD8. The
+ * current scene's track is D_800DF320 (func_800C15A0 sets it; func_800BF9B8 and func_800C0BDC read its keys). On PC
+ * 0x10 bytes. */
+typedef struct {
+    Nw2MenuCamKey *keys; /* +0 */
+    s16 f4;              /* +4 */
+    u16 f6;              /* +6 */
+} Nw2MenuSceneTrack;
+_Static_assert(offsetof(Nw2MenuSceneTrack, f4) == 8 && sizeof(Nw2MenuSceneTrack) == 0x10,
+               "a camera track is 0x10 bytes on a 64-bit PC");
+
+/* Nw2MenuShot: one of the 27 picture sets of D_800D4930 (N64: 0x20 bytes, the pictures' addresses at +0 to +0xC).
+ * pic holds up to four pictures, each the address of a 16-byte record of 16-bit values (its size and kind:
+ * func_800C0680's Pic, func_8009EC58's Spr), or NULL; func_800C0680 puts them in the layers D_800E7558 (as handles,
+ * because the layers keep their N64 layout). A picture is drawn in front when its n is above the key's D_800EA0B4. res
+ * is a picture's resource id that func_800B600C loads into D_800E81F8, or 0, and max the largest value the scene's
+ * counter D_800DF318 passes to func_800C0680 (func_800C12D0, func_800C15A0, func_800C194C). On PC 0x30 bytes. */
+typedef struct {
+    void *pic[4]; /* +0 */
+    u16 n[4];     /* +0x10 */
+    u16 res;      /* +0x18 */
+    u16 max;      /* +0x1A */
+    u8 f1C[4];    /* +0x1C */
+} Nw2MenuShot;
+_Static_assert(offsetof(Nw2MenuShot, n) == 0x20 && offsetof(Nw2MenuShot, res) == 0x28 && sizeof(Nw2MenuShot) == 0x30,
+               "a picture set is 0x30 bytes on a 64-bit PC");
+
+/* Nw2MenuScene: one of the 77 scenes of D_800D4ED8 (N64: 0x1C bytes); the last one's kind is -1. The current scene is
+ * D_800DF31C (&D_800D4ED8[n], func_800C15A0). type is the kind (func_800BF9B8 switches on it; func_800C194C prints
+ * type and f1). flags: bits 0 to 3 a fade at the scene's end, 0x10, 0x20 (D_800D5E80), 0x40 the sequence's end, 0x80
+ * (D_800D5F28) and 0x100 (keep the layers' fEA). n is the scene's length in frames, or 0 (it does not end by
+ * itself). f6 goes to func_800B807C. f8 is the picture set (an index into D_800D4930, D_800E79C4) and fA the camera
+ * track (an index into D_800D4E40). cast holds, for each wrestler, a word that is 0 (no wrestler), a number (the
+ * wrestler's character in its low 12 bits, func_800C1370), or the address of the wrestler's keys (0x14-byte records
+ * of 16-bit values, func_800BF65C's Key), which the code tells apart by the sign (N64: negative is an address). On PC
+ * each is port.h's IdOrAddr, as wide as a pointer, so cast starts at +0x10 and a scene is 0x30 bytes. The N64 also
+ * names record 0's f8 and fA D_800D4EE0 and D_800D4EE2; no file uses those labels. */
+typedef struct {
+    s8 type;          /* +0 */
+    s8 f1;            /* +1 */
+    u16 flags;        /* +2 */
+    u16 n;            /* +4 */
+    u16 f6;           /* +6 */
+    s16 f8;           /* +8 */
+    s16 fA;           /* +0xA */
+    IdOrAddr cast[4]; /* +0xC */
+} Nw2MenuScene;
+_Static_assert(offsetof(Nw2MenuScene, fA) == 0xA && offsetof(Nw2MenuScene, cast) == 0x10 &&
+                   sizeof(Nw2MenuScene) == 0x30,
+               "a scene is 0x30 bytes on a 64-bit PC, its four cast words from +0x10");
+#define NW2_MENU_SCENE_COUNT 77 /* D_800D4ED8's scenes */
+
+/* Nw2MenuSceneCast: one of the four records of D_800DF330 (BSS; N64: 0x1C bytes), what wrestler i does in the scene.
+ * keys is the scene's cast[i] (func_800C1370 and func_800C194C copy it; an IdOrAddr as there). When it holds an
+ * address, func_800BF65C walks the keys: idx is the current key (-1: none yet), t the frame within it, and x, y, z and
+ * r the wrestler's place and angle, which func_800BF2F0 works out from the key. The N64 also reaches idx and t of record
+ * j as D_800DF344[j] (D_800DF360 for j = 1, func_800BF9B8); on PC code reads them by name. func_800BF2F0 reads the
+ * record through a view of its own, whose PC layout (keys an 8-byte address) is this one's. On PC 0x20 bytes. */
+typedef struct {
+    IdOrAddr keys;    /* +0 */
+    f32 x;            /* +4 */
+    f32 y;            /* +8 */
+    f32 z;            /* +0xC */
+    s32 r;            /* +0x10 */
+    s16 idx;          /* +0x14 */
+    s16 t;            /* +0x16 */
+    u16 f18;          /* +0x18 */
+    u16 f1A;          /* +0x1A */
+} Nw2MenuSceneCast;
+_Static_assert(offsetof(Nw2MenuSceneCast, x) == 8 && offsetof(Nw2MenuSceneCast, idx) == 0x18 &&
+                   sizeof(Nw2MenuSceneCast) == 0x20,
+               "a wrestler's scene record is 0x20 bytes on a 64-bit PC");
 
 /* The PC declarations of game functions and variables that game files declare with other types (port_decls.h). They
  * come last, after the PC layouts above, whose types they use, and after port.h's renames, as the game files' own

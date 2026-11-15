@@ -15,7 +15,12 @@ extern s32 D_800E7CC0[];
 extern s32 D_800E74B8[];
 extern Pt *D_800D5DA0[];
 extern Pt *D_800D5990[];
+#ifdef TARGET_PC
+/* PC: func_800966B8's definition returns a u16: read as an s32, the PC result's upper bits would be unset. */
+u16 func_800966B8(void);
+#else
 s32 func_800966B8(void);
+#endif
 s32 func_800B5E18(s32, s32);
 
 static inline Pt *get(s32 k, s32 idx) {

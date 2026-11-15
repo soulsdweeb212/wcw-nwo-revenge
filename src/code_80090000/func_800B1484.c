@@ -5,6 +5,47 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: the menus and their elements hold addresses, so they are common.h's Nw2Menu and Nw2MenuEl, which these views
+ * follow (the asserts check). */
+typedef struct {
+    u8 p0[0xA];
+    u16 flags; /* 0A */
+    u8 p1;
+    u8 g;      /* 0D */
+    u8 p2[2];
+    s16 h;     /* 10 */
+    u8 p3[2];
+    s16 d;     /* 14 */
+    u8 a;      /* 16 */
+    u8 p4;
+    u8 b;      /* 18 */
+    u8 p5[7];
+    u16 c;     /* 20 */
+    u16 id;    /* 22 */
+    u8 p6[sizeof(Nw2MenuEl) - 0x24];
+} El;
+_Static_assert(offsetof(El, flags) == offsetof(Nw2MenuEl, fA) && offsetof(El, g) == offsetof(Nw2MenuEl, fD) &&
+                   offsetof(El, h) == offsetof(Nw2MenuEl, f10) && offsetof(El, d) == offsetof(Nw2MenuEl, f14) &&
+                   offsetof(El, a) == offsetof(Nw2MenuEl, f16) && offsetof(El, b) == offsetof(Nw2MenuEl, f18) &&
+                   offsetof(El, c) == offsetof(Nw2MenuEl, f20) && offsetof(El, id) == offsetof(Nw2MenuEl, f22) &&
+                   sizeof(El) == sizeof(Nw2MenuEl),
+               "El must follow common.h's Nw2MenuEl");
+typedef struct {
+    void *items;
+    s16 cur;
+    u8 pad6[8];
+    s16 e;
+    u8 p10[2];
+    s16 s;
+    El *el;
+    u8 pad20[sizeof(Nw2Menu) - 0x20];
+} Menu;
+_Static_assert(offsetof(Menu, cur) == offsetof(Nw2Menu, cur) && offsetof(Menu, e) == offsetof(Nw2Menu, fE) &&
+                   offsetof(Menu, s) == offsetof(Nw2Menu, f12) && offsetof(Menu, el) == offsetof(Nw2Menu, el) &&
+                   sizeof(Menu) == sizeof(Nw2Menu),
+               "Menu must follow common.h's Nw2Menu");
+#else
 typedef struct {
     u8 p0[0xA];
     u16 flags; /* 0A */
@@ -23,13 +64,18 @@ typedef struct {
     u8 p6[0x148 - 0x24];
 } El;
 typedef struct { void *items; s16 cur; u8 pad6[8]; s16 e; u8 p10[2]; s16 s; El *el; u8 pad18[0x138 - 0x18]; } Menu;
+#endif
 typedef struct {
     u8 pad0[0xE];
     s16 fE;
     u16 f10;
     s16 f12;
     u8 pad14[0x18];
+#ifdef TARGET_PC
+    u32 f2C; /* PC: the name table's handle (D_8007EF30 keeps its N64 layout); its count is at +8 on PC */
+#else
     u16 *f2C;
+#endif
 } Game;
 extern Game D_8007EF30;
 extern Menu D_800E8230[];
@@ -75,8 +121,16 @@ void func_800B1484(s32 n, s32 m) {
             }
         } else {
             D_8007EF30.f12 = 0;
+#ifdef TARGET_PC
+            if (D_8007EF30.fE >= ((Nw2IdSubTable *)SLOT_TO_PTR(D_8007EF30.f2C))->count) {
+#else
             if (D_8007EF30.fE >= D_8007EF30.f2C[2]) {
+#endif
+#ifdef TARGET_PC
+                D_8007EF30.fE = ((Nw2IdSubTable *)SLOT_TO_PTR(D_8007EF30.f2C))->count - 1;
+#else
                 D_8007EF30.fE = D_8007EF30.f2C[2] - 1;
+#endif
             }
             mn->cur = (u16)D_8007EF30.fE + 1;
             func_800B1298(n);

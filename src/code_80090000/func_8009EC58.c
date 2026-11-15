@@ -81,7 +81,9 @@ extern s32 D_800E797C;
 extern u8 *D_800E81F8;
 extern u8 D_800C9538[], D_800C95F0[], D_800C9620[], D_800C5C50[];
 void func_800B830C(void *);
-s32 func_800B6F88(s32, u8 **, u8 **);
+/* func_800B6F88 takes the picture's key as a MenuKey (port.h; a resource id here, a number as on the N64) and returns
+ * the picture's address, which an s32 would cut in half. */
+u8 *func_800B6F88(MenuKey, u8 **, u8 **);
 u8 *func_800B64EC(u8 *, s32);
 #else
 extern s32 D_800E81F8;

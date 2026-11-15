@@ -20,8 +20,9 @@ typedef struct { u8 pad0[0x24]; Def *def; } Obj;
 
 extern Mdl D_800CB7B8[];
 #ifdef TARGET_PC
-/* PC: func_800B6F88 hands back the texture's and the palette's addresses (u8 ** in its definition). */
-s32 func_800B6F88(s32, u8 **, u8 **);
+/* PC: func_800B6F88 takes the picture's key as a MenuKey (port.h; 9 is a resource id, a number as on the N64), returns
+ * the picture's address and hands back the texture's and the palette's addresses (u8 ** in its definition). */
+u8 *func_800B6F88(MenuKey, u8 **, u8 **);
 #else
 s32 func_800B6F88(s32, s32 *, s32 *);
 #endif

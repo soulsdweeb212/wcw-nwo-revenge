@@ -5,7 +5,11 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Nw2Cup Cup; /* PC: common.h's layout of a cup, 0x18 bytes */
+#else
 typedef struct { u8 id; u8 pad1[5]; u16 flags; u8 pad8[0xC]; } Cup;
+#endif
 typedef struct {
     u8 pad0[8];
     u16 mode;
@@ -16,13 +20,25 @@ typedef struct {
     u8 pad12[6];
     s16 f18;
     u8 pad1A[0x12];
+#ifdef TARGET_PC
+    u32 f2C; /* PC: D_8007EF30 keeps its N64 layout, so its addresses are handles (port.h) */
+#else
     u8 *f2C;
+#endif
+#ifdef TARGET_PC
+    u32 cup;
+#else
     Cup *cup;
+#endif
 } Game;
 typedef struct { u16 f0; u8 pad2[6]; s32 best[10]; } Rec;
 extern Game D_8007EF30;
 extern Cup D_8003A484[];
+#ifdef TARGET_PC
+extern Nw2IdSubTable lookupSubTables[]; /* PC: the name tables, 16 bytes each */
+#else
 extern u8 lookupSubTables[];
+#endif
 extern s16 D_80038A90;
 extern Rec D_8007F0A0;
 void func_800AEF28(s32);
@@ -32,14 +48,26 @@ s32 func_800B0DD4(s32 i) {
     s32 k;
     u16 f;
 
+#ifdef TARGET_PC
+    D_8007EF30.cup = PTR_TO_SLOT(&D_8003A484[i]);
+#else
     D_8007EF30.cup = &D_8003A484[i];
+#endif
+#ifdef TARGET_PC
+    D_8007EF30.f2C = PTR_TO_SLOT(&lookupSubTables[D_8007EF30.f10]);
+#else
     D_8007EF30.f2C = &lookupSubTables[D_8007EF30.f10 * 8];
+#endif
     /* Placeholder: an if/else that only cse1 can fold (k is known 0 there). It ends cse1's block,
        so the mode/fC stores are related to the cup-store address in cse2 (base a1, -0x28/-0x24)
        instead of being folded back to symbols, without the sched barrier a do { } while (0) adds. */
     k = 0;
     if (k == 0) {
+#ifdef TARGET_PC
+        f = ((Cup *)SLOT_TO_PTR(D_8007EF30.cup))->flags | 0x8000;
+#else
         f = D_8007EF30.cup->flags | 0x8000;
+#endif
     } else {
         f = 0;
     }

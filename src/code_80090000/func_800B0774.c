@@ -5,13 +5,21 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Nw2Cup Cup; /* PC: common.h's layout of a cup, 0x18 bytes */
+#else
 typedef struct { u8 id; u8 pad1[5]; u16 flags; u8 pad8[8]; u8 *list; } Cup;
+#endif
 typedef struct { s16 f0; s16 id; u8 pad4[0xC]; } Pl;
 typedef struct {
     u8 pad0[8];
     u16 mode;
     u8 padA[0x26];
+#ifdef TARGET_PC
+    u32 cup; /* PC: a handle (CUP below) */
+#else
     Cup *cup;
+#endif
     u8 pad34[0x18];
     Pl pl[4];
     u8 pad8C[0x14E - 0x8C];
@@ -24,8 +32,19 @@ typedef struct {
 } Game;
 
 extern Game D_8007EF30;
+#ifdef TARGET_PC
+/* PC: D_8007EF30 keeps its N64 layout, so its +0x30, the current cup (common.h's Nw2Cup), holds a handle (port.h's
+ * PTR_TO_SLOT); CUP is the cup's address. */
+#define CUP ((Cup *)SLOT_TO_PTR(D_8007EF30.cup))
+#endif
 extern s32 D_80038AA8;
+#ifdef TARGET_PC
+/* PC: the type of func_8002B528's definition, which returns a u16: read as an s32, the PC result's upper bits would
+ * be unset. */
+u16 func_8002B528(s32);
+#else
 s32 func_8002B528(s32);
+#endif
 s32 func_800B0524(s32);
 s32 guRandom(void);
 void func_800B0654(void);
@@ -37,7 +56,11 @@ static inline s32 isCupBoss(s32 id) {
     if (!(D_8007EF30.mode & 0x8000)) {
         r = 0;
     } else {
+#ifdef TARGET_PC
+        k = CUP->id;
+#else
         k = D_8007EF30.cup->id;
+#endif
         if ((D_8007EF30.f14E[k] & 0xFFF) == id) {
             r = -1;
         } else {
@@ -71,15 +94,31 @@ void func_800B0774(void) {
     s32 a, b, x, y, t;
     u8 c;
 
+#ifdef TARGET_PC
+    list = CUP->list;
+#else
     list = D_8007EF30.cup->list;
+#endif
     n = 0;
+#ifdef TARGET_PC
+    if (CUP->flags & 0x20) {
+#else
     if (D_8007EF30.cup->flags & 0x20) {
+#endif
         if (isCupBoss(D_8007EF30.pl[0].id) && isCupBoss(D_8007EF30.pl[1].id)) {
+#ifdef TARGET_PC
+            setLastPair(D_8007EF30.f15A[CUP->id], D_8007EF30.f164);
+#else
             setLastPair(D_8007EF30.f15A[D_8007EF30.cup->id], D_8007EF30.f164);
+#endif
         } else if (isCupBoss(D_8007EF30.pl[0].id) || isCupBoss(D_8007EF30.pl[1].id)) {
             func_800B0654();
         } else {
+#ifdef TARGET_PC
+            setLastPair(D_8007EF30.f14E[CUP->id], D_8007EF30.f158);
+#else
             setLastPair(D_8007EF30.f14E[D_8007EF30.cup->id], D_8007EF30.f158);
+#endif
         }
         while ((c = *list) != 0) {
             a = func_8002B528(c);
@@ -107,12 +146,24 @@ void func_800B0774(void) {
         }
     } else {
         if (isCupBoss(D_8007EF30.pl[0].id)) {
+#ifdef TARGET_PC
+            setLast(D_8007EF30.f15A[CUP->id]);
+#else
             setLast(D_8007EF30.f15A[D_8007EF30.cup->id]);
+#endif
         } else {
+#ifdef TARGET_PC
+            setLast(D_8007EF30.f14E[CUP->id]);
+#else
             setLast(D_8007EF30.f14E[D_8007EF30.cup->id]);
+#endif
         }
         i = 1;
+#ifdef TARGET_PC
+        if (CUP->flags & 0x2000) {
+#else
         if (D_8007EF30.cup->flags & 0x2000) {
+#endif
             while ((c = *list) != 0) {
                 a = func_8002B528(c);
                 if (func_800B0524(a)) {
@@ -142,7 +193,11 @@ void func_800B0774(void) {
         }
     }
     /* Empty loops, kept by the compiler (probably debug output compiled out). */
+#ifdef TARGET_PC
+    if (CUP->flags & 0x20) {
+#else
     if (D_8007EF30.cup->flags & 0x20) {
+#endif
         for (i = 0; i < 18; i += 2) {
         }
     } else {

@@ -7,7 +7,9 @@
 
 extern u16 D_800EA0C2;
 extern s32 D_800DF1D0, D_800DF1C0, D_800DF1CC, D_800E7C90;
+#ifndef TARGET_PC /* on PC, port_decls.h declares findOrAddCacheEntryRaw */
 void findOrAddCacheEntryRaw(s32, s32, s32, s32, s32);
+#endif
 void func_800BB110(void);
 
 void func_800BB440(void) {

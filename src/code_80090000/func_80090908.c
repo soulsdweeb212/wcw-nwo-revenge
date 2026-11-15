@@ -45,7 +45,15 @@ u32 osVirtualToPhysical(s32);
     ((f) == 0 ? (((t[0] * 2) & 0xFF) << 16) | ((t[1] << 9) & 0xFE00) | ((t[2] * 2) & 0xFF) : \
      (f) == 1 ? (((t[1] * 2) & 0xFF) << 16) | ((t[2] << 9) & 0xFE00) | ((t[0] * 2) & 0xFF) : \
                 (((t[2] * 2) & 0xFF) << 16) | ((t[0] << 9) & 0xFE00) | ((t[1] * 2) & 0xFF))
+#ifdef TARGET_PC
+/* PC: tools/port_data.py turns a part into the PC's byte order as 16-bit values, its bytes and byte pairs too, so a
+ * byte the N64 reads at an even offset is the high half of the u16 there, and one at an odd offset the low half. */
+#define PART_HI(p) ((u8)(*(const u16 *)(p) >> 8))
+#define PART_LO(p) ((u8)*(const u16 *)(p))
+#define TILEW1(tile, s) (((tile) << 24) | ((PART_HI(&s->f12) & 3) << 18) | ((PART_LO(&s->f12) & 0xF) << 14) | ((PART_HI(&s->f10) & 3) << 8) | ((PART_LO(&s->f10) & 0xF) << 4))
+#else
 #define TILEW1(tile, s) (((tile) << 24) | ((s->f12 & 3) << 18) | ((s->f13 & 0xF) << 14) | ((s->f10 & 3) << 8) | ((s->f11 & 0xF) << 4))
+#endif
 #define LOADBLOCK(shift, rnd, rsh) { \
     Gfx0908 *_g = D_800DB68C++; \
     u32 _w; u32 _dw; s32 _dxt; s32 _lrs; u32 _hi; u32 _v; \
@@ -81,7 +89,11 @@ void func_80090908(S0908 *s, s32 arg1)
     s32 k;
 
     tri = func_800B64EC(D_800DB6A0, s->f2);
+#ifdef TARGET_PC
+    pal = func_800B64EC(D_800DB69C, (u8)s->f8.h) + 8;
+#else
     pal = func_800B64EC(D_800DB69C, s->f8.b[1]) + 8;
+#endif
     tex = func_800B64EC(D_800DB69C, s->fA);
     EMIT(0xE7000000, 0);
     EMIT(0xE3001001, 0x8000);
@@ -139,9 +151,17 @@ void func_80090908(S0908 *s, s32 arg1)
     k = 0;
     EMIT(0xE7000000, 0);
     for (i = 0; i < s->count; i++, tri += 4) {
+#ifdef TARGET_PC
+        if (PART_LO(pr) == i) {
+#else
         if (pr[1] == i) {
+#endif
             Gfx0908 *gv = D_800DB68C++;
+#ifdef TARGET_PC
+            gv->w0 = 0x01000000 | (PART_HI(pr) << 12) | ((PART_HI(pr) & 0x7F) << 1);
+#else
             gv->w0 = 0x01000000 | (pr[0] << 12) | ((pr[0] & 0x7F) << 1);
+#endif
 #ifdef TARGET_PC
             /* PC: the vertices' address as the whole pointer (port.h's DL_ADDR); osVirtualToPhysical returns a
              * u32. */
@@ -149,10 +169,18 @@ void func_80090908(S0908 *s, s32 arg1)
 #else
             gv->w1 = osVirtualToPhysical(arg1 + k * 16);
 #endif
+#ifdef TARGET_PC
+            k += PART_HI(pr);
+#else
             k += pr[0];
+#endif
             pr += 2;
         }
+#ifdef TARGET_PC
+        if (i + 1 < s->count && i + 1 != PART_LO(pr)) {
+#else
         if (i + 1 < s->count && i + 1 != pr[1]) {
+#endif
             Gfx0908 *gt = D_800DB68C++;
             gt->w0 = TRI(tri[3], tri) | 0x06000000;
             gt->w1 = TRI(tri[7], (tri + 4));

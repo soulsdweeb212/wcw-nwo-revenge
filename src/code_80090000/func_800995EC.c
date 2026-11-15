@@ -6,8 +6,10 @@
 #include "common.h"
 
 extern u8 D_800C94CC[];
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_80099734 and func_800B75D4 */
 s32 func_80099734(s32);
 void func_800B75D4(s32 *, s32, s32);
+#endif
 u8 *func_80028D18(s32, s32);
 u8 *func_80029A24(u8 *, s32, s32);
 

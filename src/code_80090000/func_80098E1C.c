@@ -5,6 +5,38 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: D_800E7518 holds the address of the request pool, 0x60 of common.h's Nw2ResourceRequest (port_decls.h), which
+ * holds its picture list's address and so is 0x10 bytes on PC: the pool is allocated by sizeof, and each request's key
+ * cleared (the N64 clears the first word of each 0xC-byte record). D_800E7CE0 is 0x40 of common.h's Nw2MenuPicSlot
+ * (port_decls.h), each a list of one picture, the picture itself; the N64 reaches the fields through the labels
+ * D_800E7CE4, D_800E7CE8 and D_800E7CF0, which have no PC symbol, so the PC names the fields. */
+extern s32 D_800E7BE8;
+extern s32 D_800E7BEC;
+extern s32 D_800E8220;
+
+void *allocateHeap(u32);
+
+void func_80098E1C(void) {
+    Nw2ResourceRequest *p;
+    s32 i;
+
+    p = allocateHeap(0x60 * sizeof(Nw2ResourceRequest));
+    D_800E7518 = p;
+    for (i = 0x5F; i >= 0; i--) {
+        p[i].key = NULL;
+    }
+    for (i = 0; i < 0x40; i++) {
+        D_800E7CE0[i].list.pics = &D_800E7CE0[i].pic;
+        D_800E7CE0[i].list.count = 1;
+        D_800E7CE0[i].pic.key = 0;
+        D_800E7CE0[i].pic.match = 0;
+    }
+    D_800E7BEC = 0;
+    D_800E7BE8 = 0;
+    D_800E8220 = 0;
+}
+#else
 extern void *D_800E7518;
 extern u8 D_800E7CE0[];
 extern u8 D_800E7CE4[];
@@ -54,3 +86,4 @@ void func_80098E1C(void) {
     D_800E7BE8 = 0;
     D_800E8220 = 0;
 }
+#endif

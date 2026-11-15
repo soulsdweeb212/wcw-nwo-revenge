@@ -10,6 +10,47 @@
  * RDP rectangle command (0xE4) with a scissor (0xE1) and tile-size (0xF1)
  * pair, preceded by a sync command (0xE7) and the fill colour (0xFA). The
  * r/g/b/a arguments are the fill colour components. */
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx, and the strips' commands are written by field. The N64 code writes their
+ * words through a u32 pointer that steps 8 bytes per command, which on PC would land in the middle of the commands. */
+#define EMIT99748(a, b) { Gfx *_g = p++; _g->w0 = (a); _g->w1 = (u32)(b); }
+
+void func_80099748(Gfx **out, s32 r, s32 g, s32 b, s32 a) {
+    Gfx *p = *out;
+    Gfx *q;
+    s32 y = 0, end;
+    s32 x = 0;
+    s32 width = 479, height = 239;
+
+    EMIT99748(0xE7000000, 0);
+    EMIT99748(0xFCFFFFFF, 0xFFFDF6FB);
+    EMIT99748(0xFA000000, (r << 24) | ((g & 255) << 16) | ((b & 255) << 8) | (a & 255));
+    q = p;
+    q->w0 = 0xE7000000;
+    q->w1 = 0;
+    q++;
+    do {
+        end = y + 4;
+        if (end > height) {
+            end = height;
+        }
+        q->w0 = 0xE4000000 | (((width << 2) & 0xFFF) << 12) | ((end << 2) & 0xFFF);
+        q->w1 = (((x << 2) & 0xFFF) << 12) | ((y << 2) & 0xFFF);
+        q++;
+        q->w0 = 0xE1000000;
+        q->w1 = 0;
+        q++;
+        q->w0 = 0xF1000000;
+        q->w1 = 0x04000400;
+        q++;
+        y += 4;
+    } while (y < height);
+    q->w0 = 0xE7000000;
+    q->w1 = 0;
+    q++;
+    *out = q;
+}
+#else
 typedef union { struct { u32 w0, w1; } words; u64 align; } Gfx99748;
 #define EMIT99748(a, b) { Gfx99748 *_g = p++; _g->words.w0 = (a); _g->words.w1 = (b); }
 
@@ -58,3 +99,4 @@ void func_80099748(Gfx99748 **out, s32 r, s32 g, s32 b, s32 a) {
     }
     *out = p;
 }
+#endif

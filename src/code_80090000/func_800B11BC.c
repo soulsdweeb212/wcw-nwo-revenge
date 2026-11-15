@@ -8,7 +8,13 @@
 typedef struct { u8 *p; u16 n; u16 c; } L;
 extern L lookupSubTables[];
 extern u8 D_8007EF30[];
+#ifdef TARGET_PC
+/* PC: the type of func_8002B668's definition, which returns a u16: read as an s32, the PC result's upper bits would
+ * be unset. */
+u16 func_8002B668(u32, s32);
+#else
 s32 func_8002B668(s32, s32);
+#endif
 s32 func_8002B710(s32);
 
 static inline s32 chk(s32 x) {

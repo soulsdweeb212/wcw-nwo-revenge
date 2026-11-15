@@ -7,7 +7,11 @@
 
 typedef struct { s32 f0; u8 pad4[0xC]; } Ent;
 typedef struct { s32 w[10]; s32 f28; } Sc;
+#ifdef TARGET_PC
+extern struct { u8 pad0[8]; u16 mode; u8 padA[0x26]; u32 p30; } D_8007EF30;
+#else
 extern struct { u8 pad0[8]; u16 mode; u8 padA[0x26]; u16 *p30; } D_8007EF30;
+#endif
 extern Ent D_800EA0D8[2][10];
 extern s32 D_800DC830[];
 extern s32 D_800DC850[];
@@ -23,7 +27,11 @@ void func_800B3640(void) {
     s32 i, j, k, n, v, t;
 
     if (D_8007EF30.mode & 0x8000) {
+#ifdef TARGET_PC
+        n = ((Nw2Cup *)SLOT_TO_PTR(D_8007EF30.p30))->f8;
+#else
         n = D_8007EF30.p30[4];
+#endif
     } else {
         switch (D_8007EF30.mode & 0xF0) {
         case 0x40:

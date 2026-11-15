@@ -5,11 +5,25 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx, which func_800A2BC0 also writes on PC. The picture is the entry of the
+ * resource-name cache that func_800B600C hands back for the name this file is given (port_decls.h: the key is a
+ * MenuKey, port.h; func_8009FE3C passes names' addresses as MENU_KEY_NAME), common.h's Nw2ResourceEntryHashed: h, at
+ * +0x10 on the N64, is reserved's +8 there, as the assert checks, and func_800A2BC0 reads the same entry through its
+ * own view of that layout. */
+typedef Gfx G;
+typedef struct { u8 pad0[0x18]; s16 h; } Spr;
+_Static_assert(offsetof(Spr, h) == offsetof(Nw2ResourceEntryHashed, reserved) + 8,
+               "Spr must follow the PC layout of Nw2ResourceEntryHashed");
+#else
 typedef struct { u32 w0, w1; } G;
 typedef struct { u8 pad0[0x10]; s16 h; } Spr;
+#endif
 extern s32 D_800CCBF8[];
 extern f64 D_800D61F0;
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800B600C */
 Spr *func_800B600C(s32, s32);
+#endif
 void func_800A2BC0(G **, Spr *, s32 *, s32 *, s32, s32);
 
 static inline void wobble(s32 *x, s32 *y, s32 n) {
@@ -41,7 +55,11 @@ static inline s32 hi(s32 b, s32 w) {
     return b + w;
 }
 
+#ifdef TARGET_PC
+void func_800A3500(G **dl, u8 *t, MenuKey id, s32 flags) { /* PC: the picture's key, as above */
+#else
 void func_800A3500(G **dl, u8 *t, s32 id, s32 flags) {
+#endif
     s32 x[4];
     s32 y[4];
     G *g = *dl;

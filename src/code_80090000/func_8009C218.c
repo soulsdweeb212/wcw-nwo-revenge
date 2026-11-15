@@ -67,7 +67,8 @@ extern s16 D_800E74D2;
 #ifdef TARGET_PC
 /* PC: D_800E81F8 holds the address of a resource (func_800C15A0 stores what func_800B600C returns), so it is a
  * pointer, as func_800B64EC takes it (its definition takes a u8 *). func_800B600C returns the address of a resource
- * (its record's b, a heap block); its N64 definition returns it as an s32, which on PC would cut it in half. */
+ * (port_decls.h: for the resource ids this file passes, the picture's heap block); its N64 definition returns it as an
+ * s32, which on PC would cut it in half. */
 extern u8 *D_800E81F8;
 #else
 extern s32 D_800E81F8;
@@ -76,8 +77,7 @@ s32 guRandom(void);
 f32 cosf(f32);
 f32 sinf(f32);
 #ifdef TARGET_PC
-/* PC: as above. */
-u8 *func_800B600C(s32, u16);
+/* PC: as above; port_decls.h declares func_800B600C. */
 u8 *func_800B64EC(u8 *, s32);
 #else
 s32 func_800B600C(s32, s32);

@@ -30,7 +30,9 @@ typedef union {
     f64 d;
 } Nw2Out;
 
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800B600C */
 void *func_800B600C(s32, s32);
+#endif
 #ifdef TARGET_PC
 /* PC: the definitions' types: appendPaletteSetupDisplayList and buildTiledTextureDisplayList (its PC definition) write
  * port.h's 16-byte Gfx, and the latter takes the texture as a pointer. The display lists at 0x800C95F0, 0x800C95B8 and
@@ -49,8 +51,10 @@ extern u32 D_C95B8;
 #ifdef TARGET_PC
 /* PC: a command is port.h's 16-byte Gfx (common.h's Nw2GfxCommand is the N64's 8 bytes), so the list is a list of Gfx,
  * and the display lists' addresses go into the commands as the whole pointers (port.h's DL_ADDR). The N64 keeps the
- * cursor for buildTiledTextureDisplayList in a union with an f64; on PC it is a Gfx pointer of its own. */
-void func_800982C0(Gfx **arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6)
+ * cursor for buildTiledTextureDisplayList in a union with an f64; on PC it is a Gfx pointer of its own. The sprite's
+ * key is a MenuKey (port.h), as func_800B600C takes it (port_decls.h): emitSpriteCommand passes keys of the
+ * resource-name cache. */
+void func_800982C0(Gfx **arg0, MenuKey arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6)
 {
     Nw2PaletteRec *rec;
     Gfx *g;

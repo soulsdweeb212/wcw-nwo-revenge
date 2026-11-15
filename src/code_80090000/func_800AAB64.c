@@ -6,8 +6,20 @@
 #include "common.h"
 
 typedef struct { u8 pad0[6]; u8 nav[4]; u8 padA[0xC]; } Item;
+#ifdef TARGET_PC
+/* PC: the menus and their elements hold addresses, so they are common.h's Nw2Menu and Nw2MenuEl, which these views
+ * follow (the asserts check). Item is an element's description (common.h's Nw2MenuDef, no address), and items' first
+ * field is the address of the menu's descriptions on both machines. */
+typedef struct { u8 pad0[0xA]; u16 flags; u8 padC[sizeof(Nw2MenuEl) - 0xC]; } El;
+typedef struct { Item **items; s16 cur; u8 pad6[0xE]; El *el; } Menu;
+_Static_assert(offsetof(El, flags) == offsetof(Nw2MenuEl, fA) && sizeof(El) == sizeof(Nw2MenuEl) &&
+                   offsetof(Menu, cur) == offsetof(Nw2Menu, cur) && offsetof(Menu, el) == offsetof(Nw2Menu, el) &&
+                   sizeof(Item) == sizeof(Nw2MenuDef) && offsetof(Item, nav) == offsetof(Nw2MenuDef, up),
+               "El and Menu must follow common.h's Nw2MenuEl and Nw2Menu");
+#else
 typedef struct { u8 pad0[0xA]; u16 flags; u8 padC[0x148 - 0xC]; } El;
 typedef struct { Item **items; s16 cur; u8 pad6[0xE]; El *el; } Menu;
+#endif
 
 s32 func_800AAB64(Menu *m, s32 btn) {
     s32 n = m->cur;

@@ -44,7 +44,14 @@ typedef struct {
 } Game;
 #endif
 typedef struct { void *p; s16 f4; u8 pad6[6]; } Slot;
+#ifdef TARGET_PC
+/* PC: a credits line of D_800D34C8 in overlay 1's data (8 bytes on the N64: the address of its text, a value, a type
+ * and the delay f7), which func_8009B66C draws; the text's address is a pointer, so the record is 0x10 bytes on PC and
+ * the list ends at the record whose text is NULL. */
+typedef struct { u8 *name; s16 value; u8 type; u8 f7; } Demo;
+#else
 typedef struct { u8 pad0[7]; u8 f7; } Demo;
+#endif
 
 extern Game D_8007EF30;
 extern struct { u8 pad0[0x688]; s32 ids[8]; } D_8007E228;
@@ -67,8 +74,17 @@ extern s32 D_800E79BC, D_800E7CC0, D_800E7CC4, D_800E79C4, D_800EA0B4, D_800E797
 extern Slot D_800E79D8[];
 extern Demo D_800D34C8[];
 extern s32 D_800E7C98, D_800E7C9C, D_800E7CA0, D_800E7CA4, D_800DF1C0;
+#ifdef TARGET_PC
+/* PC: D_800E9E3C is D_800E8230[23].cur, and D_800CCA09 (D_800CC8EC + 0x11D, the +9 of the last of the 12-byte element
+ * lists) D_800CC8EC[23].f9. The menus and the element lists hold addresses, so they are common.h's Nw2Menu and
+ * Nw2MenuItems on PC, read by field name: the labels have no PC symbol. */
+extern s16 D_800E7CB8;
+extern Nw2Menu D_800E8230[];
+extern Nw2MenuItems D_800CC8EC[];
+#else
 extern s16 D_800E7CB8, D_800E9E3C;
 extern s8 D_800CCA09;
+#endif
 
 void func_80099478(s32, s32, s32);
 s32 func_800BBEB8(s32);
@@ -96,13 +112,17 @@ s16 func_8000F6F4(void);
 void func_8000EED8(s32);
 void func_8000F620(s32);
 void func_800BC32C(void);
+#ifndef TARGET_PC /* on PC, port_decls.h declares findOrAddCacheEntryRaw */
 void findOrAddCacheEntryRaw(s32, s32, s32, s32, s32);
+#endif
 s32 func_800B04BC(s32);
 void func_800BCBB4(s32);
 s32 func_800AA1E0(s32, s32, s32, s32);
 void func_800B8050(void);
 void func_800B2588(void);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_80099148, whose key is a MenuKey (port.h) */
 s32 func_80099148(s32, s32, s32, s32, s32);
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_8002AD04, which returns the name record's address */
 s32 func_8002AD04(s32, s32);
 #endif
@@ -705,14 +725,25 @@ void func_800BCDF4(void) {
         }
         if (D_800E798C == 1) {
             func_800AA1E0(0, D_8007EF30.opp[0], 8, 6);
+#ifdef TARGET_PC
+            /* PC: the name record's address as the picture's key in the resource-name cache (port.h's MENU_KEY_NAME). */
+            func_80099148(MENU_KEY_NAME(func_8002AD04(D_8007EF30.opp[0], 0)), 0xF0, 0xC8, 0x18008, 0x402);
+#else
             func_80099148(func_8002AD04(D_8007EF30.opp[0], 0), 0xF0, 0xC8, 0x18008, 0x402);
+#endif
             D_800E74B8[1] = D_800E74B8[0];
             D_800EA0A8[1] = D_800EA0A8[0];
         } else {
             func_800AA1E0(0, D_8007EF30.opp[0], 8, 6);
             func_800AA1E0(1, D_8007EF30.opp[1], 8, 6);
+#ifdef TARGET_PC
+            /* PC: as above. */
+            func_80099148(MENU_KEY_NAME(func_8002AD04(D_8007EF30.opp[0], 0)), 0xF0, 0xB9, 0x18008, 0x402);
+            func_80099148(MENU_KEY_NAME(func_8002AD04(D_8007EF30.opp[1], 0)), 0xF0, 0xD2, 0x18008, 0x402);
+#else
             func_80099148(func_8002AD04(D_8007EF30.opp[0], 0), 0xF0, 0xB9, 0x18008, 0x402);
             func_80099148(func_8002AD04(D_8007EF30.opp[1], 0), 0xF0, 0xD2, 0x18008, 0x402);
+#endif
         }
         if (D_800EA0A8[0] == D_800EA0A8[1]) {
             D_800EA320 = D_800EA0A8[0];
@@ -805,7 +836,11 @@ void func_800BCDF4(void) {
         D_800E74C8 = 0;
         k = D_800E9F90;
         if (D_800E74E0 >= D_800D34C8[k].f7 * 4) {
+#ifdef TARGET_PC
+            if (D_800D34C8[k].name != NULL) { /* PC: the text's address, as above */
+#else
             if (*(s32 *)&D_800D34C8[k] != 0) {
+#endif
                 for (j = 0, p = D_800E79D8; j < 0x20; j++, p++) {
                     if (p->f4 < 0) {
                         p->f4 = 0;
@@ -1022,10 +1057,18 @@ void func_800BCDF4(void) {
             D_800E7C90 = 0;
             D_800E74E0 = 0;
             func_800AF978();
+#ifdef TARGET_PC
+            func_800B511C(D_800CC8EC[23].f9); /* PC: by name (see above) */
+#else
             func_800B511C(D_800CCA09);
+#endif
             func_800B5704(-1);
             D_80038A90 = 0x17;
+#ifdef TARGET_PC
+            D_800E8230[23].cur = 0; /* PC: by name (see above) */
+#else
             D_800E9E3C = 0;
+#endif
         } else {
             D_800E74C8 = D_800E74E0 * 8 - 0x80;
         }

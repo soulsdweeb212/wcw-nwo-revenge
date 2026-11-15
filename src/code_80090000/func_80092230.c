@@ -13,7 +13,7 @@
 typedef Gfx G922;
 extern u8 *D_800DB69C;
 extern u8 *D_800DBD48;
-extern u8 D_800C6450[];
+extern Vtx D_800C6450[]; /* PC: vertices, port.h's Vtx */
 u8 *func_800B64EC(u8 *, s32);
 void func_80091718(G922 **, s32, s32, s32, s32);
 #define E922(a, b) { G922 *g = dl++; g->w0 = (u32)(a); g->w1 = (u32)(b); }

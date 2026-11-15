@@ -5,9 +5,13 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+typedef Gfx Gfx0983; /* PC: a command is port.h's 16-byte Gfx */
+#else
 typedef struct {
     u32 w0, w1;   /* one two-word display-list command */
 } Gfx0983;
+#endif
 
 extern s16 D_800C9818[];   /* keyframe table: 8 s16 per rect; t == 0x100 selects the final keyframe */
 

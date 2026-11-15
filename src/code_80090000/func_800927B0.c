@@ -11,16 +11,23 @@
 s32 loadResourceTexture4b(void *, void *, s32);
 void accumulateColorChannels(s32,s32,s32);
 extern u8 D_800C5D48[];
+#ifdef TARGET_PC
+typedef Nw2PicShape Desc927; /* PC: a record of D_800C6508 (common.h) */
+#else
 typedef struct { s32 f0; u32 f4; u16 f8; } Desc927;
+#endif
 #ifdef TARGET_PC
 /* PC: a command is port.h's 16-byte Gfx (common.h's Nw2GfxCommand is the N64's 8 bytes), and the branch target goes
- * into the command as the whole pointer (port.h's DL_ADDR). arg2->f4, the digits' vertices, is still the record's
- * 32-bit word: arg2 is D_800C6588, overlay 1 data whose PC layout is not decided yet. */
+ * into the command as the whole pointer (port.h's DL_ADDR). The N64 reaches that list, D_800C5D90, as
+ * D_800C5D48 + 0x48; the PC's copies of the lists have 16-byte commands, where that sum lands in the middle of one, so
+ * the PC names the list. arg2 is record 8 of D_800C6508 (common.h's Nw2PicShape): its vertices' address goes into the
+ * G_VTX command as the whole pointer. */
+extern u8 D_800C5D90[];
 void func_800927B0(Gfx **arg0, s32 arg1, Desc927 *arg2) {
     Gfx *cmd; s32 digit,i;
     cmd=*arg0;
-    { Gfx *g=cmd++; g->w0=0xDE000000; g->w1=DL_ADDR(D_800C5D48+0x48); }
-    { Gfx *g=cmd++; g->w0=0x01000000|((arg2->f8&255)<<12)|((arg2->f8&127)*2); g->w1=arg2->f4; }
+    { Gfx *g=cmd++; g->w0=0xDE000000; g->w1=DL_ADDR(D_800C5D90); }
+    { Gfx *g=cmd++; g->w0=0x01000000|((arg2->count&255)<<12)|((arg2->count&127)*2); g->w1=DL_ADDR(arg2->vtx); }
     i=0; do { digit=arg1; if(arg1>=10) digit=arg1%10+10;
         if(digit>=0) {
             if(loadResourceTexture4b(&cmd,arg2,digit)) {

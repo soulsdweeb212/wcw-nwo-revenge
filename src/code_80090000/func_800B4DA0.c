@@ -6,7 +6,13 @@
 #include "common.h"
 
 extern u8 D_8007EF30[];
+#ifdef TARGET_PC
+/* PC: D_800E9962 is D_800E8230[19].fA. The menus hold addresses, so they are common.h's Nw2Menu on PC, read by field
+ * name: the label has no PC symbol. */
+extern Nw2Menu D_800E8230[];
+#else
 extern u16 D_800E9962;
+#endif
 extern s32 D_800E79A0, D_800E79A4;
 void func_8002B7E0(s32, s32);
 void func_800B1D04(s32);
@@ -14,7 +20,11 @@ void func_800B1D04(s32);
 
 s32 func_800B4DA0(s32 a) {
     s32 r, s;
+#ifdef TARGET_PC
+    func_8002B7E0(F(s16, 0x4E, D_800E8230[19].fA), F(u8, 0x50, D_800E8230[19].fA)); /* PC: by name (see above) */
+#else
     func_8002B7E0(F(s16, 0x4E, D_800E9962), F(u8, 0x50, D_800E9962));
+#endif
     if (a == 0x422) {
         func_800B1D04(2);
         r = 0x12;

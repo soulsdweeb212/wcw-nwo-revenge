@@ -13,6 +13,92 @@
  * mode word and, for even indices below 8, seed a new 0x178-stride effect
  * record with the part's position (arg2/arg3), radius and scale. *arg0 is
  * advanced past the emitted commands. */
+#ifdef TARGET_PC
+/* PC: a command is port.h's 16-byte Gfx, as its callers' lists are (func_80092B20), and the pictures are records 7
+ * and 9 of D_800C6508 (common.h's Nw2PicShape), which the N64 reaches as D_800C6418 + 0x160 and + 0x180 (labels inside
+ * that table, whose records are 0x18 bytes on PC); the word D_800DBD54 is D_800DBB80 + 0x1D4 there. The effect
+ * records at D_800D6658 + 0x6F8 keep their N64 layout (func_800900C0.c). */
+s32 loadResourceTexture4b(Gfx **, Nw2PicShape *, s32);
+void accumulateColorChannels(s32, s32, s32);
+extern Nw2PicShape D_800C6508[];
+extern u8 D_800D6658[];
+extern s32 D_800DBD54;
+
+void func_80092554(Gfx **arg0, s32 arg1, s16 arg2, s16 arg3) {
+    Gfx *g;
+    s32 i;
+    s32 s0;
+    s32 s2;
+    s32 s3, s4, s5;
+
+    g = *arg0;
+    if (arg1 >= 0x14) {
+        Nw2PicShape *p = &D_800C6508[7];
+
+        s0 = arg1 - 0x14;
+        i = 0;
+        s5 = 0xC;
+        s4 = 0xE;
+        s3 = 0xA;
+        s2 = 8;
+        do {
+            if (s0 >= 0 && s0 < p->fC) {
+                loadResourceTexture4b(&g, p, s0);
+                g->w0 = (u32)((s2 & 0xFF) << 16 | (s3 & 0xFF) << 8 | (s4 & 0xFF) | 0x07000000);
+                g->w1 = (u32)((s2 & 0xFF) << 16 | (s4 & 0xFF) << 8 | (s5 & 0xFF));
+                g++;
+                if (i == 0 && s0 == 0) {
+                    accumulateColorChannels(0xFF, 0xFF, 0xFF);
+                    D_800DBD54 = 0x420;
+                }
+            }
+            s5 += 8;
+            s4 += 8;
+            s3 += 8;
+            s2 += 8;
+            i += 1;
+            s0 -= 2;
+        } while (i < 4);
+    } else if (arg1 >= 0) {
+        if (loadResourceTexture4b(&g, &D_800C6508[9], arg1) != 0) {
+            g->w0 = 0x07000206;
+            g->w1 = 0x604;
+            g++;
+        }
+        if (arg1 == 0) {
+            D_800DBD54 = 0x422;
+        }
+        if ((arg1 < 8) && !(arg1 & 1)) {
+            u8 *p;
+            s32 a3;
+            s32 sh;
+
+            accumulateColorChannels(0xF, 0xF, 0xF);
+            sh = arg1 << 6;
+            a3 = 0;
+            p = D_800D6658 + 0x6F8;
+            while (a3 < 0x30 && *(s16 *)(p + 0x160) >= 0) {
+                a3++;
+                p += 0x178;
+            }
+            if (a3 != 0x30) {
+                *(s16 *)(p + 0x170) = sh * 12;
+                *(s16 *)(p + 0x160) = 0;
+                *(s16 *)(p + 0x166) = 0x40;
+                *(s16 *)(p + 0x162) = 0x40;
+                *(s16 *)(p + 0x16C) = arg2;
+                *(s16 *)(p + 0x16E) = arg3;
+                *(s16 *)(p + 0x172) = 0x800;
+                *(s16 *)(p + 0x168) = 0x320;
+                *(s16 *)(p + 0x16A) = 3;
+                *(s16 *)(p + 0x164) = 0x100;
+                *(s32 *)(p + 0x174) = 0;
+            }
+        }
+    }
+    *arg0 = g;
+}
+#else
 extern s32 loadResourceTexture4b(void **, void *, s32);
 extern void accumulateColorChannels(s32, s32, s32);
 extern u8 D_800C6418[];
@@ -104,3 +190,4 @@ void func_80092554(void **arg0, s32 arg1, s16 arg2, s16 arg3) {
     }
     *arg0 = sp10;
 }
+#endif

@@ -35,7 +35,9 @@ extern u8 D_800CCCA4[], D_800CCCAC[], D_800CCCB4[];
 extern f64 D_800D6208;
 u32 osVirtualToPhysical(V *);
 void func_800B6FE0(G **, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800B75D4, which takes a name as a key (port.h's MENU_KEY_NAME) */
 T *func_800B75D4(G **, void *, s32);
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_8002AD34 */
 void *func_8002AD34(s32, s32);
 #endif
@@ -76,10 +78,17 @@ void func_800A4284(G **dl, Item *it) {
             } else {
                 src = D_800CCCAC;
             }
+#ifdef TARGET_PC
+            t = func_800B75D4(&g, MENU_KEY_NAME(src), 8); /* PC: the names' addresses as keys, as above */
+        } else {
+            t = func_800B75D4(&g, MENU_KEY_NAME(func_8002AD34(D_8007E228.ids[f & 3], D_8007E8C0[0x1C + (f & 3)])), 8);
+        }
+#else
             t = func_800B75D4(&g, src, 8);
         } else {
             t = func_800B75D4(&g, func_8002AD34(D_8007E228.ids[f & 3], D_8007E8C0[0x1C + (f & 3)]), 8);
         }
+#endif
         if (t->w > 0x60) {
             hw = 0x18;
         } else {
@@ -119,7 +128,11 @@ void func_800A4284(G **dl, Item *it) {
         if (f & 0x10) {
             EMIT(0xE7000000, 0);
             EMIT(0xFA000000, (it->f17 << 24) | (it->f17 << 16) | (it->f17 << 8) | it->f16);
+#ifdef TARGET_PC
+            func_800B75D4(&g, MENU_KEY_NAME(D_800E7C60[n]), 0x88); /* PC: as above */
+#else
             func_800B75D4(&g, D_800E7C60[n], 0x88);
+#endif
             EMIT(0x07080A0E, 0x00080E0C);
         }
     }

@@ -24,7 +24,12 @@ extern s32 D_800EA0A8[];
 extern Ent *D_800D5DA0[];
 extern Ent *D_800D5990[];
 extern f64 D_800D6C68;
+#ifdef TARGET_PC
+/* PC: func_800966B8's definition returns a u16: read as an s32, the PC result's upper bits would be unset. */
+u16 func_800966B8(void);
+#else
 s32 func_800966B8(void);
+#endif
 s32 func_800B5E18(s32, s32);
 f32 nw2Sqrtf(f32);
 void guPositionF(void *, f32, f32, f32, f32, f32, f32, f32);

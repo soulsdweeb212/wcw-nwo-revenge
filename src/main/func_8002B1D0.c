@@ -24,7 +24,13 @@ extern Nw2LookupEntry D_8003A59C;
 
 u16 func_8002B528(s32 arg0);
 
+#ifdef TARGET_PC
+/* PC: the N64 function returns nothing, but its last call leaves func_8002B528's result in v0, and func_800AC144
+ * uses it; the PC returns that result. */
+u16 func_8002B1D0(s32 arg0) {
+#else
 void func_8002B1D0(s32 arg0) {
+#endif
     Nw2LookupEntry *e;
     s32 k;
     s32 j;
@@ -45,5 +51,10 @@ lookup:
     } else {
         e = D_8003A4F8[idx >> 8].entries[idx & 0xFF];
     }
+#ifdef TARGET_PC
+    /* PC: the entry's field by name (common.h's Nw2NameEntry): the three addresses before it are 8 bytes each on PC. */
+    return func_8002B528(((Nw2NameEntry *)e)->f15);
+#else
     func_8002B528(*(u8 *)((u8 *)e + 0x15));
+#endif
 }

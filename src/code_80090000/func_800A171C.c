@@ -12,6 +12,44 @@ typedef Gfx G;
 typedef struct { u32 w0, w1; } G;
 #endif
 typedef struct { u8 pad0[0x10]; s16 f10; } Def;
+#ifdef TARGET_PC
+/* PC: the menus and their elements hold addresses, so they are common.h's Nw2Menu and Nw2MenuEl, which these views
+ * follow (the asserts check): an element is 0x158 bytes, its scene object at +0x70; a menu is 0x140 bytes, its scene
+ * object at +0x60; an element list's count is at +9. The scene objects keep their N64 layout and hold handles
+ * (port.h's PTR_TO_SLOT): the N64's f80 is the element's obj.group, and the menu's f5C its obj.child. */
+typedef struct {
+    u8 pad0[0x16];
+    u8 f16;
+    u8 pad17[0x24 - 0x17];
+    Def *def;
+    u8 pad30[0x40];
+    Nw2SceneObj obj;
+    u8 pad14C[sizeof(Nw2MenuEl) - 0x14C];
+} El;
+_Static_assert(offsetof(El, f16) == offsetof(Nw2MenuEl, f16) && offsetof(El, def) == offsetof(Nw2MenuEl, def) &&
+                   offsetof(El, obj) == offsetof(Nw2MenuEl, obj) && sizeof(El) == sizeof(Nw2MenuEl),
+               "El must follow common.h's Nw2MenuEl");
+typedef Nw2MenuItems Items;
+typedef struct {
+    Items *items;
+    s16 cur;
+    u8 pad6[4];
+    u16 fA;
+    u8 padC[2];
+    s16 fE;
+    u8 pad10[2];
+    s16 f12;
+    El *el;
+    u8 pad20[0x40];
+    Nw2SceneObj obj;
+    u8 pad13C[4];
+} Menu;
+_Static_assert(offsetof(Menu, cur) == offsetof(Nw2Menu, cur) && offsetof(Menu, fA) == offsetof(Nw2Menu, fA) &&
+                   offsetof(Menu, fE) == offsetof(Nw2Menu, fE) && offsetof(Menu, f12) == offsetof(Nw2Menu, f12) &&
+                   offsetof(Menu, el) == offsetof(Nw2Menu, el) && offsetof(Menu, obj) == offsetof(Nw2Menu, obj) &&
+                   sizeof(Menu) == sizeof(Nw2Menu),
+               "Menu must follow common.h's Nw2Menu");
+#else
 typedef struct {
     u8 pad0[0x16];
     u8 f16;
@@ -37,6 +75,7 @@ typedef struct {
     void *f5C;
     u8 pad60[0x138 - 0x60];
 } Menu;
+#endif
 
 extern u8 D_800E79B4, D_800E7542;
 #ifdef TARGET_PC
@@ -101,7 +140,11 @@ s32 func_800A171C(void) {
             if (e->f16 != 0) {
                 any = -1;
             } else {
+#ifdef TARGET_PC
+                e->obj.group |= 0x80; /* PC: the scene object's draw group, by name (see above) */
+#else
                 e->f80 |= 0x80;
+#endif
             }
         }
         if (any) {
@@ -123,7 +166,11 @@ s32 func_800A171C(void) {
         if (any) goto draw;
         if (f) {
 draw:
+#ifdef TARGET_PC
+            m->obj.child = PTR_TO_SLOT(&m->el->obj); /* PC: the first element's scene object, as a handle (see above) */
+#else
             m->f5C = m->el->f68;
+#endif
             p = m->el;
             for (k = 0; k < m->items->n; k++, p++) {
                 x = (k == m->cur) << 1;
@@ -137,7 +184,11 @@ draw:
                 func_800A0420(p, pos, i, g);
             }
         } else {
+#ifdef TARGET_PC
+            m->obj.child = 0; /* PC: as above */
+#else
             m->f5C = 0;
+#endif
         }
     }
     if (D_80038A8C != 0) {

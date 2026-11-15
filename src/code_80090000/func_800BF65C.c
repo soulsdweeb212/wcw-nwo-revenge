@@ -6,7 +6,13 @@
 #include "common.h"
 
 typedef struct { u16 f0; u16 f2; u16 f4; s16 len; s16 v[4]; u16 flags; u16 f12; } Key;
+#ifdef TARGET_PC
+/* PC: the wrestlers' records D_800DF330 have their PC layout (common.h's Nw2MenuSceneCast), in which keys is an
+ * IdOrAddr: a number, or the address of the wrestler's keys. */
+typedef Nw2MenuSceneCast Anim;
+#else
 typedef struct { Key *keys; f32 x, y, z; s32 r; s16 idx; s16 t; u16 f18; u16 f1A; } Anim;
+#endif
 typedef struct {
     u8 pad0[0x680];
     f32 f680;
@@ -48,9 +54,16 @@ void func_800BF65C(void) {
     u16 t;
 
     for (i = 0, a = D_800DF330; i < 4; i++, w++, a++) {
+#ifdef TARGET_PC
+        /* PC: a record without keys holds a number (the N64 tests the sign). */
+        if (!ID_OR_ADDR_IS_ADDR(a->keys)) {
+            continue;
+        }
+#else
         if ((s32)a->keys >= 0) {
             continue;
         }
+#endif
         if (a->idx < 0) {
             w->f6BE = 0;
             a->t = 1;
@@ -59,7 +72,12 @@ void func_800BF65C(void) {
             n = 1;
         } else {
             w->f6BE = 2;
+#ifdef TARGET_PC
+            /* PC: keys holds the keys' address here. */
+            k = &((Key *)a->keys)[a->idx];
+#else
             k = &a->keys[a->idx];
+#endif
             if (w->f6C4 & 0x80) {
                 if (w->f6BA == 0 && w->f692 == w->f694) {
                     if (D_800E9F70 < 0) {
@@ -110,7 +128,12 @@ void func_800BF65C(void) {
                 if (a->idx != 0 && !(k->flags & 0x8000)) {
                     func_800C2DA0(i, &a->x, 0);
                 }
+#ifdef TARGET_PC
+                /* PC: as above. */
+                k = &((Key *)a->keys)[a->idx];
+#else
                 k = &a->keys[a->idx];
+#endif
                 if (k->flags & 0x2000) {
                     w->f6BE = 2;
                 }

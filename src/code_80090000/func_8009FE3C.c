@@ -11,7 +11,14 @@ typedef Gfx G;
 #else
 typedef struct { u32 w0, w1; } G;
 #endif
+#ifdef TARGET_PC
+/* PC: an entry of D_800CB7B8 in overlay 1's data (0x10 bytes on the N64): the addresses of a display list and of its
+ * vertices, then the vertex count. On PC the two addresses are pointers, so the entry is 0x18 bytes, as func_800A0420's
+ * view of it has it. */
+typedef struct { void *dl; Vtx *addr; u16 n; u8 padA[6]; } VtxSet;
+#else
 typedef struct { void *dl; void *addr; u16 n; u8 padA[6]; } VtxSet;
+#endif
 typedef struct { u8 pad0[0xE]; u8 idx; } Def;
 typedef struct {
     u8 pad0[0xD];
@@ -29,12 +36,8 @@ extern s32 D_800CCA64[][2];
 extern u8 D_800D6178[], D_8007E8C0[];
 void func_800A2158(G **, Obj *, s32);
 void func_800A2B5C(G **, Obj *, s32);
+#ifndef TARGET_PC /* on PC, port_decls.h declares func_800A3500 and func_800A3E00, which take the picture's key */
 void func_800A3500(G **, Obj *, void *, s32);
-#ifdef TARGET_PC
-/* PC: func_800AA070 returns the address of a name record (its PC definition, func_800AA070.c), which this file hands
- * to func_800A3E00 as the name of the picture to draw; an s32 would cut it in half. */
-void func_800A3E00(G **, u8 *);
-#else
 void func_800A3E00(G **, s32);
 #endif
 void func_800B7260(G **, s32, s32, s32);
@@ -58,7 +61,8 @@ void func_800A7E9C(G **, Obj *);
 void func_800A83FC(G **, Obj *);
 void func_800A8BB0(G **, Obj *);
 #ifdef TARGET_PC
-/* PC: the name record's address, as above. */
+/* PC: func_800AA070 returns the address of a name record (its PC definition, func_800AA070.c), which this file hands
+ * to func_800A3E00 as the name of the picture to draw; an s32 would cut it in half. */
 u8 *func_800AA070(s32);
 #else
 s32 func_800AA070(s32);
@@ -86,18 +90,32 @@ void func_8009FE3C(G **dl, Obj *o) {
         func_800A2B5C(&g, o, k);
         break;
     case 0x5000:
+#ifdef TARGET_PC
+        /* PC: the object as func_800A3500 takes it (u8 *), and the names' addresses as keys of the resource-name cache
+         * (port.h's MENU_KEY_NAME), as func_800A3500 and func_800A3E00 take them (port_decls.h). */
+        if (o->f22 == 0) {
+            func_800A3500(&g, (u8 *)o, MENU_KEY_NAME(D_800D6178), 0);
+        } else {
+            func_800A3500(&g, (u8 *)o, MENU_KEY_NAME(func_8002AD04(o->f22, k & 3)), 0);
+        }
+#else
         if (o->f22 == 0) {
             func_800A3500(&g, o, D_800D6178, 0);
         } else {
             func_800A3500(&g, o, func_8002AD04(o->f22, k & 3), 0);
         }
+#endif
         break;
     case 0x700:
         func_800B6FE0(&g, D_800C9130[k]);
         func_800A1C30(&g, o);
         break;
     case 0x4100:
+#ifdef TARGET_PC
+        func_800A3E00(&g, MENU_KEY_NAME(func_800AA070(k))); /* PC: as above */
+#else
         func_800A3E00(&g, func_800AA070(k));
+#endif
         break;
     case 0x4300:
         k = func_800AA0D8(k);
@@ -130,11 +148,19 @@ void func_8009FE3C(G **dl, Obj *o) {
         func_800A7130(&g, o, D_800C9110[k], D_800C9110[t]);
         break;
     case 0x5900:
+#ifdef TARGET_PC
+        if (k == 0) { /* PC: as above */
+            func_800A3500(&g, (u8 *)o, MENU_KEY_NAME(D_8007E8C0 + 0xB8), 0x10000);
+        } else {
+            func_800A3500(&g, (u8 *)o, MENU_KEY_NAME(D_8007E8C0 + 0xDA), 0x10000);
+        }
+#else
         if (k == 0) {
             func_800A3500(&g, o, D_8007E8C0 + 0xB8, 0x10000);
         } else {
             func_800A3500(&g, o, D_8007E8C0 + 0xDA, 0x10000);
         }
+#endif
         break;
     case 0x5A00:
     case 0x5B00:

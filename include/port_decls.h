@@ -22,11 +22,10 @@
  * float itself. tools/port_calls.py finds the calls that do not: it compares each call with the same call in the
  * file's N64 view.
  *
- * Functions are grouped by the folder of the file that defines them (main, then overlay 2's four folders), in
- * address order, each with that file. A name is here only once every file of the developer program's set
- * (tools/port_filelist.py --set match) that uses it compiles against this declaration; a file outside the set that
- * uses it needs the same #ifndef TARGET_PC wrap before the PC build first compiles it. docs/port.md ("The PC
- * declarations: port_decls.h") says how to add a name. */
+ * Functions are grouped by the folder of the file that defines them (main, then overlay 1's folder, then overlay 2's
+ * four folders), in address order, each with that file. A name is here only once every file of the boot set
+ * (tools/port_filelist.py --set boot, which holds the developer program's) that uses it compiles against this
+ * declaration. docs/port.md ("The PC declarations: port_decls.h") says how to add a name. */
 #ifndef PORT_DECLS_H
 #define PORT_DECLS_H
 
@@ -72,6 +71,35 @@ u8 *func_8002AD04(s32 a, s32 b);                                     /* func_800
 u8 *func_8002AD34(s32 a, s32 b);                                     /* func_8002AD34.c, PC definition */
 u8 func_8002B5AC(s32 arg0);                                          /* func_8002B5AC.c */
 u8 *func_8002B790(s32 arg0, u32 arg1);                               /* func_8002B790.c, PC definition */
+
+/* ---- overlay 1: src/code_80090000 ---- */
+/* The menus' two picture caches (port.h's MenuKey, common.h's "The menus' picture caches"): a key is a MenuKey, the
+ * table of loaded pictures hands back a pointer, and a picture request holds its picture list's address. */
+
+s32 func_80098EEC(Nw2MenuPicList *list, s32 flags);                  /* func_80098EEC.c, PC definition */
+s32 findOrAddCacheEntryRaw(MenuKey key, s16 x, s16 y, s32 match, s32 flags); /* findOrAddCacheEntryRaw.c, PC definition */
+s32 func_80099148(MenuKey key, s16 x, s16 y, s32 match, s32 flags);  /* func_80099148.c, PC definition */
+u8 *func_80099734(s32 id);                                           /* func_80099734.c, PC definition */
+void func_800A3500(Gfx **dl, u8 *t, MenuKey key, s32 flags);         /* func_800A3500.c, PC definition */
+void func_800A3E00(Gfx **dl, MenuKey key);                           /* func_800A3E00.c, PC definition */
+void *func_800B600C(MenuKey key, u16 flags);                         /* func_800B600C.c, PC definition */
+void *func_800B75D4(Gfx **dl, MenuKey key, u32 flags);               /* func_800B75D4.c, PC definition */
+
+/* overlay 1 .bss: the address of a display list, or NULL: in scene mode 4 (D_800DB688), func_80092DE0 builds it
+ * (func_80091F50) for the frame's first encounter (common.h's Nw2Encounter) whose phase has bit 0x100 set, and the
+ * frame's later ones branch to it; func_800936DC and func_800945E0 clear it. */
+extern Gfx *D_800DBD44;
+/* overlay 1 .bss: the table of loaded pictures (Nw2MenuResSlot, common.h), D_800E6BA0 on the N64: func_800B5FD0 clears
+ * it, func_800B600C finds or adds an entry, func_800B642C loads the entries still to load, func_800B6278 and
+ * func_800B6334 free them. On PC it has a name of its own, because overlay 2 has an f64 at the same N64 address. */
+extern Nw2MenuResSlot D_800E6BA0_ovl1[0x80];
+/* overlay 1 .bss: the address of the heap block of 0x60 picture requests (Nw2ResourceRequest, common.h), which
+ * func_80098E1C allocates and func_80098EC8 frees; func_80098EEC adds a request, func_8009F2F8 draws and fades them. */
+extern Nw2ResourceRequest *D_800E7518;
+/* overlay 1 .bss: the 0x40 one-picture lists (Nw2MenuPicSlot, common.h) that func_80098E1C sets up and func_80099148
+ * and findOrAddCacheEntryRaw fill by key. The N64 labels D_800E7CE4, D_800E7CE8 and D_800E7CF0 (fields of entry 0)
+ * have no PC symbol: code reads D_800E7CE0[n] by field name. */
+extern Nw2MenuPicSlot D_800E7CE0[0x40];
 
 /* ---- overlay 2: src/ovl2_80090000 ---- */
 

@@ -10,7 +10,13 @@ extern u8 D_8007EF30[];
 #define S16(o) (*(s16 *)(D_8007EF30 + (o)))
 #define F32(o) (*(s32 *)(D_8007EF30 + (o)))
 extern struct { u8 pad[0x620]; s32 f; } D_8007E228;
+#ifdef TARGET_PC
+/* PC: D_800CC8F5 is D_800CC8EC + 9, the f9 of the 12-byte element lists, which hold addresses, so on PC they are
+ * common.h's Nw2MenuItems (0x10 bytes), read by field name: the label has no PC symbol. */
+extern Nw2MenuItems D_800CC8EC[];
+#else
 extern s8 D_800CC8F5[][12];
+#endif
 extern s32 D_80038A8C, D_80038A98, D_80038AA8;
 extern s16 D_80038A90, D_80038A92, D_800E7CB8, D_800E9F7C;
 extern s32 D_800E6B88, D_800E6B90, D_800E74C8, D_800E74E0, D_800E7530, D_800E798C, D_800E79CC, D_800E7C90;
@@ -49,7 +55,12 @@ void func_800A98B4(void) {
             D_800E74C8 = 0xFF;
         }
         F16(0xE) = 0;
+#ifdef TARGET_PC
+        /* PC: D_8007EF30 keeps its N64 layout, so its +0x2C holds the name table's handle (port.h's PTR_TO_SLOT). */
+        *(u32 *)(D_8007EF30 + 0x2C) = PTR_TO_SLOT(lookupSubTables);
+#else
         *(void **)(D_8007EF30 + 0x2C) = lookupSubTables;
+#endif
         F16(0x12) = 0;
         F16(0x10) = 0;
         F32(0x20) = 0;
@@ -110,6 +121,10 @@ void func_800A98B4(void) {
         func_800B807C(0, 0);
         D_800E9F70 = D_8007EF30[4];
         func_800B50CC();
+#ifdef TARGET_PC
+        func_800B511C(D_800CC8EC[D_80038A90].f9); /* PC: by name (see above) */
+#else
         func_800B511C(D_800CC8F5[D_80038A90][0]);
+#endif
     }
 }

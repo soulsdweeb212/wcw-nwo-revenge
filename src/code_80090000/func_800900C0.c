@@ -7,7 +7,13 @@
 
 extern u8 D_800DB348[];
 extern u8 D_800D6658[];
+#ifdef TARGET_PC
+/* PC: vertices (the display list D_800C5B90 loads them, and the nodes made here point at them), so port.h's Vtx: the
+ * PC turns their 16-bit values into its byte order when it loads overlay 1. */
+extern Vtx D_800C5AD0[];
+#else
 extern u8 D_800C5AD0[];
+#endif
 extern u8 D_800C5C50[];
 #ifdef TARGET_PC
 /* PC: the display list at 0x800C5B90 by its own address (port.h's DL_ADDR turns it into the command word; D_C5B90 is

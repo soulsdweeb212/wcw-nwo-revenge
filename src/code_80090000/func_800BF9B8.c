@@ -5,17 +5,30 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: the scenes, their camera tracks and the wrestlers' records hold addresses, so they have their PC layouts
+ * (common.h's Nw2MenuScene, Nw2MenuSceneTrack with its Nw2MenuCamKey keys, and Nw2MenuSceneCast). The N64's Pl
+ * records at D_800DF344 are the wrestlers' records from their +0x14 on (idx and t), which the PC reads as
+ * D_800DF330[j].idx and .t. */
+typedef Nw2MenuScene Scene;
+typedef Nw2MenuCamKey Key;
+#else
 /* The current scene script entry: its type picks the case below. */
 typedef struct { s8 type; s8 f1; } Scene;
 /* One timeline key: `n` frames long, low two bits of f2 copied to D_800EA0B4. */
 typedef struct { u16 n; u16 f2; s16 v[6]; } Key;
 /* 0x1C-byte per-player records at D_800DF344; [1].state is D_800DF360. */
 typedef struct { s16 state; s16 timer; u8 pad[0x18]; } Pl;
+#endif
 /* 0xEC-byte character records: D_800E7642, D_800E772E and D_800E781A are [0..2].f6. */
 typedef struct { s16 f0, f2, f4; u16 f6; u8 pad8[0xEC - 8]; } Ch;
 
 extern s32 D_800E9F70;
+#ifdef TARGET_PC
+extern Nw2MenuSceneTrack *D_800DF320; /* PC: the current camera track (see above) */
+#else
 extern Key **D_800DF320;
+#endif
 extern s32 D_800DF314, D_800DF318, D_800DF324, D_800DF328;
 extern Scene *D_800DF31C;
 extern s32 D_800EA0B4, D_800DF3A8, D_800DF3B0, D_800DF304;
@@ -23,7 +36,11 @@ extern Ch D_800E763C[];
 extern s32 D_800D5744, D_800D5748, D_800D574C, D_800D5750;
 extern s32 D_800E74C4, D_800E79BC;
 extern s16 D_800E74D2;
+#ifdef TARGET_PC
+extern Nw2MenuSceneCast D_800DF330[]; /* PC: the wrestlers' records (see above) */
+#else
 extern Pl D_800DF344[];
+#endif
 void func_800C3094(s32, s32, s32, s32, s32, s32);
 s32 func_8000DEE4(s32);
 void func_8000DF78(s32);
@@ -82,7 +99,11 @@ void func_800BF9B8(void *s) {
     } else {
         func_800C3094(-1, 0, 1000, -1000, 0xFF, 0x80);
     }
+#ifdef TARGET_PC
+    e = D_800DF320->keys; /* PC: the track's keys by name */
+#else
     e = *D_800DF320;
+#endif
     t = D_800DF314;
     for (i = 0; e[i].n != 0; i++) {
         if (t < e[i].n) {
@@ -267,6 +288,24 @@ void func_800BF9B8(void *s) {
         } else {
             D_800DF318 = D_800DF314 * 2 + 0x1F2;
             for (j = 1; j < 4; j++) {
+#ifdef TARGET_PC
+                /* PC: the N64's D_800DF344[j].state and .timer are wrestler j's idx and t (see above). */
+                if (D_800DF330[j].idx == 1) {
+                    if (D_800DF330[j].t < 0x10) {
+                        a = D_800DF330[j].t * 16;
+                        b = D_800DF330[j].t * 8;
+                    } else {
+                        a = 0xFF;
+                        b = 0x7F;
+                    }
+                } else if (j == 1 && D_800DF330[1].idx == 2) {
+                    a = 0xFF;
+                    b = 0x7F;
+                } else {
+                    b = 0;
+                    a = 0;
+                }
+#else
                 if (D_800DF344[j].state == 1) {
                     if (D_800DF344[j].timer < 0x10) {
                         a = D_800DF344[j].timer * 16;
@@ -282,6 +321,7 @@ void func_800BF9B8(void *s) {
                     b = 0;
                     a = 0;
                 }
+#endif
                 func_800C3094(j, 0, 1000, -1000, a, b);
             }
         }

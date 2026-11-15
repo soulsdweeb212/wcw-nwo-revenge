@@ -10,7 +10,12 @@
 
 typedef struct { u8 p0[0x18]; u8 *p; u8 f; u8 p1[0xBF]; } N;
 typedef struct { u8 p0[0xDC]; N n[0x16]; } H;
+#ifdef TARGET_PC
+extern s32 D_800D5F40, D_800D5F44, D_800D5F20, D_800D5F18, D_800DF3C0, D_800E7C90;
+extern void *D_800E9F80; /* PC: the framebuffer's address, a pointer (func_80091718, emitFullscreenOverlay99908) */
+#else
 extern s32 D_800D5F40, D_800D5F44, D_800D5F20, D_800D5F18, D_800DF3C0, D_800E7C90, D_800E9F80;
+#endif
 typedef struct { s32 a, b, c; } V;
 extern V D_800DF3C8[];
 extern u8 D_800DF3E0[], D_8006527C[], D_8007EF30[];
@@ -84,7 +89,13 @@ void func_800C5214(s32 a) {
     func_800C4C78(D_800D5F20 ? (D_800E7C90 ? 2 : 1) : 0);
     func_800B642C();
     func_80002BC0(&D_800DF3C8[D_800D5F40]);
+#ifdef TARGET_PC
+    /* PC: the frame record keeps its N64 layout, so its first word holds the framebuffer's handle (func_80002CC4.c
+     * stores PTR_TO_SLOT of it); the address is that handle turned back. */
+    D_800E9F80 = SLOT_TO_PTR(D_800DF3C8[D_800D5F40].a);
+#else
     D_800E9F80 = D_800DF3C8[D_800D5F40].a;
+#endif
     D_800D5F40 ^= 1;
     D_800D5F44++;
 }

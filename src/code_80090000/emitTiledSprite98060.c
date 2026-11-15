@@ -17,9 +17,11 @@
 extern u8 D_C95F0[];
 extern u8 D_C95B8[];
 extern u8 D_C9620[];
+#ifndef TARGET_PC /* on PC, below with the definitions' types; port_decls.h declares func_800B600C */
 void appendPaletteSetupDisplayList(s32 *);
 void *func_800B600C(s32, s32);
 void buildTiledTextureDisplayList(void **, void *, s32, s32, s32, s32, s32, s32, s32, s32);
+#endif
 
 #ifdef TARGET_PC
 /* PC: a command is port.h's 16-byte Gfx, which appendPaletteSetupDisplayList and buildTiledTextureDisplayList also
@@ -28,7 +30,11 @@ void buildTiledTextureDisplayList(void **, void *, s32, s32, s32, s32, s32, s32,
  * The sprite is an entry of the resource-name cache (func_800B600C hands back what func_8002A2FC returns for it),
  * whose PC layout is Nw2ResourceEntryHashed in common.h: the picture's address, at +4 on the N64, is the entry's
  * allocation at +8, and the three sizes at +0xC, +0xE and +0x10 are reserved's +4, +6 and +8. Spr98 is that view, and
- * the assert checks that it agrees with the entry. */
+ * the assert checks that it agrees with the entry. The sprite's key is a MenuKey (port.h), as func_800B600C takes it
+ * (port_decls.h): emitSpriteCommand passes keys of the resource-name cache. appendPaletteSetupDisplayList and
+ * buildTiledTextureDisplayList take the cursor as a Gfx ** (their definitions: Nw2RdpCmd is port.h's Gfx on PC). */
+void appendPaletteSetupDisplayList(Gfx **);
+void buildTiledTextureDisplayList(Gfx **, void *, s32, s32, s32, s32, s32, s32, s32, s32);
 extern u8 D_800C95F0[];
 extern u8 D_800C95B8[];
 extern u8 D_800C9620[];
@@ -38,7 +44,7 @@ _Static_assert(offsetof(Spr98, img) == offsetof(Nw2ResourceEntryHashed, allocati
                    offsetof(Spr98, s0E) == offsetof(Nw2ResourceEntryHashed, reserved) + 6 &&
                    offsetof(Spr98, s10) == offsetof(Nw2ResourceEntryHashed, reserved) + 8,
                "Spr98 must follow the PC layout of Nw2ResourceEntryHashed");
-void emitTiledSprite98060(Gfx **arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6) {
+void emitTiledSprite98060(Gfx **arg0, MenuKey arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6) {
     Gfx *g;
     Spr98 *tex;
     s32 w;
@@ -51,7 +57,7 @@ void emitTiledSprite98060(Gfx **arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s3
     if (tex != NULL) {
         { Gfx *q = g++; q->w0 = 0xDE000000; q->w1 = DL_ADDR(D_800C95F0); }
         { Gfx *q = g++; q->w0 = 0xDE000000; q->w1 = DL_ADDR(D_800C95B8); }
-        appendPaletteSetupDisplayList((s32 *)&g);
+        appendPaletteSetupDisplayList(&g);
         if (arg5 & 0x8000)
             w = (tex->s10 * 0x1E0) / 0x140;
         else
@@ -73,7 +79,7 @@ void emitTiledSprite98060(Gfx **arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s3
             scw = (w * arg4) / 255;
             sch = (h * arg4) / 255;
         }
-        buildTiledTextureDisplayList((void **)&g, tex->img, 0, arg2 - scw / 2, arg3 - sch / 2,
+        buildTiledTextureDisplayList(&g, tex->img, 0, arg2 - scw / 2, arg3 - sch / 2,
                       tex->s10, tex->s0E, scw, sch, tex->s0C);
         { Gfx *q = g++; q->w0 = 0xDE000000; q->w1 = DL_ADDR(D_800C9620); }
         *arg0 = g;

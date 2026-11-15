@@ -43,5 +43,11 @@ lookup:
     } else {
         e = D_8003A4F8[idx >> 8].entries[idx & 0xFF];
     }
+#ifdef TARGET_PC
+    /* PC: the entry's field by name (common.h's Nw2NameEntry): the three addresses before it are 8 bytes each on PC,
+     * so the N64's +0x16 lies elsewhere. */
+    return ((Nw2NameEntry *)e)->f16;
+#else
     return *(u16 *)((u8 *)e + 0x16);
+#endif
 }

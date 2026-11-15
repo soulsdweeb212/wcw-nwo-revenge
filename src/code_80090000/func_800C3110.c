@@ -59,7 +59,13 @@ void func_800C3110(s32 a, s32 b) {
 
     w->f68C &= 0xFFF;
     id = (s16)a;
+#ifdef TARGET_PC
+    /* PC: the N64 reads the low half of the s32 f6C4 as the second u16 of its bytes, which in the PC's byte order is the
+     * upper half: the PC takes the low half by arithmetic (docs/port.md, "Byte order on PC"). */
+    func_8000D238(id, (u16)w->f6C4.w);
+#else
     func_8000D238(id, w->f6C4.h.lo);
+#endif
     if (w->f6C4.w == 0x80) {
         return;
     }
