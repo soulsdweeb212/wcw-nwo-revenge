@@ -20,6 +20,12 @@ s32 func_8002B528(s32);
 #endif
 s32 func_800B0EC4(s32);
 #define H(o) (*(u16 *)(D_8007EF30 + (o)))
+#ifdef TARGET_PC
+/* PC: D_8007EF30 keeps its N64 layout, so its +0x30, the current cup (common.h's Nw2Cup), holds a handle (port.h's
+ * PTR_TO_SLOT); CUP is the cup's address. The cup itself is in its PC layout, which keeps +6 and its list's address at
+ * +0x10. */
+#define CUP ((u8 *)SLOT_TO_PTR(*(u32 *)(D_8007EF30 + 0x30)))
+#endif
 
 s32 func_800B0524(s32 id) {
     u8 *t, *s;
@@ -31,14 +37,22 @@ s32 func_800B0524(s32 id) {
     if (*(s16 *)(D_8007EF30 + 0x4E) == id) {
         return 0;
     }
+#ifdef TARGET_PC
+    t = CUP;
+#else
     t = *(u8 **)(D_8007EF30 + 0x30);
+#endif
     if (id == (*(u16 *)(D_8007EF30 + 0x4E + t[0] * 2 + 0x100) & 0xFFF)) {
         return 0;
     }
     if (func_800B0EC4(id) == 0) {
         return 0;
     }
+#ifdef TARGET_PC
+    t = CUP;
+#else
     t = *(u8 **)(D_8007EF30 + 0x30);
+#endif
     f = *(u16 *)(t + 6);
     s = *(u8 **)(t + 0x10);
     if (f & 0x20) {

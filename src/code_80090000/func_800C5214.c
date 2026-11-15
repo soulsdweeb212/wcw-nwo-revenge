@@ -70,7 +70,13 @@ void func_800C5214(s32 a) {
         n = 0;
         for (j = 1, h = D_8006527C + i * 0x13C4, p = h + 0x14; j < 0x17; j++, p += 0xDC) {
             if (!(p[4] & 0x80)) {
+#ifdef TARGET_PC
+                /* PC: p is an object's +0x14 (common.h's Nw2SceneObj, which keeps its N64 layout), its first work
+                 * block's handle (port.h's PTR_TO_SLOT); h is the block's address. */
+                h = SLOT_TO_PTR(*(u32 *)p);
+#else
                 h = *(u8 **)p;
+#endif
                 if (h) {
                     n++;
                     s += (s32)*(f32 *)(h + 0x28);

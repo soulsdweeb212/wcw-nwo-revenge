@@ -1224,7 +1224,7 @@ td_data_800C82F4	800C82F4	ovl1.data	data	0x4f0	2:0.2
 td_anon_800C87E4	800C87E4	ovl1.data	own	0xa0	14:4:8:0.0.p
 td_data_800C8834	800C8834	ovl1.data	data	0x37c	2:0.2
 td_anon_800C8BB0	800C8BB0	ovl1.data	own	0x70	e:4:8:0.0.p
-td_data_800C8BE8	800C8BE8	ovl1.data	data	0x19c	2:0.2
+td_data_800C8BE8	800C8BE8	ovl1.data	data	0x1c0	2:0.2
 td_anon_800C8DA8	800C8DA8	ovl1.data	own	0x30	4:c:c:0.0.2,2.2.1,3.3.1,4.4.2,6.6.2,8.8.2,a.a.2
 td_anon_800C8DD8	800C8DD8	ovl1.data	own	0x24	3:c:c:0.0.2,2.2.1,3.3.1,4.4.2,6.6.2,8.8.2,a.a.2
 td_anon_800C8DFC	800C8DFC	ovl1.data	own	0x18	2:c:c:0.0.2,2.2.1,3.3.1,4.4.2,6.6.2,8.8.2,a.a.2

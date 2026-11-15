@@ -232,7 +232,15 @@ little-endian, with the least significant byte first. On PC the game's data is k
   an `s32` array and index from 1 (it is `D_800E3D00` one entry back), sits on the last two `u16` entries of
   `D_800E3CF0`; on PC those three files read `D_800E3D00` instead, so no file names `D_800E3CFC` and the two entries
   are converted as `u16`. A list that runs past the next label is described in TABLES with `Data(w, to_zero=True)`
-  (`D_800E2CF4`'s last list ends in the table's own first word).
+  (`D_800E2CF4`'s last list ends in the table's own first word), or, for a list of records that ends with a record
+  whose value at some offset is 0, with `Data(w, closing=(size, offset))`: the menus' spot lists, where the N64's
+  code has a label inside scene 8's list (`D_800C8D84`, which it reads as `D_800C8D84 + 0x100`, the scenes).
+- The menus' packs (one resource that holds several pictures or pieces of a mesh: a 32-bit count, a 32-bit offset for
+  each entry, then the entries) stay in the ROM's byte order, like the textures and palettes in them. The menus reach
+  an entry only through `func_800B64EC`, whose PC version reads the offset with `READ_BE32`; `func_800936DC`, which
+  copies a mesh's vertex records out of a pack into vertices for the display list, reads their 16-bit fields with
+  `READ_BE16`. The N64 builds the count from its four bytes in reverse order (a pack of 0x28 entries counts as
+  0x28000000), and the PC does the same with the same bytes, so the test against it turns the same indexes away.
 
 ## Display lists on PC
 

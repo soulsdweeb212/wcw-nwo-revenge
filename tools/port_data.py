@@ -593,6 +593,9 @@ def build_map(cc: str, jobs: int, out: Path, file_set: str) -> list[str]:
 #                            block, and is turned into the PC's byte order as w-byte values up to the next label;
 #     Data(w, to_zero=True)  the same, for a list that ends with a 0 value: up to the next label or, where that 0
 #                            lies past it, up to and with the 0;
+#     Data(w, closing=(size, at))  the same, for a list of size-byte records that ends with the first record whose
+#                            w-byte value at +at is 0: up to the next label or, where that record ends past it, up to
+#                            and with the record (a label of the N64's code can lie inside such a list);
 #     a shape                one object of that shape (an Arr for an array of them), which gets storage of its own;
 #     FUNC                   a function: the PC function of that N64 address;
 #     GFX                    a display list (section 7): the address of its PC copy;
@@ -639,11 +642,12 @@ class IdOr:
 
 
 class Data:
-    def __init__(self, width, to_zero=False):
-        self.width, self.to_zero = width, to_zero
+    def __init__(self, width, to_zero=False, closing=None):
+        self.width, self.to_zero, self.closing = width, to_zero, closing
 
     def __repr__(self):
-        return f"Data({self.width}{', to_zero=True' if self.to_zero else ''})"
+        return (f"Data({self.width}{', to_zero=True' if self.to_zero else ''}"
+                f"{f', closing={self.closing!r}' if self.closing else ''})")
 
 
 # A wrestler's name entry (common.h's Nw2NameEntry): id, value, a byte, a word, the addresses of the name, height and
@@ -684,11 +688,15 @@ MENU_CAM_COUNTS = ((1, 1, 1, 1, 1, 1), (4, 4, 4, 4, 4, 4), (5, 5, 5, 5, 5, 5), (
 # values), its spots, its title pieces (common.h's Nw2EncTitle) and five phase lists of 16-bit values. The counts
 # of each scene's parts and title pieces (the closing piece counted), from the ROM; scenes 7 and 8 share their parts.
 ENC_TITLE = [2, 1, 1, 2, 2, 2, 2]
+# A spot list (common.h's Nw2EncSpot, 16 bytes) ends with the first spot whose count, at +2, is 0. The N64's code has a
+# label inside scene 8's list (D_800C8D84, which it reads as D_800C8D84 + 0x100, the scenes themselves), so the list
+# goes by that closing spot, not by the next label.
+ENC_SPOTS_END = (16, 2)
 
 
 def ENC_SCENE(parts, title):
-    return [2, 2, 2, 2, Ptr(Arr(parts, Ptr(Data(2)))), Ptr(Data(2)), Ptr(Arr(title, ENC_TITLE)), 2, 2, 2, 2,
-            Arr(5, Ptr(Data(2))), 4]
+    return [2, 2, 2, 2, Ptr(Arr(parts, Ptr(Data(2)))), Ptr(Data(2, closing=ENC_SPOTS_END)), Ptr(Arr(title, ENC_TITLE)),
+            2, 2, 2, 2, Arr(5, Ptr(Data(2))), 4]
 
 
 TABLES = {
@@ -866,6 +874,16 @@ class Tables:
                 return a
         raise Fail(f"{where}: the list has no closing 0 before the end of {sec[0]}")
 
+    def record_end(self, a: int, width: int, size: int, at: int, where: str) -> int:
+        """The end of the list of size-byte records at a, after its closing record: the first whose width-byte value at
+        +at is 0."""
+        sec = rom_section_of(a)
+        while a + size <= sec[2]:
+            a += size
+            if self.word(a - size + at, width) == 0:
+                return a
+        raise Fail(f"{where}: the list has no closing record before the end of {sec[0]}")
+
     def next_label(self, a: int) -> int:
         sec = rom_section_of(a)
         mine = {b for s, b in self.var_at if s == sec[0]}
@@ -962,6 +980,8 @@ class Tables:
                     self.claims.append((w, target.width, here))
                     if target.to_zero:
                         self.claim_ends[w] = self.zero_end(w, target.width, here)
+                    if target.closing:
+                        self.claim_ends[w] = self.record_end(w, target.width, *target.closing, here)
                 else:
                     tsec = section_of(w, ovl)
                     self.add(w, target, self.var_at.get((tsec[0] if tsec else None, w), f"td_anon_{w:08X}"),

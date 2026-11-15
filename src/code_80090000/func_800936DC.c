@@ -257,12 +257,24 @@ void func_800936DC(s32 arg0) {
                 src = func_800B64EC(D_800DB6A0, part->resId);
                 j = 0;
                 while (j < part->count) {
+#ifdef TARGET_PC
+                    /* PC: the pack's vertex records keep the N64's byte order (func_800B64EC), and the copies are
+                     * vertices that LibUltraShip reads in the PC's, so each 16-bit field is read big-endian. The four
+                     * bytes after them are copied as they are. */
+                    D_800DB694->f0 = READ_BE16(&src->f0);
+                    D_800DB694->f2 = READ_BE16(&src->f2);
+                    D_800DB694->f4 = READ_BE16(&src->f4);
+                    D_800DB694->f6 = READ_BE16(&src->f6);
+                    D_800DB694->f8 = READ_BE16(&src->f8);
+                    D_800DB694->fA = READ_BE16(&src->fA);
+#else
                     D_800DB694->f0 = src->f0;
                     D_800DB694->f2 = src->f2;
                     D_800DB694->f4 = src->f4;
                     D_800DB694->f6 = src->f6;
                     D_800DB694->f8 = src->f8;
                     D_800DB694->fA = src->fA;
+#endif
                     D_800DB694->fC = src->fC;
                     D_800DB694->fD = src->fD;
                     D_800DB694->fE = src->fE;
