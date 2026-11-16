@@ -13454,12 +13454,12 @@
    "c": "src/code_800BBA00/func_800C0E44.c"
   },
   {
-   "name": "updateEntityAttachmentState",
+   "name": "runRingClimb",
    "seg": "code_800BBA00",
    "vram": 2148274844,
    "rom": 739132,
-   "asm": "asm/nonmatchings/code_800BBA00/updateEntityAttachmentState.s",
-   "c": "src/code_800BBA00/updateEntityAttachmentState.c",
+   "asm": "asm/nonmatchings/code_800BBA00/runRingClimb.s",
+   "c": "src/code_800BBA00/runRingClimb.c",
    "own": {}
   },
   {
@@ -14182,12 +14182,12 @@
    "own": {}
   },
   {
-   "name": "runEntityPairAction",
+   "name": "runGrappleAttempt",
    "seg": "code_800BBA00",
    "vram": 2148330512,
    "rom": 794800,
-   "asm": "asm/nonmatchings/code_800BBA00/runEntityPairAction.s",
-   "c": "src/code_800BBA00/runEntityPairAction.c",
+   "asm": "asm/nonmatchings/code_800BBA00/runGrappleAttempt.s",
+   "c": "src/code_800BBA00/runGrappleAttempt.c",
    "own": {
     ".rodata": 2148428328
    }

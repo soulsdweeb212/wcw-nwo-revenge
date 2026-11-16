@@ -9793,13 +9793,13 @@
       }
     },
     {
-      "name": "code_800BBA00/updateEntityAttachmentState",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/updateEntityAttachmentState.o",
+      "name": "code_800BBA00/runRingClimb",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/runRingClimb.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/updateEntityAttachmentState.c"
+        "source_path": "src/code_800BBA00/runRingClimb.c"
       },
-      "base_path": "build/src/code_800BBA00/updateEntityAttachmentState.o"
+      "base_path": "build/src/code_800BBA00/runRingClimb.o"
     },
     {
       "name": "code_800BBA00/func_800C16BC",
@@ -10465,13 +10465,13 @@
       "base_path": "build/src/code_800BBA00/func_800CEAE0.o"
     },
     {
-      "name": "code_800BBA00/runEntityPairAction",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/runEntityPairAction.o",
+      "name": "code_800BBA00/runGrappleAttempt",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/runGrappleAttempt.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/runEntityPairAction.c"
+        "source_path": "src/code_800BBA00/runGrappleAttempt.c"
       },
-      "base_path": "build/src/code_800BBA00/runEntityPairAction.o"
+      "base_path": "build/src/code_800BBA00/runGrappleAttempt.o"
     },
     {
       "name": "code_800BBA00/func_800CF1B8",

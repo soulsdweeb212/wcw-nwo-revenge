@@ -1,16 +1,21 @@
 /* @header
- * updateEntityAttachmentState  (originally func_800C129C)
+ * runRingClimb  (originally func_800C129C)
  * VRAM 0x800C129C | ROM 0xB473C | size 0x420
- * asm: asm/nonmatchings/code_800BBA00/updateEntityAttachmentState.s
+ * asm: asm/nonmatchings/code_800BBA00/runRingClimb.s
  */
 #include "common.h"
 
-/* Entity attachment (held-object) state machine (steps 0..3).
- * Step 0 raises/grabs the attachment: it flips the apron/in-ring zone bits and
- * picks the pickup animation from the character profile's flags (+0x38;
- * func_800BF2FC decides the large-object branch). Step 1 plays it and waits
- * (func_800D8D74), step 2 finishes the raise (scale via func_800C278C) and
- * picks the carry animation, step 3 gently scales the attachment while held. */
+/* runRingClimb: state 0x61 (floor to apron, or apron to ring), run through the
+ * state table's entry func_800A4E84; func_800C16BC and func_800C1DCC start it
+ * once the wrestler has reached the ring's edge (steps 0..3).
+ * Step 0, on the apron: the wrestler is now in the ring, and climbs in with an
+ * animation chosen by the profile's style bits (+0x38: 0x1082 to 0x1086;
+ * func_800BF2FC decides between the big ones), then goes to step 3.
+ * Step 0, on the floor: the wrestler is now on the apron and climbs up to it
+ * (func_800D4D44 picks the climb). Step 1 waits for the climb (func_800D8D74),
+ * then plays 0xF1A, or 0x1024 when flag 0x1000000000000 allows. Step 2: if
+ * C-up is still held (D_800FABE6 & 8), the wrestler carries on into the ring.
+ * Step 3 lets the animation finish (func_800C278C moves the wrestler). */
 extern u16 D_800FABE6;
 #ifdef TARGET_PC
 /* PC: D_800F9B0C is a float (the distance to the opponent), and func_800D4D44's third parameter is a float (its
@@ -33,7 +38,7 @@ s8 func_800D8D74(void *, s32);
 void func_800C278C(void *, f32);
 void func_800A7188(void *);
 
-void updateEntityAttachmentState(void) {
+void runRingClimb(void) {
     s16 anim;
     Wrestler *ent = D_800FAF5C;
 

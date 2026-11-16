@@ -20,8 +20,8 @@ typedef s32 M2C_UNK32;
 #define M2C_OVERFLOW(a) (0)
 #endif
 
-M2C_UNK updateEntityAttachmentState();                            /* extern */
+M2C_UNK runRingClimb();                            /* extern */
 
 void func_800A4E84(void) {
-    updateEntityAttachmentState();
+    runRingClimb();
 }

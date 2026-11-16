@@ -1,14 +1,16 @@
 /* @header
- * runEntityPairAction  (originally func_800CEC10)
+ * runGrappleAttempt  (originally func_800CEC10)
  * VRAM 0x800CEC10 | ROM 0xC20B0 | size 0x5A8
- * asm: asm/nonmatchings/code_800BBA00/runEntityPairAction.s
+ * asm: asm/nonmatchings/code_800BBA00/runGrappleAttempt.s
  */
 #include "common.h"
 
-/* runEntityPairAction: nine-step action machine for self (D_800FAF5C) as it
- * interacts with its opponent (D_800F9B00).  It plays the reach/grab
- * animations, resolves the linked target and, once engaged, hands off to
- * updateEntityPairInteraction; steps 5..8 handle the finish/throw variants. */
+/* runGrappleAttempt: state 0x44 (grapple: reaching), run through the state
+ * table's entry func_800A339C, for self (D_800FAF5C) and its opponent
+ * (D_800F9B00). Steps 0..2 reach and count how long A is held (8 ticks or
+ * more makes a strong grapple, grappleCtx |= 2; less is weak); 3..4 make
+ * contact and, once linked, hand off to updateEntityPairInteraction; 5..6
+ * play the miss and end the attempt; 7..8 are two other reach variants. */
 
 extern u16 D_800FABE6;
 extern f32 D_800F9B0C;
@@ -35,7 +37,7 @@ s8 func_800CE748(Wrestler *);
 s8 updateEntityPairInteraction(Wrestler *, void *);
 void func_800CF1B8(void *, void *, s32, s32);
 
-void runEntityPairAction(void) {
+void runGrappleAttempt(void) {
     switch (D_800FAF5C->step) {
     case 0:
         D_800FADBE[D_800FADB8] = 0;
