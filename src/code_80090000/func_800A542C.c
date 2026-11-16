@@ -16,7 +16,14 @@ u8 *func_800B6FE0(G **, s32);
 
 void func_800A542C(G **dl, u8 *t) {
     G *g = *dl;
+#ifdef TARGET_PC
+    /* PC: +0x20 of the menu object is a 16-bit value (func_8009FE3C's Obj: f20, the screen in its high byte and the
+     * item in its low byte). The N64 takes the low byte at +0x21, its second byte; on PC the low byte comes first, so
+     * the u16 is read whole. */
+    u8 a = *(u16 *)(t + 0x20);
+#else
     u8 a = t[0x21];
+#endif
 
     { G *d = g++; d->w0 = 0xFC51FEA3; d->w1 = 0x44FE773B; }
     { G *d = g++; d->w0 = 0xFA000000; d->w1 = ((t[0x16] * 2) / 3) & 0xFF; }

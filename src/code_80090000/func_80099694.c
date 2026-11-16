@@ -20,8 +20,20 @@ typedef s32 M2C_UNK32;
 #define M2C_OVERFLOW(a) (0)
 #endif
 
+#ifdef TARGET_PC
+/* PC: D_800C9434 is text, the letters of the costume name's keyboard ("abcde#7fghij..."), so it is declared as bytes.
+ * tools/port_data.py converts a variable by the width its files give it, and as an M2C_UNK (an s32) the text would be
+ * turned around 4 bytes at a time, which moves its line breaks: the keyboard is then drawn as one line six times as wide
+ * as its picture, and the strips below it read past the picture's memory. */
+extern u8 D_800C9434[];
+
+M2C_UNK *func_80099694(void) {
+    return (M2C_UNK *)D_800C9434;
+}
+#else
 extern M2C_UNK D_800C9434;
 
 M2C_UNK *func_80099694(void) {
     return &D_800C9434;
 }
+#endif

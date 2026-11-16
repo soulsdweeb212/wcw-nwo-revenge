@@ -60,7 +60,14 @@ s32 func_800AA0D8(s32);
 void func_800A37FC_ovl1(G **dl, Obj *o) {
     G *g = *dl;
     /* One variable for the object id and, later, both loop counters: the ROM keeps all three in a3. */
+#ifdef TARGET_PC
+    /* PC: +0x20 of the menu object is a 16-bit value (func_8009FE3C's Obj: f20, the screen in its high byte and the
+     * item in its low byte). The N64 takes the low byte at +0x21, its second byte; on PC the low byte comes first, so
+     * the u16 is read whole. */
+    s32 i = *(u16 *)&o->f20 & 0xFF;
+#else
     s32 i = o->f21;
+#endif
     s32 n, x, k;
 
     if (D_800E7BF0[0] != i && D_800E7BF0[1] != i && D_800E7BF0[2] != i && D_800E7BF0[3] != i) {

@@ -225,13 +225,17 @@ little-endian, with the least significant byte first. On PC the game's data is k
   its byte 3 (`func_800D43DC`, the animation mode `func_800D427C` stores), or its first two bytes as a `u16`
   (`func_800D6350`), or a label names the second byte of an `s16` (`D_800EB37B`, read in `func_8009D7A0`). In the
   N64's byte order those are the value's low byte or upper half; on PC the reading file takes the same part of the
-  value by arithmetic (`(u8)x`, `x >> 16`). Turnbuckle Dive's byte-order check (its docs/TESTING.md, "The byte-order
+  value by arithmetic (`(u8)x`, `x >> 16`). The menus' objects are one more case: their `+0x20` is a 16-bit value
+  (the screen in its high byte, the item in its low byte) that `func_800A6498`, `func_800A37FC_ovl1` and
+  `func_800A542C` read as its byte `+0x21`. Turnbuckle Dive's byte-order check (its docs/TESTING.md, "The byte-order
   check") runs a match and lists every read whose value differs from the N64's.
 - A table that `tools/port_data.py` converts gets its widths from the files' types, so a file that declares a label
   inside a table at another width changes how those bytes are converted. `D_800E3CFC`, which three files declare as
   an `s32` array and index from 1 (it is `D_800E3D00` one entry back), sits on the last two `u16` entries of
   `D_800E3CF0`; on PC those three files read `D_800E3D00` instead, so no file names `D_800E3CFC` and the two entries
-  are converted as `u16`. A list that runs past the next label is described in TABLES with `Data(w, to_zero=True)`
+  are converted as `u16`. Text needs a byte type in every file that declares it: `D_800C9434`, the letters of the
+  costume name's keyboard, was an `M2C_UNK` (an `s32`) in `func_80099694`, so its bytes were turned around four at a
+  time and its line breaks moved. A list that runs past the next label is described in TABLES with `Data(w, to_zero=True)`
   (`D_800E2CF4`'s last list ends in the table's own first word), or, for a list of records that ends with a record
   whose value at some offset is 0, with `Data(w, closing=(size, offset))`: the menus' spot lists, where the N64's
   code has a label inside scene 8's list (`D_800C8D84`, which it reads as `D_800C8D84 + 0x100`, the scenes).
@@ -241,6 +245,11 @@ little-endian, with the least significant byte first. On PC the game's data is k
   copies a mesh's vertex records out of a pack into vertices for the display list, reads their 16-bit fields with
   `READ_BE16`. The N64 builds the count from its four bytes in reverse order (a pack of 0x28 entries counts as
   0x28000000), and the PC does the same with the same bytes, so the test against it turns the same indexes away.
+- The menus' pictures (a 16-byte header that starts with "TEX", then a palette and texels) are read by some thirty
+  files that take the header's width, height and number of colours as plain 16-bit integers (`func_80097E1C`,
+  `func_800B6F88`). The port's loader turns those three numbers into the PC's byte order, in a resource that is a
+  picture and in each picture entry of a pack (Turnbuckle Dive's `src/res_convert.c`), so those files need no PC
+  version; the palette and the texels stay in the ROM's byte order.
 - The save buffer (`D_800DCFB8`, the copy of the cartridge's save memory that the menus keep) holds its 16-bit values
   in the PC's byte order: the menus write them as `u16` and read them back as `u16`, and the checksums go over the
   same bytes on both sides. Three readers take part of such a value differently, and their PC versions read the whole

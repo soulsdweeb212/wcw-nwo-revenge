@@ -48,7 +48,14 @@ void func_800B6FE0(G **, s32);
 
 void func_800A6498(G **dl, Item *it) {
     G *g = *dl;
+#ifdef TARGET_PC
+    /* PC: +0x20 of the menu object is a 16-bit value (func_8009FE3C's Obj: f20, the screen in its high byte and the
+     * item in its low byte). The N64 takes the low byte at +0x21, its second byte; on PC the low byte comes first, so
+     * the u16 is read whole. */
+    s32 n = *(u16 *)((u8 *)it + 0x20) & 0xFF;
+#else
     s32 n = it->f21;
+#endif
     Spr *spr = NULL;
     s32 shown = 0;
     u8 *name;
