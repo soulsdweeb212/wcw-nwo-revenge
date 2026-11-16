@@ -204,5 +204,11 @@ void func_800B0774(void) {
         for (i = 0; i < 9; i++) {
         }
     }
+#ifdef TARGET_PC
+    /* PC: the run starts at round 9 - n for the port's setting of n matches (port.h, port_championship_matches); with
+     * the default 9, at round 0 as on the N64. The title holder stays the last match, round 8. */
+    D_80038AA8 = 9 - port_championship_matches();
+#else
     D_80038AA8 = 0;
+#endif
 }

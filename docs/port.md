@@ -64,6 +64,9 @@ These exist only under `TARGET_PC`:
 - `port_overlay_of` and `port_overlay_load`, which the overlay loader `func_80000700` and `func_8000082C` call on PC:
   both overlays' code is compiled into the program, so loading one only starts its variables afresh from the ROM, and
   the entry called is the loaded overlay's (`func_80090000` or `func_80090000_ovl2`).
+- `port_championship_matches`, a setting of the port's (1 to 9; the original game's 9): `func_800B0774` starts a
+  championship run at round 9 minus it, so a shorter run leaves out the first contenders and still ends with the title
+  match, round 8.
 - A check that the CPU is little-endian, as the PCs the port runs on are: the PC code is written for that byte order
   where the N64 code reads a value through a view of another width (see "Byte order on PC").
 - `ROM_RES_BASE`, `ROM_RES_TABLE`, `ROM_SEG1_INIT` and the other `ROM_` names: the ROM addresses of the decomp's ROM

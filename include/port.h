@@ -235,6 +235,11 @@ void port_overlay_load(s32 overlay);
 #define PORT_PRESENT_SYNC  2 /* func_80002C74: nothing to draw, wait for the next retrace */
 void port_present(s32 kind);
 
+/* The port's settings that the game's code reads on PC. port_championship_matches: how many matches a championship
+ * run has, 1 to 9; the original game always has 9 (8 contenders, then the title holder). func_800B0774 starts a run at
+ * round 9 - n, so a shorter run leaves out the first contenders and still ends with the title match (round 8). */
+s32 port_championship_matches(void);
+
 /* Drawing on PC. The N64's render thread (func_80002CC4) turns each frame into graphics tasks and hands them to the
  * RSP; on PC no thread runs it. At a frame's hand-off the port calls port_render_frame (func_80002CC4.c, game code),
  * which does the render thread's work for that frame, and each task it submits reaches the port through
