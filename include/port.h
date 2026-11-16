@@ -240,6 +240,13 @@ void port_present(s32 kind);
  * round 9 - n, so a shorter run leaves out the first contenders and still ends with the title match (round 8). */
 s32 port_championship_matches(void);
 
+/* port_costume_ramp: the player's own colour for colour 1 or 2 (channel) of wrestler `character` (the game's character
+ * id, bank << 8 | entry + 1), picked in the port's Costume Colours window. When there is one, it fills ramp with that
+ * colour's 16 shades, lightest first, as a row of the game's colour table (resource 0xA51): RGBA5551 in the N64's byte
+ * order, as the palettes stay on PC. It returns 1 then, and 0 when the game's own colour applies. func_8000B884 asks
+ * each time it colours a palette, and uses the ramp in place of the colour the Costume Change menu chose. */
+s32 port_costume_ramp(u16 character, s32 channel, u16 *ramp);
+
 /* Drawing on PC. The N64's render thread (func_80002CC4) turns each frame into graphics tasks and hands them to the
  * RSP; on PC no thread runs it. At a frame's hand-off the port calls port_render_frame (func_80002CC4.c, game code),
  * which does the render thread's work for that frame, and each task it submits reaches the port through

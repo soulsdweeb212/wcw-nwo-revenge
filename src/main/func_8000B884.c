@@ -13,6 +13,9 @@ extern u16 D_80030860[];
 extern u16 D_800307A0;
 extern s8 D_80030868[];
 extern s16 D_8003086C[];
+#ifdef TARGET_PC
+extern u16 D_8006A2A4[]; /* each entity's character id (func_8000BB40) */
+#endif
 #ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void func_80003684(void *, u16, void *);
 #endif
@@ -31,7 +34,18 @@ void func_8000B884(u16 *out, s16 entity, s16 slot)
     u32 index;
     s32 t;
     u32 half = 0;
+#ifdef TARGET_PC
+    u16 custom[3][16];
+    s32 hasCustom[3];
+#endif
     func_80003684(meta, 0xA51, D_800485F0);
+#ifdef TARGET_PC
+    /* PC: the player's own colours 1 and 2 for the wrestler this entity shows (port.h, port_costume_ramp), each a ramp of
+     * 16 shades as a row of D_800485F0; a keyed entry takes the shade of its key, as from the game's row. */
+    hasCustom[0] = 0;
+    hasCustom[1] = port_costume_ramp(D_8006A2A4[entity], 1, custom[1]);
+    hasCustom[2] = port_costume_ramp(D_8006A2A4[entity], 2, custom[2]);
+#endif
     if (D_8007C318[entity][slot] >= 17)
     {
         for (channel = 1; channel < 3; channel++)
@@ -55,6 +69,14 @@ void func_8000B884(u16 *out, s16 entity, s16 slot)
 #endif
                     {
                         level = D_80075440[entity][channel];
+#ifdef TARGET_PC
+                        if (hasCustom[channel])
+                        {
+                            t = ((s32) (READ_BE16(&src[16 + i]) & mask)) >> D_80030868[channel];
+                            out[i] = custom[channel][15 - ((u32)t >> 1)];
+                        }
+                        else
+#endif
                         if (level < 15)
                         {
 #ifdef TARGET_PC

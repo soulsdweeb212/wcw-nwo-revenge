@@ -67,6 +67,10 @@ These exist only under `TARGET_PC`:
 - `port_championship_matches`, a setting of the port's (1 to 9; the original game's 9): `func_800B0774` starts a
   championship run at round 9 minus it, so a shorter run leaves out the first contenders and still ends with the title
   match, round 8.
+- `port_costume_ramp`, the player's own costume colours (the port's Costume Colours window): `func_8000B884`, which
+  colours a body part's palette, asks for a 16-shade ramp for colour 1 and colour 2 of the wrestler the entity shows
+  (its character id, `D_8006A2A4`) and, when the port has one, uses it for the keyed entries in place of the row of the
+  game's colour table (resource 0xA51) that the Costume Change menu chose.
 - A check that the CPU is little-endian, as the PCs the port runs on are: the PC code is written for that byte order
   where the N64 code reads a value through a view of another width (see "Byte order on PC").
 - `ROM_RES_BASE`, `ROM_RES_TABLE`, `ROM_SEG1_INIT` and the other `ROM_` names: the ROM addresses of the decomp's ROM
