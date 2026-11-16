@@ -260,6 +260,11 @@ little-endian, with the least significant byte first. On PC the game's data is k
   `func_800BA59C`, which also reads the options through C bit-fields. A big-endian compiler lays bit-fields out from
   the top bit down and a PC from the bottom bit up, so its PC version takes the same bits with shifts. A save made on
   an N64 has these values in the other byte order.
+- The score ranking: `func_800B8C4C` copies the default records (`D_800CD270`, 9 tables of 10 records of 16 bytes,
+  then 16 bytes of other data) into the save buffer with 32- and 16-bit moves, and `func_800BA940` reads them back
+  the same way for the Score ranking screen. So the records' score (`s32` at `+0`) and the two `u16` (`+4`, `+0xA`)
+  must start in the PC's byte order: the PC version of `func_800B4BC8` declares the table by those fields. Declared as
+  bytes, as the N64 file does, they stayed in the ROM's order, and the screen showed numbers such as -917504 for 13000.
 
 ## Display lists on PC
 
