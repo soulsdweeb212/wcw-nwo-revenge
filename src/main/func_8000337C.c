@@ -7,7 +7,7 @@
 
 void func_800033C0(s32);
 #ifdef TARGET_PC
-/* PC: the type of MusStartSong's definition (libmus, which the port replaces with a stand-in): it takes the address
+/* PC: the type of MusStartSong's definition (libmus, which the port replaces with its own player): it takes the address
  * of the song, which an s32 would cut in half. */
 s32 MusStartSong(void *);
 #else

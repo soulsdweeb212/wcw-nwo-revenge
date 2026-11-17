@@ -6,7 +6,7 @@
 #include "common.h"
 
 #ifdef TARGET_PC
-/* PC: the type of MusHandleAsk's definition (libmus, which the port replaces with a stand-in): it takes the handle of
+/* PC: the type of MusHandleAsk's definition (libmus, which the port replaces with its own player): it takes the handle of
  * the sound to ask about. */
 s32 MusHandleAsk(s32 key);
 #else

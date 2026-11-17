@@ -154,7 +154,8 @@ extern void *D_80046860[512];
  * D_80046860; the work blocks (Nw2SceneWork) keep their N64 layout. */
 extern void *D_80047070[2][512];
 /* main .bss: the address of the sound-effect bank, which func_80003120 loads into a heap buffer on the N64;
- * func_8000327C and func_800032A4 hand it to libmus. On PC nothing sets it until audio is ported, so it stays NULL. */
+ * func_8000327C and func_800032A4 hand it to libmus. On PC nothing sets it, so it stays NULL: the port's music player
+ * has the bank already. */
 extern void *D_800482D4;
 /* main .bss: the cartridge's PI handle (an OSPiHandle *), which func_80008810 gets from osCartRomInit; the resource
  * streams (func_8000946C, initializeResourceStream, func_80009990) hand it to osEPiStartDma. */

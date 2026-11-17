@@ -198,8 +198,8 @@ memory. Game code reaches it through the same functions as on the N64:
    is read straight into `buf`. On PC it then calls `port_res_loaded(id, buf, size)`: every whole resource passes
    there, so the port can track loaded buffers and convert byte order in one place.
 5. Two boot functions read ROM by fixed ROM symbols. On PC, `func_80001260` reads the segment-1 block by
-   `ROM_SEG1_INIT`, and `func_80003120` skips the sound banks, because until the port has audio the libmus functions
-   are empty stand-ins.
+   `ROM_SEG1_INIT`, and `func_80003120` skips the sound banks and `MusInitialize`: the libmus functions are the
+   port's own music player, which reads the banks and the effect table from the ROM itself.
 
 The resource streams (`func_8000946C`, `initializeResourceStream`) run their own DMA and have no PC version yet.
 

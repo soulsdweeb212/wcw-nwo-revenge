@@ -33,10 +33,11 @@ void MusSetMasterVolume(s32, s16);
 void MusBankInitialize(s32, void *);
 
 #ifdef TARGET_PC
-/* PC: until the port has audio, the libmus functions are empty stand-ins that play nothing. So the two sound banks are
- * not read from ROM and libmus is not set up with them; their ROM symbols are not linked on PC (port.h has their
- * addresses as ROM_MUS_BANK and the others). The volume words the game reads back are set as on N64: D_800482D8
- * through func_80003418, and D_800482DA. */
+/* PC: the libmus functions are the port's own music player, which reads the two sound banks and the effect table from
+ * the ROM itself when the program sets up its sound (turnbuckle-dive src/audio/). So they are not read here and there
+ * is no MusInitialize; their ROM symbols are not linked on PC (port.h has their addresses as ROM_MUS_BANK and the
+ * others). The volumes are set as on N64: the songs' through func_80003418 (D_800482D8), D_800482DA, and the
+ * effects' with MusSetMasterVolume. */
 void func_80003120(void) {
     func_80003418(0x7F);
     D_800482DA = 0x7FFF;

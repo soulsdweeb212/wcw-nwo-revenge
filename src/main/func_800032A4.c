@@ -6,9 +6,9 @@
 #include "common.h"
 
 #ifdef TARGET_PC
-/* PC: as in func_8000327C.c, D_800482D4 holds the address of the sound-effect bank (a pointer, port_decls.h; 0 on PC
- * until audio is ported), which MusBankStartEffect2 (libmus, which the port replaces with a stand-in) takes as a
- * pointer, with five s32 after it; an s32 would cut the address in half. */
+/* PC: as in func_8000327C.c, D_800482D4 holds the address of the sound-effect bank (a pointer, port_decls.h; 0 on PC,
+ * where the port's music player has the bank already), which MusBankStartEffect2 (libmus, which the port replaces with
+ * its own player) takes as a pointer, with five s32 after it; an s32 would cut the address in half. */
 s32 MusBankStartEffect2(void *,s32,s32,s32,s32,s32);
 #else
 s32 MusBankStartEffect2(s32,s16,s16,s16,s16,s16); extern s32 D_800482D4;
