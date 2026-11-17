@@ -240,7 +240,11 @@ little-endian, with the least significant byte first. On PC the game's data is k
   inside a table at another width changes how those bytes are converted. `D_800E3CFC`, which three files declare as
   an `s32` array and index from 1 (it is `D_800E3D00` one entry back), sits on the last two `u16` entries of
   `D_800E3CF0`; on PC those three files read `D_800E3D00` instead, so no file names `D_800E3CFC` and the two entries
-  are converted as `u16`. Text needs a byte type in every file that declares it: `D_800C9434`, the letters of the
+  are converted as `u16`. The menus' sound ids are the other way round: `func_8000DEE4` reads ids `0x401..0x42B` as
+  `D_800306A0[id]`, which lands 0x800 bytes on, in a table of `s16` at `0x80030EA2` that no file named, so it took
+  the byte type of `D_80030E53` before it and stayed in the ROM's byte order (effect 90 read as 0x5A00, out of range,
+  and the menus were silent). On PC the file reads `D_80030EA2[id - 0x401]`, and the table is converted as `s16`.
+  Text needs a byte type in every file that declares it: `D_800C9434`, the letters of the
   costume name's keyboard, was an `M2C_UNK` (an `s32`) in `func_80099694`, so its bytes were turned around four at a
   time and its line breaks moved. A list that runs past the next label is described in TABLES with `Data(w, to_zero=True)`
   (`D_800E2CF4`'s last list ends in the table's own first word), or, for a list of records that ends with a record
