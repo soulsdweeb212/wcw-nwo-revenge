@@ -20,8 +20,8 @@ typedef s32 M2C_UNK32;
 #define M2C_OVERFLOW(a) (0)
 #endif
 
-M2C_UNK updateEntityCounterAttackState();                            /* extern */
+M2C_UNK updatePinnerState();                            /* extern */
 
 void func_800A2E30(void) {
-    updateEntityCounterAttackState();
+    updatePinnerState();
 }

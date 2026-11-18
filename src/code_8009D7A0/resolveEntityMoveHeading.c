@@ -14,7 +14,7 @@
 extern s32 D_800E3C90[], D_800E3CA0[], D_800E3CB0[], D_800F9B14;
 s16 func_800D7B08(u16);
 s16 func_800D7A2C(u16);
-s16 findBoundaryQuadrant(void *, void *, s32);
+s16 findNearbyCornerPost(void *, void *, s32);
 s8 func_800B4B3C(void *);
 void func_800E212C(void *);
 s16 func_800D65D0(void *, u16);
@@ -41,7 +41,7 @@ s32 resolveEntityMoveHeading(Wrestler *w, u16 input, s32 *out) {
     w->flags &= ~0x8001000000ULL;
     if (input & 0xF00) {
         if (((*(volatile u64 *)&w->flags) & WR_FLAG_IN_RING) && ((w->dirIndex = func_800D7B08(input)) != -1)) {
-            if (w->dirIndex == findBoundaryQuadrant(w, 0, 2)) return 0;
+            if (w->dirIndex == findNearbyCornerPost(w, 0, 2)) return 0;
             w->moveMode |= 9;
         } else w->moveMode |= 3;
     } else w->moveMode = 4;
@@ -75,7 +75,7 @@ s32 resolveEntityMoveHeading(Wrestler *w, u16 input, s32 *out) {
         if (w->flags & WR_FLAG_IN_RING) {
             s32 *heading = &D_800F9B14;
             getRingBoundaryPointAlongHeading(&w->jointA[1].x, *heading, point);
-            w->dirIndex = findBoundaryQuadrant(w, point, 0);
+            w->dirIndex = findNearbyCornerPost(w, point, 0);
             if (w->dirIndex == -1) {
                 w->dirIndex = getXZDirectionQuadrant(point);
                 *out = *heading;

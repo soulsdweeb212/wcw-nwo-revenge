@@ -30,7 +30,7 @@ void func_800A7C40(Wrestler *, s8, s16);
 s16 func_800D5438(Wrestler *, s32);
 void func_800A7F6C(void *, s32);
 void func_800A9488(Wrestler *, Wrestler *);
-s8 checkEntityAttackHit(Wrestler *, u16);
+s8 tryTagExchange(Wrestler *, u16);
 s8 func_800D9568(Wrestler *);
 s8 func_800D8DF0(Wrestler *);
 void func_800A7188(Wrestler *);
@@ -187,7 +187,7 @@ void func_800DBB80(void)
                 break;
             }
             if ((D_800FAF8A & 0x28) && !(D_800FAF5C->flags & 0x200)) {
-                if (checkEntityAttackHit(D_800FAF5C, D_800FABE6)) {
+                if (tryTagExchange(D_800FAF5C, D_800FABE6)) {
                     break;
                 }
                 if (func_800D9568(D_800FAF5C)) {

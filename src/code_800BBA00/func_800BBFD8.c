@@ -43,7 +43,7 @@ extern u16 D_800FAF8A;
 extern s16 D_800FAF9E;
 
 void remapControllerButtons(s16, u16 *);
-void startEntityAction(void);
+void runCpuAi(void);
 void func_8009D8D0(void);
 void updateEntityModeFlags(void *);
 
@@ -112,7 +112,7 @@ void func_800BBFD8(void) {
         u16 w2;
         u8 w3;
         do {
-            startEntityAction();
+            runCpuAi();
         } while (D_800F9D10[D_800FADB8].flags & WR_FLAG_RERUN);
         idx = D_800FADB8;
         w1 = D_800F9B88[idx].f6;

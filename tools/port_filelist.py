@@ -1679,10 +1679,10 @@ def write_if_changed(path: Path, text: str) -> None:
 # =====================================================================================================================
 
 # An old name of a function, kept as a build.json symbol at the function's address, and the file that calls the
-# function by that name (tryBeginBlockReaction was func_800E2400). Removed, the call names nothing.
+# function by that name (tryStartBarricadeSearch was func_800E2400). Removed, the call names nothing.
 ALIAS_CONTROL = ("func_800E2400", "src/code_8009D7A0/func_8009DD60.c")
 # A table of function addresses in overlay 2's data, and the file that calls through it. Removed, the use names nothing.
-TABLE_CONTROL = ("D_800E3660", "src/code_8009D7A0/startEntityAction.c")
+TABLE_CONTROL = ("D_800E3660", "src/code_8009D7A0/runCpuAi.c")
 # A table of function addresses in overlay 2's data, and how far into it (in bytes) the control adds a label.
 SPLIT_CONTROL = ("D_800E2FF0", 0x10)
 # A name that only the PC has, which the control declares in include/port_decls.h alone, and the file (a root's, so

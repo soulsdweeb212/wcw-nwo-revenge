@@ -20,8 +20,8 @@ typedef s32 M2C_UNK32;
 #define M2C_OVERFLOW(a) (0)
 #endif
 
-M2C_UNK updateEntityThrownState();                            /* extern */
+M2C_UNK updateRopeDragLeaderState();                            /* extern */
 
 void func_8009F898(void) {
-    updateEntityThrownState();
+    updateRopeDragLeaderState();
 }

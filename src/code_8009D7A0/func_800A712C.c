@@ -6,7 +6,7 @@
 #include "common.h"
 
 s32 func_800D36E8(f32, f32);
-void unpackAnimationParameters(void *, void *);
+void unpackMoveRecord(void *, void *);
 extern u8 D_8007BD64[];
 void func_800D4AD0(void *);
 void func_800D3890(void *, void *, void *);

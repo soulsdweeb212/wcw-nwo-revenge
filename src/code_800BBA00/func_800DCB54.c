@@ -13,7 +13,7 @@ void func_800A7D1C(void *,s32);
 void func_800A7F6C(void *,s32);
 void beginEntityActionA8D8C(void *);
 void func_800B68A0(void *,void *,void *);
-void addEntityHealthDelta(void *,s32);
+void addSpiritDelta(void *,s32);
 void func_800D427C(void *,s16,s32);
 void func_800D4AD0(void *);
 s8 func_800D4CC4(void *);
@@ -23,7 +23,7 @@ s8 func_800DB4FC(void *,void *);
 void func_800D7E80(void *,s32);
 s8 func_800D8D74(void *,s32);
 #else
-void func_800A7C40(void *,s8,s16);void func_800A7D1C(void *,s32);void func_800A7F6C(void *,s32);void beginEntityActionA8D8C(void *);void func_800B68A0(void *,void *,void *);void addEntityHealthDelta(void *,s32);void func_800D427C(void *,s16,s32);void func_800D4AD0(void *);s8 func_800D4CC4(void *);s16 func_800D5438(void *,s32);s32 func_800DACE4(void *,void *);void func_800DB348(void *,void *);s8 func_800DB4FC(void *,void *);void func_800D7E80(void *,s32);s8 func_800D8D74(void *,s32);
+void func_800A7C40(void *,s8,s16);void func_800A7D1C(void *,s32);void func_800A7F6C(void *,s32);void beginEntityActionA8D8C(void *);void func_800B68A0(void *,void *,void *);void addSpiritDelta(void *,s32);void func_800D427C(void *,s16,s32);void func_800D4AD0(void *);s8 func_800D4CC4(void *);s16 func_800D5438(void *,s32);s32 func_800DACE4(void *,void *);void func_800DB348(void *,void *);s8 func_800DB4FC(void *,void *);void func_800D7E80(void *,s32);s8 func_800D8D74(void *,s32);
 #endif
 
 /* State-machine driver for one entity action (four phases): phase 0 sets up the
@@ -56,7 +56,7 @@ void func_800DCB54(void){
             if(ent->step==2){
                 func_800A7D1C(ent,0x23);
                 func_800B68A0(D_800FAF5C,D_800FAF5C,D_800FAF5C);
-                if(func_800D4CC4(ent))addEntityHealthDelta(ent,ent->move.spiritOnFinish);
+                if(func_800D4CC4(ent))addSpiritDelta(ent,ent->move.spiritOnFinish);
                 beginEntityActionA8D8C(ent);
             }else func_800A6C48(ent,0x2B);
         }

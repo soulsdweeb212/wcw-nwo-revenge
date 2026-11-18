@@ -3216,7 +3216,7 @@ func_800A33D4	800A33D4	code	entry	func_800A33D4	-
 func_800A33F0	800A33F0	code	entry	func_800A33F0	-
 func_800A340C	800A340C	code	entry	func_800A340C	-
 func_800A3428	800A3428	code	entry	func_800A3428	-
-updateActionObjectHandoff	800A3610	code	entry	updateActionObjectHandoff	-
+updateGrappleMoveVictimState	800A3610	code	entry	updateGrappleMoveVictimState	-
 func_800A37A8	800A37A8	code	entry	func_800A37A8	-
 func_800A37C4	800A37C4	code	entry	func_800A37C4	-
 func_800A37E0	800A37E0	code	entry	func_800A37E0	-
@@ -3315,7 +3315,7 @@ func_800B113C	800B113C	code	entry	func_800B113C	-
 func_800B1240	800B1240	code	entry	func_800B1240	-
 advanceCheckAction	800B1440	code	entry	advanceCheckAction	-
 advanceWaitAction	800B1530	code	entry	advanceWaitAction	-
-advanceMovePhase	800B16D0	code	entry	advanceMovePhase	-
+aiWalkToOpponent	800B16D0	code	entry	aiWalkToOpponent	-
 func_800B18E0	800B18E0	code	entry	func_800B18E0	-
 func_800B19AC	800B19AC	code	entry	func_800B19AC	-
 func_800B1BB8	800B1BB8	code	entry	func_800B1BB8	-
@@ -3343,4 +3343,4 @@ func_800B44B8	800B44B8	code	entry	func_800B44B8	-
 func_800B7BC4	800B7BC4	code	function	loadPlayerResourceSet	-
 D_800BAC30	800BAC30	code	function	func_800BAC30	-
 func_800D732C	800D732C	code	function	stepEntityXZQuadraticSpline	-
-func_800E2400	800E2400	code	function	tryBeginBlockReaction	-
+func_800E2400	800E2400	code	function	tryStartBarricadeSearch	-

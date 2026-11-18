@@ -15,7 +15,7 @@ void beginEntityActionA8D8C(void *);
 void func_800B68A0(void *, void *, void *);
 s32 func_800C2634(void *, s32, void *, s32);
 void func_800D25D0(void *, f32);
-s16 findBoundaryQuadrant(void *, s32, s32);
+s16 findNearbyCornerPost(void *, s32, s32);
 s32 func_800D3550(s32);
 s32 func_800D3684(s32, s32);
 void func_800D427C(void *, s16, s32);
@@ -55,7 +55,7 @@ void updateActionVariantState(void) {
                 func_800A6C48(D_800EB408, 0x62);
                 return;
             }
-            targetIndex = findBoundaryQuadrant(D_800EB408, 0, 0);
+            targetIndex = findNearbyCornerPost(D_800EB408, 0, 0);
             D_800EB408->dirIndex = targetIndex;
             if (targetIndex != -1 && func_800D3550(func_800D3684(D_800E3CC0[targetIndex], D_800EB408->heading)) < 0x300 && (func_800E07DC(D_800EB408) << 24) != 0) {
                 D_800EB408->moveMode = 0;

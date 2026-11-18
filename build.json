@@ -1328,12 +1328,12 @@
    "own": {}
   },
   {
-   "name": "freeResourceDescriptorArray",
+   "name": "freeDisplayRecordArray",
    "seg": "main",
    "vram": 2147513064,
    "rom": 32488,
-   "asm": "asm/nonmatchings/main/freeResourceDescriptorArray.s",
-   "c": "src/main/freeResourceDescriptorArray.c",
+   "asm": "asm/nonmatchings/main/freeDisplayRecordArray.s",
+   "c": "src/main/freeDisplayRecordArray.c",
    "own": {}
   },
   {
@@ -1964,12 +1964,12 @@
    "own": {}
   },
   {
-   "name": "updatePartPositions",
+   "name": "updatePartDrawGroups",
    "seg": "main",
    "vram": 2147537700,
    "rom": 57124,
-   "asm": "asm/nonmatchings/main/updatePartPositions.s",
-   "c": "src/main/updatePartPositions.c",
+   "asm": "asm/nonmatchings/main/updatePartDrawGroups.s",
+   "c": "src/main/updatePartDrawGroups.c",
    "own": {}
   },
   {
@@ -2027,12 +2027,12 @@
    "own": {}
   },
   {
-   "name": "tickPlayerScripts",
+   "name": "stepCharacterLoad",
    "seg": "main",
    "vram": 2147540236,
    "rom": 59660,
-   "asm": "asm/nonmatchings/main/tickPlayerScripts.s",
-   "c": "src/main/tickPlayerScripts.c",
+   "asm": "asm/nonmatchings/main/stepCharacterLoad.s",
+   "c": "src/main/stepCharacterLoad.c",
    "own": {}
   },
   {
@@ -2261,12 +2261,12 @@
    "own": {}
   },
   {
-   "name": "buildFadeColorDisplayList",
+   "name": "buildRopeTriangleList",
    "seg": "main",
    "vram": 2147547492,
    "rom": 66916,
-   "asm": "asm/nonmatchings/main/buildFadeColorDisplayList.s",
-   "c": "src/main/buildFadeColorDisplayList.c",
+   "asm": "asm/nonmatchings/main/buildRopeTriangleList.s",
+   "c": "src/main/buildRopeTriangleList.c",
    "own": {}
   },
   {
@@ -2371,12 +2371,12 @@
    "own": {}
   },
   {
-   "name": "updateRingCornerFlags",
+   "name": "updateRingSideDrawGroups",
    "seg": "main",
    "vram": 2147554100,
    "rom": 73524,
-   "asm": "asm/nonmatchings/main/updateRingCornerFlags.s",
-   "c": "src/main/updateRingCornerFlags.c",
+   "asm": "asm/nonmatchings/main/updateRingSideDrawGroups.s",
+   "c": "src/main/updateRingSideDrawGroups.c",
    "own": {}
   },
   {
@@ -6901,12 +6901,12 @@
    "own": {}
   },
   {
-   "name": "lookupPlayerNameById",
+   "name": "getJoinedNamePair",
    "seg": "code_80090000",
    "vram": 2148111488,
    "rom": 285680,
-   "asm": "asm/nonmatchings/code_80090000/lookupPlayerNameById.s",
-   "c": "src/code_80090000/lookupPlayerNameById.c",
+   "asm": "asm/nonmatchings/code_80090000/getJoinedNamePair.s",
+   "c": "src/code_80090000/getJoinedNamePair.c",
    "own": {}
   },
   {
@@ -7000,12 +7000,12 @@
    "own": {}
   },
   {
-   "name": "emitReactionSprite99B68",
+   "name": "emitTypewriterCaption",
    "seg": "code_80090000",
    "vram": 2148113256,
    "rom": 287448,
-   "asm": "asm/nonmatchings/code_80090000/emitReactionSprite99B68.s",
-   "c": "src/code_80090000/emitReactionSprite99B68.c",
+   "asm": "asm/nonmatchings/code_80090000/emitTypewriterCaption.s",
+   "c": "src/code_80090000/emitTypewriterCaption.c",
    "own": {}
   },
   {
@@ -10950,12 +10950,12 @@
    "own": {}
   },
   {
-   "name": "updateActionObjectHandoff",
+   "name": "updateGrappleMoveVictimState",
    "seg": "code_8009D7A0",
    "vram": 2148152848,
    "rom": 617136,
-   "asm": "asm/nonmatchings/code_8009D7A0/updateActionObjectHandoff.s",
-   "c": "src/code_8009D7A0/updateActionObjectHandoff.c",
+   "asm": "asm/nonmatchings/code_8009D7A0/updateGrappleMoveVictimState.s",
+   "c": "src/code_8009D7A0/updateGrappleMoveVictimState.c",
    "own": {}
   },
   {
@@ -11656,12 +11656,12 @@
    "own": {}
   },
   {
-   "name": "collectLinkedTargets",
+   "name": "listWrestlersByDistance",
    "seg": "code_8009D7A0",
    "vram": 2148168728,
    "rom": 633016,
-   "asm": "asm/nonmatchings/code_8009D7A0/collectLinkedTargets.s",
-   "c": "src/code_8009D7A0/collectLinkedTargets.c",
+   "asm": "asm/nonmatchings/code_8009D7A0/listWrestlersByDistance.s",
+   "c": "src/code_8009D7A0/listWrestlersByDistance.c",
    "own": {}
   },
   {
@@ -11701,12 +11701,12 @@
    "own": {}
   },
   {
-   "name": "selectNewLinkedTarget",
+   "name": "switchTargetOpponent",
    "seg": "code_8009D7A0",
    "vram": 2148170552,
    "rom": 634840,
-   "asm": "asm/nonmatchings/code_8009D7A0/selectNewLinkedTarget.s",
-   "c": "src/code_8009D7A0/selectNewLinkedTarget.c",
+   "asm": "asm/nonmatchings/code_8009D7A0/switchTargetOpponent.s",
+   "c": "src/code_8009D7A0/switchTargetOpponent.c",
    "own": {}
   },
   {
@@ -11728,12 +11728,12 @@
    "own": {}
   },
   {
-   "name": "unpackAnimationParameters",
+   "name": "unpackMoveRecord",
    "seg": "code_8009D7A0",
    "vram": 2148171108,
    "rom": 635396,
-   "asm": "asm/nonmatchings/code_8009D7A0/unpackAnimationParameters.s",
-   "c": "src/code_8009D7A0/unpackAnimationParameters.c",
+   "asm": "asm/nonmatchings/code_8009D7A0/unpackMoveRecord.s",
+   "c": "src/code_8009D7A0/unpackMoveRecord.c",
    "own": {}
   },
   {
@@ -11878,12 +11878,12 @@
    "own": {}
   },
   {
-   "name": "startEntityAction",
+   "name": "runCpuAi",
    "seg": "code_8009D7A0",
    "vram": 2148178212,
    "rom": 642500,
-   "asm": "asm/nonmatchings/code_8009D7A0/startEntityAction.s",
-   "c": "src/code_8009D7A0/startEntityAction.c",
+   "asm": "asm/nonmatchings/code_8009D7A0/runCpuAi.s",
+   "c": "src/code_8009D7A0/runCpuAi.c",
    "own": {
     ".rodata": 2148420600
    }
@@ -12075,12 +12075,12 @@
    "own": {}
   },
   {
-   "name": "requestAttachmentAction",
+   "name": "aiTryProfileMove",
    "seg": "code_8009D7A0",
    "vram": 2148188680,
    "rom": 652968,
-   "asm": "asm/nonmatchings/code_8009D7A0/requestAttachmentAction.s",
-   "c": "src/code_8009D7A0/requestAttachmentAction.c",
+   "asm": "asm/nonmatchings/code_8009D7A0/aiTryProfileMove.s",
+   "c": "src/code_8009D7A0/aiTryProfileMove.c",
    "own": {
     ".rodata": 2148421248
    }
@@ -12126,12 +12126,12 @@
    "own": {}
   },
   {
-   "name": "tryApplyHitReaction",
+   "name": "tryReverseOpponentMove",
    "seg": "code_8009D7A0",
    "vram": 2148193364,
    "rom": 657652,
-   "asm": "asm/nonmatchings/code_8009D7A0/tryApplyHitReaction.s",
-   "c": "src/code_8009D7A0/tryApplyHitReaction.c",
+   "asm": "asm/nonmatchings/code_8009D7A0/tryReverseOpponentMove.s",
+   "c": "src/code_8009D7A0/tryReverseOpponentMove.c",
    "own": {}
   },
   {
@@ -12582,12 +12582,12 @@
    "own": {}
   },
   {
-   "name": "advanceMovePhase",
+   "name": "aiWalkToOpponent",
    "seg": "code_8009D7A0",
    "vram": 2148210384,
    "rom": 674672,
-   "asm": "asm/nonmatchings/code_8009D7A0/advanceMovePhase.s",
-   "c": "src/code_8009D7A0/advanceMovePhase.c",
+   "asm": "asm/nonmatchings/code_8009D7A0/aiWalkToOpponent.s",
+   "c": "src/code_8009D7A0/aiWalkToOpponent.c",
    "own": {}
   },
   {
@@ -12853,12 +12853,12 @@
    "own": {}
   },
   {
-   "name": "startEntityGrapple",
+   "name": "resolveWalkCollision",
    "seg": "code_8009D7A0",
    "vram": 2148225856,
    "rom": 690144,
-   "asm": "asm/nonmatchings/code_8009D7A0/startEntityGrapple.s",
-   "c": "src/code_8009D7A0/startEntityGrapple.c",
+   "asm": "asm/nonmatchings/code_8009D7A0/resolveWalkCollision.s",
+   "c": "src/code_8009D7A0/resolveWalkCollision.c",
    "own": {}
   },
   {
@@ -13182,12 +13182,12 @@
    "own": {}
   },
   {
-   "name": "pickPresentControllerEntity",
+   "name": "pickPostMatchFocusSlot",
    "seg": "code_800BBA00",
    "vram": 2148255704,
    "rom": 719992,
-   "asm": "asm/nonmatchings/code_800BBA00/pickPresentControllerEntity.s",
-   "c": "src/code_800BBA00/pickPresentControllerEntity.c",
+   "asm": "asm/nonmatchings/code_800BBA00/pickPostMatchFocusSlot.s",
+   "c": "src/code_800BBA00/pickPostMatchFocusSlot.c",
    "own": {}
   },
   {
@@ -13231,12 +13231,12 @@
    "own": {}
   },
   {
-   "name": "updateEntityThrownState",
+   "name": "updateRopeDragLeaderState",
    "seg": "code_800BBA00",
    "vram": 2148263136,
    "rom": 727424,
-   "asm": "asm/nonmatchings/code_800BBA00/updateEntityThrownState.s",
-   "c": "src/code_800BBA00/updateEntityThrownState.c",
+   "asm": "asm/nonmatchings/code_800BBA00/updateRopeDragLeaderState.s",
+   "c": "src/code_800BBA00/updateRopeDragLeaderState.c",
    "own": {
     ".rodata": 2148423720
    }
@@ -13253,12 +13253,12 @@
    }
   },
   {
-   "name": "updateEntityBoundaryFlags",
+   "name": "chooseRopeDragDirection",
    "seg": "code_800BBA00",
    "vram": 2148264724,
    "rom": 729012,
-   "asm": "asm/nonmatchings/code_800BBA00/updateEntityBoundaryFlags.s",
-   "c": "src/code_800BBA00/updateEntityBoundaryFlags.c",
+   "asm": "asm/nonmatchings/code_800BBA00/chooseRopeDragDirection.s",
+   "c": "src/code_800BBA00/chooseRopeDragDirection.c",
    "own": {}
   },
   {
@@ -13352,32 +13352,32 @@
    "own": {}
   },
   {
-   "name": "addEntityHealthDelta",
+   "name": "addSpiritDelta",
    "seg": "code_800BBA00",
    "vram": 2148267564,
    "rom": 731852,
-   "asm": "asm/nonmatchings/code_800BBA00/addEntityHealthDelta.s",
-   "c": "src/code_800BBA00/addEntityHealthDelta.c",
+   "asm": "asm/nonmatchings/code_800BBA00/addSpiritDelta.s",
+   "c": "src/code_800BBA00/addSpiritDelta.c",
    "own": {}
   },
   {
-   "name": "updateEntityStunTimer",
+   "name": "updateSpiritTimers",
    "seg": "code_800BBA00",
    "vram": 2148267776,
    "rom": 732064,
-   "asm": "asm/nonmatchings/code_800BBA00/updateEntityStunTimer.s",
-   "c": "src/code_800BBA00/updateEntityStunTimer.c",
+   "asm": "asm/nonmatchings/code_800BBA00/updateSpiritTimers.s",
+   "c": "src/code_800BBA00/updateSpiritTimers.c",
    "own": {
     ".rodata": 2148423808
    }
   },
   {
-   "name": "readEntityStunState",
+   "name": "getSpiritMeterDisplay",
    "seg": "code_800BBA00",
    "vram": 2148268832,
    "rom": 733120,
-   "asm": "asm/nonmatchings/code_800BBA00/readEntityStunState.s",
-   "c": "src/code_800BBA00/readEntityStunState.c",
+   "asm": "asm/nonmatchings/code_800BBA00/getSpiritMeterDisplay.s",
+   "c": "src/code_800BBA00/getSpiritMeterDisplay.c",
    "own": {}
   },
   {
@@ -13730,23 +13730,23 @@
    "own": {}
   },
   {
-   "name": "updateGrabAction",
+   "name": "updateStrikeState21",
    "seg": "code_800BBA00",
    "vram": 2148295128,
    "rom": 759416,
-   "asm": "asm/nonmatchings/code_800BBA00/updateGrabAction.s",
-   "c": "src/code_800BBA00/updateGrabAction.c",
+   "asm": "asm/nonmatchings/code_800BBA00/updateStrikeState21.s",
+   "c": "src/code_800BBA00/updateStrikeState21.c",
    "own": {
     ".rodata": 2148425912
    }
   },
   {
-   "name": "updateEntityGrabActionState",
+   "name": "updateStompState",
    "seg": "code_800BBA00",
    "vram": 2148295704,
    "rom": 759992,
-   "asm": "asm/nonmatchings/code_800BBA00/updateEntityGrabActionState.s",
-   "c": "src/code_800BBA00/updateEntityGrabActionState.c",
+   "asm": "asm/nonmatchings/code_800BBA00/updateStompState.s",
+   "c": "src/code_800BBA00/updateStompState.c",
    "own": {
     ".rodata": 2148426232
    }
@@ -13947,12 +13947,12 @@
    "own": {}
   },
   {
-   "name": "updateRingLeapAction",
+   "name": "updateDownedOpponentAttack36",
    "seg": "code_800BBA00",
    "vram": 2148309852,
    "rom": 774140,
-   "asm": "asm/nonmatchings/code_800BBA00/updateRingLeapAction.s",
-   "c": "src/code_800BBA00/updateRingLeapAction.c",
+   "asm": "asm/nonmatchings/code_800BBA00/updateDownedOpponentAttack36.s",
+   "c": "src/code_800BBA00/updateDownedOpponentAttack36.c",
    "own": {
     ".rodata": 2148428176
    }
@@ -13969,12 +13969,12 @@
    }
   },
   {
-   "name": "updateEntityCounterAttackState",
+   "name": "updatePinnerState",
    "seg": "code_800BBA00",
    "vram": 2148311804,
    "rom": 776092,
-   "asm": "asm/nonmatchings/code_800BBA00/updateEntityCounterAttackState.s",
-   "c": "src/code_800BBA00/updateEntityCounterAttackState.c",
+   "asm": "asm/nonmatchings/code_800BBA00/updatePinnerState.s",
+   "c": "src/code_800BBA00/updatePinnerState.c",
    "own": {}
   },
   {
@@ -14074,21 +14074,21 @@
    "own": {}
   },
   {
-   "name": "tryStartFacingGroupAtGate",
+   "name": "tryJoinDoubleTeam",
    "seg": "code_800BBA00",
    "vram": 2148325060,
    "rom": 789348,
-   "asm": "asm/nonmatchings/code_800BBA00/tryStartFacingGroupAtGate.s",
-   "c": "src/code_800BBA00/tryStartFacingGroupAtGate.c",
+   "asm": "asm/nonmatchings/code_800BBA00/tryJoinDoubleTeam.s",
+   "c": "src/code_800BBA00/tryJoinDoubleTeam.c",
    "own": {}
   },
   {
-   "name": "setupEntityFacingGroup",
+   "name": "beginDoubleTeam",
    "seg": "code_800BBA00",
    "vram": 2148325388,
    "rom": 789676,
-   "asm": "asm/nonmatchings/code_800BBA00/setupEntityFacingGroup.s",
-   "c": "src/code_800BBA00/setupEntityFacingGroup.c",
+   "asm": "asm/nonmatchings/code_800BBA00/beginDoubleTeam.s",
+   "c": "src/code_800BBA00/beginDoubleTeam.c",
    "own": {}
   },
   {
@@ -14466,12 +14466,12 @@
    "own": {}
   },
   {
-   "name": "findBoundaryQuadrant",
+   "name": "findNearbyCornerPost",
    "seg": "code_800BBA00",
    "vram": 2148348868,
    "rom": 813156,
-   "asm": "asm/nonmatchings/code_800BBA00/findBoundaryQuadrant.s",
-   "c": "src/code_800BBA00/findBoundaryQuadrant.c",
+   "asm": "asm/nonmatchings/code_800BBA00/findNearbyCornerPost.s",
+   "c": "src/code_800BBA00/findNearbyCornerPost.c",
    "own": {}
   },
   {
@@ -15096,12 +15096,12 @@
    "own": {}
   },
   {
-   "name": "updateSpecialMoveRequest",
+   "name": "updateTagPartnerReturnRequest",
    "seg": "code_800BBA00",
    "vram": 2148372292,
    "rom": 836580,
-   "asm": "asm/nonmatchings/code_800BBA00/updateSpecialMoveRequest.s",
-   "c": "src/code_800BBA00/updateSpecialMoveRequest.c",
+   "asm": "asm/nonmatchings/code_800BBA00/updateTagPartnerReturnRequest.s",
+   "c": "src/code_800BBA00/updateTagPartnerReturnRequest.c",
    "own": {}
   },
   {
@@ -15177,12 +15177,12 @@
    "own": {}
   },
   {
-   "name": "checkEntityAttackHit",
+   "name": "tryTagExchange",
    "seg": "code_800BBA00",
    "vram": 2148374852,
    "rom": 839140,
-   "asm": "asm/nonmatchings/code_800BBA00/checkEntityAttackHit.s",
-   "c": "src/code_800BBA00/checkEntityAttackHit.c",
+   "asm": "asm/nonmatchings/code_800BBA00/tryTagExchange.s",
+   "c": "src/code_800BBA00/tryTagExchange.c",
    "own": {}
   },
   {
@@ -15240,12 +15240,12 @@
    "own": {}
   },
   {
-   "name": "isEntityEligibleForSpecialAction",
+   "name": "canTagPartnerInterfere",
    "seg": "code_800BBA00",
    "vram": 2148378088,
    "rom": 842376,
-   "asm": "asm/nonmatchings/code_800BBA00/isEntityEligibleForSpecialAction.s",
-   "c": "src/code_800BBA00/isEntityEligibleForSpecialAction.c",
+   "asm": "asm/nonmatchings/code_800BBA00/canTagPartnerInterfere.s",
+   "c": "src/code_800BBA00/canTagPartnerInterfere.c",
    "own": {}
   },
   {
@@ -15347,21 +15347,21 @@
    }
   },
   {
-   "name": "tryBeginEntityGrab",
+   "name": "tryTargetBlockOrCounter",
    "seg": "code_800BBA00",
    "vram": 2148382508,
    "rom": 846796,
-   "asm": "asm/nonmatchings/code_800BBA00/tryBeginEntityGrab.s",
-   "c": "src/code_800BBA00/tryBeginEntityGrab.c",
+   "asm": "asm/nonmatchings/code_800BBA00/tryTargetBlockOrCounter.s",
+   "c": "src/code_800BBA00/tryTargetBlockOrCounter.c",
    "own": {}
   },
   {
-   "name": "handleEntityState38To3F",
+   "name": "applyDiveHitToTarget",
    "seg": "code_800BBA00",
    "vram": 2148382836,
    "rom": 847124,
-   "asm": "asm/nonmatchings/code_800BBA00/handleEntityState38To3F.s",
-   "c": "src/code_800BBA00/handleEntityState38To3F.c",
+   "asm": "asm/nonmatchings/code_800BBA00/applyDiveHitToTarget.s",
+   "c": "src/code_800BBA00/applyDiveHitToTarget.c",
    "own": {
     ".rodata": 2148430832
    }
@@ -15485,12 +15485,12 @@
    "own": {}
   },
   {
-   "name": "tryEntityAttackDEF84",
+   "name": "tryMoveThroughRopes",
    "seg": "code_800DE9C0",
    "vram": 2148396932,
    "rom": 861220,
-   "asm": "asm/nonmatchings/code_800DE9C0/tryEntityAttackDEF84.s",
-   "c": "src/code_800DE9C0/tryEntityAttackDEF84.c",
+   "asm": "asm/nonmatchings/code_800DE9C0/tryMoveThroughRopes.s",
+   "c": "src/code_800DE9C0/tryMoveThroughRopes.c",
    "own": {}
   },
   {
@@ -15539,12 +15539,12 @@
    "own": {}
   },
   {
-   "name": "chooseDodgeAction",
+   "name": "chooseApronStrikeState",
    "seg": "code_800DE9C0",
    "vram": 2148400268,
    "rom": 864556,
-   "asm": "asm/nonmatchings/code_800DE9C0/chooseDodgeAction.s",
-   "c": "src/code_800DE9C0/chooseDodgeAction.c",
+   "asm": "asm/nonmatchings/code_800DE9C0/chooseApronStrikeState.s",
+   "c": "src/code_800DE9C0/chooseApronStrikeState.c",
    "own": {}
   },
   {
@@ -15629,12 +15629,12 @@
    "own": {}
   },
   {
-   "name": "snapEntityToRingBoundary",
+   "name": "snapEntityToApronLine",
    "seg": "code_800DE9C0",
    "vram": 2148403400,
    "rom": 867688,
-   "asm": "asm/nonmatchings/code_800DE9C0/snapEntityToRingBoundary.s",
-   "c": "src/code_800DE9C0/snapEntityToRingBoundary.c",
+   "asm": "asm/nonmatchings/code_800DE9C0/snapEntityToApronLine.s",
+   "c": "src/code_800DE9C0/snapEntityToApronLine.c",
    "own": {}
   },
   {
@@ -15716,12 +15716,12 @@
    "own": {}
   },
   {
-   "name": "updatePlayerEntryStates",
+   "name": "syncFieldSlotsToRender",
    "seg": "code_800DE9C0",
    "vram": 2148408840,
    "rom": 873128,
-   "asm": "asm/nonmatchings/code_800DE9C0/updatePlayerEntryStates.s",
-   "c": "src/code_800DE9C0/updatePlayerEntryStates.c",
+   "asm": "asm/nonmatchings/code_800DE9C0/syncFieldSlotsToRender.s",
+   "c": "src/code_800DE9C0/syncFieldSlotsToRender.c",
    "own": {}
   },
   {
@@ -15761,12 +15761,12 @@
    "own": {}
   },
   {
-   "name": "tryBeginBlockReaction",
+   "name": "tryStartBarricadeSearch",
    "seg": "code_800DE9C0",
    "vram": 2148410368,
    "rom": 874656,
-   "asm": "asm/nonmatchings/code_800DE9C0/tryBeginBlockReaction.s",
-   "c": "src/code_800DE9C0/tryBeginBlockReaction.c",
+   "asm": "asm/nonmatchings/code_800DE9C0/tryStartBarricadeSearch.s",
+   "c": "src/code_800DE9C0/tryStartBarricadeSearch.c",
    "own": {}
   },
   {

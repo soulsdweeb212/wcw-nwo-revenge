@@ -47,7 +47,7 @@ void func_80008CE8(s32, s16, s16, void *, s32, s32);
 void func_8000CD18(s32, f32, f32);
 void func_8000D238(s32, u16);
 s16 func_800C2E50(Wr3110 *);
-void updatePartPositions(s32);
+void updatePartDrawGroups(s32);
 
 void func_800C3110(s32 a, s32 b) {
     Wr3110 *w = (Wr3110 *)(D_800E79B8 + a * 0x6D0);
@@ -76,7 +76,7 @@ void func_800C3110(s32 a, s32 b) {
     }
     func_80008CE8(id, w->f6B2, w->f6B4, &w->f680, 0, w->f6BF);
     if (w->f6C4.w == 4) {
-        updatePartPositions(id);
+        updatePartDrawGroups(id);
         func_8000CD18(id, 90.0f, 0.0f);
     } else {
         if (D_800E74D8 == -5 || D_800E74D8 == -4) {

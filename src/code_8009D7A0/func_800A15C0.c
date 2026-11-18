@@ -20,8 +20,8 @@ typedef s32 M2C_UNK32;
 #define M2C_OVERFLOW(a) (0)
 #endif
 
-M2C_UNK updateGrabAction();                            /* extern */
+M2C_UNK updateStrikeState21();                            /* extern */
 
 void func_800A15C0(void) {
-    updateGrabAction();
+    updateStrikeState21();
 }

@@ -6,7 +6,7 @@
 #include "common.h"
 
 s32 func_800D36E8(f32, f32);
-void unpackAnimationParameters(void *, void *);
+void unpackMoveRecord(void *, void *);
 extern u8 D_8007BD64[];
 void func_800D4AD0(void *);
 void func_800D3890(void *, void *, void *);
@@ -15,5 +15,5 @@ void func_800D3890(void *, void *, void *);
 void func_800A7D1C(Wrestler *w, s16 moveId) {
     w->moveId = moveId;
     w->moveOwnerId = w->id;
-    unpackAnimationParameters(&w->move, D_8007BD64 + 0x14 + moveId * 0x18);
+    unpackMoveRecord(&w->move, D_8007BD64 + 0x14 + moveId * 0x18);
 }

@@ -21,13 +21,13 @@ extern u8 D_800587F0[], D_80058900[], D_80058988[];
 #endif
 #ifdef TARGET_PC
 /* PC: D_800587EC, D_800588F8 and D_80058984 hold the display lists that func_8000E920 got from func_80007020, so
- * they are pointers (port_decls.h). freeResourceDescriptorArray takes the list as a pointer, as its definition does. */
+ * they are pointers (port_decls.h). freeDisplayRecordArray takes the list as a pointer, as its definition does. */
 void func_8000520C(void *,void *);
-void freeResourceDescriptorArray(void *,void *,s16);
+void freeDisplayRecordArray(void *,void *,s16);
 #else
 extern s32 D_800587EC,D_800588F8,D_80058984;
 void func_8000520C(void *,void *);
-void freeResourceDescriptorArray(void *,s32,s16);
+void freeDisplayRecordArray(void *,s32,s16);
 #endif
 void func_8000F408(void);
 /* Tears down the arena: releases each object's paired resource, frees the
@@ -36,8 +36,8 @@ void func_8000F408(void);
 void func_8000EDE0(void) {
     u32 i;
     for(i=0;i<D_80059D80;i++) func_8000520C(&D_80057030[i],&D_800583F8[i]);
-    if(D_80036C74[D_80059D82]) {freeResourceDescriptorArray(D_800587F0,D_800587EC,6);D_800587EC=0;}
-    freeResourceDescriptorArray(D_80058900,D_800588F8,3);D_800588F8=0;
-    freeResourceDescriptorArray(D_80058988,D_80058984,3);D_80058984=0;
+    if(D_80036C74[D_80059D82]) {freeDisplayRecordArray(D_800587F0,D_800587EC,6);D_800587EC=0;}
+    freeDisplayRecordArray(D_80058900,D_800588F8,3);D_800588F8=0;
+    freeDisplayRecordArray(D_80058988,D_80058984,3);D_80058984=0;
     func_8000F408();
 }

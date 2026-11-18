@@ -101,7 +101,7 @@ void func_80099748(Gx **, s32, s32, s32, s32);
 void func_80091244(Gx **);
 void func_8009C010(Gx **, s32, s32);
 void func_8009126C(Gx **);
-void emitReactionSprite99B68(Gx **, Item *);
+void emitTypewriterCaption(Gx **, Item *);
 void func_8009A02C(Gx **);
 void buildTiledTextureDisplayList(Gx **, void *, s32, s32, s32, s32, s32, s32, s32, s32);
 void func_8009773C(Gx **, void *, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
@@ -308,7 +308,7 @@ void func_8009C218(Gx **arg0, Item *arg1, s32 arg2) {
             break;
         case 1:                                     /* switch 2 */
             if (arg1->unkEA != 0) {
-                emitReactionSprite99B68(&sp38, arg1);
+                emitTypewriterCaption(&sp38, arg1);
             }
             break;
         case 18:                                    /* switch 2 */
@@ -1012,7 +1012,7 @@ void func_8009C218(Gx **arg0, Item *arg1, s32 arg2) {
             break;
         case 1:                                     /* switch 2 */
             if (arg1->unkEA != 0) {
-                emitReactionSprite99B68(&sp38, arg1);
+                emitTypewriterCaption(&sp38, arg1);
             }
             break;
         case 18:                                    /* switch 2 */

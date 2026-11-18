@@ -60,7 +60,7 @@ s32 func_800AA0D8(s32);
 u8 *func_800AA070(s32);
 #ifdef TARGET_PC
 /* PC: func_80028D18's keys are a name's address and a number here, so as wide as a pointer: the declaration its PC
- * definition must have (lookupPlayerNameById.c says why; its definition still takes s32 keys). */
+ * definition must have (getJoinedNamePair.c says why; its definition still takes s32 keys). */
 u8 *func_80028D18(uintptr_t, uintptr_t);
 #else
 u8 *func_80028D18(u8 *, s32);

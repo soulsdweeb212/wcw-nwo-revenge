@@ -22,8 +22,8 @@ extern s8 D_800FADB9[];
 s16 func_800BF1E0(void *, s8);
 void func_800BF338(void *, s16, s32);
 void func_800BF228(void *, s32, s8);
-void addEntityHealthDelta(Wrestler *, s16);
-s16 updateEntityStunTimer(void *, s32, s32);
+void addSpiritDelta(Wrestler *, s16);
+s16 updateSpiritTimers(void *, s32, s32);
 
 /* Applies a landed move: source->move is the move used, attacker gets the credit, target takes the damage (callers
  * often pass the same record for two or all three). The damage is the sum of three pieces, each at least 0: move.power
@@ -35,7 +35,7 @@ s16 updateEntityStunTimer(void *, s32, s32);
  * healthMax drops by a quarter of it (not below 128), each bodyPart[] loses move.partDamage[], and D_800FADB9[target]
  * records targetPart when that part is now at most 50 and no part 0..3 is lower. Spirit: the attacker gains
  * move.spiritGainSelf (+3 when its health < 49 and it is not in state 0x3D, + profile byte 3 with flag 0x400000000),
- * the target gets move.spiritDeltaTarget, and updateEntityStunTimer(target, 0, 3) takes 60 ticks off its SPIRIT_FULL /
+ * the target gets move.spiritDeltaTarget, and updateSpiritTimers(target, 0, 3) takes 60 ticks off its SPIRIT_FULL /
  * SPECIAL timers. Both get flag 0x40000000000; D_800F9B78[attacker] and [target] change by move.unk3A8[0] / [1],
  * clamped to 30..200. Returns the damage. */
 s16 func_800B68A0(Wrestler *source, Wrestler *attacker, Wrestler *target) {
@@ -83,9 +83,9 @@ s16 func_800B68A0(Wrestler *source, Wrestler *attacker, Wrestler *target) {
     bonus = source->move.spiritGainSelf;
     if (attacker->state != 0x3D && attacker->health < 49) bonus += 3;
     if (attacker->flags & 0x400000000ULL) bonus += (s8)((AttrB68 *)attacker->profile)->f3;
-    addEntityHealthDelta(attacker, bonus);
-    addEntityHealthDelta(target, source->move.spiritDeltaTarget);
-    updateEntityStunTimer(target, 0, 3);
+    addSpiritDelta(attacker, bonus);
+    addSpiritDelta(target, source->move.spiritDeltaTarget);
+    updateSpiritTimers(target, 0, 3);
     attacker->flags |= 0x40000000000ULL;
     target->flags |= 0x40000000000ULL;
     D_800F9B78[attacker->id] += (s8)source->move.unk3A8[0];

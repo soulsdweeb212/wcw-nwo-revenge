@@ -32,7 +32,7 @@ s8 func_800B8D8C(void);
 s8 func_800B93B0(void);
 s8 func_800B9194(void);
 s8 func_800B955C(u64);
-s8 pickPresentControllerEntity(void);
+s8 pickPostMatchFocusSlot(void);
 void func_80097EF4(s32);
 #define AU8(n, o) (*(volatile u8 *)((u8 *)&n + (o)))
 /* A volatile read of a Wrestler field, the record picked by a byte offset (slot * 0x3B0). */
@@ -84,7 +84,7 @@ void runMatchPhaseStateMachine(void) {
         break;
     case 3:
         D_800FADCF |= 0x40;
-        D_800EB464 = pickPresentControllerEntity();
+        D_800EB464 = pickPostMatchFocusSlot();
         func_800BBA00();
         D_800EB462 = 0;
         D_800EB465++;

@@ -29,7 +29,7 @@ void func_800056F4(void *, f32, f32, f32);
 void initSideSlotTransforms(void);
 void func_8000E920(s32, s32);
 void initializeMatchResources(void);
-void updateRingCornerFlags(void);
+void updateRingSideDrawGroups(void);
 CharInfo *func_8002B7E0(s16, s16);
 void func_8000C91C(s16, s16, s32, s32, s32, s32, s32);
 void func_8009A69C(void *, Pos14 *);
@@ -112,7 +112,7 @@ void func_80099F70(void) {
     initSideSlotTransforms();
     func_8000E920(D_800EB378, D_8007FC10);
     initializeMatchResources();
-    updateRingCornerFlags();
+    updateRingSideDrawGroups();
     for (i = 0; i < 4; i++) {
         id = D_800FACEA[i];
         if (D_800FACEA[i] <= 0) {

@@ -15,7 +15,7 @@ extern u8 D_8007E228[];
 extern u8 D_80070494[];
 extern u8 D_8007EF30[];
 void func_800BF548(void *, s16);
-void updateEntityStunTimer(void *, s32, s32);
+void updateSpiritTimers(void *, s32, s32);
 void func_800C2B20(s8);
 void func_800A97A0(s32);
 void func_800D9234(s32);
@@ -86,7 +86,7 @@ void func_800BA770(s8 arg0, s16 arg1, s32 arg2)
     D_800FADC6[idx] = 0;
     D_800F9B78[idx] = 0x1E;
     func_800BF548(ent, 0);
-    updateEntityStunTimer(ent, 0, 0);
+    updateSpiritTimers(ent, 0, 0);
     func_800C2B20(idx);
     func_800A97A0(idx);
     func_800D9234(idx);

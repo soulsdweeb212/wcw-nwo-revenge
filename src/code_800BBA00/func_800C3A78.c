@@ -27,7 +27,7 @@ extern s16 D_800E3BFC[];
 void func_800A6D80(void *, s32);
 void func_800A837C(void *);
 s16 func_800BF2FC(void *);
-void addEntityHealthDelta(void *, s32);
+void addSpiritDelta(void *, s32);
 s8 func_800C41F0(void *, void *);
 void func_800C4610(void *, void *);
 s8 func_800C472C(void *, void *, s32);
@@ -41,7 +41,7 @@ void func_800E212C(void *);
  * 0x0400000000000000. Otherwise src->comboHits is cleared, tgt->heldById = src->id (and tgt->opponentId = src->id
  * unless tgt is src's tag partner), tgt->hitInfo = arg2, func_800E212C(tgt) and func_800C4610(src, tgt) run, and a
  * class bit 0x10000000 / 0x20000000 / 0x40000000 picked by src->move.unk39B is or-ed into hitInfo. Some tgt states
- * are special-cased: 23 takes 10 spirit (addEntityHealthDelta), 64 / 65 / 45..47 may counter through func_800C41F0
+ * are special-cased: 23 takes 10 spirit (addSpiritDelta), 64 / 65 / 45..47 may counter through func_800C41F0
  * or ignore the hit, 64 may go to state 0x41, 20 adds hitInfo 0x2000 when frameStatus bit 0 is set. On the apron
  * (WR_FLAG_ON_APRON) a reaction bit is chosen and tgt goes to state 0x28. Otherwise, unless
  * func_800C472C(src, tgt, 0) stuns or knocks it out, tgt->comboHits counts up (at most 4; read signed here),
@@ -81,7 +81,7 @@ void func_800C3A78(Wrestler *src, Wrestler *tgt, u32 arg2) {
     }
     switch (tgt->state) {
     case 23:
-        addEntityHealthDelta(tgt, -10);
+        addSpiritDelta(tgt, -10);
         break;
     case 64:
         if (!(tgt->flags & 9)) {

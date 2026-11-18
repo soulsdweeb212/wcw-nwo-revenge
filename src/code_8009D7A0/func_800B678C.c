@@ -9,7 +9,7 @@ f32 func_800D3890(void *, void *, void *);
 s32 func_800D3550(s32);
 s32 func_800D3684(s32, s32);
 
-/* Step-over check of w against the wrestler it walked into (startEntityGrapple starts state 0x8A on a 1). Only when
+/* Step-over check of w against the wrestler it walked into (resolveWalkCollision starts state 0x8A on a 1). Only when
  * w is not running (moveMode bit 0x20 clear), the caller passes flag 4, both share WR_FLAG_IN_RING or
  * WR_FLAG_ON_FLOOR and other has flag 0x400000 (down on the mat). If w->steppedOverId is already other->id it returns
  * 2; otherwise it takes the direction from w's pelvis (jointA[1]) to other's and, when it is within 0x2AA of

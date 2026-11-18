@@ -31,9 +31,9 @@ void func_800A1D34(void)
             else if (D_800EB408->flags & WR_FLAG_ON_APRON) {
 #ifdef TARGET_PC
                 /* PC: the wrestler as the Wrestler * the function takes (the N64's u8 * cast keeps the address). */
-                snapEntityToRingBoundary(D_800EB408);
+                snapEntityToApronLine(D_800EB408);
 #else
-                snapEntityToRingBoundary((u8 *)D_800EB408);
+                snapEntityToApronLine((u8 *)D_800EB408);
 #endif
                 a3 = 0x1081;
             } else
@@ -49,9 +49,9 @@ void func_800A1D34(void)
             if (D_800EB408->flags & WR_FLAG_ON_APRON) {
 #ifdef TARGET_PC
                 /* PC: the same call as in case 0, without the u8 * cast. */
-                snapEntityToRingBoundary(D_800EB408);
+                snapEntityToApronLine(D_800EB408);
 #else
-                snapEntityToRingBoundary((u8 *)D_800EB408);
+                snapEntityToApronLine((u8 *)D_800EB408);
 #endif
                 a3 = 0xF5C;
             } else

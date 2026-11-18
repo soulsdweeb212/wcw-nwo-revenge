@@ -13,7 +13,7 @@ void func_800A7D1C(void *, s32);
 void func_800A7F6C(void *, s32);
 void beginEntityActionA8D8C(void *);
 void func_800B68A0(void *, void *, void *);
-void addEntityHealthDelta(void *, s32);
+void addSpiritDelta(void *, s32);
 void func_800D427C(void *, s16, s32);
 void func_800D4AD0(void *);
 s8 func_800D4CC4(void *);
@@ -35,7 +35,7 @@ s8 isEntityActionEligible(void *, void *, s32);
  * func_800D427C/func_800A7F6C/func_800DACE4 and advances.  Step 1 clears self's
  * D_800FABD8 bit and waits for func_800DB4FC, then falls into step 2, which
  * pumps func_800DB348 and when animFramesLeft runs out either runs the 0x23
- * attack (func_800A7D1C/func_800B68A0/func_800D4CC4/addEntityHealthDelta/
+ * attack (func_800A7D1C/func_800B68A0/func_800D4CC4/addSpiritDelta/
  * beginEntityActionA8D8C) or ends with func_800A6C48(0x2B). */
 void func_800DD370(void) {
     Wrestler *self;
@@ -102,7 +102,7 @@ void func_800DD370(void) {
                 func_800A7D1C(self, 0x23);
                 func_800B68A0(D_800FAF5C, D_800FAF5C, D_800FAF5C);
                 if (func_800D4CC4(self)) {
-                    addEntityHealthDelta(self, self->move.spiritOnFinish);
+                    addSpiritDelta(self, self->move.spiritOnFinish);
                 }
                 beginEntityActionA8D8C(self);
             } else {

@@ -19,15 +19,15 @@ extern u8 D_8007EF30[];
 extern u8 D_8007E228[];
 
 void func_800A7240(void *, s32, s32, u64);
-s8 selectNewLinkedTarget(void *, s32);
-s8 updateSpecialMoveRequest(void *);
+s8 switchTargetOpponent(void *, s32);
+s8 updateTagPartnerReturnRequest(void *);
 s8 isEntityActionAllowedC2870(void *);
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800D6658 */
 u32 func_800D6658(void *, void *, s32, s32, f32);
 #endif
 s8 func_800DF5C4(void *, void *, u16, u16, s8, s32);
 s8 func_800DE9C0(void *, void *, u16, u16, s32);
-s8 tryEntityAttackDEF84(void *, u16, u16, s32);
+s8 tryMoveThroughRopes(void *, u16, u16, s32);
 s8 func_800E2400(void *, u16, u16, u32);
 s8 func_800DF214(void *, u16);
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800DF3E4 */
@@ -40,7 +40,7 @@ s8 func_800E0590(void *, void *, u16, void *);
 s8 func_800E074C(void *, u16, u16);
 s8 func_800E06C0(void *, void *, s8);
 void func_800BF548(void *, s32);
-void updateEntityStunTimer(void *, void *, s32);
+void updateSpiritTimers(void *, void *, s32);
 
 void func_8009DD60(void) {
     D_800EB408->flags |= 0x100000000000ULL;
@@ -73,7 +73,7 @@ void func_8009DD60(void) {
     if (D_800EB408->flags & 0x8000) {
         D_800EB408->flags |= 0x10000ULL;
     }
-    if (selectNewLinkedTarget(D_800EB408, D_800FAF8A)) {
+    if (switchTargetOpponent(D_800EB408, D_800FAF8A)) {
         return;
     }
     if (D_800EB408->flags & 0x8000) {
@@ -87,7 +87,7 @@ void func_8009DD60(void) {
             return;
         }
     }
-    if (updateSpecialMoveRequest(D_800EB408)) {
+    if (updateTagPartnerReturnRequest(D_800EB408)) {
         func_800A6C48(D_800EB408, 0x7E);
         return;
     }
@@ -142,7 +142,7 @@ void func_8009DD60(void) {
     D_800F9D08[D_800FADB8] = 0;
     D_800EB408->steppedOverId = -1;
     func_800BF548(D_800EB408, 1);
-    updateEntityStunTimer(D_800EB408, D_800EB40C, 1);
+    updateSpiritTimers(D_800EB408, D_800EB40C, 1);
     func_800D93DC(D_800EB408);
     {
         u32 r = func_800D6658(D_800EB408, D_800EB40C, D_800FABE6, 0, D_800F9B0C[0]);
@@ -169,7 +169,7 @@ void func_8009DD60(void) {
             if (func_800DE9C0(D_800EB408, D_800EB40C, D_800FABE6, D_800FAF8A, s0)) {
                 return;
             }
-            if (tryEntityAttackDEF84(D_800EB408, D_800FABE6, D_800FAF8A, s0)) {
+            if (tryMoveThroughRopes(D_800EB408, D_800FABE6, D_800FAF8A, s0)) {
                 return;
             }
         }
@@ -188,7 +188,7 @@ void func_8009DD60(void) {
         /* PC: the N64 passes D_800F9B0C - 1, the address of the match-distance block (Nw2DirectionResult): x, then y =
          * the distance D_800F9B0C, z, then angle = the heading D_800F9B14. On PC these data names are separate
          * variables that nothing keeps at those offsets, so the PC passes a block of its own with the same y and
-         * angle. The four functions below, and func_800D23B4 and chooseDodgeAction that they hand it to, only read
+         * angle. The four functions below, and func_800D23B4 and chooseApronStrikeState that they hand it to, only read
          * its y and angle and write nothing into it; x and z are never read (0 here). Only func_800A712C writes
          * D_800F9B0C and D_800F9B14, called from func_8009D8D0 before this handler runs, so the copy holds what the
          * N64 block holds through these calls. */

@@ -374,7 +374,7 @@ The records:
    `func_8002A1C4` (and through the last two to `countNibblePixelNeighbors`), which read it through views of their
    own; on PC those views follow `Nw2ResourceEntryHashed`, as an assert in each of the first five checks.
    `D_8007FC3C` holds the address of a heap block of 40 name buffers (`Nw2KeyedBufferEntry`). Their two keys can be
-   names' addresses (`lookupPlayerNameById` passes two), so on PC they are as wide as a pointer: an entry is 0x50
+   names' addresses (`getJoinedNamePair` passes two), so on PC they are as wide as a pointer: an entry is 0x50
    bytes, and `func_8002AA28` allocates the 40 by that size. `freeCachedResource`, `func_8002A820` and `func_8002A658` (which steps through the entries
    by 0x18), which are not among the developer program's files, need the same changes when they are compiled for the
    PC.
@@ -499,7 +499,7 @@ How it works:
    same number. The vertices the lists load get the widths of a vertex; textures and palettes stay bytes; the viewport
    that a `G_MOVEMEM` loads is eight 16-bit values. The files' own types for a list's bytes do not count: the PC draws
    the copy.
-7. An old name of a function that some file still calls (`func_800E2400` for `tryBeginBlockReaction`) gets a
+7. An old name of a function that some file still calls (`func_800E2400` for `tryStartBarricadeSearch`) gets a
    "function" line; the port's linker gives the function that second name. Only names of the game's own form count:
    `build.json` also puts `sqrtf` at `nw2Sqrtf`'s address, but on PC `sqrtf` is the C library's.
 
@@ -576,7 +576,7 @@ been set up: the first run of `build.py` extracts `asm/data/` and `assets/` from
    reads or writes.
 2. **It finds what each name is.** A name can be a function of a C file (a `static` one counts only in its own file),
    an old name of a function that `build.json` keeps as a symbol at the function's address (`func_800E2400` is
-   `tryBeginBlockReaction`), a variable (a `build.json` symbol, a label in `asm/data/`, or a C definition), a
+   `tryStartBarricadeSearch`), a variable (a `build.json` symbol, a label in `asm/data/`, or a C definition), a
    function the port supplies, declared in `port.h`, or a name that only the PC has, declared in `port_decls.h`. The
    tool reads those two headers on their own, with `common.h`'s typedefs, because it keeps no other declaration of a
    header. A name that is none of these is an error: the tool names the file and line that use it, still prints the
@@ -641,11 +641,11 @@ changes each copy in one way, runs the tool on every copy as a separate program 
 
 1. The copy unchanged: exit status 0, the same list as the decompilation itself, and in the summary the tables
    `D_800E2FF0` and `D_800E3660` with every function their data holds.
-2. `func_800E2400`, the old name of `tryBeginBlockReaction`, removed from `build.json` and `build/game.ld`: exit status
+2. `func_800E2400`, the old name of `tryStartBarricadeSearch`, removed from `build.json` and `build/game.ld`: exit status
    1, an error at the line of `src/code_8009D7A0/func_8009DD60.c` that calls it, and
-   `src/code_800DE9C0/tryBeginBlockReaction.c` gone from the list.
+   `src/code_800DE9C0/tryStartBarricadeSearch.c` gone from the list.
 3. The table `D_800E3660` removed from both: exit status 1, an error at the line of
-   `src/code_8009D7A0/startEntityAction.c` that calls through it, and files of the table's functions gone from the list.
+   `src/code_8009D7A0/runCpuAi.c` that calls through it, and files of the table's functions gone from the list.
 4. A label added 0x10 bytes into the table `D_800E2FF0`, in both: exit status 2 and the error that a run of function
    addresses goes on from `D_800E2FF0` into the new label.
 5. A PC-only name, `port_filelist_pc_only`, declared in `include/port_decls.h` alone and used in a function added to
@@ -814,7 +814,7 @@ it reads at a time.
 3. For each call made in the set it finds the definition the call reaches, as the N64 link does: a static function of
    the caller's own file first, then the global function of that name, then a function's other name (an
    `__attribute__((alias))`, or a name that `build.json`'s `symbols` puts at a function's address, such as
-   `func_800E2400` for `tryBeginBlockReaction`). A call through a table of function addresses in overlay 2's data,
+   `func_800E2400` for `tryStartBarricadeSearch`). A call through a table of function addresses in overlay 2's data,
    such as `D_800E3660`, reaches every function the table holds, and each is rated against the type the call uses.
 4. For every argument it works out where the caller puts it and where the definition reads it, on the N64 (the first
    four argument words in `$a0` to `$a3`, an 8-byte value starting on an even word, and the first two arguments in

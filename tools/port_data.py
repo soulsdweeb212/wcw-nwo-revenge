@@ -379,7 +379,7 @@ def build_map(cc: str, jobs: int, out: Path, file_set: str) -> list[str]:
         return [v for v in views[name] if overlay == 0 or src_overlay[v[0]] in (0, overlay)]
 
     # Old names of functions: build.json keeps a renamed function's first name as a symbol at its address, and some
-    # files still call it by that name (tryBeginBlockReaction was func_800E2400). The PC link needs the same second name.
+    # files still call it by that name (tryStartBarricadeSearch was func_800E2400). The PC link needs the same second name.
     # The two overlays' functions share addresses (func_80090000 and func_80090000_ovl2), so the functions are kept by
     # overlay: an address names a function of main or of the overlay of the code that holds it.
     all_functions: dict[int, dict[int, str]] = {0: {}, 1: {}, 2: {}}
@@ -731,7 +731,7 @@ TABLES = {
     "D_800E2D58": [Ptr(UNUSED), Arr(10, Ptr(Data(1)))],               # byte tables, indexed from 1
     "D_800E2E80": Arr(6, Ptr(Data(1))),                                # textures for display lists: stay big-endian
     "D_800E2FF0": Arr(146, Ptr(FUNC)),                                 # handlers (func_8009D8D0)
-    "D_800E3660": Arr(62, Ptr(FUNC)),                                  # handlers (startEntityAction)
+    "D_800E3660": Arr(62, Ptr(FUNC)),                                  # handlers (runCpuAi)
     # overlay 1's data
     # The menus' shapes (func_8009F9A0, func_800A0420): a display list or 0, its vertices, their count and three s16.
     # Entries share vertices (0x800C9EC8 with 4, 5 and 12), and func_800A73AC reads 64 from one, so the vertices of
@@ -742,7 +742,7 @@ TABLES = {
     # table (D_800C6568 ...); on PC they index it.
     "D_800C6508": Arr(12, [Ptr(GFX), Ptr(VTX), 2, 2, 1, 1, 1, 1]),
     "D_800C93E8": Arr(19, Ptr(Data(1))),                               # texts of message ids 0x122 to 0x134
-    "D_800C9708": Arr(3, [Ptr(Data(1)), 2, 2, 2, 2]),                 # reaction texts (emitReactionSprite99B68)
+    "D_800C9708": Arr(3, [Ptr(Data(1)), 2, 2, 2, 2]),                 # reaction texts (emitTypewriterCaption)
     # The credits' lines (func_8009B66C, func_800BCDF4): text, a value, a kind and a delay; the last has no text.
     "D_800D34C8": Arr(152, [Ptr(Data(1)), 2, 1, 1]),
     # The menus' scene records (common.h's Nw2MenuScene; func_800C1370, func_800C15A0, func_800C194C, func_800BF9B8):

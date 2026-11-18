@@ -6,14 +6,14 @@
 #include "common.h"
 
 s32 func_800C2CDC(Wrestler *, s32);
-s8 tryBeginEntityGrab(void *, Wrestler *);
-void handleEntityState38To3F(Wrestler *, void *);
+s8 tryTargetBlockOrCounter(void *, Wrestler *);
+void applyDiveHitToTarget(Wrestler *, void *);
 
 /* Picks an action index from self's move id (moveId-0xDA), then finds a target
  * wrestler for it. For action 0xB a "searching" flag (0x400000) is raised on the
  * opponent and the opponent's opponent around the lookup and cleared afterwards.
- * The candidate found is validated with tryBeginEntityGrab and finally bound to
- * self by handleEntityState38To3F. Returns 0 if no valid target was found. */
+ * The candidate found is validated with tryTargetBlockOrCounter and finally bound to
+ * self by applyDiveHitToTarget. Returns 0 if no valid target was found. */
 s32 func_800DB4FC(Wrestler *self, Wrestler *opponent) {
     s16 anim;
     s16 act;
@@ -59,9 +59,9 @@ s32 func_800DB4FC(Wrestler *self, Wrestler *opponent) {
     if (target == -1) {
         return 0;
     }
-    if (tryBeginEntityGrab(&D_800F9D10[target], self) != 0) {
+    if (tryTargetBlockOrCounter(&D_800F9D10[target], self) != 0) {
         return 0;
     }
-    handleEntityState38To3F(self, &D_800F9D10[target]);
+    applyDiveHitToTarget(self, &D_800F9D10[target]);
     return 1;
 }

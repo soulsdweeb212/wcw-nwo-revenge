@@ -12,7 +12,7 @@
  *       0x100), then advance when func_800DB4FC reports the interaction finished;
  *  2 -> raise flag 0x80000000000, and when animFrame reaches anim.hitEnd lower
  *       it and push forward; once animFramesLeft runs out, either run the paired
- *       finish (func_800A7D1C 0x23, func_800B68A0, optional addEntityHealthDelta
+ *       finish (func_800A7D1C 0x23, func_800B68A0, optional addSpiritDelta
  *       of move.spiritOnFinish, then beginEntityActionA8D8C) or just end with
  *       action 0x2B. */
 extern s8 D_800FADB8;
@@ -32,7 +32,7 @@ void func_800D4AD0(void *);
 void func_800A7D1C(void *, s32);
 void func_800B68A0(void *, void *, void *);
 s8 func_800D4CC4(void *);
-void addEntityHealthDelta(void *, s8);
+void addSpiritDelta(void *, s8);
 void beginEntityActionA8D8C(void *);
 
 void updateActionStateDCD64(void) {
@@ -66,7 +66,7 @@ void updateActionStateDCD64(void) {
                 func_800A7D1C(s, 0x23);
                 func_800B68A0(D_800FAF5C, D_800FAF5C, D_800FAF5C);
                 if (func_800D4CC4(s) != 0) {
-                    addEntityHealthDelta(s, s->move.spiritOnFinish);
+                    addSpiritDelta(s, s->move.spiritOnFinish);
                 }
                 beginEntityActionA8D8C(s);
             } else {

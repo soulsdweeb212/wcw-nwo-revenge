@@ -24,7 +24,7 @@ void func_80001DC4(void *);
 void func_800A1C04(void);
 void func_800C1F24(void);
 void func_80090738(s32);
-void updateRingCornerFlags(void);
+void updateRingSideDrawGroups(void);
 void func_800C3110(s32, s32);
 void func_80010E6C(void);
 void func_80012CD0(void);
@@ -48,7 +48,7 @@ void func_800C5214(s32 a) {
         func_800C1F24();
     }
     func_80090738(D_800D5F20);
-    updateRingCornerFlags();
+    updateRingSideDrawGroups();
     if (a != 1) {
         func_800C3110(0, D_800D5F18);
         func_800C3110(1, D_800D5F18);

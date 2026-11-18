@@ -11,7 +11,7 @@ void func_800D4AD0(Wrestler *);
 void func_800D4B10(Wrestler *);
 void func_800D427C(Wrestler *, s16, s32);
 s16 func_800D5438(Wrestler *, s32);
-void unpackAnimationParameters(void *, void *);
+void unpackMoveRecord(void *, void *);
 
 /* Enter state st: step, stepFlags and pairSignals cleared, flags bits 0x10810000000 cleared and 0x1000000000 set;
  * func_800DECAC(w, 0, 0, 0) only zeroes D_800F98D0[w->id]. */
@@ -30,7 +30,7 @@ static inline void load83(Wrestler *w, s8 owner, s16 moveId)
     w->moveOwnerId = owner;
     w->moveId = moveId;
     tbl = &D_80075468[0x10] + w->moveOwnerId * 0x1A30;
-    unpackAnimationParameters(&w->move, tbl + moveId * 0x18);
+    unpackMoveRecord(&w->move, tbl + moveId * 0x18);
     if (moveId < 0xEF) {
         if (w->move.flags & 0x8000) {
             w->flags |= 0x4000000000000000ULL;

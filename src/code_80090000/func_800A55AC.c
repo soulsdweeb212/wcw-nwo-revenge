@@ -37,7 +37,7 @@ T *func_800B7A00(G **, s32, s32);
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_8002AD34 */
 void *func_8002AD34(s32, s32);
 #endif
-void *lookupPlayerNameById(void *, void *);
+void *getJoinedNamePair(void *, void *);
 void func_800B7260(G **, s32, s32, s32);
 
 #define EMIT(a, b) { G *_g = g++; _g->w0 = (a); _g->w1 = (b); }
@@ -69,7 +69,7 @@ void func_800A55AC(G **dl, Item *it, u32 k) {
     e = &D_800EA0D8[(k >> 4) & 1][k & 0xF];
 #ifdef TARGET_PC
     if (e->fA) { /* PC: the names' addresses as keys, as above */
-        t = func_800B75D4(&g, MENU_KEY_NAME(lookupPlayerNameById(func_8002AD34(e->f4 & 0xFFF, (e->f4 >> 12) & 3),
+        t = func_800B75D4(&g, MENU_KEY_NAME(getJoinedNamePair(func_8002AD34(e->f4 & 0xFFF, (e->f4 >> 12) & 3),
                                                                  func_8002AD34(e->fA & 0xFFF, (e->fA >> 12) & 3))),
                           f | 8);
     } else {
@@ -77,7 +77,7 @@ void func_800A55AC(G **dl, Item *it, u32 k) {
     }
 #else
     if (e->fA) {
-        t = func_800B75D4(&g, lookupPlayerNameById(func_8002AD34(e->f4 & 0xFFF, (e->f4 >> 12) & 3),
+        t = func_800B75D4(&g, getJoinedNamePair(func_8002AD34(e->f4 & 0xFFF, (e->f4 >> 12) & 3),
                                                    func_8002AD34(e->fA & 0xFFF, (e->fA >> 12) & 3)), f | 8);
     } else {
         t = func_800B75D4(&g, func_8002AD34(e->f4 & 0xFFF, (e->f4 >> 12) & 3), f | 8);
@@ -90,7 +90,7 @@ void func_800A55AC(G **dl, Item *it, u32 k) {
     EMIT(0x07000206, 0x604);
     drawId(&g, e->f0, f);
     if (e->fC[0]) {
-        name = lookupPlayerNameById(e->f6, e->fC);
+        name = getJoinedNamePair(e->f6, e->fC);
     } else {
         name = e->f6;
     }

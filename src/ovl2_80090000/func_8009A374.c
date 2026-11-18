@@ -9,9 +9,9 @@ typedef struct { u8 pad[0xC]; } View;
 
 void func_8009A75C(s16);
 void setupTiltedPerspectiveCamera(void *, f32, f32, f32, f32, f32, f32, f32);
-void updateRingCornerFlags(void);
+void updateRingSideDrawGroups(void);
 void func_8000EDC4(void);
-void updatePartPositions(s16);
+void updatePartDrawGroups(s16);
 void func_8000CD18(s16, f32, f32);
 void func_800018C4(void *, f32 *, u8, u8);
 s8 func_800D633C(void);
@@ -23,7 +23,7 @@ void func_80001EA8(s32);
 void func_800942F0(s16);
 void func_80098560(void);
 void func_80002BC0(void *);
-void tickPlayerScripts(void);
+void stepCharacterLoad(void);
 
 extern u8 D_800651A0[];
 extern u8 D_800E2FA6;
@@ -47,13 +47,13 @@ void func_8009A374(s16 arg0) {
     setupTiltedPerspectiveCamera(&D_800EB360[D_800E2FA8], D_800EB3A4 * 0.017453292519943295,
                                  D_800EB37C[0], D_800EB37C[1], D_800EB37C[2], D_800EB388[0],
                                  D_800EB388[1], D_800EB388[2]);
-    updateRingCornerFlags();
+    updateRingSideDrawGroups();
     if (arg0 == 0 && !(D_800E2FAC & 0xF)) {
         func_8000EDC4();
     }
     for (n = 0, i = 0; i < 4; i++) {
         if (D_800FACEA[i] >= 0) {
-            updatePartPositions(i);
+            updatePartDrawGroups(i);
             func_8000CD18(i, 90.0f, 0.0f);
             if (D_800E2FAC % D_800EB378 == n) {
                 func_800018C4(D_800651A0 + i * 0x13C4, D_800EB394, D_800E2FA6, D_800E2FA7);
@@ -70,7 +70,7 @@ void func_8009A374(s16 arg0) {
     func_800942F0(arg0);
     func_80098560();
     func_80002BC0(&D_800EB360[D_800E2FA8]);
-    tickPlayerScripts();
+    stepCharacterLoad();
     D_800E2FA8 ^= 1;
     D_800E2FAC++;
 }

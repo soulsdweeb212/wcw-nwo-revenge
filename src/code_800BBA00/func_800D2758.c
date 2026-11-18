@@ -12,7 +12,7 @@ typedef struct
     f32 f4;
     s32 f8;
 } TgtCandidate;
-void collectLinkedTargets(void *, void *, void *, u64);
+void listWrestlersByDistance(void *, void *, void *, u64);
 s32 func_800D3550(s32);
 s32 func_800D3684(s32, s32);
 s32 func_800D35B0(s32, s32);
@@ -34,7 +34,7 @@ s8 func_800D2758(Wrestler *arg0, f32 arg1, u16 arg2, s8 arg3, s16 arg4)
     {
         arg2 = 0xF00;
     }
-    collectLinkedTargets(arg0, &arg0->jointA[1], buf, arg0->flags & WR_FLAG_ZONE_MASK);
+    listWrestlersByDistance(arg0, &arg0->jointA[1], buf, arg0->flags & WR_FLAG_ZONE_MASK);
     s5 = -1;
     for (s1 = 0; s1 < 4; s1++)
     {

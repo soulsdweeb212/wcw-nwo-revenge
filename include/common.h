@@ -30,7 +30,7 @@ extern s32 D_800D6D30;
 /* Sub-words of the D_8007E228 bss block. Declare these as PLAIN SCALARS:
  * KMC then emits a direct `lw/lhu sym` (expanded to lui+lw), which is what the
  * ROM does. Writing `*(u32*)(D_8007E228 + 0x620)` makes KMC LICM-hoist the
- * invariant address out of loops instead (see pickPresentControllerEntity). */
+ * invariant address out of loops instead (see pickPostMatchFocusSlot). */
 extern u32 D_8007E848; /* "present" bitmask word at D_8007E228+0x620 */
 extern u16 D_8007E280; /* u16 flags word at D_8007E228+0x58 */
 
@@ -451,7 +451,7 @@ extern f64 D_800E76B8;
  * D_800F9D3C entity word bit2, state7 ->0x10 iff entity u64 flags
  * D_800F9D30 contain 0x10000000000ULL; otherwise zero. */
 
-/* Matched BF62C: void addEntityHealthDelta(void *entity, s32 delta);
+/* Matched BF62C: void addSpiritDelta(void *entity, s32 delta);
  * Adds delta to s16 +0x14 unless u64 flags +0x20 contain 0xE0000.
  * At >=100 clamps to 99 when flag1 set, otherwise 100 and sets 0x40000.
  * At <=0 clamps to zero and sets 0x20000. Keep prototype local. */
@@ -676,9 +676,9 @@ typedef struct {
     s32 angle;
 } Nw2TargetCandidate;
 /* Gameplay-overlay signatures (declare locally for legacy callers):
- * void collectLinkedTargets(void *entity, void *position, void *outCandidates, u64 flags);
+ * void listWrestlersByDistance(void *entity, void *position, void *outCandidates, u64 flags);
  * void func_80096E2C(s32 entityId, s32 targetId);
- * s8 selectNewLinkedTarget(void *entity, s32 flags);
+ * s8 switchTargetOpponent(void *entity, s32 flags);
  */
 
 /* __osInsertTimer: delta-time timer queue; value is remaining relative delay. */
@@ -718,11 +718,11 @@ typedef struct Nw2TimerQueueEntry {
  * Calls void func_800A7C40(void *,s8,s16), void func_800A7F6C(void *,s32).
  */
 
-/* snapEntityToRingBoundary(u8 *entity): clears u64 flags10000000,
+/* snapEntityToApronLine(u8 *entity): clears u64 flags10000000,
  * stores getXZDirectionQuadrant(position+6C) to s16+3C, copies X/Z
  * to +4C/+54 and table D_800E3CA0[quadrant] to s32+58, then snaps
  * quadrant-selected X/Z to +/-265. D_800E3CA0 is s32[4]. */
-void snapEntityToRingBoundary(Wrestler *);
+void snapEntityToApronLine(Wrestler *);
 
 /* Matched 9903C/99148/99254/99364: 64 resource-cache entries at D_800E7CE0,
  * stride 20, key at +8, s16 parameters +C/+E, secondary key +10.
@@ -794,7 +794,7 @@ typedef struct {
 /* Matched 0F4FC: D_80036CAC is s8[]; D_80036CB4/CCC/CE4 are pointer tables.
  * D_80058A10/D_80058FA0 are 1408-byte buffers; D_80058A0C/D_80058F90
  * hold their s32 counts, D_80059D82 is s16 selection index.
- * void freeResourceDescriptorArray(void *,s32,s8);
+ * void freeDisplayRecordArray(void *,s32,s8);
  * s32 func_80007020(void *,void *,void *,s8);
  * void func_80007818(void *,void *,s32,s32);
  * Keep declarations local to accommodate legacy callers. */
@@ -1080,7 +1080,7 @@ typedef union {
  * D_800FADB8 s8 entity index, D_800FADBE/D_800F9B70 s16[], D_800FAF8E u16[],
  * D_800F9B14 s32 animation id, D_800FAF78 s8, D_800FAF8A u16.
  * s16 updateEntityHealthLevel(void *); void func_800E1560(void *,s32);
- * s8 func_800A93C0(void); s8 selectNewLinkedTarget(void *,s32);
+ * s8 func_800A93C0(void); s8 switchTargetOpponent(void *,s32);
  * void func_800A7240(void *,s32,s32,u64). Declare these locally.
  * Struct layout can be copied from the matched source (not added here to avoid
  * typedef conflicts with that source).
@@ -1089,11 +1089,11 @@ typedef union {
  * places the cold else block after the whole case (matches this function).
  * Case2's A7240 call needs a temp for D_800F9B14 to load a1 before a0. */
 
-/* Matched BFB20: s32 readEntityStunState(s8 entityId,s16 *level,s16 *extra).
+/* Matched BFB20: s32 getSpiritMeterDisplay(s8 entityId,s16 *level,s16 *extra).
  * Reads signed level at D_800F9D24 (entity+14), clamps ordinary levels
  * to 1..99 unless zero flag20000; flag80000 gives100 and BF700(entity,0,4).
  * Returns whether high-word flag400 (u64 mask40000000000) is set.
- * s16 updateEntityStunTimer(void *,s32,s32); keep prototype local for legacy callers. */
+ * s16 updateSpiritTimers(void *,s32,s32); keep prototype local for legacy callers. */
 
 /* Matched E0420: s32 tryBeginPairedActionOnContact(u8 *source,u8 *target,f32 distance).
  * Global D_8007EF30+170 bit100 OR source flag40 permits paired actions36/37;
@@ -1177,7 +1177,7 @@ typedef struct {
  * waits for PI idle, updates cached domain timings, reads uncached base|address.
  * s32 osEPiRawReadIo(Nw2PiHandle *,u32,u32 *); declare locally for legacy types. */
 
-/* Matched AC208: s8 requestAttachmentAction(void); maps attachment halfword IDs
+/* Matched AC208: s8 aiTryProfileMove(void); maps attachment halfword IDs
  * (+24 if action s16+24>=65, else +26), minus1, into actions36..3C/2F/30.
  * Keep declaration local for legacy callers. */
 
@@ -1264,7 +1264,7 @@ void func_800A700C(Wrestler *);
  * BF62C takes an s32 delta even when the source field is signed byte +3A2.
  * Keep declarations local for legacy callers:
  * s8 func_800DB4FC(void *,void *); s8 func_800D4CC4(void *);
- * void addEntityHealthDelta(void *,s32);
+ * void addSpiritDelta(void *,s32);
  */
 
 /* 90738: 48 transform/effect records at D_800D6D50, stride 0x178.
@@ -1599,7 +1599,7 @@ typedef struct { u8 reserved0[0x60]; s32 key; u8 reserved64[0x5A]; s16 valueBE; 
  * Using its scalar symbol avoids KMC caching the array-offset address across calls. */
 extern s8 D_8007E2BA;
 
-/* freeResourceDescriptorArray (800072E8): (void *base, void *allocation, s16 count).
+/* freeDisplayRecordArray (800072E8): (void *base, void *allocation, s16 count).
  * 0x2C descriptor stride: active u8+0, owned buffers+C/+10/+14,
  * cached shared buffer+18, owned buffer+1C, pool marker+28.
  * Nonzero pool marker suppresses freeing the first three buffers.
@@ -1765,10 +1765,10 @@ typedef struct { f32 pitch, yaw, roll; } Nw2TargetLookAngles;
  * first usable inode+60, bank count byte64, selected bank byte65.
  * Keep prototype local for legacy callers. */
 
-/* Matched DEF84: s32 tryEntityAttackDEF84(u8 *entity,u16 input,u16 triggers,u16 directionMask).
+/* Matched DEF84: s32 tryMoveThroughRopes(u8 *entity,u16 input,u16 triggers,u16 directionMask).
  * All three masks MUST be u16 for exact incoming/saved-register copies.
  * Local helper signatures: s16 func_800D7A68(u16), func_800D7A2C(u16);
- * s8 checkEntityAttackHit(void *,u16); s16 func_800A76FC(void *,u16).
+ * s8 tryTagExchange(void *,u16); s16 func_800A76FC(void *,u16).
  * Keep prototypes local for compatibility with legacy callers. */
 
 /* Confirmed CC158/CCC64: void func_800CCC64(void *entity,void *target,u32 input)
@@ -2295,7 +2295,7 @@ typedef struct {
 _Static_assert(offsetof(Nw2Cup, list) == 0x10 && sizeof(Nw2Cup) == 0x18, "a cup is 0x18 bytes on a 64-bit PC");
 
 /* ---- The name buffers: the 40 entries at D_8007FC3C (func_80028D18) ----
- * A buffer for a text and the two keys it was made for. A key can be a name's address (lookupPlayerNameById passes
+ * A buffer for a text and the two keys it was made for. A key can be a name's address (getJoinedNamePair passes
  * two), so on PC the keys are as wide as a pointer, and an entry is 0x50 bytes (0x48 on the N64); func_8002AA28
  * allocates the 40 by this size. */
 typedef struct {

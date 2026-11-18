@@ -14,7 +14,7 @@ s32 func_800D23B4(Wrestler *, Wrestler *, Nw2DirectionResult *);
  * returns 1 when tryStartPairedEntityActions(self, other, arg2, dir->y) starts something. Otherwise: self in
  * state 0x17 re-arms flag 0x20000000000; with neither flag bit 0x1 nor 0x8 it starts action 0x44. With one of
  * them, func_800D23B4(self, other, dir) starts 0x44 at step 4; failing that flag 0x0100000000000000 is set and a
- * self not WR_FLAG_ON_APRON starts 0x1E, while an apron self picks 0x1B / 0x1C / 0x1D like chooseDodgeAction
+ * self not WR_FLAG_ON_APRON starts 0x1E, while an apron self picks 0x1B / 0x1C / 0x1D like chooseApronStrikeState
  * (ringSide tables against arg2, then other's zone; nothing when other is in no zone). Returns 1. */
 s32 func_800DFDD4(Wrestler *self, Wrestler *other, s32 arg2, Nw2DirectionResult *dir)
 {

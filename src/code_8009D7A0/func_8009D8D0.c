@@ -27,7 +27,7 @@ extern u8 D_800F9B14[];
 s32 func_800A93C0(void);
 void func_800A712C(void *, void *, void *, void *);
 void func_800BF26C(void *);
-void updateEntityStunTimer(void *, s32, s32);
+void updateSpiritTimers(void *, s32, s32);
 void func_800C02E4(void *);
 void func_800D7B54(void *, u16, u16, s32);
 void func_800D90E8(void *);
@@ -103,7 +103,7 @@ void func_8009D8D0(void) {
 #endif
     D_800EB408->ringSide = getXZDirectionQuadrant(&D_800EB408->x);
     updateEntityStatus43Timer(D_800EB408, 1);
-    updateEntityStunTimer(D_800EB408, 0, 2);
+    updateSpiritTimers(D_800EB408, 0, 2);
     func_800D90E8(D_800EB408);
     func_800D91C0(D_800EB408);
     func_800BF26C(D_800EB408);

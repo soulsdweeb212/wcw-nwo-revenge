@@ -25,7 +25,7 @@ running game yet.
 - [Health, spirit, special, counts](#health-spirit-special-counts)
 - [Field map](#field-map)
 - [The flag word (+0x20)](#the-flag-word-0x20)
-- [Function names that are wrong](#function-names-that-are-wrong)
+- [Renamed functions](#renamed-functions)
 - [Open questions](#open-questions)
 
 ## Where the records are and how they are updated
@@ -47,7 +47,7 @@ running game yet.
 - **Every tick (1/30 s).** `func_800BBA00` runs the match:
   1. `copyPartCoordinateFields` copies the skeleton's joint positions into the records.
   2. Each wrestler is updated by `func_800BBFD8`:
-     - it reads the controller of its port, or, when flag `0x4` (CPU) is set, runs the AI (`startEntityAction`, table
+     - it reads the controller of its port, or, when flag `0x4` (CPU) is set, runs the AI (`runCpuAi`, table
        `D_800E3660`), which presses virtual buttons;
      - it calls `func_8009D8D0`, which sets the role pointers below, clears the per-tick flags, updates side, spirit and
        health timers, and calls the handler for the current state from the 146-entry table `D_800E2FF0[state]`.
@@ -67,7 +67,7 @@ running game yet.
 | `D_800FABE0` (= `D_800EB410`) | its tag partner (itself if none) | `+0x355` |
 | `D_800F9B64` (= `D_800EB414`) | whoever is holding or attacking it | `+0x351` |
 | `D_800FAF7C` (= `D_800EB418`) | the second attacker of a double team | `+0x352` |
-| `D_800FAF58`, `D_800F9B60`, `D_800FAF80`, `D_800FADDC` | AI only: self, opponent, partner, partner's opponent | set by `startEntityAction` |
+| `D_800FAF58`, `D_800F9B60`, `D_800FAF80`, `D_800FADDC` | AI only: self, opponent, partner, partner's opponent | set by `runCpuAi` |
 
 ## Coordinates
 
@@ -155,7 +155,7 @@ A map of the arena in world units, seen from above (not to scale), Y up:
 - **`dirIndex` (`+0x3E`)**: a side or corner index for the current action, so its meaning depends on the state. It
   can be:
   - the rope side you run into or walk along;
-  - the corner post you climb (from `findBoundaryQuadrant`, -1 = none nearby);
+  - the corner post you climb (from `findNearbyCornerPost`, -1 = none nearby);
   - the direction you approach a downed opponent from.
 
 **Boundaries.** `func_800D2CAC` clamps a wrestler to one of 13 boxes in `D_800E3D30`, chosen by zone and side. Each box
@@ -171,7 +171,7 @@ is {maxZ, maxX, minZ, minX}:
 | 1, 2 | whole arena, ring platform | never selected |
 
 - In the ring and on the floor, the box is applied to the centre of the joints' bounding box, padded by ±30. On the
-  apron it is applied to the root, and `snapEntityToRingBoundary` puts the root back on the 265 line facing the ring.
+  apron it is applied to the root, and `snapEntityToApronLine` puts the root back on the 265 line facing the ring.
 - The function sets a bit for each wall touched. Those bits feed the "against the ropes / barricade / aisle rail"
   reactions.
 
@@ -459,19 +459,52 @@ Likely, from consistent use:
 `func_8009D8D0` clears the per-tick bits (`0x2C407C7110500000`) at the start of every update; `0x200000204` survives a
 match reset.
 
-## Function names that are wrong
+## Renamed functions
 
-Earlier passes named these from partial reads. The mapping shows what they really do; they should be renamed when the
-overlay functions are named:
+Earlier passes named some functions from partial reads, and those names said something the code does not do. They
+were renamed once the code was read in full; the old names may still appear in older notes:
 
-| function | what it does |
-| :-- | :-- |
-| `startEntityGrapple` | walking collision: two wrestlers bump (state 5), or a blocker / rope-runner reacts |
-| `updateEntityStunTimer`, `addEntityHealthDelta` | both act on spirit (`+0x14`) and its timers, not stun or health |
-| `updateEntityBoundaryFlags` | picks which way to move along a rope or apron side (states 0xD and 15), from the d-pad and who is in the way |
-| `updateRingLeapAction` | approach offsets around an opponent by the attacker's direction relative to the opponent's facing; not the ring |
-| `updateEntityGrabActionState` | strike on a downed opponent (states 0x24/0x55/0x56) |
-| `snapEntityToRingBoundary` | the apron snap: root onto the 265 line, facing the ring; it does not move the joints |
+| old name | new name | what it does |
+| :-- | :-- | :-- |
+| `startEntityGrapple` | `resolveWalkCollision` | walking collision: two wrestlers bump (state 5), or a blocker / rope-runner reacts |
+| `updateEntityStunTimer` | `updateSpiritTimers` | spirit's drift timer and the timers of flags 0x20000, 0x40000 and 0x80000 (mode 4 returns the SPECIAL timer) |
+| `addEntityHealthDelta` | `addSpiritDelta` | adds to spirit (`+0x14`), not health |
+| `updateEntityBoundaryFlags` | `chooseRopeDragDirection` | picks which way to move along a rope or apron side (states 0x0D and 0x0F), from the d-pad and who is in the way |
+| `updateRingLeapAction` | `updateDownedOpponentAttack36` | state 0x36, started on a downed opponent; approach offsets by the attacker's direction relative to the opponent's facing, nearly the same as state 0x30's handler |
+| `updateEntityGrabActionState` | `updateStompState` | strike on a downed opponent (states 0x24/0x55/0x56) |
+| `snapEntityToRingBoundary` | `snapEntityToApronLine` | the apron snap: root onto the 265 line, facing the ring; it does not move the joints |
+| `startEntityAction` | `runCpuAi` | the CPU wrestler's think step: runs its behaviour from `D_800E3660`, which presses virtual buttons |
+| `unpackAnimationParameters` | `unpackMoveRecord` | unpacks one 0x18-byte move-table entry into `move` (`+0x38C`) |
+| `tryApplyHitReaction` | `tryReverseOpponentMove` | the reversal window: R pressed in the 2 frames before the attacker's hit lands |
+| `collectLinkedTargets` | `listWrestlersByDistance` | the other wrestlers present, sorted by pelvis distance |
+| `selectNewLinkedTarget` | `switchTargetOpponent` | sets `opponentId` (`+0x353`) to the nearest wrestler that is neither partner nor current opponent |
+| `advanceMovePhase` | `aiWalkToOpponent` | CPU behaviour 0x21: holds the d-pad toward the opponent until closer than 125 |
+| `requestAttachmentAction` | `aiTryProfileMove` | CPU chance roll that maps a profile move (`+0x24`/`+0x26`) to behaviours 0x2F..0x3C |
+| `updateActionObjectHandoff` | `updateGrappleMoveVictimState` | state 0x4A, taking a grapple move; on a reversal it takes over as leader (0x49) |
+| `updateEntityCounterAttackState` | `updatePinnerState` | states 0x38/0x3E, the pinner: sets the pin flag and waits for a release or the opponent losing |
+| `updateGrabAction` | `updateStrikeState21` | state 0x21, a strike (move 0xB4) |
+| `readEntityStunState` | `getSpiritMeterDisplay` | spirit and the SPECIAL timer as the HUD shows them |
+| `pickPresentControllerEntity` | `pickPostMatchFocusSlot` | after the match, the winner's slot (or a human loser's) from the result bits `D_8007E848` |
+| `checkEntityAttackHit` | `tryTagExchange` | the tag: legal man and partner on the apron within reach start states 0x7F/0x80 |
+| `tryEntityAttackDEF84` | `tryMoveThroughRopes` | standing with C-up toward a side: states 0x60/0x61 (between ring, apron and floor) or a tag |
+| `chooseDodgeAction` | `chooseApronStrikeState` | picks an apron strike (states 0x1B..0x1D) |
+| `tryBeginEntityGrab` | `tryTargetBlockOrCounter` | the target's block (0x40) or counter (0x5C) of an incoming dive or strike |
+| `tryBeginBlockReaction` | `tryStartBarricadeSearch` | on the floor, C-up toward the barricade: state 0x7D, which rolls and may claim a field slot |
+| `setupEntityFacingGroup` | `beginDoubleTeam` | starts a double team: states 0x76 (lead), 0x77 (helper), 0x78 (victim) |
+| `tryStartFacingGroupAtGate` | `tryJoinDoubleTeam` | the partner joins a teammate's tie-up as a double team |
+| `updateEntityThrownState` | `updateRopeDragLeaderState` | states 0x0D/0x0F, the leader of a pair dragged along the ropes or the apron |
+| `updateSpecialMoveRequest` | `updateTagPartnerReturnRequest` | a non-legal tag wrestler's request to go back to the corner (state 0x7E) |
+| `isEntityEligibleForSpecialAction` | `canTagPartnerInterfere` | whether a non-legal tag partner may come in; drives a HUD icon |
+| `findBoundaryQuadrant` | `findNearbyCornerPost` | which corner post (±230) is within a radius of a position, or -1 |
+| `handleEntityState38To3F` | `applyDiveHitToTarget` | applies a dive or strike hit to its target (breaks up a pin or hold when there is one) |
+| `updatePlayerEntryStates` | `syncFieldSlotsToRender` | passes the four field slots at `D_800F98E0` (not players) to the renderer |
+| `updatePartPositions` | `updatePartDrawGroups` | sets each part node's draw group from its position; moves nothing |
+| `buildFadeColorDisplayList` | `buildRopeTriangleList` | the ring ropes' shaded triangles |
+| `lookupPlayerNameById` | `getJoinedNamePair` | builds a cached "A & B" text from two names |
+| `emitReactionSprite99B68` | `emitTypewriterCaption` | a caption revealed one character per tick, with a sound, then faded out |
+| `tickPlayerScripts` | `stepCharacterLoad` | loads a newly asked-for character into a slot, one step per tick |
+| `freeResourceDescriptorArray` | `freeDisplayRecordArray` | frees an array of 0x2C-byte display records, not ROM descriptors |
+| `updateRingCornerFlags` | `updateRingSideDrawGroups` | a camera test on the four sides of the ±280 platform, writing their draw groups |
 
 ## Open questions
 

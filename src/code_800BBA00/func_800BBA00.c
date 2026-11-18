@@ -13,7 +13,7 @@ void func_800BBFD8(void);
 void func_800D43DC(void);
 void func_800D54A0(void);
 void updateFieldRecordMotion(void);
-void updatePlayerEntryStates(void);
+void syncFieldSlotsToRender(void);
 void func_800A712C(void *, void *, s32 *, f32 *);
 void func_800A7240(void *, s32, s32, u64);
 #ifdef TARGET_PC
@@ -127,7 +127,7 @@ void func_800BBA00(void)
     D_800EB466 = (D_800EB466 + 1) & 3;
     i = 0;
     updateFieldRecordMotion();
-    updatePlayerEntryStates();
+    syncFieldSlotsToRender();
     for (; i < 4; i++)
     {
         if (D_800F9D10[i].flags & 4)

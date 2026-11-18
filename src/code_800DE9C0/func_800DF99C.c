@@ -7,7 +7,7 @@
 
 s32 func_800A9208(void *, s32 *);
 f32 func_800D3EEC(void *, void *, s32);
-void chooseDodgeAction(Wrestler *, Wrestler *, s32, Nw2DirectionResult *);
+void chooseApronStrikeState(Wrestler *, Wrestler *, s32, Nw2DirectionResult *);
 
 /* Contact/counter reaction test between self and target.  It clears self flag
  * 0x20000000000, and when mask bit 0x4000 is set also clears flag
@@ -21,7 +21,7 @@ void chooseDodgeAction(Wrestler *, Wrestler *, s32, Nw2DirectionResult *);
  * and not 0x0400000000000000, info->y is below the same gap + D_800E76B8 and the
  * reverse heading delta is under 0x200, it starts 0x25; else it re-arms flag
  * 0x20000000000 when self is in state 0x17 and starts 0x1E.  A self in
- * neither zone but WR_FLAG_ON_APRON defers to chooseDodgeAction. */
+ * neither zone but WR_FLAG_ON_APRON defers to chooseApronStrikeState. */
 s8 func_800DF99C(Wrestler *self, Wrestler *target, u16 mask, Nw2DirectionResult *info) {
     u64 flags;
     flags = self->flags;
@@ -51,7 +51,7 @@ s8 func_800DF99C(Wrestler *self, Wrestler *target, u16 mask, Nw2DirectionResult 
             return 1;
         }
         if (flags & WR_FLAG_ON_APRON) {
-            chooseDodgeAction(self, target, mask & 0xFFFF, info);
+            chooseApronStrikeState(self, target, mask & 0xFFFF, info);
             return 1;
         }
         return 0;

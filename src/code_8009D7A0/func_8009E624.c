@@ -35,7 +35,7 @@ s8 func_800B4C60(void *, void *, s32, s32);
 s8 func_800B61EC(void *, void *, s32, s32);
 s8 func_800B5730(void *, void *, u16, u16, s8, f32);
 s8 func_800B5CA0(void *, void *, s32, f32);
-s8 updateSpecialMoveRequest(void *);
+s8 updateTagPartnerReturnRequest(void *);
 
 void func_8009E624(void) {
     D_800EB408->flags |= 0x100000ULL;
@@ -91,7 +91,7 @@ void func_8009E624(void) {
         }
         break;
     case 2:
-        if (updateSpecialMoveRequest(D_800EB408)) {
+        if (updateTagPartnerReturnRequest(D_800EB408)) {
             D_800EB408->step++;
             break;
         }

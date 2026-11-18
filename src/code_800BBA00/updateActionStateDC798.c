@@ -39,7 +39,7 @@ void func_800A7D1C(void *, s32);
 void func_800B68A0(void *, void *, void *);
 void func_800D4AD0(void *);
 s8 func_800D4CC4(void *);
-void addEntityHealthDelta(void *, s32);
+void addSpiritDelta(void *, s32);
 void beginEntityActionA8D8C(void *);
 s8 func_800DB4FC(void *, void *);
 void func_800C38FC(s8 *, u64, s32);
@@ -135,7 +135,7 @@ void updateActionStateDC798(void)
                     func_800B68A0(D_800FAF5C, D_800FAF5C, D_800FAF5C);
                     if (func_800D4CC4(o))
                     {
-                        addEntityHealthDelta(o, o->move.spiritOnFinish);
+                        addSpiritDelta(o, o->move.spiritOnFinish);
                     }
                     beginEntityActionA8D8C(o);
                     break;

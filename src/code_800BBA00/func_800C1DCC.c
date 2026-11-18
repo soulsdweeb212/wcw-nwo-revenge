@@ -18,12 +18,12 @@ extern f64 D_800E5910;
 s8 func_800D8DF0(void *);
 void func_800A7240(void *, s32, s32, u64);
 void func_800BF548(void *, s32);
-void updateEntityStunTimer(void *, void *, s32);
+void updateSpiritTimers(void *, void *, s32);
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2670 and func_800D2B64 */
 void func_800D2670(void *, s32);
 void func_800D2B64(void *, s32, s32, s32);
 #endif
-s16 findBoundaryQuadrant(void *, s32, s32);
+s16 findNearbyCornerPost(void *, s32, s32);
 s32 func_800D35B0(s32, s32);
 void func_800D3890(void *, f32 *, void *);
 void func_800D427C(void *, s16, s32);
@@ -53,7 +53,7 @@ void func_800C1DCC(void) {
     }
     D_800FAF5C->knockdowns = 0;
     func_800BF548(D_800FAF5C, 1);
-    updateEntityStunTimer(D_800FAF5C, D_800F9B00, 1);
+    updateSpiritTimers(D_800FAF5C, D_800F9B00, 1);
     if (D_800FAF5C->flags & WR_FLAG_IN_RING) {
         func_800D427C(D_800FAF5C, func_800D4D44(D_800FAF5C, 0, D_800F9B0C), 3);
         q = getXZDirectionQuadrant(&D_800FAF5C->jointA[1].x);
@@ -80,7 +80,7 @@ void func_800C1DCC(void) {
         func_800D2670(D_800FAF5C, 0x40000000);
         func_800D2B64(D_800FAF5C, 0x3F800000, 0, 2);
 #endif
-        if ((s16)findBoundaryQuadrant(D_800FAF5C, 0, 3) == s0) {
+        if ((s16)findNearbyCornerPost(D_800FAF5C, 0, 3) == s0) {
             D_800FAF5C->dirIndex = (s16)q;
             func_800A6C48(D_800FAF5C, 0x60);
             func_800E212C(D_800FAF5C);

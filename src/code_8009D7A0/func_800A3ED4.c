@@ -20,8 +20,8 @@ typedef s32 M2C_UNK32;
 #define M2C_OVERFLOW(a) (0)
 #endif
 
-M2C_UNK updateEntityGrabActionState();                            /* extern */
+M2C_UNK updateStompState();                            /* extern */
 
 void func_800A3ED4(void) {
-    updateEntityGrabActionState();
+    updateStompState();
 }

@@ -1046,13 +1046,13 @@
       "base_path": "build/src/main/func_80007020.o"
     },
     {
-      "name": "main/freeResourceDescriptorArray",
-      "target_path": "build/asm/nonmatchings/main/freeResourceDescriptorArray.o",
+      "name": "main/freeDisplayRecordArray",
+      "target_path": "build/asm/nonmatchings/main/freeDisplayRecordArray.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/main/freeResourceDescriptorArray.c"
+        "source_path": "src/main/freeDisplayRecordArray.c"
       },
-      "base_path": "build/src/main/freeResourceDescriptorArray.o"
+      "base_path": "build/src/main/freeDisplayRecordArray.o"
     },
     {
       "name": "main/func_800074A4",
@@ -1674,13 +1674,13 @@
       "base_path": "build/src/main/func_8000D238.o"
     },
     {
-      "name": "main/updatePartPositions",
-      "target_path": "build/asm/nonmatchings/main/updatePartPositions.o",
+      "name": "main/updatePartDrawGroups",
+      "target_path": "build/asm/nonmatchings/main/updatePartDrawGroups.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/main/updatePartPositions.c"
+        "source_path": "src/main/updatePartDrawGroups.c"
       },
-      "base_path": "build/src/main/updatePartPositions.o"
+      "base_path": "build/src/main/updatePartDrawGroups.o"
     },
     {
       "name": "main/func_8000D424",
@@ -1737,13 +1737,13 @@
       "base_path": "build/src/main/func_8000DC50.o"
     },
     {
-      "name": "main/tickPlayerScripts",
-      "target_path": "build/asm/nonmatchings/main/tickPlayerScripts.o",
+      "name": "main/stepCharacterLoad",
+      "target_path": "build/asm/nonmatchings/main/stepCharacterLoad.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/main/tickPlayerScripts.c"
+        "source_path": "src/main/stepCharacterLoad.c"
       },
-      "base_path": "build/src/main/tickPlayerScripts.o"
+      "base_path": "build/src/main/stepCharacterLoad.o"
     },
     {
       "name": "main/func_8000DE40",
@@ -1971,13 +1971,13 @@
       "base_path": "build/src/main/func_8000F710.o"
     },
     {
-      "name": "main/buildFadeColorDisplayList",
-      "target_path": "build/asm/nonmatchings/main/buildFadeColorDisplayList.o",
+      "name": "main/buildRopeTriangleList",
+      "target_path": "build/asm/nonmatchings/main/buildRopeTriangleList.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/main/buildFadeColorDisplayList.c"
+        "source_path": "src/main/buildRopeTriangleList.c"
       },
-      "base_path": "build/src/main/buildFadeColorDisplayList.o"
+      "base_path": "build/src/main/buildRopeTriangleList.o"
     },
     {
       "name": "main/func_8000FAF8",
@@ -2079,13 +2079,13 @@
       "base_path": "build/src/main/func_80011320.o"
     },
     {
-      "name": "main/updateRingCornerFlags",
-      "target_path": "build/asm/nonmatchings/main/updateRingCornerFlags.o",
+      "name": "main/updateRingSideDrawGroups",
+      "target_path": "build/asm/nonmatchings/main/updateRingSideDrawGroups.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/main/updateRingCornerFlags.c"
+        "source_path": "src/main/updateRingSideDrawGroups.c"
       },
-      "base_path": "build/src/main/updateRingCornerFlags.o"
+      "base_path": "build/src/main/updateRingSideDrawGroups.o"
     },
     {
       "name": "main/func_8001143C",
@@ -6554,13 +6554,13 @@
       "base_path": "build/src/code_80090000/func_80099478.o"
     },
     {
-      "name": "code_80090000/lookupPlayerNameById",
-      "target_path": "build/asm/nonmatchings/code_80090000/lookupPlayerNameById.o",
+      "name": "code_80090000/getJoinedNamePair",
+      "target_path": "build/asm/nonmatchings/code_80090000/getJoinedNamePair.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_80090000/lookupPlayerNameById.c"
+        "source_path": "src/code_80090000/getJoinedNamePair.c"
       },
-      "base_path": "build/src/code_80090000/lookupPlayerNameById.o"
+      "base_path": "build/src/code_80090000/getJoinedNamePair.o"
     },
     {
       "name": "code_80090000/func_80099568",
@@ -6653,13 +6653,13 @@
       "base_path": "build/src/code_80090000/emitFullscreenOverlay99908.o"
     },
     {
-      "name": "code_80090000/emitReactionSprite99B68",
-      "target_path": "build/asm/nonmatchings/code_80090000/emitReactionSprite99B68.o",
+      "name": "code_80090000/emitTypewriterCaption",
+      "target_path": "build/asm/nonmatchings/code_80090000/emitTypewriterCaption.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_80090000/emitReactionSprite99B68.c"
+        "source_path": "src/code_80090000/emitTypewriterCaption.c"
       },
-      "base_path": "build/src/code_80090000/emitReactionSprite99B68.o"
+      "base_path": "build/src/code_80090000/emitTypewriterCaption.o"
     },
     {
       "name": "code_80090000/func_80099DF0",
@@ -7361,13 +7361,13 @@
       "base_path": "build/src/code_8009D7A0/func_800A3428.o"
     },
     {
-      "name": "code_8009D7A0/updateActionObjectHandoff",
-      "target_path": "build/asm/nonmatchings/code_8009D7A0/updateActionObjectHandoff.o",
+      "name": "code_8009D7A0/updateGrappleMoveVictimState",
+      "target_path": "build/asm/nonmatchings/code_8009D7A0/updateGrappleMoveVictimState.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_8009D7A0/updateActionObjectHandoff.c"
+        "source_path": "src/code_8009D7A0/updateGrappleMoveVictimState.c"
       },
-      "base_path": "build/src/code_8009D7A0/updateActionObjectHandoff.o"
+      "base_path": "build/src/code_8009D7A0/updateGrappleMoveVictimState.o"
     },
     {
       "name": "code_8009D7A0/func_800A37A8",
@@ -8063,13 +8063,13 @@
       "base_path": "build/src/code_8009D7A0/func_800A7364.o"
     },
     {
-      "name": "code_8009D7A0/collectLinkedTargets",
-      "target_path": "build/asm/nonmatchings/code_8009D7A0/collectLinkedTargets.o",
+      "name": "code_8009D7A0/listWrestlersByDistance",
+      "target_path": "build/asm/nonmatchings/code_8009D7A0/listWrestlersByDistance.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_8009D7A0/collectLinkedTargets.c"
+        "source_path": "src/code_8009D7A0/listWrestlersByDistance.c"
       },
-      "base_path": "build/src/code_8009D7A0/collectLinkedTargets.o"
+      "base_path": "build/src/code_8009D7A0/listWrestlersByDistance.o"
     },
     {
       "name": "code_8009D7A0/func_800A76FC",
@@ -8108,13 +8108,13 @@
       "base_path": "build/src/code_8009D7A0/translateEntityByActionQuadrant.o"
     },
     {
-      "name": "code_8009D7A0/selectNewLinkedTarget",
-      "target_path": "build/asm/nonmatchings/code_8009D7A0/selectNewLinkedTarget.o",
+      "name": "code_8009D7A0/switchTargetOpponent",
+      "target_path": "build/asm/nonmatchings/code_8009D7A0/switchTargetOpponent.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_8009D7A0/selectNewLinkedTarget.c"
+        "source_path": "src/code_8009D7A0/switchTargetOpponent.c"
       },
-      "base_path": "build/src/code_8009D7A0/selectNewLinkedTarget.o"
+      "base_path": "build/src/code_8009D7A0/switchTargetOpponent.o"
     },
     {
       "name": "code_8009D7A0/func_800A7C40",
@@ -8135,13 +8135,13 @@
       "base_path": "build/src/code_8009D7A0/func_800A7D1C.o"
     },
     {
-      "name": "code_8009D7A0/unpackAnimationParameters",
-      "target_path": "build/asm/nonmatchings/code_8009D7A0/unpackAnimationParameters.o",
+      "name": "code_8009D7A0/unpackMoveRecord",
+      "target_path": "build/asm/nonmatchings/code_8009D7A0/unpackMoveRecord.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_8009D7A0/unpackAnimationParameters.c"
+        "source_path": "src/code_8009D7A0/unpackMoveRecord.c"
       },
-      "base_path": "build/src/code_8009D7A0/unpackAnimationParameters.o"
+      "base_path": "build/src/code_8009D7A0/unpackMoveRecord.o"
     },
     {
       "name": "code_8009D7A0/func_800A7F6C",
@@ -8278,13 +8278,13 @@
       "base_path": "build/src/code_8009D7A0/func_800A97A0.o"
     },
     {
-      "name": "code_8009D7A0/startEntityAction",
-      "target_path": "build/asm/nonmatchings/code_8009D7A0/startEntityAction.o",
+      "name": "code_8009D7A0/runCpuAi",
+      "target_path": "build/asm/nonmatchings/code_8009D7A0/runCpuAi.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_8009D7A0/startEntityAction.c"
+        "source_path": "src/code_8009D7A0/runCpuAi.c"
       },
-      "base_path": "build/src/code_8009D7A0/startEntityAction.o"
+      "base_path": "build/src/code_8009D7A0/runCpuAi.o"
     },
     {
       "name": "code_8009D7A0/func_800A9D5C",
@@ -8467,13 +8467,13 @@
       "base_path": "build/src/code_8009D7A0/func_800AC0B4.o"
     },
     {
-      "name": "code_8009D7A0/requestAttachmentAction",
-      "target_path": "build/asm/nonmatchings/code_8009D7A0/requestAttachmentAction.o",
+      "name": "code_8009D7A0/aiTryProfileMove",
+      "target_path": "build/asm/nonmatchings/code_8009D7A0/aiTryProfileMove.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_8009D7A0/requestAttachmentAction.c"
+        "source_path": "src/code_8009D7A0/aiTryProfileMove.c"
       },
-      "base_path": "build/src/code_8009D7A0/requestAttachmentAction.o"
+      "base_path": "build/src/code_8009D7A0/aiTryProfileMove.o"
     },
     {
       "name": "code_8009D7A0/func_800AC3A0",
@@ -8512,13 +8512,13 @@
       "base_path": "build/src/code_8009D7A0/func_800AD2C4.o"
     },
     {
-      "name": "code_8009D7A0/tryApplyHitReaction",
-      "target_path": "build/asm/nonmatchings/code_8009D7A0/tryApplyHitReaction.o",
+      "name": "code_8009D7A0/tryReverseOpponentMove",
+      "target_path": "build/asm/nonmatchings/code_8009D7A0/tryReverseOpponentMove.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_8009D7A0/tryApplyHitReaction.c"
+        "source_path": "src/code_8009D7A0/tryReverseOpponentMove.c"
       },
-      "base_path": "build/src/code_8009D7A0/tryApplyHitReaction.o"
+      "base_path": "build/src/code_8009D7A0/tryReverseOpponentMove.o"
     },
     {
       "name": "code_8009D7A0/func_800AD574",
@@ -8962,13 +8962,13 @@
       "base_path": "build/src/code_8009D7A0/func_800B1634.o"
     },
     {
-      "name": "code_8009D7A0/advanceMovePhase",
-      "target_path": "build/asm/nonmatchings/code_8009D7A0/advanceMovePhase.o",
+      "name": "code_8009D7A0/aiWalkToOpponent",
+      "target_path": "build/asm/nonmatchings/code_8009D7A0/aiWalkToOpponent.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_8009D7A0/advanceMovePhase.c"
+        "source_path": "src/code_8009D7A0/aiWalkToOpponent.c"
       },
-      "base_path": "build/src/code_8009D7A0/advanceMovePhase.o"
+      "base_path": "build/src/code_8009D7A0/aiWalkToOpponent.o"
     },
     {
       "name": "code_8009D7A0/func_800B18E0",
@@ -9223,13 +9223,13 @@
       "base_path": "build/src/code_8009D7A0/func_800B4C60.o"
     },
     {
-      "name": "code_8009D7A0/startEntityGrapple",
-      "target_path": "build/asm/nonmatchings/code_8009D7A0/startEntityGrapple.o",
+      "name": "code_8009D7A0/resolveWalkCollision",
+      "target_path": "build/asm/nonmatchings/code_8009D7A0/resolveWalkCollision.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_8009D7A0/startEntityGrapple.c"
+        "source_path": "src/code_8009D7A0/resolveWalkCollision.c"
       },
-      "base_path": "build/src/code_8009D7A0/startEntityGrapple.o"
+      "base_path": "build/src/code_8009D7A0/resolveWalkCollision.o"
     },
     {
       "name": "code_8009D7A0/func_800B5730",
@@ -9533,13 +9533,13 @@
       "base_path": "build/src/code_800BBA00/func_800BC7D0.o"
     },
     {
-      "name": "code_800BBA00/pickPresentControllerEntity",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/pickPresentControllerEntity.o",
+      "name": "code_800BBA00/pickPostMatchFocusSlot",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/pickPostMatchFocusSlot.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/pickPresentControllerEntity.c"
+        "source_path": "src/code_800BBA00/pickPostMatchFocusSlot.c"
       },
-      "base_path": "build/src/code_800BBA00/pickPresentControllerEntity.o"
+      "base_path": "build/src/code_800BBA00/pickPostMatchFocusSlot.o"
     },
     {
       "name": "code_800BBA00/func_800BCA10",
@@ -9578,13 +9578,13 @@
       "base_path": "build/src/code_800BBA00/func_800BE450.o"
     },
     {
-      "name": "code_800BBA00/updateEntityThrownState",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/updateEntityThrownState.o",
+      "name": "code_800BBA00/updateRopeDragLeaderState",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/updateRopeDragLeaderState.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/updateEntityThrownState.c"
+        "source_path": "src/code_800BBA00/updateRopeDragLeaderState.c"
       },
-      "base_path": "build/src/code_800BBA00/updateEntityThrownState.o"
+      "base_path": "build/src/code_800BBA00/updateRopeDragLeaderState.o"
     },
     {
       "name": "code_800BBA00/func_800BE908",
@@ -9596,13 +9596,13 @@
       "base_path": "build/src/code_800BBA00/func_800BE908.o"
     },
     {
-      "name": "code_800BBA00/updateEntityBoundaryFlags",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/updateEntityBoundaryFlags.o",
+      "name": "code_800BBA00/chooseRopeDragDirection",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/chooseRopeDragDirection.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/updateEntityBoundaryFlags.c"
+        "source_path": "src/code_800BBA00/chooseRopeDragDirection.c"
       },
-      "base_path": "build/src/code_800BBA00/updateEntityBoundaryFlags.o"
+      "base_path": "build/src/code_800BBA00/chooseRopeDragDirection.o"
     },
     {
       "name": "code_800BBA00/func_800BED3C",
@@ -9695,31 +9695,31 @@
       "base_path": "build/src/code_800BBA00/func_800BF548.o"
     },
     {
-      "name": "code_800BBA00/addEntityHealthDelta",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/addEntityHealthDelta.o",
+      "name": "code_800BBA00/addSpiritDelta",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/addSpiritDelta.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/addEntityHealthDelta.c"
+        "source_path": "src/code_800BBA00/addSpiritDelta.c"
       },
-      "base_path": "build/src/code_800BBA00/addEntityHealthDelta.o"
+      "base_path": "build/src/code_800BBA00/addSpiritDelta.o"
     },
     {
-      "name": "code_800BBA00/updateEntityStunTimer",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/updateEntityStunTimer.o",
+      "name": "code_800BBA00/updateSpiritTimers",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/updateSpiritTimers.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/updateEntityStunTimer.c"
+        "source_path": "src/code_800BBA00/updateSpiritTimers.c"
       },
-      "base_path": "build/src/code_800BBA00/updateEntityStunTimer.o"
+      "base_path": "build/src/code_800BBA00/updateSpiritTimers.o"
     },
     {
-      "name": "code_800BBA00/readEntityStunState",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/readEntityStunState.o",
+      "name": "code_800BBA00/getSpiritMeterDisplay",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/getSpiritMeterDisplay.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/readEntityStunState.c"
+        "source_path": "src/code_800BBA00/getSpiritMeterDisplay.c"
       },
-      "base_path": "build/src/code_800BBA00/readEntityStunState.o"
+      "base_path": "build/src/code_800BBA00/getSpiritMeterDisplay.o"
     },
     {
       "name": "code_800BBA00/func_800BFC90",
@@ -10051,22 +10051,22 @@
       "base_path": "build/src/code_800BBA00/func_800C5FBC.o"
     },
     {
-      "name": "code_800BBA00/updateGrabAction",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/updateGrabAction.o",
+      "name": "code_800BBA00/updateStrikeState21",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/updateStrikeState21.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/updateGrabAction.c"
+        "source_path": "src/code_800BBA00/updateStrikeState21.c"
       },
-      "base_path": "build/src/code_800BBA00/updateGrabAction.o"
+      "base_path": "build/src/code_800BBA00/updateStrikeState21.o"
     },
     {
-      "name": "code_800BBA00/updateEntityGrabActionState",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/updateEntityGrabActionState.o",
+      "name": "code_800BBA00/updateStompState",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/updateStompState.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/updateEntityGrabActionState.c"
+        "source_path": "src/code_800BBA00/updateStompState.c"
       },
-      "base_path": "build/src/code_800BBA00/updateEntityGrabActionState.o"
+      "base_path": "build/src/code_800BBA00/updateStompState.o"
     },
     {
       "name": "code_800BBA00/updateActionStateC6868",
@@ -10240,13 +10240,13 @@
       "base_path": "build/src/code_800BBA00/func_800C9AC0.o"
     },
     {
-      "name": "code_800BBA00/updateRingLeapAction",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/updateRingLeapAction.o",
+      "name": "code_800BBA00/updateDownedOpponentAttack36",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/updateDownedOpponentAttack36.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/updateRingLeapAction.c"
+        "source_path": "src/code_800BBA00/updateDownedOpponentAttack36.c"
       },
-      "base_path": "build/src/code_800BBA00/updateRingLeapAction.o"
+      "base_path": "build/src/code_800BBA00/updateDownedOpponentAttack36.o"
     },
     {
       "name": "code_800BBA00/func_800CA114",
@@ -10258,13 +10258,13 @@
       "base_path": "build/src/code_800BBA00/func_800CA114.o"
     },
     {
-      "name": "code_800BBA00/updateEntityCounterAttackState",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/updateEntityCounterAttackState.o",
+      "name": "code_800BBA00/updatePinnerState",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/updatePinnerState.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/updateEntityCounterAttackState.c"
+        "source_path": "src/code_800BBA00/updatePinnerState.c"
       },
-      "base_path": "build/src/code_800BBA00/updateEntityCounterAttackState.o"
+      "base_path": "build/src/code_800BBA00/updatePinnerState.o"
     },
     {
       "name": "code_800BBA00/func_800CA758",
@@ -10357,22 +10357,22 @@
       "base_path": "build/src/code_800BBA00/selectPairedActionCD3F8.o"
     },
     {
-      "name": "code_800BBA00/tryStartFacingGroupAtGate",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/tryStartFacingGroupAtGate.o",
+      "name": "code_800BBA00/tryJoinDoubleTeam",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/tryJoinDoubleTeam.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/tryStartFacingGroupAtGate.c"
+        "source_path": "src/code_800BBA00/tryJoinDoubleTeam.c"
       },
-      "base_path": "build/src/code_800BBA00/tryStartFacingGroupAtGate.o"
+      "base_path": "build/src/code_800BBA00/tryJoinDoubleTeam.o"
     },
     {
-      "name": "code_800BBA00/setupEntityFacingGroup",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/setupEntityFacingGroup.o",
+      "name": "code_800BBA00/beginDoubleTeam",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/beginDoubleTeam.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/setupEntityFacingGroup.c"
+        "source_path": "src/code_800BBA00/beginDoubleTeam.c"
       },
-      "base_path": "build/src/code_800BBA00/setupEntityFacingGroup.o"
+      "base_path": "build/src/code_800BBA00/beginDoubleTeam.o"
     },
     {
       "name": "code_800BBA00/setupEntityMoveCD990",
@@ -10735,13 +10735,13 @@
       "base_path": "build/src/code_800BBA00/func_800D2CAC.o"
     },
     {
-      "name": "code_800BBA00/findBoundaryQuadrant",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/findBoundaryQuadrant.o",
+      "name": "code_800BBA00/findNearbyCornerPost",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/findNearbyCornerPost.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/findBoundaryQuadrant.c"
+        "source_path": "src/code_800BBA00/findNearbyCornerPost.c"
       },
-      "base_path": "build/src/code_800BBA00/findBoundaryQuadrant.o"
+      "base_path": "build/src/code_800BBA00/findNearbyCornerPost.o"
     },
     {
       "name": "code_800BBA00/func_800D3550",
@@ -11356,13 +11356,13 @@
       "base_path": "build/src/code_800BBA00/func_800D8DF0.o"
     },
     {
-      "name": "code_800BBA00/updateSpecialMoveRequest",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/updateSpecialMoveRequest.o",
+      "name": "code_800BBA00/updateTagPartnerReturnRequest",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/updateTagPartnerReturnRequest.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/updateSpecialMoveRequest.c"
+        "source_path": "src/code_800BBA00/updateTagPartnerReturnRequest.c"
       },
-      "base_path": "build/src/code_800BBA00/updateSpecialMoveRequest.o"
+      "base_path": "build/src/code_800BBA00/updateTagPartnerReturnRequest.o"
     },
     {
       "name": "code_800BBA00/func_800D90E8",
@@ -11437,13 +11437,13 @@
       "base_path": "build/src/code_800BBA00/func_800D9814.o"
     },
     {
-      "name": "code_800BBA00/checkEntityAttackHit",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/checkEntityAttackHit.o",
+      "name": "code_800BBA00/tryTagExchange",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/tryTagExchange.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/checkEntityAttackHit.c"
+        "source_path": "src/code_800BBA00/tryTagExchange.c"
       },
-      "base_path": "build/src/code_800BBA00/checkEntityAttackHit.o"
+      "base_path": "build/src/code_800BBA00/tryTagExchange.o"
     },
     {
       "name": "code_800BBA00/func_800D9DD4",
@@ -11500,13 +11500,13 @@
       "base_path": "build/src/code_800BBA00/func_800DA3D8.o"
     },
     {
-      "name": "code_800BBA00/isEntityEligibleForSpecialAction",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/isEntityEligibleForSpecialAction.o",
+      "name": "code_800BBA00/canTagPartnerInterfere",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/canTagPartnerInterfere.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/isEntityEligibleForSpecialAction.c"
+        "source_path": "src/code_800BBA00/canTagPartnerInterfere.c"
       },
-      "base_path": "build/src/code_800BBA00/isEntityEligibleForSpecialAction.o"
+      "base_path": "build/src/code_800BBA00/canTagPartnerInterfere.o"
     },
     {
       "name": "code_800BBA00/func_800DA6DC",
@@ -11598,22 +11598,22 @@
       "base_path": "build/src/code_800BBA00/func_800DB4FC.o"
     },
     {
-      "name": "code_800BBA00/tryBeginEntityGrab",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/tryBeginEntityGrab.o",
+      "name": "code_800BBA00/tryTargetBlockOrCounter",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/tryTargetBlockOrCounter.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/tryBeginEntityGrab.c"
+        "source_path": "src/code_800BBA00/tryTargetBlockOrCounter.c"
       },
-      "base_path": "build/src/code_800BBA00/tryBeginEntityGrab.o"
+      "base_path": "build/src/code_800BBA00/tryTargetBlockOrCounter.o"
     },
     {
-      "name": "code_800BBA00/handleEntityState38To3F",
-      "target_path": "build/asm/nonmatchings/code_800BBA00/handleEntityState38To3F.o",
+      "name": "code_800BBA00/applyDiveHitToTarget",
+      "target_path": "build/asm/nonmatchings/code_800BBA00/applyDiveHitToTarget.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800BBA00/handleEntityState38To3F.c"
+        "source_path": "src/code_800BBA00/applyDiveHitToTarget.c"
       },
-      "base_path": "build/src/code_800BBA00/handleEntityState38To3F.o"
+      "base_path": "build/src/code_800BBA00/applyDiveHitToTarget.o"
     },
     {
       "name": "code_800BBA00/func_800DBB80",
@@ -11722,13 +11722,13 @@
       "base_path": "build/src/code_800DE9C0/func_800DEEE8.o"
     },
     {
-      "name": "code_800DE9C0/tryEntityAttackDEF84",
-      "target_path": "build/asm/nonmatchings/code_800DE9C0/tryEntityAttackDEF84.o",
+      "name": "code_800DE9C0/tryMoveThroughRopes",
+      "target_path": "build/asm/nonmatchings/code_800DE9C0/tryMoveThroughRopes.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800DE9C0/tryEntityAttackDEF84.c"
+        "source_path": "src/code_800DE9C0/tryMoveThroughRopes.c"
       },
-      "base_path": "build/src/code_800DE9C0/tryEntityAttackDEF84.o"
+      "base_path": "build/src/code_800DE9C0/tryMoveThroughRopes.o"
     },
     {
       "name": "code_800DE9C0/func_800DF214",
@@ -11776,13 +11776,13 @@
       "base_path": "build/src/code_800DE9C0/func_800DF99C.o"
     },
     {
-      "name": "code_800DE9C0/chooseDodgeAction",
-      "target_path": "build/asm/nonmatchings/code_800DE9C0/chooseDodgeAction.o",
+      "name": "code_800DE9C0/chooseApronStrikeState",
+      "target_path": "build/asm/nonmatchings/code_800DE9C0/chooseApronStrikeState.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800DE9C0/chooseDodgeAction.c"
+        "source_path": "src/code_800DE9C0/chooseApronStrikeState.c"
       },
-      "base_path": "build/src/code_800DE9C0/chooseDodgeAction.o"
+      "base_path": "build/src/code_800DE9C0/chooseApronStrikeState.o"
     },
     {
       "name": "code_800DE9C0/func_800DFDD4",
@@ -11866,13 +11866,13 @@
       "base_path": "build/src/code_800DE9C0/func_800E07DC.o"
     },
     {
-      "name": "code_800DE9C0/snapEntityToRingBoundary",
-      "target_path": "build/asm/nonmatchings/code_800DE9C0/snapEntityToRingBoundary.o",
+      "name": "code_800DE9C0/snapEntityToApronLine",
+      "target_path": "build/asm/nonmatchings/code_800DE9C0/snapEntityToApronLine.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800DE9C0/snapEntityToRingBoundary.c"
+        "source_path": "src/code_800DE9C0/snapEntityToApronLine.c"
       },
-      "base_path": "build/src/code_800DE9C0/snapEntityToRingBoundary.o"
+      "base_path": "build/src/code_800DE9C0/snapEntityToApronLine.o"
     },
     {
       "name": "code_800DE9C0/func_800E09DC",
@@ -11947,13 +11947,13 @@
       "base_path": "build/src/code_800DE9C0/updateFieldRecordMotion.o"
     },
     {
-      "name": "code_800DE9C0/updatePlayerEntryStates",
-      "target_path": "build/asm/nonmatchings/code_800DE9C0/updatePlayerEntryStates.o",
+      "name": "code_800DE9C0/syncFieldSlotsToRender",
+      "target_path": "build/asm/nonmatchings/code_800DE9C0/syncFieldSlotsToRender.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800DE9C0/updatePlayerEntryStates.c"
+        "source_path": "src/code_800DE9C0/syncFieldSlotsToRender.c"
       },
-      "base_path": "build/src/code_800DE9C0/updatePlayerEntryStates.o"
+      "base_path": "build/src/code_800DE9C0/syncFieldSlotsToRender.o"
     },
     {
       "name": "code_800DE9C0/packFieldRecords",
@@ -11992,13 +11992,13 @@
       "base_path": "build/src/code_800DE9C0/func_800E2230.o"
     },
     {
-      "name": "code_800DE9C0/tryBeginBlockReaction",
-      "target_path": "build/asm/nonmatchings/code_800DE9C0/tryBeginBlockReaction.o",
+      "name": "code_800DE9C0/tryStartBarricadeSearch",
+      "target_path": "build/asm/nonmatchings/code_800DE9C0/tryStartBarricadeSearch.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/code_800DE9C0/tryBeginBlockReaction.c"
+        "source_path": "src/code_800DE9C0/tryStartBarricadeSearch.c"
       },
-      "base_path": "build/src/code_800DE9C0/tryBeginBlockReaction.o"
+      "base_path": "build/src/code_800DE9C0/tryStartBarricadeSearch.o"
     },
     {
       "name": "code_800DE9C0/func_800E2500",

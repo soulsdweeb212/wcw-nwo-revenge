@@ -5,7 +5,7 @@
  */
 #include "common.h"
 
-/* Returns a category 0..0x17 of w's action state (and step), for the AI (startEntityAction stores it for the
+/* Returns a category 0..0x17 of w's action state (and step), for the AI (runCpuAi stores it for the
  * AI wrestler and for its opponent, other = the AI wrestler). States 3 and 4 depend on moveMode bit 0x20 (running);
  * for state 3 with a different id than other's, also on bit 0x8 (rope run). 0 means none of the listed states. */
 s32 func_800AD7B0(Wrestler *w, Wrestler *other)

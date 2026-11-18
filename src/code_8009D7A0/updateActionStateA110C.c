@@ -17,7 +17,7 @@ extern s16 D_800EB400[];
 s8 func_800D4198(s16);
 void func_800D427C(void *, s32, s32);
 void func_800A7F6C(void *, s32);
-void addEntityHealthDelta(void *, s32);
+void addSpiritDelta(void *, s32);
 void func_800A6BE0(void *, s32);
 void func_800A837C(void *);
 void func_800A7188(void *);
@@ -52,7 +52,7 @@ void updateActionStateA110C(void) {
                 if (D_800EB400[D_800FADB8] == 2)
                     D_800EB40C->moveMode |= 0x200;
                 D_800EB40C->heldById = D_800FADB8;
-                addEntityHealthDelta(D_800EB408, D_800EB408->move.spiritGainSelf);
+                addSpiritDelta(D_800EB408, D_800EB408->move.spiritGainSelf);
                 func_800A6BE0(D_800EB40C, 0x1A);
                 { Wrestler *b = D_800EB40C; Wrestler *a = D_800EB408;
                     b->flags |= 0x20000000ULL;

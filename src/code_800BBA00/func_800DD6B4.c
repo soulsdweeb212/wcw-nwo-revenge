@@ -17,11 +17,11 @@ void func_800D4AD0(void*);
 void func_800A7D1C(void*,s32);
 void func_800B68A0(void*,void*,void*);
 s8 func_800D4CC4(void*);
-void addEntityHealthDelta(void*,s32);
+void addSpiritDelta(void*,s32);
 void beginEntityActionA8D8C(void*);
 void func_800A837C(void*);
 #else
-void func_800A7C40(void*,s8,s16);s16 func_800D5438(void*,s32);void func_800D427C(void*,s16,s32);void func_800A7F6C(void*,s32);s8 func_800DB4FC(void*,void*);void func_800C38FC(void*,u64,s32);s32 func_800D2B64(void*,f32,u16,s32);void func_800D4AD0(void*);void func_800A7D1C(void*,s32);void func_800B68A0(void*,void*,void*);s8 func_800D4CC4(void*);void addEntityHealthDelta(void*,s32);void beginEntityActionA8D8C(void*);void func_800A837C(void*);
+void func_800A7C40(void*,s8,s16);s16 func_800D5438(void*,s32);void func_800D427C(void*,s16,s32);void func_800A7F6C(void*,s32);s8 func_800DB4FC(void*,void*);void func_800C38FC(void*,u64,s32);s32 func_800D2B64(void*,f32,u16,s32);void func_800D4AD0(void*);void func_800A7D1C(void*,s32);void func_800B68A0(void*,void*,void*);s8 func_800D4CC4(void*);void addSpiritDelta(void*,s32);void beginEntityActionA8D8C(void*);void func_800A837C(void*);
 #endif
 void func_800DD6B4(void) {
     s16 anim; Wrestler *e;
@@ -46,7 +46,7 @@ void func_800DD6B4(void) {
         if(D_800FAF5C->animFrame>=D_800FAF5C->anim.hitEnd) {D_800FAF5C->flags&=~0x80000000000ULL;if(D_800FAF5C->anim.endZone==2)func_800D2B64(D_800FAF5C,4.0f,0,0xFFFFE);}
         if(D_800FAF5C->animFramesLeft<=0) {
             func_800D4AD0(D_800FAF5C);e=D_800FAF5C;
-            if(e->step==2) {func_800A7D1C(e,0x23);func_800B68A0(D_800FAF5C,D_800FAF5C,D_800FAF5C);if(func_800D4CC4(e))addEntityHealthDelta(e,e->move.spiritOnFinish);beginEntityActionA8D8C(e);}else func_800A6C48(e,0x2B);
+            if(e->step==2) {func_800A7D1C(e,0x23);func_800B68A0(D_800FAF5C,D_800FAF5C,D_800FAF5C);if(func_800D4CC4(e))addSpiritDelta(e,e->move.spiritOnFinish);beginEntityActionA8D8C(e);}else func_800A6C48(e,0x2B);
         }break;
     case 4:
         if(D_800FAF5C->animFramesLeft<=0) {func_800B68A0(D_800FAF5C,D_800FAF5C,D_800F9B00);func_800D4AD0(D_800FAF5C);func_800A6C48(D_800FAF5C,0x2B);func_800A7F6C(D_800FAF5C,0);func_800A837C(D_800FAF5C);}break;

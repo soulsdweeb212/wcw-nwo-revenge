@@ -20,7 +20,7 @@ s16 func_800D5438(void *, s16);
 #endif
 void func_800D427C(void *, s16, s32);
 void func_800D4AD0(void *);
-void addEntityHealthDelta(void *, s32);
+void addSpiritDelta(void *, s32);
 extern u8 D_800F9B18[];
 extern s8 D_800FABE4;
 extern s8 D_800FADB8;
@@ -54,7 +54,7 @@ void func_800A553C(void) {
     case 2:
         func_800D2BEC(D_800EB408, D_800EB40C, D_800EB418, 4.0f, 0, 0xFFFFE);
         if (D_800EB408->animFramesLeft == 1) {
-            addEntityHealthDelta(D_800EB408, D_800EB418->move.spiritGainSelf);
+            addSpiritDelta(D_800EB408, D_800EB418->move.spiritGainSelf);
         }
         if (D_800EB408->animFramesLeft <= 0) {
             func_800D4AD0(D_800EB408);

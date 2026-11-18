@@ -6,7 +6,7 @@
 #include "common.h"
 
 extern u8 D_80075468[];
-void unpackAnimationParameters(void *, void *);
+void unpackMoveRecord(void *, void *);
 
 /* Set w's current move to entry moveId of owner's move table: store moveOwnerId and moveId, then unpack the
  * 0x18-byte entry (D_80075468 + 0x10 + owner*0x1A30 + moveId*0x18) into w->move. For moveId below 0xEF, set or
@@ -20,7 +20,7 @@ void func_800A7C40(Wrestler *w, s8 owner, s16 moveId) {
     idx = w->moveOwnerId;
     w->moveId = moveId;
     tbl = &D_80075468[0x10] + idx * 0x1A30;
-    unpackAnimationParameters(&w->move, tbl + moveId * 0x18);
+    unpackMoveRecord(&w->move, tbl + moveId * 0x18);
     if (moveId < 0xEF) {
         if (w->move.flags & 0x8000)
             w->flags |= 0x4000000000000000ULL;

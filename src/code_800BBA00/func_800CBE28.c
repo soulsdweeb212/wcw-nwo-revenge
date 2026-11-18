@@ -17,7 +17,7 @@ s8 func_800A93C0(void);
 s32 func_800D2BEC(void *, void *, void *, f32, u16, s32);
 void func_800D4AD0(void *);
 s16 func_800BF2FC(void *);
-void addEntityHealthDelta(void *, s32);
+void addSpiritDelta(void *, s32);
 void beginEntityActionA8D8C(void *);
 
 /* Three-step grapple state machine on self->step (D_800FAF5C).  Step 0
@@ -29,7 +29,7 @@ void beginEntityActionA8D8C(void *);
  * pairSignals/attached word reads 0x100000 under mask 0x180000) selects the follow-up
  * animation from the pairSignals bits (0x10 -> 6, 0x208 -> 4, else 2) and advances.
  * Step 2 runs the 2.0f separation (func_800D2BEC), clears attached[0]/flag
- * 0x40000000, ends the action via func_800BF2FC/addEntityHealthDelta, and finishes
+ * 0x40000000, ends the action via func_800BF2FC/addSpiritDelta, and finishes
  * with beginEntityActionA8D8C or func_800A6C48(0x2B) by move.flags bit 2. */
 void func_800CBE28(void) {
     s16 animId;
@@ -101,7 +101,7 @@ void func_800CBE28(void) {
             t->flags &= ~WR_FLAG_PAIR_LEADER;
             func_800D4AD0(D_800FAF5C);
             if (func_800BF2FC(D_800FAF5C) < 0x31) {
-                addEntityHealthDelta(D_800FAF5C, 3);
+                addSpiritDelta(D_800FAF5C, 3);
             }
             if (D_800FAF5C->move.flags & 2) {
                 beginEntityActionA8D8C(D_800FAF5C);

@@ -19,7 +19,7 @@ void func_800D427C(void *, s16, s32);
 s16 func_800D5438(void *, s32);
 #endif
 void func_800D43B4(void *, s16, s32);
-void tryApplyHitReaction(void *, void *, u16, u16);
+void tryReverseOpponentMove(void *, void *, u16, u16);
 void func_800AD574(void *, void *, u16);
 void func_800A7F6C(void *, s32);
 void func_800A837C(void *);
@@ -62,7 +62,7 @@ void func_800ACC48(void) {
         if (D_800FAF5C->animFramesLeft <= 0) {
             func_800D43B4(D_800FAF5C, D_800EB440[(s8)D_800FABE4], 3);
         }
-        tryApplyHitReaction(D_800F9B00, D_800FAF5C, D_800FABE6, D_800FAF8A);
+        tryReverseOpponentMove(D_800F9B00, D_800FAF5C, D_800FABE6, D_800FAF8A);
         o = D_800FAF5C;
         if (o->pairSignals & 4) {
             o->pairSignals &= ~4;
@@ -92,7 +92,7 @@ void func_800ACC48(void) {
         }
 #ifdef TARGET_PC
         /* The N64 call passes two records and func_800B68A0 reads a third, target, from $a2. There $a2 still holds
-         * D_800FAF5C, loaded after tryApplyHitReaction to test its pairSignals (o here), so the PC passes o. */
+         * D_800FAF5C, loaded after tryReverseOpponentMove to test its pairSignals (o here), so the PC passes o. */
         func_800B68A0(D_800F9B00, D_800F9B00, o);
 #else
         func_800B68A0(D_800F9B00, D_800F9B00);

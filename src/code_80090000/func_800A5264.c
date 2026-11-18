@@ -25,7 +25,7 @@ u8 *func_800B75D4(G **, void *, s32);
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_8002AD34, which returns the name's address */
 void *func_8002AD34(s32, s32);
 #endif
-void *lookupPlayerNameById(void *, void *);
+void *getJoinedNamePair(void *, void *);
 
 void func_800A5264(G **dl, s32 a) {
     G *g = *dl;
@@ -50,7 +50,7 @@ void func_800A5264(G **dl, s32 a) {
         x = func_8002AD34(a, (v >> 12) & 3);
         v = *(u16 *)(D_8007EF30 + 0xC92 + n * 4);
         a = v & 0xFFF;
-        p = lookupPlayerNameById(x, func_8002AD34(a, (v >> 12) & 3));
+        p = getJoinedNamePair(x, func_8002AD34(a, (v >> 12) & 3));
     } else {
         u16 v = *(u16 *)(D_8007EF30 + 0xC90 + n * 2);
         a = v & 0xFFF;

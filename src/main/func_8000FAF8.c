@@ -49,7 +49,7 @@ extern s32 func_800015AC(void *, s32);
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_8000F710 */
 extern void func_8000F710(void *, s32);
 #endif
-extern void buildFadeColorDisplayList(void *);
+extern void buildRopeTriangleList(void *);
 extern s32 guRandom(void);
 
 void func_8000FAF8(s32 idx) {
@@ -79,7 +79,7 @@ void func_8000FAF8(s32 idx) {
     dl = allocateHeap(0x200);
     s->f10 = dl;
 #endif
-    buildFadeColorDisplayList(dl);
+    buildRopeTriangleList(dl);
     for (i = 0; i < 6; i++) {
 #ifdef TARGET_PC
         /* PC: handles, as above; 0 stands for none, so func_800015AC hands out a new work block. */

@@ -18,7 +18,7 @@ void func_800A7D1C(void *,s32);
 void func_800A7F6C(void *,s32);
 void beginEntityActionA8D8C(void *);
 void func_800B68A0(void *,void *,void *);
-void addEntityHealthDelta(void *,s32);
+void addSpiritDelta(void *,s32);
 void func_800D427C(void *,s16,s32);
 void func_800D4AD0(void *);
 s8 func_800D4CC4(void *);
@@ -27,7 +27,7 @@ void func_800DB348(void *,void *);
 s8 func_800DB4FC(void *,void *);
 s8 func_800B60C8(void *,void *);
 #else
-void func_800A7C40(void *,s8,s16); void func_800A7D1C(void *,s32); void func_800A7F6C(void *,s32); void beginEntityActionA8D8C(void *); void func_800B68A0(void *,void *,void *); void addEntityHealthDelta(void *,s32); void func_800D427C(void *,s16,s32); void func_800D4AD0(void *); s8 func_800D4CC4(void *); s16 func_800D5438(void *,s32); s32 func_800DACE4(void *,void *); void func_800DB348(void *,void *); s8 func_800DB4FC(void *,void *); s8 func_800B60C8(void *,void *);
+void func_800A7C40(void *,s8,s16); void func_800A7D1C(void *,s32); void func_800A7F6C(void *,s32); void beginEntityActionA8D8C(void *); void func_800B68A0(void *,void *,void *); void addSpiritDelta(void *,s32); void func_800D427C(void *,s16,s32); void func_800D4AD0(void *); s8 func_800D4CC4(void *); s16 func_800D5438(void *,s32); s32 func_800DACE4(void *,void *); void func_800DB348(void *,void *); s8 func_800DB4FC(void *,void *); s8 func_800B60C8(void *,void *);
 #endif
 void func_800DD188(void) {
     Wrestler *actor;
@@ -49,7 +49,7 @@ void func_800DD188(void) {
             func_800D4AD0(D_800FAF5C);actor=D_800FAF5C;
             if(actor->step==1) {
                 func_800A7D1C(actor,0x23);func_800B68A0(D_800FAF5C,D_800FAF5C,D_800FAF5C);
-                if(func_800D4CC4(actor))addEntityHealthDelta(actor,actor->move.spiritOnFinish);
+                if(func_800D4CC4(actor))addSpiritDelta(actor,actor->move.spiritOnFinish);
                 beginEntityActionA8D8C(actor);
             }else func_800A6C48(actor,0x2B);
         } break;

@@ -18,37 +18,37 @@ extern u8 D_8005AAE8[], D_8005AB48[], D_8005ABA8[], D_8005AC30[], D_8005ACB8[], 
 #ifdef TARGET_PC
 /* PC: port_decls.h declares D_8005B0F8 and D_8005AAA0, the four animation-command records (Nw2AnimatedCi4State), whose
  * three buffers are heap blocks that initializeMatchResources allocates; this file frees them by field name.
- * releaseHeapBlock and freeResourceDescriptorArray are declared with their definitions' types: they take the
+ * releaseHeapBlock and freeDisplayRecordArray are declared with their definitions' types: they take the
  * addresses as pointers and the count as an s16. */
 void releaseHeapBlock(u8 *);
 void func_80006E2C(void *);
-void freeResourceDescriptorArray(void *, void *, s16);
+void freeDisplayRecordArray(void *, void *, s16);
 #else
 extern s32 D_8005B0F8[], D_8005AAA0[][4];
 void releaseHeapBlock(s32);
 void func_80006E2C(void *);
-void freeResourceDescriptorArray(void *, s32, s32);
+void freeDisplayRecordArray(void *, s32, s32);
 #endif
 
 void releaseAllResources1211C(void) {
     u32 i, j;
-    freeResourceDescriptorArray(D_8005AAE8, D_8005AAE0, 2); D_8005AAE0 = 0;
-    freeResourceDescriptorArray(D_8005AB48, D_8005AB40, 2); D_8005AB40 = 0;
-    freeResourceDescriptorArray(D_8005ABA8, D_8005ABA0, 3); D_8005ABA0 = 0;
-    freeResourceDescriptorArray(D_8005AC30, D_8005AC2C, 3); D_8005AC2C = 0;
-    freeResourceDescriptorArray(D_8005ACB8, D_8005ACB4, 3); D_8005ACB4 = 0;
-    freeResourceDescriptorArray(D_8005AD40, D_8005AD3C, 3); D_8005AD3C = 0;
-    freeResourceDescriptorArray(D_8005ADC8, D_8005ADC4, 3); D_8005ADC4 = 0;
-    freeResourceDescriptorArray(D_8005AE50, D_8005AE4C, 2); D_8005AE4C = 0;
-    freeResourceDescriptorArray(D_8005AEB0, D_8005AEA8, 7); D_8005AEA8 = 0;
-    freeResourceDescriptorArray(D_8005AFE8, D_8005AFE4, 3); D_8005AFE4 = 0;
-    freeResourceDescriptorArray(D_8005B070, D_8005B06C, 3); D_8005B06C = 0;
+    freeDisplayRecordArray(D_8005AAE8, D_8005AAE0, 2); D_8005AAE0 = 0;
+    freeDisplayRecordArray(D_8005AB48, D_8005AB40, 2); D_8005AB40 = 0;
+    freeDisplayRecordArray(D_8005ABA8, D_8005ABA0, 3); D_8005ABA0 = 0;
+    freeDisplayRecordArray(D_8005AC30, D_8005AC2C, 3); D_8005AC2C = 0;
+    freeDisplayRecordArray(D_8005ACB8, D_8005ACB4, 3); D_8005ACB4 = 0;
+    freeDisplayRecordArray(D_8005AD40, D_8005AD3C, 3); D_8005AD3C = 0;
+    freeDisplayRecordArray(D_8005ADC8, D_8005ADC4, 3); D_8005ADC4 = 0;
+    freeDisplayRecordArray(D_8005AE50, D_8005AE4C, 2); D_8005AE4C = 0;
+    freeDisplayRecordArray(D_8005AEB0, D_8005AEA8, 7); D_8005AEA8 = 0;
+    freeDisplayRecordArray(D_8005AFE8, D_8005AFE4, 3); D_8005AFE4 = 0;
+    freeDisplayRecordArray(D_8005B070, D_8005B06C, 3); D_8005B06C = 0;
     for (i = 0; i < 6; i++) {
 #ifdef TARGET_PC
         /* PC: D_8005B110 is an array of display records (Nw2Descr4BA8): record i is D_8005B110[i]. */
-        freeResourceDescriptorArray(&D_8005B110[i], D_8005B0F8[i], 1);
+        freeDisplayRecordArray(&D_8005B110[i], D_8005B0F8[i], 1);
 #else
-        freeResourceDescriptorArray(D_8005B110[i], D_8005B0F8[i], 1);
+        freeDisplayRecordArray(D_8005B110[i], D_8005B0F8[i], 1);
 #endif
         D_8005B0F8[i] = 0;
     }

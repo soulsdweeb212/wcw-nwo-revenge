@@ -7,7 +7,7 @@
 
 /* updateEntityPairInteraction: decides which paired action `self` (the wrestler being updated) starts on `other`.
  * Sets self->grappleCtx bit 0x40 when getEntityPairFacingFlags gives bit 8 (other's heading not within 0x400 of the
- * direction back to self); takes 10 spirit from other when it is in state 0x17 (addEntityHealthDelta). Gives up (0)
+ * direction back to self); takes 10 spirit from other when it is in state 0x17 (addSpiritDelta). Gives up (0)
  * when other has flag bit 0x400000, or bits 0x600000000000 without 0x0400000000000000; then func_800E212C(other).
  * Unless self's flags have bit 0x1 or 0x8: when other is in state 0xA step 4/5/7, state 0x81 step 3, or (without
  * flag bit 0x1000000000) states 0x6B..0x6F, self must be in the ring and starts 0x7B/0x7C with other
@@ -19,7 +19,7 @@
  * 0x46; self on the floor with other on the apron (other not in state 0x46) goes straight to the paired action.
  * Unless self's flags have bit 0x1 or 0x8: both profiles having bit 0x400000000 at +0x38 and both health >= 0x97
  * with other in state 0x44 step 4 at animFrame hitStart - 2 .. hitEnd (both in the ring, no self grappleCtx 0x44,
- * no other bit 4) raise grappleCtx 0x40000; tryStartFacingGroupAtGate may start a three-wrestler move. The paired
+ * no other bit 4) raise grappleCtx 0x40000; tryJoinDoubleTeam may start a three-wrestler move. The paired
  * action itself is chosen by selectPairedActionCD3F8(self, other), which is never called while other is in state
  * 0x46. Returns 1 when an action was started. */
 
@@ -27,10 +27,10 @@ void beginPairedEntityActions(void *, s32, void *, s32);
 #ifndef TARGET_PC /* on PC, port_decls.h declares getEntityPairFacingFlags */
 s32 getEntityPairFacingFlags(void *, void *);
 #endif
-void addEntityHealthDelta(void *, s32);
+void addSpiritDelta(void *, s32);
 void func_800E212C(void *);
 s32 func_800D7B54(void *, s32, s32, s32);
-s32 tryStartFacingGroupAtGate(void *, void *);
+s32 tryJoinDoubleTeam(void *, void *);
 void selectPairedActionCD3F8(void *, void *);
 extern s16 D_800FADBE[];
 
@@ -41,7 +41,7 @@ s32 updateEntityPairInteraction(Wrestler *self, Wrestler *other) {
         self->grappleCtx |= 0x40;
     }
     if (other->state == 0x17) {
-        addEntityHealthDelta(other, -0xA);
+        addSpiritDelta(other, -0xA);
     }
     if (other->flags & 0x400000ULL) {
         return 0;
@@ -154,7 +154,7 @@ check74:
             }
         }
     }
-    if ((tryStartFacingGroupAtGate(self, other) << 16) != 0) {
+    if ((tryJoinDoubleTeam(self, other) << 16) != 0) {
         return 1;
     }
 tail:

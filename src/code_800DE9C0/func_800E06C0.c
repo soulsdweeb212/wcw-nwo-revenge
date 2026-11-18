@@ -5,7 +5,7 @@
  */
 #include "common.h"
 
-s32 checkEntityAttackHit(void *, s32);
+s32 tryTagExchange(void *, s32);
 s32 isEntityActionEligible(Wrestler *, Wrestler *, s16);
 void func_800E212C(Wrestler *);
 

@@ -7,7 +7,7 @@
 
 #ifdef TARGET_PC
 /* PC: an entry is common.h's Nw2KeyedBufferEntry, whose keys are as wide as a pointer: a key can be a name's address
- * (lookupPlayerNameById passes two), which an s32 would cut in half. */
+ * (getJoinedNamePair passes two), which an s32 would cut in half. */
 typedef Nw2KeyedBufferEntry Entry;
 #else
 typedef struct { u8 text[64]; s32 key0, key1; } Entry;

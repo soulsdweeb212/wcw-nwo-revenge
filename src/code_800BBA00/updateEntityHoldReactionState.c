@@ -17,7 +17,7 @@ void beginEntityActionA8D8C(void *);
 void func_800B68A0(void *, void *, void *);
 void func_800C472C(void *, void *, s32);
 s32 func_800D2BEC(void *, void *, void *, f32, u16, s32);
-s16 findBoundaryQuadrant(void *, void *, s32);
+s16 findNearbyCornerPost(void *, void *, s32);
 void func_800D427C(void *, s16, s32);
 void func_800D43B4(void *, s16, s32);
 void func_800D4AD0(void *);
@@ -57,7 +57,7 @@ void updateEntityHoldReactionState(void) {
         }
         if (D_800F9B00->move.flags & 0x1000) {
             if (D_800F9B00->move.flags & 0x40000) {
-                s16 r = findBoundaryQuadrant(D_800FAF5C, &D_800FAF5C->jointA[D_800F9B00->move.targetJoint], 1);
+                s16 r = findNearbyCornerPost(D_800FAF5C, &D_800FAF5C->jointA[D_800F9B00->move.targetJoint], 1);
                 if (r != -1 && r == D_800FAF5C->dirIndex) {
                     D_800F9B00->pairSignals |= 1;
                 }

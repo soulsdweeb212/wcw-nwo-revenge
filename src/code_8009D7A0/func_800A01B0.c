@@ -179,7 +179,7 @@ void func_800A01B0(void) {
          * (Nw2DirectionResult): x, then y = the distance D_800F9B0C, z, then angle = the heading D_800F9B14. On PC an
          * s32 cannot hold an address, and these data names are separate variables that nothing keeps at those
          * offsets, so the PC passes distBlock, a block of its own with the same y and angle. The three functions, and
-         * func_800D23B4 and chooseDodgeAction that they hand it to, only read its y and angle and write nothing into
+         * func_800D23B4 and chooseApronStrikeState that they hand it to, only read its y and angle and write nothing into
          * it; x and z are never read (0 here). Only func_800A712C writes D_800F9B0C and D_800F9B14, called from
          * func_8009D8D0 before this handler runs, so the copy holds what the N64 block holds through these calls.
          * s0 is not read again in this step. */

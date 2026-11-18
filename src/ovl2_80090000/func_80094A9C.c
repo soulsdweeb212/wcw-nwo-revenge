@@ -100,9 +100,9 @@ void func_800907A0(void *, Rec2C *, s16, s16, f32, f32, f32, f32, u8, u8, u8, u8
 s16 func_800AD730(s16);
 u16 func_800B8278(void);
 s8 func_800BFC90(s8);
-s8 isEntityEligibleForSpecialAction(s8);
+s8 canTagPartnerInterfere(s8);
 f32 nw2Sqrtf(f32);
-s8 readEntityStunState(s8, s16 *, s16 *);
+s8 getSpiritMeterDisplay(s8, s16 *, s16 *);
 
 static inline void func_8009075C(Rec2C *r, Tex8 *t) {
 #ifdef TARGET_PC
@@ -180,7 +180,7 @@ void func_80094A9C(void) {
 
     for (i = 0; i < D_800EB0AA; i++) {
         old = D_800E9D40[i].hp;
-        if (readEntityStunState(i, &D_800E9D40[i].hp, &D_800E9D40[i].f6)) {
+        if (getSpiritMeterDisplay(i, &D_800E9D40[i].hp, &D_800E9D40[i].f6)) {
             if (D_800E9D40[i].hp != old) {
                 if (old < D_800E9D40[i].hp) {
                     D_800E9D40[i].id |= 0x40;
@@ -293,13 +293,13 @@ void func_80094A9C(void) {
         }
 #ifdef TARGET_PC
         /* PC: as above. */
-        if (!(D_800E77B4 & 8) && isEntityEligibleForSpecialAction(i)) {
+        if (!(D_800E77B4 & 8) && canTagPartnerInterfere(i)) {
             NODE(D_800EA758[i])->flags &= ~0x80;
         } else {
             NODE(D_800EA758[i])->flags |= 0x80;
         }
 #else
-        if (!(D_800E77B4 & 8) && isEntityEligibleForSpecialAction(i)) {
+        if (!(D_800E77B4 & 8) && canTagPartnerInterfere(i)) {
             D_800EA758[i].node->flags &= ~0x80;
         } else {
             D_800EA758[i].node->flags |= 0x80;

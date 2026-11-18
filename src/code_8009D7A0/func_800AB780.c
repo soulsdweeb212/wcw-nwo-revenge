@@ -23,7 +23,7 @@ extern s16 D_800E3574[], D_800E3594[];
 extern u8 D_800E3574[], D_800E3594[];
 #endif
 s8 func_800D4198(s16);
-s8 requestAttachmentAction(void);
+s8 aiTryProfileMove(void);
 s8 func_800AC0B4(void);
 s8 func_800AB43C(void);
 void func_800AD958(s32);
@@ -32,13 +32,13 @@ void func_800AB780(void) {
     if ((D_800FAF58->flags & WR_FLAG_SPIRIT_FULL) || (*(s16 *)(D_800FABD0 + 0x28) >= 81 && func_800D4198(((s16)(D_800FAF50[D_800F9B60->id] / 3) + 1) * 40))) {
         func_800AD958(0x22); return;
     }
-    if (!requestAttachmentAction()) {
+    if (!aiTryProfileMove()) {
         if (*(f32 *)(D_800FABD0 + 0x3C) > *(f32 *)(D_800FABD0 + 0x58)) { func_800AD958(0x21); return; }
         if (D_800FAF58->flags & WR_FLAG_SPECIAL) {
             if (*(s16 *)(D_800FABD0 + 0x26) < 10 && func_800D4198(500)) { func_800AD958(0xD); return; }
             func_800AD958(0xA); return;
         }
-        if (!func_800AC0B4() && !requestAttachmentAction() && !func_800AB43C()) {
+        if (!func_800AC0B4() && !aiTryProfileMove() && !func_800AB43C()) {
             if (func_800D4198(*(s16 *)(D_800FABD0 + 0x12))) func_800ADA38(D_800E3574);
             else func_800ADA38(D_800E3594);
         }

@@ -20,12 +20,12 @@ extern f64 D_800E54C0;
 void func_800A7F6C(void *, s32);
 void func_800A837C(void *);
 s8 func_800A93C0(void);
-s8 startEntityGrapple(void *, s16, u16);
+s8 resolveWalkCollision(void *, s16, u16);
 s8 func_800C2634(void *, u16);
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 u32 func_800D2B64(void *, f32, s32, s32);
 #endif
-s16 findBoundaryQuadrant(void *, s32, s32);
+s16 findNearbyCornerPost(void *, s32, s32);
 s16 func_800D3638(s32);
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800D3B24 */
 s8 func_800D3B24(f32 *, f32 *, f32, s32);
@@ -45,7 +45,7 @@ s32 func_800B4C60(Wrestler *o, Wrestler *other, u16 inputFlags, s16 mode) {
     s32 st;
 
     translateEntityXZ(o, o->moveDelta);
-    if (startEntityGrapple(o, mode, inputFlags)) {
+    if (resolveWalkCollision(o, mode, inputFlags)) {
         return 1;
     }
     if (func_800A93C0()) {
@@ -159,7 +159,7 @@ s32 func_800B4C60(Wrestler *o, Wrestler *other, u16 inputFlags, s16 mode) {
 #else
     if ((*(u32 *)&o->moveMode & 0x280000) == 0x80000) {
 #endif
-        q = findBoundaryQuadrant(o, 0, 2);
+        q = findNearbyCornerPost(o, 0, 2);
         if (q != -1 && q == o->dirIndex && (inputFlags & 4) && func_800E07DC(o)) {
             if (func_800DF924(o, other)) {
                 func_800A6C48(o, 0xA);
@@ -175,7 +175,7 @@ s32 func_800B4C60(Wrestler *o, Wrestler *other, u16 inputFlags, s16 mode) {
     if (o->moveMode & 8) {
         s16 q2;
         do {
-            q2 = findBoundaryQuadrant(o, 0, 0);
+            q2 = findNearbyCornerPost(o, 0, 0);
         } while (0);
         if (q2 == -1) {
             return 0;

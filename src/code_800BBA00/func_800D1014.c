@@ -38,7 +38,7 @@ void translateEntityXZ(void *, void *);
 s32 func_800D3684(s32, s32);
 s32 func_800D35B0(s32, s32);
 s32 func_800D2BEC(void *, void *, void *, f32, u16, s32);
-s16 findBoundaryQuadrant(void *, s32, s32);
+s16 findNearbyCornerPost(void *, s32, s32);
 void func_800D43B4(void *, s16, s32);
 void func_800D4AD0(void *);
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800D6610 */
@@ -153,7 +153,7 @@ void func_800D1014(void) {
         func_800D1EA8(D_800FAF5C, D_800F9B00);
         if (D_800FAF5C->move.flags & 0x1000) {
             if (!(D_800FAF5C->move.flags & 0x40000)) {
-                s16 q = findBoundaryQuadrant(D_800FAF5C, 0, 1);
+                s16 q = findNearbyCornerPost(D_800FAF5C, 0, 1);
                 if (q != -1 && q == D_800FAF5C->dirIndex) {
                     D_800FAF5C->pairSignals |= 1;
                 }

@@ -30,7 +30,7 @@ void func_800E1560(Wrestler *, s32);
 #endif
 s8 func_800A93C0(void);
 s32 func_800D35B0(s32, s32);
-s8 selectNewLinkedTarget(void *, s32);
+s8 switchTargetOpponent(void *, s32);
 void func_800A7240(Wrestler *, s32, s32, u64);
 
 void func_800E0D60(void) {
@@ -70,7 +70,7 @@ void func_800E0D60(void) {
         break;
     case 2: {
         s32 id;
-        selectNewLinkedTarget(D_800FAF5C, D_800FAF8A);
+        switchTargetOpponent(D_800FAF5C, D_800FAF8A);
         id = D_800F9B14;
         func_800A7240(D_800FAF5C, id, 0x71, 0x100000000ULL);
         if (D_800FAF78) {

@@ -22,8 +22,8 @@ s32 func_800D35B0(s32, s32);
 s8 func_800A7240(void *, s32, s32, u64);
 void func_800A7F6C(void *, s32);
 s8 func_800C2CDC(void *, s32);
-s8 tryBeginEntityGrab(void *, void *);
-void handleEntityState38To3F(void *, void *);
+s8 tryTargetBlockOrCounter(void *, void *);
+void applyDiveHitToTarget(void *, void *);
 void func_800DB348(void *, void *);
 void func_800A837C(void *);
 s32 func_800D3684(s32, s32);
@@ -33,7 +33,7 @@ void func_800D4AD0(void *);
 void func_800A7D1C(void *, s32);
 s16 func_800B68A0(void *, void *, void *);
 s8 func_800D4CC4(void *);
-void addEntityHealthDelta(void *, s8);
+void addSpiritDelta(void *, s8);
 void beginEntityActionA8D8C(void *);
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 void func_800D2B64(void *, f32, s32, s32);
@@ -112,7 +112,7 @@ void func_800DDAC8(void)
                     }
                 } else {
                     D_800FAF5C->unk034 |= 4;
-                    handleEntityState38To3F(D_800FAF5C, &D_800F9D10[SLOT]);
+                    applyDiveHitToTarget(D_800FAF5C, &D_800F9D10[SLOT]);
                 }
                 D_800FAF5C->step++;
             }
@@ -121,15 +121,15 @@ void func_800DDAC8(void)
             SLOT = r;
             if (r != -1) {
                 D_800FAF5C->unk034 |= 8;
-                handleEntityState38To3F(D_800FAF5C, &D_800F9D10[SLOT]);
+                applyDiveHitToTarget(D_800FAF5C, &D_800F9D10[SLOT]);
                 D_800FAF5C->step++;
             }
         } else {
             r = func_800C2CDC(D_800FAF5C, 0xD);
             SLOT = r;
-            if (r != -1 && !tryBeginEntityGrab(&D_800F9D10[SLOT], D_800FAF5C)) {
+            if (r != -1 && !tryTargetBlockOrCounter(&D_800F9D10[SLOT], D_800FAF5C)) {
                 D_800FAF5C->unk034 |= 8;
-                handleEntityState38To3F(D_800FAF5C, &D_800F9D10[SLOT]);
+                applyDiveHitToTarget(D_800FAF5C, &D_800F9D10[SLOT]);
                 D_800FAF5C->step++;
             }
         }
@@ -224,7 +224,7 @@ void func_800DDAC8(void)
         func_800A7D1C(e, 0x23);
         func_800B68A0(D_800FAF5C, D_800FAF5C, D_800FAF5C);
         if (func_800D4CC4(e)) {
-            addEntityHealthDelta(e, e->move.spiritOnFinish);
+            addSpiritDelta(e, e->move.spiritOnFinish);
         }
         beginEntityActionA8D8C(e);
         return;
@@ -243,7 +243,7 @@ void func_800DDAC8(void)
             func_800A7D1C(e, 0x23);
             func_800B68A0(D_800FAF5C, D_800FAF5C, D_800FAF5C);
             if (func_800D4CC4(e)) {
-                addEntityHealthDelta(e, e->move.spiritOnFinish);
+                addSpiritDelta(e, e->move.spiritOnFinish);
             }
             beginEntityActionA8D8C(e);
         }
@@ -254,7 +254,7 @@ void func_800DDAC8(void)
             func_800A7D1C(D_800FAF5C, 0x24);
             func_800B68A0(D_800FAF5C, D_800F9B00, D_800FAF5C);
             if (func_800D4CC4(D_800FAF5C)) {
-                addEntityHealthDelta(D_800FAF5C, D_800FAF5C->move.spiritOnFinish);
+                addSpiritDelta(D_800FAF5C, D_800FAF5C->move.spiritOnFinish);
             }
             func_800D4AD0(D_800FAF5C);
             beginEntityActionA8D8C(D_800FAF5C);
