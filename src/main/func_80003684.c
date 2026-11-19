@@ -31,17 +31,21 @@ extern u8 D_000DAC50[];
 
 #ifdef TARGET_PC
 /* PC: the same reads and the same heap traffic, with the descriptor as the 16-byte ResDesc of port.h (filled by
- * lookupResourceDescriptor, which computes exactly what the N64 code does inline). After the load it tells the port
- * through port_res_loaded, the one place where a whole resource reaches RAM. */
+ * lookupResourceDescriptor, which computes exactly what the N64 code does inline). When the port runs from the game's
+ * archive instead of the ROM, port_res_read gives the resource's bytes as they are once unpacked, and the packed copy
+ * is still allocated and freed, so the heap sees the same traffic. After the load it tells the port through
+ * port_res_loaded, the one place where a whole resource reaches RAM. */
 void *func_80003684(void *out, s32 id, void *buf) {
     ResDesc res;
     lookupResourceDescriptor(&res, (u16)id);
     if (res.packed > 0) {
         u8 *b = allocateHeap(res.packed);
-        readRomSynchronousChunks(res.start, b, res.packed);
-        func_800037F4(b, buf);
+        if (!port_res_read((u16)id, buf, res.size)) {
+            readRomSynchronousChunks(res.start, b, res.packed);
+            func_800037F4(b, buf);
+        }
         releaseHeapBlock(b);
-    } else {
+    } else if (!port_res_read((u16)id, buf, res.size)) {
         readRomSynchronousChunks(res.start, buf, res.size);
     }
     port_res_loaded((u16)id, buf, res.size);

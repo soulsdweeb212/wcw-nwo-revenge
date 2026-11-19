@@ -207,6 +207,10 @@ void *func_80003684(void *out, s32 id, void *buf);
  * ROM bytes with readRomSynchronousChunks directly, such as func_80008810, gets them unconverted.) */
 void port_rom_read(void *dst, RomAddr src, u32 size);
 void port_res_loaded(u32 id, void *buf, s32 size);
+/* Also implemented by the port, for func_80003684: when the port runs from the game's archive (an .o2r file written
+ * from the ROM) rather than from the ROM, it copies resource id's size bytes, as they are once unpacked, to buf and
+ * returns 1; otherwise it returns 0 and the resource is read from the ROM. */
+s32 port_res_read(u32 id, void *buf, s32 size);
 
 /* The game's heap on PC, implemented by the port; allocateHeap and releaseHeapBlock call them. The N64's heap cannot run
  * on a 64-bit PC as it is: its block header {next, size, magic} is 16 bytes there and 24 here, but it counts in 16-byte
