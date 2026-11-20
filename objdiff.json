@@ -624,13 +624,13 @@
       "base_path": "build/src/main/func_80003684.o"
     },
     {
-      "name": "main/func_800037F4",
-      "target_path": "build/asm/nonmatchings/main/func_800037F4.o",
+      "name": "main/decompressLzss",
+      "target_path": "build/asm/nonmatchings/main/decompressLzss.o",
       "metadata": {
         "complete": true,
-        "source_path": "src/main/func_800037F4.c"
+        "source_path": "src/main/decompressLzss.c"
       },
-      "base_path": "build/src/main/func_800037F4.o"
+      "base_path": "build/src/main/decompressLzss.o"
     },
     {
       "name": "main/approximateAtan",

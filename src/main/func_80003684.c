@@ -9,7 +9,7 @@
  * Decode the resource descriptor for `id` into `out`.  The descriptor table
  * D_800482E0 holds packed ROM addresses (low bit = "compressed"); a compressed
  * resource is loaded into a temporary heap buffer and decompressed by
- * func_800037F4, otherwise the raw bytes are read straight into `buf`.
+ * decompressLzss, otherwise the raw bytes are read straight into `buf`.
  */
 typedef struct {
     u8 *volatile src;
@@ -22,7 +22,7 @@ void *allocateHeap(u32);
 #ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void readRomSynchronousChunks(void *, void *, s32);
 #endif
-void func_800037F4(void *, void *);
+void decompressLzss(void *, void *);
 void releaseHeapBlock(void *);
 
 extern s32 *D_800482E0;
@@ -42,7 +42,7 @@ void *func_80003684(void *out, s32 id, void *buf) {
         u8 *b = allocateHeap(res.packed);
         if (!port_res_read((u16)id, buf, res.size)) {
             readRomSynchronousChunks(res.start, b, res.packed);
-            func_800037F4(b, buf);
+            decompressLzss(b, buf);
         }
         releaseHeapBlock(b);
     } else if (!port_res_read((u16)id, buf, res.size)) {
@@ -87,7 +87,7 @@ void *func_80003684(void *out, s32 id, void *buf) {
     if (res.delta > 0) {
         u8 *b = allocateHeap(res.delta);
         readRomSynchronousChunks(res.src, b, res.delta);
-        func_800037F4(b, buf);
+        decompressLzss(b, buf);
         releaseHeapBlock(b);
     } else {
         readRomSynchronousChunks(res.src, buf, res.size);

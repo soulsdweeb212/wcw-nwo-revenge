@@ -194,8 +194,8 @@ memory. Game code reaches it through the same functions as on the N64:
    it at 16 bytes, so the callers' `s32[4]` and `u8[16]` buffers still fit. An unknown id stops the program with a
    message (the N64 loops forever).
 4. `func_80003684(out, id, buf)` loads resource `id` into `buf`. A compressed resource is read into a temporary heap
-   block and unpacked by `func_800037F4` (the same LZSS code on both, with `READ_BE32` for its size word); any other
-   is read straight into `buf`. On PC it then calls `port_res_loaded(id, buf, size)`: every whole resource passes
+   block and unpacked by `decompressLzss`, formerly `func_800037F4` (the same LZSS code on both, with `READ_BE32` for
+   its size word); any other is read straight into `buf`. On PC it then calls `port_res_loaded(id, buf, size)`: every whole resource passes
    there, so the port can track loaded buffers and convert byte order in one place.
 5. Two boot functions read ROM by fixed ROM symbols. On PC, `func_80001260` reads the segment-1 block by
    `ROM_SEG1_INIT`, and `func_80003120` skips the sound banks and `MusInitialize`: the libmus functions are the

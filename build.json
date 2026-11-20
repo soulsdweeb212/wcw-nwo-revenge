@@ -899,12 +899,12 @@
    "own": {}
   },
   {
-   "name": "func_800037F4",
+   "name": "decompressLzss",
    "seg": "main",
    "vram": 2147497972,
    "rom": 17396,
-   "asm": "asm/nonmatchings/main/func_800037F4.s",
-   "c": "src/main/func_800037F4.c",
+   "asm": "asm/nonmatchings/main/decompressLzss.s",
+   "c": "src/main/decompressLzss.c",
    "own": {}
   },
   {
