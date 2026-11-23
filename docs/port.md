@@ -71,6 +71,9 @@ These exist only under `TARGET_PC`:
   colours a body part's palette, asks for a 16-shade ramp for colour 1 and colour 2 of the wrestler the entity shows
   (its character id, `D_8006A2A4`) and, when the port has one, uses it for the keyed entries in place of the row of the
   game's colour table (resource 0xA51) that the Costume Change menu chose.
+- `port_anim_started`, for the port's Player Console: `func_800D427C`, the game's function that starts an animation
+  on a wrestler, reports each change of animation (slot, new and previous animation id, mode) as it makes it. The
+  port only records it.
 - A check that the CPU is little-endian, as the PCs the port runs on are: the PC code is written for that byte order
   where the N64 code reads a value through a view of another width (see "Byte order on PC").
 - `ROM_RES_BASE`, `ROM_RES_TABLE`, `ROM_SEG1_INIT` and the other `ROM_` names: the ROM addresses of the decomp's ROM

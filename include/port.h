@@ -251,6 +251,12 @@ s32 port_championship_matches(void);
  * each time it colours a palette, and uses the ramp in place of the colour the Costume Change menu chose. */
 s32 port_costume_ramp(u16 character, s32 channel, u16 *ramp);
 
+/* port_anim_started: the game's func_800D427C, which starts an animation on a wrestler, tells the port each time it
+ * changes the wrestler's animation: the wrestler's slot (0 to 3), the new animation id (a resource id, 0xE39 and up),
+ * the one it replaces, and the caller's mode (stored in D_800EB6B8). The port's Player Console logs it. It is called
+ * before the new animation's metadata is decoded, and must not touch the game's state. */
+void port_anim_started(s32 slot, s16 anim, s16 previous, s32 mode);
+
 /* Drawing on PC. The N64's render thread (func_80002CC4) turns each frame into graphics tasks and hands them to the
  * RSP; on PC no thread runs it. At a frame's hand-off the port calls port_render_frame (func_80002CC4.c, game code),
  * which does the render thread's work for that frame, and each task it submits reaches the port through

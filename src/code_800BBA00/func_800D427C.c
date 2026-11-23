@@ -18,6 +18,10 @@ void func_800D427C(Wrestler *w, s16 animId, s32 mode) {
     D_800EB680[w->id] = w->animId;
     w->animId = animId;
     if (animId != D_800EB680[w->id]) {
+#ifdef TARGET_PC
+        /* PC: tell the port's Player Console (port.h); D_800EB680 still holds the animation being replaced. */
+        port_anim_started(w->id, animId, D_800EB680[w->id], mode);
+#endif
         D_800EB680[w->id] = animId;
         decodeAnimationMetadata(&w->anim, w->animId);
         if (w->anim.hitStart == 0) {
