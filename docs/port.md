@@ -567,6 +567,15 @@ functions each holds, and how many replaced files the listed files call into. Th
 been set up: the first run of `build.py` extracts `asm/data/` and `assets/` from the ROM, and every run writes
 `build/game.ld` (without `build/game.ld` the tool goes by `build.json` alone). It only reads the decompilation.
 
+`port/game_files.txt` keeps the boot set's list, so that the port can be built where there is no ROM (CI, releases):
+Turnbuckle Dive compiles the files it names when the tool cannot run, and warns when the tool works out another list.
+The file holds only paths of the decompilation's C files. After a change that adds or drops a file of the boot, write
+it again and commit it with the change:
+
+```
+python3 tools/port_filelist.py --set boot > port/game_files.txt
+```
+
 ### How it works
 
 1. **It reads the C as the port compiles it.** The tool reads every C file named in `build.json` with `TARGET_PC`,
