@@ -257,6 +257,12 @@ s32 port_costume_ramp(u16 character, s32 channel, u16 *ramp);
  * before the new animation's metadata is decoded, and must not touch the game's state. */
 void port_anim_started(s32 slot, s16 anim, s16 previous, s32 mode);
 
+/* port_song_asked: the game's func_8000E55C, which the screens call to ask for their song (the menus and the match at
+ * every frame), tells the port the song number each time it is called with one, before it acts on it: 0 to 21, 0 when
+ * the music is switched off. The port's Sound Player gives the songs back to the game when the screen asks for
+ * another song than when the player's started. It must not touch the game's state. */
+void port_song_asked(s32 song);
+
 /* Drawing on PC. The N64's render thread (func_80002CC4) turns each frame into graphics tasks and hands them to the
  * RSP; on PC no thread runs it. At a frame's hand-off the port calls port_render_frame (func_80002CC4.c, game code),
  * which does the render thread's work for that frame, and each task it submits reaches the port through

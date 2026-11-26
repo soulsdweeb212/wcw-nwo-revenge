@@ -26,6 +26,11 @@ void func_8000E55C(s32 arg0,s16 arg1,s8 arg2) {
     if((u16)arg0<22U) {
         if(!arg2) arg0=0;
         index=arg0;
+#ifdef TARGET_PC
+        /* PC: tell the port which song the screen asks for (port.h); its Sound Player gives the songs back when the
+         * screen asks for another. */
+        port_song_asked(index);
+#endif
         if(arg1<2) duration=2;
         if(index!=D_80036748) {
             if(func_800033F8()==0) {
