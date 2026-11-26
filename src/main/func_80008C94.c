@@ -19,7 +19,12 @@ void lookupResourceDescriptor(void *, s32);
 void func_80003684(void *, s32, s32);
 #endif
 void releaseHeapBlock(void *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+f32 func_8000B370(s32);
+#else
 f32 func_8000B370(s16);
+#endif
 void guScaleF(void *, f32, f32, f32);
 
 /* Set the uniform scale of part arg0's matrix from its size. */

@@ -32,7 +32,12 @@ void func_800D4AD0(void *);
 void func_800A7D1C(void *, s32);
 void func_800B68A0(void *, void *, void *);
 s8 func_800D4CC4(void *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void addSpiritDelta(void *, s32);
+#else
 void addSpiritDelta(void *, s8);
+#endif
 void beginEntityActionA8D8C(void *);
 
 void updateActionStateDCD64(void) {

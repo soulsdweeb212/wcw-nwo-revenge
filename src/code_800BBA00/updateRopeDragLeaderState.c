@@ -15,12 +15,22 @@ extern u16 D_800FAF8E[];
 extern s32 D_800E3C90[];
 
 s8 chooseRopeDragDirection(void *, void *, u16 *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800BF018(void *, void *, s32);
+#else
 s16 func_800BF018(void *, void *, u16);
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800BF150 */
 s8 func_800BF150(void *, void *);
 #endif
 void func_800D8D74(void *, void *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800D7A2C(s32);
+#else
 s16 func_800D7A2C(u16);
+#endif
 void func_800D7E80(void *, s32);
 void func_800D37C0(s32, f32, void *);
 f32 func_800D63F0(void *, void *, s32);

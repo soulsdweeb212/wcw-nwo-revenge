@@ -7,7 +7,12 @@
 
 extern s8 D_800485B0[4][8];
 extern s8 D_800485D0[4][8];
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void setIndexedS16Pair(s32, s32, s16, s16);
+#else
 void setIndexedS16Pair(s32, s32, s8, s8);
+#endif
 
 /* Releases the pending indexed pair at (arg0,arg1): writes the stored pair and
  * marks the slot free (-1). */

@@ -21,7 +21,12 @@ void func_800A7C40(void *, s8, s16);
 s16 func_800D5438(void *, s32);
 #endif
 void func_800D427C(void *, s16, s32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s32 func_800AD218(void *, s32, s32, s32, s16 *);
+#else
 s32 func_800AD218(void *, u16, u16, s8, s16 *);
+#endif
 void func_800AD6D0(void *);
 void func_800D4AD0(void *);
 void func_800AD2C4(void *, void *, u16, s16);

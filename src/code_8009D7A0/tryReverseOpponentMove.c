@@ -7,7 +7,12 @@
 
 extern s16 D_800EB420[];
 void func_800A7C40(Wrestler *, s8, s16);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800A8D14(Wrestler *, Wrestler *);
+#else
 s32 func_800A8D14(Wrestler *, Wrestler *);
+#endif
 s8 func_800D4198(s16);
 
 /* attacker = the opponent (D_800F9B00), victim = the wrestler being updated (D_800FAF5C).

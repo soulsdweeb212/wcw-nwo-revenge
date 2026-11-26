@@ -17,7 +17,12 @@ s8 func_800A93C0(void);
 s8 func_800A9348(void *);
 s8 func_800B71F8(void *,s32,s32);
 void func_800D427C(void *,s16,s32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s8 func_800D7894(void *,s32);
+#else
 s8 func_800D7894(void *,u16);
+#endif
 s8 func_800DA8D0(void *);
 void beginEntityActionA8D8C(void *);
 void func_800D4AD0(void *);

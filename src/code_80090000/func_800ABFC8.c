@@ -19,7 +19,12 @@ _Static_assert(offsetof(P, a) == offsetof(Nw2MenuEl, fA) && offsetof(P, c) == of
 typedef struct { u8 pad0[0xA]; u16 a; s8 c; s8 d; s8 e; u8 pad1; s16 f; u8 pad2[0x136]; } P;
 typedef struct { u8 pad0[4]; u16 k; u8 pad1[0xE]; P *p; } A;
 #endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800A06F8(P *, s32);
+#else
 s16 func_800A06F8(P *, s8);
+#endif
 
 void func_800ABFC8(A *a) {
     P *t = a->p;

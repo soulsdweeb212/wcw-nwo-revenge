@@ -19,7 +19,12 @@ extern s16 D_800EB620[];
 f32 func_800D3890(void *, void *, void *);
 s32 func_800D35B0(s32, s32);
 void func_800D3E40(void *, void *, s32, void *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_800A72FC(void *, void *, s32);
+#else
 void func_800A72FC(void *, void *, s16);
+#endif
 void func_800D36B4(void *, void *, void *);
 void translateEntityXZ(Wrestler *, f32 *);
 void func_800D427C(void *, s32, s32);

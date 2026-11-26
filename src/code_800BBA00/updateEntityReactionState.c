@@ -33,7 +33,12 @@ void func_800D4AD0(void *);
 s16 func_800D5438(void *, s32);
 #endif
 s16 func_800D7690(void *, s32, s32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s32 func_800D7894(void *, s32);
+#else
 s32 func_800D7894(void *, u16);
+#endif
 
 void updateEntityReactionState(void) {
     s32 animId;

@@ -19,10 +19,25 @@ extern f32 D_800E37CC[];
 extern f64 D_800E55C0;
 extern s16 D_800F9B78[];
 extern s8 D_800FADB9[];
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800BF1E0(void *, s16);
+#else
 s16 func_800BF1E0(void *, s8);
+#endif
 void func_800BF338(void *, s16, s32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_800BF228(void *, s32, s32);
+#else
 void func_800BF228(void *, s32, s8);
+#endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void addSpiritDelta(Wrestler *, s32);
+#else
 void addSpiritDelta(Wrestler *, s16);
+#endif
 s16 updateSpiritTimers(void *, s32, s32);
 
 /* Applies a landed move: source->move is the move used, attacker gets the credit, target takes the damage (callers

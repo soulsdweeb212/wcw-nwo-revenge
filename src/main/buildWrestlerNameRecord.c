@@ -16,7 +16,12 @@ typedef struct { NameEntry **entries; u16 count, pad; } NameTable;
 extern NameTable lookupSubTables[];
 extern NameEntry D_8003A59C;
 extern char D_80039958[], D_80039B80[];
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_8000B630(u8 *, s32, s16);
+#else
 void func_8000B630(u8 *, s16, s16);
+#endif
 void bzero(void *, s32);
 void func_80028C44(void *, void *);
 void func_80028BB8(void *, void *);

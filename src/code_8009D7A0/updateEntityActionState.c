@@ -18,7 +18,7 @@ s8 func_800D4198(s16);
 s8 func_800B71F8(void*,s32,s32);
 s8 func_800A93C0(void);
 void beginEntityActionA8D8C(void*);
-void playEntitySound(s8,s32);
+void playEntitySound(s16,s32);
 #else
 s32 func_800D2B64(void*,f32,u16,s32);void func_800D427C(void*,s32,s32);void func_800D4AD0(void*);void func_800D4CC4(void*);s8 func_800D4198(s16);s8 func_800B71F8(void*,s32,s32);s8 func_800A93C0(void);void beginEntityActionA8D8C(void*);void playEntitySound(s8,s32);
 #endif

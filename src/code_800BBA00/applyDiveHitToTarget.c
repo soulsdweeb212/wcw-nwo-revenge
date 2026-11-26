@@ -14,7 +14,12 @@ void func_800E212C(void *);
 void func_800A837C(void *);
 void func_800A6D80(void *, s32);
 void func_800C4610(void *, void *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void addSpiritDelta(void *, s32);
+#else
 void addSpiritDelta(void *, s16);
+#endif
 s8 func_800C472C(void *, void *, s32);
 
 void applyDiveHitToTarget(Wrestler *source, Wrestler *target)

@@ -12,12 +12,27 @@
  * and returns 1 if the move is allowed or 0 if it is blocked. moveMode is cleared first and collects the resolution
  * bits (1, 2, 4, 8, 0x10, 0x4000); on the apron, flags bit 0x8000000000 is set when dirIndex becomes ringSide - 1. */
 extern s32 D_800E3C90[], D_800E3CA0[], D_800E3CB0[], D_800F9B14;
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800D7B08(s32);
+#else
 s16 func_800D7B08(u16);
+#endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800D7A2C(s32);
+#else
 s16 func_800D7A2C(u16);
+#endif
 s16 findNearbyCornerPost(void *, void *, s32);
 s8 func_800B4B3C(void *);
 void func_800E212C(void *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800D65D0(void *, s32);
+#else
 s16 func_800D65D0(void *, u16);
+#endif
 void getRingBoundaryPointAlongHeading(void *, s32, void *);
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800D6610 */
 s32 func_800D6610(void *, s16);

@@ -19,8 +19,18 @@ void func_800D427C(void *, s16, s32);
 s16 func_800D5438(void *, s32);
 #endif
 void func_800D43B4(void *, s16, s32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void tryReverseOpponentMove(void *, void *, s32, s32);
+#else
 void tryReverseOpponentMove(void *, void *, u16, u16);
+#endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_800AD574(void *, void *, s32);
+#else
 void func_800AD574(void *, void *, u16);
+#endif
 void func_800A7F6C(void *, s32);
 void func_800A837C(void *);
 void func_800A6BE0(void *, s32);

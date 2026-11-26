@@ -16,7 +16,12 @@ extern s32 func_8009678C(void);
 extern s32 func_800DA8B4(void *, s32, s32);
 extern s8 func_800A93C0(void);
 extern s32 func_800DA850(void *, s32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+extern s8 func_80096854(s16);
+#else
 extern s8 func_80096854(s8);
+#endif
 extern s8 func_800B8484(s32);
 /* Gate for a multi-stage "finish" sequence: only runs while the enable byte is
  * set, the inhibit flag is clear and no attachment is active. It scans the four

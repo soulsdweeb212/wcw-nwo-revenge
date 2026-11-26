@@ -10,7 +10,12 @@ typedef struct { u8 value; u8 pad[91]; } Tbl7E010;      /* one u8 per player */
 extern ByteColumn D_800F98E0[], D_800F98E1[], D_800F98E2[], D_800F98E3[];
 extern Tbl7E010 D_8007E010[];
 extern u8 D_800F98E4[];
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_80012364(s16, s16, s16, void *);
+#else
 void func_80012364(s16, s8, s8, void *);
+#endif
 
 /* For each of the four field slots at D_800F98E0 (not players): if the slot's type is 11 or 12
  * and its D_8007E010 flag is set, clear the slot; then pass the slot's id, type and position

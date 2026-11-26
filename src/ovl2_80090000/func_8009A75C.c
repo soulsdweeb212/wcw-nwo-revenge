@@ -13,7 +13,12 @@ typedef struct {
 void func_80097E34(s32, s16);
 u16 func_800B8278(void);
 s8 func_800A90FC(s16);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+u16 func_800085E4(s32);
+#else
 u16 func_800085E4(s16);
+#endif
 s8 func_800B83CC(s16);
 void func_8009AAC8(void);
 void func_8009B2EC(s16, u16 *);

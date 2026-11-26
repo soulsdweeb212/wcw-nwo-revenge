@@ -20,7 +20,7 @@ void func_800A837C(void*);
 void func_800A7C40(void*,s8,s16);
 s32 func_800D35B0(s32,s32);
 void func_800D427C(void*,s16,s32);
-s16 func_800D7690(void*,u16,s16);
+s16 func_800D7690(void*,s32,s16);
 void func_800D43B4(void*,s16,s32);
 void translateEntityXZ(void*,void*);
 #else

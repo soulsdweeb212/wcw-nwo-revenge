@@ -30,8 +30,18 @@ s16 func_800D3638(s32);
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800D3B24 */
 s8 func_800D3B24(f32 *, f32 *, f32, s32);
 #endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800D65D0(void *, s32);
+#else
 s16 func_800D65D0(void *, u16);
+#endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800D7A2C(s32);
+#else
 s16 func_800D7A2C(u16);
+#endif
 s8 func_800DF924(void *, void *);
 s8 func_800E07DC(void *);
 void translateEntityXZ(void *, f32 *);

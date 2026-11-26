@@ -20,9 +20,24 @@
  *  - WR_FLAG_ON_FLOOR: simpler D_800E3CD8 quadrant test. */
 extern u16 D_800E3CD0[], D_800E3CD8[], D_800E3CEE[];
 extern u8 D_8007E228[];
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800D7A68(s32);
+#else
 s16 func_800D7A68(u16);
+#endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800D7A2C(s32);
+#else
 s16 func_800D7A2C(u16);
+#endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s8 tryTagExchange(Wrestler *, s32);
+#else
 s8 tryTagExchange(Wrestler *, u16);
+#endif
 s8 isEntityActionAllowedC2870(Wrestler *);
 s8 func_800C2830(Wrestler *);
 s8 func_800D9568(Wrestler *);

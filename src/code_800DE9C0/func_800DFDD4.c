@@ -7,7 +7,12 @@
 
 extern u16 D_800E3CD0[];
 extern u16 D_800E3CD8[];
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s32 tryStartPairedEntityActions(Wrestler *, Wrestler *, s32, f32);
+#else
 s32 tryStartPairedEntityActions(Wrestler *, Wrestler *, u16, f32);
+#endif
 void func_800E212C(Wrestler *);
 s32 func_800D23B4(Wrestler *, Wrestler *, Nw2DirectionResult *);
 /* Clears self flag 0x20000000000; returns 0 unless arg2 has bit 0x8000. Then clears flag 0x0100000000000000 and

@@ -23,7 +23,12 @@ extern void func_800D2B64(void *, f32, s32, s32);
 extern void func_800D427C(void *, s32, s32);
 extern void func_800D4AD0(void *);
 extern s16 func_800D7690(void *, s32, s32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+extern s8 func_800D7894(void *, s32);
+#else
 extern s8 func_800D7894(void *, u16);
+#endif
 
 /* Six-step action state machine on the step of the wrestler being updated
  * (D_800EB408).  Steps 0/2 aim it at side dirIndex (position tables

@@ -27,7 +27,12 @@ void func_80010200(s16, s16, s32);
 void func_8000DB90(s32, s32);
 void func_8000946C(s32, s16, s16);
 void func_80008CE8(s32, s16, s16, f32 *, s32, s8);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_80012364(s16, s16, s16, f32 *);
+#else
 void func_80012364(s16, s8, s8, f32 *);
+#endif
 
 void stepRecordedFramePlayback(void) {
     s16 player, clipFrame;          /* slot index; clip frame within the take */

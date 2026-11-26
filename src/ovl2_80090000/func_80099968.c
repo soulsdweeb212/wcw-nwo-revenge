@@ -23,7 +23,12 @@ typedef struct { s32 flags; } Node;
 
 s16 func_80098960(G **, s32);
 void func_80098D54(G **, s32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s32 func_8000DEE4(s32);
+#else
 s32 func_8000DEE4(s16);
+#endif
 void MusHandleSetReverb(s32, s32);
 void func_800B8C94(void);
 void func_80003418(s8);

@@ -14,6 +14,10 @@ argument travels.
 - On a 64-bit PC (x86-64 with the System V convention, as on Linux) pointers are 64 bits, integers and pointers travel
   in rdi, rsi, rdx, rcx, r8 and r9, and floats in xmm0 to xmm7. The same call can then cut a pointer to 32 bits, or
   hand the function a different number.
+- On 64-bit Windows (the Microsoft x64 convention, which the port's Windows build uses) a caller sets only the bits of
+  the type its declaration gives an argument, where the System V compilers widen an 8- or 16-bit integer to 32 bits.
+  So an integer narrower than its parameter (an s8 -1 where the function reads an s16) arrives with the rest of the
+  register unset: 255, or anything (class F3). The tool rates that alone for Windows; the rest it rates for System V.
 This tool finds every call in the set whose caller sees the called function differently from its definition, in a way
 that changes what happens on such a PC, and rates the effect.
 
@@ -117,7 +121,8 @@ DUMP_FLAGS = ["-fsyntax-only", "-ferror-limit=0", "-fno-color-diagnostics", "-Xc
 # Effects. A call's effect is the worst of its findings', unless the called function lies outside the set (SDK,
 # replaced) or clang could not build the call (not rated). Crash and wrong value block: exit status 1.
 # - crash: a pointer is cut to 32 bits, or the function reads a pointer from a place that holds something else.
-# - wrong value: the function gets, or the caller gets back, a different number than on the N64.
+# - wrong value: the function gets, or the caller gets back, a different number than on the N64 (for F3, on 64-bit
+#   Windows only).
 # - clang-only: an integer argument wider than its parameter. GCC at any optimisation and clang at -O0 narrow it in the
 #   called function, as the N64 code does; clang at -O1 and above counts on the caller to have narrowed it.
 # - harmless: the two sides differ, but the PC does what the N64 does.
@@ -145,6 +150,7 @@ CLASSES = {
     "E": "result of a void function used",
     "F1": "integer wider than the parameter",
     "F2": "narrow result read at full width",
+    "F3": "integer narrower than the parameter (64-bit Windows)",
     "G": "function pointer made from integers",
     "H": "struct passed by value",
     "O": "other difference",
@@ -793,6 +799,8 @@ def compare(args: list, params: list, constants: list) -> list:
                     out.append((j, "narrow", f"the caller passes a {a[1]}-byte integer"))
                 elif a[1] == p[1] < 4 and a[2] != p[2]:
                     out.append((j, "narrow", "the caller passes it with the other signedness"))
+                elif a[1] < p[1]:
+                    out.append((j, "wide", f"the caller passes a {a[1]}-byte integer, the function reads {p[1]} bytes"))
             elif a[0] != p[0] and kinds not in ("Li", "Lq"):
                 out.append((j, "bits", f"the caller passes {KIND_WORDS[a[0]]}, the function reads {KIND_WORDS[p[0]]} "
                                        "from the same place"))
@@ -904,6 +912,8 @@ def call_findings(call: dict, d: dict, float_externs: dict | None = None) -> lis
             out.append(("D", CRASH if params[j][0] == "p" else WRONG, f"{what} {words}"))
         elif code == "narrow":
             out.append(("F1", CLANG_ONLY, f"{what}: {words}"))
+        elif code == "wide":
+            out.append(("F3", WRONG, f"{what}: {words}; on 64-bit Windows the bytes past the argument's are unset"))
         elif code == "struct":
             out.append(("H", WRONG, f"{what}: {words}"))
         else:

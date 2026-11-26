@@ -5,7 +5,12 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void MusSetMasterVolume(s32, s32);
+#else
 s32 MusSetMasterVolume(s32, s16);
+#endif
 extern s16 D_800482D8;
 
 /* Set the global volume byte from arg0 (a nonnegative s8): store arg0<<8 in

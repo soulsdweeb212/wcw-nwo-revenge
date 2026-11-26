@@ -17,10 +17,20 @@ typedef struct {
 extern s8 D_800566E8[];      /* per-player script state byte */
 extern s16 D_800566E0[];     /* per-player parameter */
 extern s16 D_8007DFA8[];     /* per-player current value */
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+extern Nw2DD0CRec *func_8002B7E0(s32, s32);
+#else
 extern Nw2DD0CRec *func_8002B7E0(s16, s16);
+#endif
 extern void func_80002C0C(void);
 extern void func_8000C1B8(s32, s32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+extern void func_8000CFD4(s32, s32, s16, s16, s32, s32, s32);
+#else
 extern void func_8000CFD4(s32, s16, u8, u8, s32, s32, s32);
+#endif
 
 /* Runs one step of loading a newly asked-for character into each player slot (4 slots),
  * as a run-in needs. Each slot's state byte: 0 clears the value, 1 looks up the character's

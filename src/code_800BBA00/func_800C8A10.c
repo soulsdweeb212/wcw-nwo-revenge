@@ -12,7 +12,12 @@ void func_800D427C(void *, s16, s32);
 s8 func_800D8D74(void *, s32);
 s16 func_800B6DEC(void *, void *, s32);
 void func_800D7690(void *, s32, s32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s8 func_800D7894(void *, s32);
+#else
 s8 func_800D7894(void *, u16);
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(void *, f32, u16, s32);
 #endif

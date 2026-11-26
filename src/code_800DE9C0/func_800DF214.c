@@ -28,7 +28,12 @@ extern s32 D_800E3D00[];
 #else
 extern s32 D_800E3CFC[]; 
 #endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800D7A68(s32, s32); void func_800D37C0(s32, f32, void *); f32 func_800D3890(void *, void *, void *); void func_800E212C(void *);
+#else
 s16 func_800D7A68(u16, s32); void func_800D37C0(s32, f32, void *); f32 func_800D3890(void *, void *, void *); void func_800E212C(void *);
+#endif
 s32 func_800DF214(Wrestler *p, s32 flags) {
 #ifdef TARGET_PC
     /* PC: vec has room for a whole Nw2DirectionResult, because func_800D26A0 copies 16 bytes from it (it uses only x

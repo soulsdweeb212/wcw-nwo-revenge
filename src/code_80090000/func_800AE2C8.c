@@ -48,7 +48,12 @@ extern Menu D_800E8230[];
 extern El *D_800E8FAC; /* D_800E8230[11].el, by its own name in the inlined func_800AE1E4 */
 #endif
 void func_800A8EF0(s32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800A06F8(El *, s32);
+#else
 s16 func_800A06F8(El *, s8);
+#endif
 
 /* func_800AE1E4, inlined (it is a separate function too) */
 static inline void setup(void) {

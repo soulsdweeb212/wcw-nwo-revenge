@@ -8,7 +8,12 @@
 extern u8 D_8007EF30[];
 extern u8 D_800FABE8[], D_800FABEC[], D_800FABEE[];
 extern s16 D_800EB4D0[];
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_800D2638(void *, s32, f32);
+#else
 void func_800D2638(void *, u16, f32);
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 s32 func_800D2B64(void *, f32, u16, s32);
 #endif

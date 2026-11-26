@@ -16,7 +16,12 @@ extern s16 D_800EB620[];
 extern s32 D_800EB600[];
 void setupEntityMoveCD990(void *, void *);
 s32 func_800CDEE4(void *, void *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s32 func_800CDF40(void *, u16, u16, s16, u16 *);
+#else
 s32 func_800CDF40(void *, u16, u16, s8, u16 *);
+#endif
 s32 func_800D00FC(void *, void *, u16);
 void translateEntityXZ(void *, void *);
 s32 func_800D35B0(s32, s32);

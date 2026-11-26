@@ -6,7 +6,12 @@
 #include "common.h"
 
 void bzero(void *, s32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s32 func_80028E28(u8 *, s32);
+#else
 s32 func_80028E28(u8 *, u16);
+#endif
 
 s32 func_80029C7C(u8 *str, s32 arg1, s32 *out, s32 count)
 {

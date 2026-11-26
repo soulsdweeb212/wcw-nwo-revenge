@@ -33,7 +33,12 @@ extern Obj2CC4 *D_80047070[][512];
 s32 osRecvMesg(void *, void *, s32);
 s32 osSendMesg(void *, void *, s32);
 void func_80002324(s16);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_80002454(Gfx2CC4 **, s16, s16);
+#else
 s32 func_80002454(Gfx2CC4 **, s16, s16);
+#endif
 Gfx2CC4 *buildSceneSetupDisplayList(Task2CC4 *, s32);
 void submitGraphicsTask(Task2CC4 *, Gfx2CC4 *, s32, s16);
 void func_80003098(void);

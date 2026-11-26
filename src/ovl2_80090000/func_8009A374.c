@@ -12,7 +12,12 @@ void setupTiltedPerspectiveCamera(void *, f32, f32, f32, f32, f32, f32, f32);
 void updateRingSideDrawGroups(void);
 void func_8000EDC4(void);
 void updatePartDrawGroups(s16);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_8000CD18(s32, f32, f32);
+#else
 void func_8000CD18(s16, f32, f32);
+#endif
 void func_800018C4(void *, f32 *, u8, u8);
 s8 func_800D633C(void);
 s8 func_800D6350(void);

@@ -30,11 +30,21 @@ void initSideSlotTransforms(void);
 void func_8000E920(s32, s32);
 void initializeMatchResources(void);
 void updateRingSideDrawGroups(void);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+CharInfo *func_8002B7E0(s32, s32);
+#else
 CharInfo *func_8002B7E0(s16, s16);
+#endif
 void func_8000C91C(s16, s16, s32, s32, s32, s32, s32);
 void func_8009A69C(void *, Pos14 *);
 void func_80001DC4(void *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_8000CD18(s32, f32, f32);
+#else
 void func_8000CD18(s16, f32, f32);
+#endif
 void func_8000DB90(s16, s32);
 void initializeTransformNode(void *, s32, f32, f32, f32);
 void buildColorOverlayDisplayList(void *, s32, s32, s32, s32);

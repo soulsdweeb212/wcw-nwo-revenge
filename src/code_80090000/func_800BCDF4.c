@@ -135,7 +135,12 @@ void func_800AF978(void);
 void func_800B511C(s32);
 void func_800B5704(s32);
 void func_800B9F18(void);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_8000DEE4(s32);
+#else
 void func_8000DEE4(s16);
+#endif
 
 static inline s32 winner(s32 a, s32 b) {
     s32 c, n, e, w;

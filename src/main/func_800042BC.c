@@ -10,7 +10,12 @@ extern u8 D_800484F3;
 extern u16 D_80048310[];
 extern u8 D_800482F0[];
 extern u8 D_80048350[];
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s32 osMotorInit(void *, void *, s32);
+#else
 s32 osMotorInit(void *, void *, s16);
+#endif
 void func_800043CC(s16);
 
 /* Save pak bank arg0: clear its dirty bit in D_800484F3, and if the bank is

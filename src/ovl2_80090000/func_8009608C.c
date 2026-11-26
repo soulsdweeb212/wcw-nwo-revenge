@@ -51,7 +51,12 @@ extern Rec2C D_800E8014[];
 extern s16 D_800E80C4;
 extern s16 D_800E80C6;
 extern s16 D_800F99B6;
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_8000DEE4(s32);
+#else
 void func_8000DEE4(s16);
+#endif
 void func_800907A0(void *, Rec2C *, s16, s16, f32, f32, f32, f32, u8, u8, u8, u8);
 void func_8009786C(s32);
 

@@ -19,8 +19,18 @@ extern s32 D_800F9B14;
 void func_800B5F24(void *, void *, u16);
 void func_800A6BE0(void *, s32);
 s32 isEntityActionEligible(void *, void *, s32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s32 func_800B5CA0(void *, void *, s32, f32);
+#else
 s32 func_800B5CA0(void *, void *, u16, f32);
+#endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s8 func_800B5DC4(void *, s32);
+#else
 s32 func_800B5DC4(void *, s32);
+#endif
 f32 func_800D3EEC(void *, void *, s32);
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800D3B24 */
 s32 func_800D3B24(void *, f32 *, f32, Nw2DirectionResult *);

@@ -56,7 +56,12 @@ extern u8 D_8005AAE8[],D_8005AB48[],D_8005ABA8[],D_8005AC30[],D_8005ACB8[],D_800
 void func_80007874(void *,void *,s32,s32);
 #endif
 s32 guRandom(void);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_80011B24(s32);
+#else
 s16 func_80011B24(s16);
+#endif
 #ifdef TARGET_PC
 /* PC: the animation-command record by field name (Nw2AnimatedCi4State): type, frame and countdown (Col16's d, e, f). */
 static inline void setCol(s32 v, s16 i) {

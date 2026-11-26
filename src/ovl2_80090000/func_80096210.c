@@ -73,7 +73,12 @@ extern Rec2C D_800E9398[];
 extern Rec2C D_800E93F0[];
 extern s16 D_800E9448;
 extern s16 D_800E944A;
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s32 func_8000DEE4(s32);
+#else
 s32 func_8000DEE4(s16);
+#endif
 void MusHandleSetReverb(s32, s32);
 s32 func_80090A38(ObjDC *, Rec2C *, ObjDC *, Rec2C *, f32, s16, s32);
 s32 func_80091108(ObjDC *, Rec2C *, ObjDC *, Rec2C *, f32, s16, s16);

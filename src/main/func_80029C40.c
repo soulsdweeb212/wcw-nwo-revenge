@@ -5,7 +5,12 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_80029C7C(void *, s32, s32 *, s32);
+#else
 void func_80029C7C(void *, u16, s32 *, s32);
+#endif
 
 /* Render arg0 into a scratch result array and return the arg2-th entry. */
 s32 func_80029C40(void *arg0, u16 arg1, s32 arg2) {

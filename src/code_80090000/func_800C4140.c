@@ -55,7 +55,12 @@ u16 func_8000B46C(s16);
 u16 func_8000B550(s16, s32);
 void func_80012B38(s16, s32, s32);
 s32 func_800C2E50(P *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_80008574(s32);
+#else
 s16 func_80008574(s16);
+#endif
 void func_8000946C(s16, s16, s16);
 
 static inline void setPos(s32 n) {

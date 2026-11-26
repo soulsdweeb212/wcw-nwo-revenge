@@ -16,7 +16,12 @@ f32 func_80003CF0(f32);
 f32 nw2Sqrtf(f32);
 s16 func_8000CF64(f32, f32);
 s8 func_800A90FC(s16);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+u16 func_800085E4(s32);
+#else
 u16 func_800085E4(s16);
+#endif
 s32 guRandom(void);
 s32 func_800A9028(s16);
 f32 func_80003A3C(f32, f32);

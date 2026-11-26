@@ -30,7 +30,12 @@ void func_800A7C40(Wrestler *, s8, s16);
 s16 func_800D5438(Wrestler *, s32);
 void func_800A7F6C(void *, s32);
 void func_800A9488(Wrestler *, Wrestler *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s8 tryTagExchange(Wrestler *, s32);
+#else
 s8 tryTagExchange(Wrestler *, u16);
+#endif
 s8 func_800D9568(Wrestler *);
 s8 func_800D8DF0(Wrestler *);
 void func_800A7188(Wrestler *);

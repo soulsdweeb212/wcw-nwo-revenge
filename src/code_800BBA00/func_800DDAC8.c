@@ -33,7 +33,12 @@ void func_800D4AD0(void *);
 void func_800A7D1C(void *, s32);
 s16 func_800B68A0(void *, void *, void *);
 s8 func_800D4CC4(void *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void addSpiritDelta(void *, s32);
+#else
 void addSpiritDelta(void *, s8);
+#endif
 void beginEntityActionA8D8C(void *);
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800D2B64 */
 void func_800D2B64(void *, f32, s32, s32);

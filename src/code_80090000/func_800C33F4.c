@@ -42,8 +42,18 @@ u8 *func_8002B7E0(s32, s32);
 void func_8000D238(s16, u16);
 void func_80012B38(s16, s32, s32);
 void func_80012364(s16, s16, s32, s32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_8000CFD4(s16, s32, s16, s16, s32, s8, s8);
+#else
 void func_8000CFD4(s16, s16, s16, s16, s8, s8, s8);
+#endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_8000BB40(s16, s32, s8, s8);
+#else
 void func_8000BB40(s16, s8, s8, s8);
+#endif
 
 void func_800C33F4(s32 a) {
     Wr33F4 *w = (Wr33F4 *)(D_800E79B8 + a * 0x6D0);

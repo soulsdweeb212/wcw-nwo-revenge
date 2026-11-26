@@ -77,10 +77,30 @@ extern Rec8CE8 D_800706A8[];
 extern Bone8CE8 D_80070C40[][23];
 
 void func_8000A310(s16);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_8000A3DC(s32, s32);
+#else
 void func_8000A3DC(s16, s32);
+#endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_8000AD00(s32, s16);
+#else
 void func_8000AD00(s16, s16);
+#endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_8000B2B8(s32, s16);
+#else
 void func_8000B2B8(s16, s16);
+#endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_80009D98(s16, s16, s32);
+#else
 void func_80009D98(s16, s16, s8);
+#endif
 void initializeResourceStream(s16, s16);
 void updateBodyPartTransforms(s16);
 void func_80007E14(f32 *, f32);

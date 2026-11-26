@@ -8,7 +8,12 @@
 extern u16 D_800E4000[];
 extern u16 D_800E4008[];
 s16 findNearbyCornerPost(void *, s32, s32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800D65D0(void *, s32);
+#else
 s16 func_800D65D0(void *, u16);
+#endif
 s32 func_800DF924(void *, void *);
 s32 func_800E07DC(void *);
 void func_800E212C(void *);

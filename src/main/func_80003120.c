@@ -29,7 +29,12 @@ void readRomSynchronousChunks(void *, void *, s32);
 void *func_80000610(void);
 void func_80003418(s32);
 void MusInitialize(Nw2AudioInit *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void MusSetMasterVolume(s32, s32);
+#else
 void MusSetMasterVolume(s32, s16);
+#endif
 void MusBankInitialize(s32, void *);
 
 #ifdef TARGET_PC

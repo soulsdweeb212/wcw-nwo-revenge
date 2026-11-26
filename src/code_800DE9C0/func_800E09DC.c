@@ -20,7 +20,7 @@ s32 func_800D35B0(s32,s32);
 f32 func_800D3EEC(void *,void *,s32);
 void func_800D427C(void *,s32,s32);
 void func_800D4AD0(void *);
-s32 updateEntityHealthLevel(void *);
+s16 updateEntityHealthLevel(void *);
 void func_800E1560(Wrestler *w, s32 targetHeading, s32 a2);
 s8 func_800A93C0(void);
 void beginPairedEntityActions(void *,s32,void *,s32);

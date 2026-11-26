@@ -10,7 +10,12 @@ extern u8 D_800C94CC[];
 s32 func_80099734(s32);
 void func_800B75D4(s32 *, s32, s32);
 #endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+u8 *func_80028D18(uintptr_t, uintptr_t);
+#else
 u8 *func_80028D18(s32, s32);
+#endif
 u8 *func_80029A24(u8 *, s32, s32);
 
 /* Builds the name string for arg0 into its cached record (or returns the

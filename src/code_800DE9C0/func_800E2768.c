@@ -8,7 +8,12 @@
 extern s8 D_800F99A0[];
 extern u8 D_800F98E2[];
 
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void applyEntityTextureMasks(s16, s16);
+#else
 void applyEntityTextureMasks(s8, s8);
+#endif
 
 /* Re-applies the texture masks (applyEntityTextureMasks(other->id, D_800F99A0[self->id])) when
  * self->anim.unk372[2] is set and animFrame equals anim.unk372[3] + 7. */

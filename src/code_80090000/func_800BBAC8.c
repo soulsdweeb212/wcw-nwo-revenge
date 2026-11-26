@@ -12,7 +12,12 @@ extern s32 D_800E7CC0[];
 typedef struct { s32 v; } Cnt;
 extern Cnt D_800E7CC8, D_800E7CCC;
 extern s32 D_800E7CD0, D_800E7CD4;
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+u16 func_8002AEE0(s32);
+#else
 s32 func_8002AEE0(s32);
+#endif
 s32 func_800BB994(s32, s32);
 
 void func_800BBAC8(s32 a) {

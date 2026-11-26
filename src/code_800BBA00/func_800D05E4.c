@@ -11,7 +11,12 @@
  * opponent flag 0x01000000 and gives it move func_800A8D14(self, opponent) from self's table, returning 0; bit
  * 0x100 / 0x200 give move 0x7F / 0x83 (else arg2, which func_800D00FC does not pass). The finishing cases set the
  * move from the opponent's own table, call func_800A7F6C(opponent, 0) and return 1. */
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800A8D14(Wrestler*,Wrestler*);void func_800A7C40(Wrestler*,s8,s16);void func_800A7F6C(void*,s32);
+#else
 s32 func_800A8D14(Wrestler*,Wrestler*);void func_800A7C40(Wrestler*,s8,s16);void func_800A7F6C(void*,s32);
+#endif
 s32 func_800D05E4(Wrestler *self,Wrestler *opponent,s16 arg2){
     u64 flags=opponent->flags;s32 f;
     if(!(flags&0x02000000))goto ret0;

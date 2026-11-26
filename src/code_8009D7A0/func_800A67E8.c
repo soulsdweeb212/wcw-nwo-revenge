@@ -10,7 +10,12 @@ extern s32 D_800E3C98;
 extern f64 D_800E46E8;
 extern f64 D_800E46F0;
 
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_8000DB90(s16, s32);
+#else
 void func_8000DB90(s8, s32);
+#endif
 void func_800A7F6C(void *, s32);
 void func_800A837C(void *);
 void func_800D427C(void *, s16, s32);

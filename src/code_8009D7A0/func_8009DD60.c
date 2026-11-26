@@ -26,19 +26,59 @@ s8 isEntityActionAllowedC2870(void *);
 u32 func_800D6658(void *, void *, s32, s32, f32);
 #endif
 s8 func_800DF5C4(void *, void *, u16, u16, s8, s32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s8 func_800DE9C0(void *, void *, s32, s32, s32);
+#else
 s8 func_800DE9C0(void *, void *, u16, u16, s32);
+#endif
 s8 tryMoveThroughRopes(void *, u16, u16, s32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s8 func_800E2400(void *, s32, s32, u32);
+#else
 s8 func_800E2400(void *, u16, u16, u32);
+#endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s8 func_800DF214(void *, s32);
+#else
 s8 func_800DF214(void *, u16);
+#endif
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800DF3E4 */
 s8 func_800DF3E4(void *, void *, u16, f32);
 #endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s8 func_800DFDD4(void *, void *, s32, void *);
+#else
 s8 func_800DFDD4(void *, void *, u16, void *);
+#endif
 s8 func_800DF99C(void *, void *, u16, void *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s8 func_800E022C(void *, void *, s32, void *);
+#else
 s8 func_800E022C(void *, void *, u16, void *);
+#endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s8 func_800E0590(void *, void *, s32, void *);
+#else
 s8 func_800E0590(void *, void *, u16, void *);
+#endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s8 func_800E074C(void *, s32, s32);
+#else
 s8 func_800E074C(void *, u16, u16);
+#endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s8 func_800E06C0(void *, void *, s32);
+#else
 s8 func_800E06C0(void *, void *, s8);
+#endif
 void func_800BF548(void *, s32);
 void updateSpiritTimers(void *, void *, s32);
 

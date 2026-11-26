@@ -7,7 +7,12 @@
 
 s8 func_800D7B54(void *, s32, s32, s32);
 void func_800C4610(Wrestler *, Wrestler *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void playEntitySound(s16, s32);
+#else
 void playEntitySound(s8, s32);
+#endif
 
 /* Called with a candidate `target` of `attacker`'s move (func_800DB4FC, func_800DDAC8, which give up on the target
  * when this returns 1). Returns 1 when the target starts its own action (state 0x5C or 0x40), else 0.

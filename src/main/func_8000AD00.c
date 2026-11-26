@@ -27,9 +27,19 @@ extern Ent D_80070D18[];
 extern Ent D_80070CB8[];
 extern Ent D_80070C94[];
 extern Ent D_80070C9C[];
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_8000B248(s32, s32);
+#else
 void func_8000B248(s16, s16);
+#endif
 void playEntitySound(s16, s16);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_8000E4FC(s16, s32);
+#else
 s32 func_8000E4FC(s16, s32);
+#endif
 void setIndexedS16Pair(s16, s16, s16, s16);
 void func_80010200(s16, s16, f32);
 void func_8000AD00(s32 arg0, u16 arg1)

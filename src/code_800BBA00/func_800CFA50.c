@@ -12,7 +12,12 @@ extern s16 D_800EB628[];
 extern s32 D_800EB610[];
 
 void selectTurnAnimationCDC04(void *, void *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_800D0700(void *, void *, s32);
+#else
 void func_800D0700(void *, void *, u16);
+#endif
 void translateEntityXZ(void *, void *);
 s32 func_800D35B0(s32, s32);
 void func_800D427C(void *, s16, s32);

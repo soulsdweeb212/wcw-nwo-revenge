@@ -6,7 +6,12 @@
 #include "common.h"
 
 extern s16 D_800EB490[];
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_800BF338(Wrestler *, s16, s32);
+#else
 void func_800BF338(Wrestler *, s8, s32);
+#endif
 
 /* Per-wrestler tick counter D_800EB490[w->id]. Mode 0 resets it; mode 1
  * increments it and, when it reaches the limit -- 90 when w has flag

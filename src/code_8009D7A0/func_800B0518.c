@@ -16,7 +16,12 @@ extern Nw2Action0518 *D_800FABD0;
 extern u16 D_800E3CF0[];
 extern u8 D_8007E228[], D_8007EF30[];
 s32 func_800D36E8(f32, f32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800D3614(s32);
+#else
 s32 func_800D3614(s32);
+#endif
 s8 func_800D4198(s16);
 
 #define REG280 (*(u16 *)(D_8007E228 + 0x58))

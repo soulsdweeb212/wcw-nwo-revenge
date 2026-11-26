@@ -5,7 +5,12 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void playEntitySound(s16,s32);
+#else
 void playEntitySound(s8,s32);
+#endif
 void beginPairedEntityActions(void *,s32,void *,s32);
 
 /* Decides whether self can counter other's move and, if so, records the move

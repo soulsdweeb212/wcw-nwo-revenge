@@ -11,7 +11,12 @@ s32 func_800D2B64(void *, f32, u16, s32);
 void func_800D427C(void *, s32, s32);
 void func_800D4AD0(void *);
 void beginEntityActionA8D8C(void *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_8000C784(s16);
+#else
 void func_8000C784(s8);
+#endif
 extern s8 D_800FADB8;
 extern s16 D_800E3262[];
 

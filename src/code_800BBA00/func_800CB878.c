@@ -9,7 +9,12 @@ extern u16 D_800FAF8A;
 extern s8 D_800FAF78;
 
 void func_800A9290(void *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_800CBD5C(void *, void *, s32);
+#else
 void func_800CBD5C(void *, void *, u16);
+#endif
 void func_800D2BEC(void *, void *, void *, f32, u16, s32);
 void func_800D4AD0(void *);
 void beginEntityActionA8D8C(void *);
@@ -21,7 +26,12 @@ s32 func_800D5438(void *, s32);
 void beginPairedEntityActions(void *, s32, void *, s32);
 void func_800A7F6C(void *, s32);
 void func_800A837C(void *);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s8 func_800D7984(void *, s32, s32);
+#else
 s8 func_800D7984(void *, u16, s8);
+#endif
 void func_800D43B4(void *, s16, s32);
 
 /* Paired action state machine, steps 0..5 on self->step.  Self (D_800FAF5C) plays

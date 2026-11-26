@@ -8,7 +8,12 @@
 extern Nw2IdSubTable lookupSubTables[];
 extern Nw2IdTableEntry D_8003A59C;
 extern u8 *D_8003A594;
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void buildWrestlerNameRecord(s32, s32, void *);
+#else
 void buildWrestlerNameRecord(u16, s32, void *);
+#endif
 /* Builds 80 groups of 4 0x2A-byte name records into the D_8003A594 buffer:
  * for each group value, resolves its id by searching the first 11 lookup
  * subtables (falling back to D_8003A59C) and emits all four variants. */

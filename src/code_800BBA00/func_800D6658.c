@@ -31,7 +31,12 @@ void func_800D427C(Wrestler *, s32, s32);
 s16 func_800D4D44(Wrestler *, s32, f32);
 #endif
 f32 func_800D63F0(Wrestler *, void *, s32);
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800D7A68(s32);
+#else
 s16 func_800D7A68(u16);
+#endif
 
 /* Shift the root and joints 1..19 (both ends) by ofs[0] on X and ofs[2] on Z. */
 static inline void moveAll(Wrestler *w, f32 *ofs) {

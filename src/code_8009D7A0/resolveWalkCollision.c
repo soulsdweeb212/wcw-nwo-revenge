@@ -21,7 +21,12 @@ s8 func_800D26A0(Wrestler *w, Nw2DirectionResult *arg1, s8 ignoreId);
 #else
 s32 func_800D26A0(void*,s32,s32);s32 getEntityPairFacingFlags(void*,void*);
 #endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_800A6BE0(void*,s32); void func_800A6CDC(void*,s32);void func_800E212C(void*);s16 func_800B678C(void*,void*,s32);
+#else
 void func_800A6BE0(void*,s32); void func_800A6CDC(void*,s32);void func_800E212C(void*);s16 func_800B678C(void*,void*,u16);
+#endif
 s32 resolveWalkCollision(Wrestler *self,s16 arg1,u16 arg2) {
     s32 id; Wrestler *other; u32 facing; s16 result;
     id=func_800D26A0(self,0,-1);

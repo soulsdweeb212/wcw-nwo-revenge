@@ -800,9 +800,12 @@ function's definition: an `s32` where the function takes a pointer, an `s32` hol
 and floats are all 32 bits there, and most arguments travel in the same four 32-bit registers (the O32 calling
 convention). The decompilation keeps these declarations because the N64 code it must match depends on them. On a
 64-bit PC (x86-64, System V calling convention) pointers are 64 bits and floats travel in registers of their own, so
-the same call can cut a pointer to 32 bits or give the function a different number.
-[`tools/port_calls.py`](../tools/port_calls.py) finds every such call in the developer program's files and rates what
-it would do. Run it in `source/`:
+the same call can cut a pointer to 32 bits or give the function a different number. 64-bit Windows (the Microsoft x64
+convention, which the port's Windows build uses) adds one more way: there a caller sets only the bits of the type its
+own declaration gives an argument, so an argument narrower than its parameter arrives with the rest of the register
+unset (class F3 below). The System V compilers widen an 8- or 16-bit argument to 32 bits, so the same call works on
+Linux. [`tools/port_calls.py`](../tools/port_calls.py) finds every such call in the developer program's files and
+rates what it would do. Run it in `source/`:
 
 ```
 python3 tools/port_calls.py                                   # every call rated crash or wrong value, and a summary
@@ -896,6 +899,10 @@ Crash and wrong value block: they give exit status 1. The classes:
   and clang at `-O1` and above leave the register's upper bits unset. It is harmless when only its low bits can
   matter: converted back to its own width or narrower, masked with a constant within that width, or shifted left so far
   that only those bits are left, perhaps after `+`, `-`, `*`, `&`, `|`, `^` or `~` with other values.
+- **F3**: an integer argument narrower than the parameter: an `s8` or `s16` where the function reads an `s16` or
+  `s32`. A wrong value on 64-bit Windows, where the caller sets only the argument's own bytes and the function reads
+  the rest of the register as it was left (an `s8` -1 read as an `s16` arrives as 255, or as anything). Harmless with
+  System V, whose compilers widen the argument to 32 bits first.
 - **G**: a call through a function pointer made from an integer or read from a table of integers.
 - **H**: a struct passed by value, which the two conventions split differently. Not flagged when the caller's
   declaration gives every parameter the definition's own type: the PC compiler then places the struct alike at both
@@ -909,6 +916,29 @@ Each blocking call is printed as `FILE:LINE: effect: callee (class and its name)
 flagged calls by class and effect; a call through a table counts once for each function it reaches. The `--tsv` file
 has one row per flagged call: its location, the caller, the callee, the class, the effect, the declaration the caller
 sees, the definition and where it is, the reason, the allow file's reason if it lists the call, and the call's text.
+
+### Prototypes on PC
+
+A caller whose declaration gives a parameter a narrower integer type than the definition (F3), or reads a narrow
+result at full width (F2), gets the definition's types for the PC in a `TARGET_PC` block, and the N64 keeps its own
+declaration, on which its code depends:
+
+```c
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_80012364(s16, s16, s16, void *);
+#else
+void func_80012364(s16, s8, s8, void *);
+#endif
+```
+
+The C conversion to the wider type then makes the PC pass every bit the function reads, on both conventions.
+Pointer parameters keep the caller's own types: any pointer travels whole. November 2026: the Windows build crashed in
+a match where a dropped item's slot, `-1` for "held by nobody", reached `func_80012364` as 255 through the declaration
+above; the item followed wrestler 255, past the end of memory (`func_80001DC4`). The music volume (`MusSetMasterVolume`)
+and a song's fade (`MusHandleStop`) went to the port's music player with their upper halves unset in the same way. A
+scan of every game file's declarations against the definitions, the port's own included, then fixed 121 declarations
+in 90 files, and class F3 was added here, so `--files-from port/game_files.txt` checks the whole program.
 
 ### The allow file
 

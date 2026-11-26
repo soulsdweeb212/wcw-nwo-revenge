@@ -196,7 +196,12 @@ void *allocateHeap(u32);
 #ifndef TARGET_PC /* on PC, port.h declares the loader functions */
 void func_80003684(void *, u16, void *);
 #endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+Vtx936 *func_800B64EC(void *, s32);
+#else
 Vtx936 *func_800B64EC(void *, u16);
+#endif
 void func_80090908(Part936 *, Vtx936 *);
 s32 guRandom(void);
 #ifdef TARGET_PC

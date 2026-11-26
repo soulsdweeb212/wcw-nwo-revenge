@@ -5,8 +5,18 @@
  */
 #include "common.h"
 
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_800D7A68(s32);
+#else
 s16 func_800D7A68(u16);
+#endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s32 func_800D7A2C(s32);
+#else
 s32 func_800D7A2C(u16);
+#endif
 extern u16 D_800E3CEE[];
 
 /* On the floor, with C-up toward the barricade, starts state 0x7D, the search at the barricade

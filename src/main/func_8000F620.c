@@ -6,7 +6,12 @@
 #include "common.h"
 
 extern u8 D_80056968[], D_80057048[];
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+void func_800112BC(s32);
+#else
 void func_800112BC(s16);
+#endif
 void func_8000F620(s16 arg0) {
     s32 i; u8 *p;
     if(arg0) {

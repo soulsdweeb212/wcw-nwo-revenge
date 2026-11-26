@@ -42,7 +42,12 @@ void func_800018C4(void *, f32 *, u8, u8);
 #ifndef TARGET_PC /* on PC, port_decls.h declares func_800056F4 */
 void func_800056F4(f32 *, f32, f32, f32);
 #endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s16 func_80008574(s32);
+#else
 s16 func_80008574(s16);
+#endif
 void func_80008CE8(s32, s16, s16, void *, s32, s32);
 void func_8000CD18(s32, f32, f32);
 void func_8000D238(s32, u16);

@@ -11,7 +11,12 @@
  * D_800F98E2 is marked -1 (unbound), func_80012364 is notified with the part's
  * D_800F98E1/D_800F98E4 fields, and bit 1 (or bits 1|8 when the wrestler is
  * WR_FLAG_IN_RING) is ORed into the part's D_800F98E3 state byte. */
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
+s32 func_80012364(s16, s32, s16, void *);
+#else
 s32 func_80012364(s8, s32, s8, void *);
+#endif
 extern s8 D_800F99A0[];
 extern u8 D_800F98E1[];
 extern s8 D_800F98E2[];
