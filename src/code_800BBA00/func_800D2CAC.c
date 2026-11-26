@@ -12,7 +12,14 @@ typedef struct { f32 x, y, z; s32 angle; } Dir2CAC;
 extern f64 D_800E6B38, D_800E6B40, D_800E6B48, D_800E6B50, D_800E6B58, D_800E6B60;
 extern V4_2CAC D_800E3D30[];
 extern s32 D_800E3D14[];
+#ifdef TARGET_PC
+/* PC: a point of four floats, (0, 0, 354, 0), which func_800D3890 reads as f32. The PC starts game variables in its
+ * own byte order by the width their declarations give (port/game_vars.tsv), so it is declared with that width here;
+ * the N64 code only takes its address. As bytes it kept the N64's order, and its 354 read as almost 0. */
+extern f32 D_800E3E10[];
+#else
 extern u8 D_800E3E10[];
+#endif
 
 void func_800D3890(void *, V4_2CAC *, Dir2CAC *);
 void translateEntityXZ(void *, f32 *);

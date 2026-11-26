@@ -454,7 +454,13 @@ byte offset uses `n * sizeof(Wrestler)` on PC where the N64 code has `n * 0x3B0`
 The tool takes a variable's width from the files' declarations of it. A file that only takes a variable's address
 may declare it as bytes (`extern u8 X[]`) and hand it to a function that reads it at another width; such a declaration
 gets a PC version with the real type (`func_8000E920` and `func_8000EF90` for `func_80007020`'s arrays, the AI files
-for `func_800ADA38`'s tables), or the variable would keep the N64's byte order. A table of addresses read through a
+for `func_800ADA38`'s tables, `func_800A9010` for the points where the screen before a match puts the names and
+handicap meters, `func_800D2CAC` for the point `func_800D3890` measures from), or the variable would keep the N64's
+byte order. Turnbuckle Dive's byte-order check cannot find these, because the ROM's bytes have no width until code
+writes them. They were found by reading every use of the 106 variables the map converts as bytes (`1:`) in November
+2026: three were read wider (the menu points, `D_800E3E10`, and `D_800E3610`, the one of `func_800ADA38`'s 16 tables
+left as bytes), and every other one is read a byte at a time, is text, or is a texture or palette, which Fast3D reads
+in the N64's order. A table of addresses read through a
 byte declaration gets a pointer declaration on PC and a `TABLES` entry (`D_80031060` in `func_8000E4FC`). So does a
 read through a cast to another width (`*(u16 *)(D_800E3F30 + i)` of a variable declared `u8[]`): the PC declares the
 variable with the width it is read at (`func_800D54A0`, `applyEntityMovementC8D84`), or reads a table inside a variable
