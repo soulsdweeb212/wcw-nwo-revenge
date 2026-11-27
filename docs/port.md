@@ -801,10 +801,13 @@ and floats are all 32 bits there, and most arguments travel in the same four 32-
 convention). The decompilation keeps these declarations because the N64 code it must match depends on them. On a
 64-bit PC (x86-64, System V calling convention) pointers are 64 bits and floats travel in registers of their own, so
 the same call can cut a pointer to 32 bits or give the function a different number. 64-bit Windows (the Microsoft x64
-convention, which the port's Windows build uses) adds one more way: there a caller sets only the bits of the type its
+convention, which the port's Windows build uses) adds two more ways. There a caller sets only the bits of the type its
 own declaration gives an argument, so an argument narrower than its parameter arrives with the rest of the register
-unset (class F3 below). The System V compilers widen an 8- or 16-bit argument to 32 bits, so the same call works on
-Linux. [`tools/port_calls.py`](../tools/port_calls.py) finds every such call in the developer program's files and
+unset (class F3 below); the System V compilers widen an 8- or 16-bit argument to 32 bits, so the same call works on
+Linux. And there only the first four arguments travel in registers, the rest on the stack, 8 bytes each, of which the
+caller writes only its own type's: a literal 0 passed as an `s32` where the function reads a pointer fills only the
+pointer's lower half (class A3); System V passes the first six integers and pointers in registers, where the 0 becomes
+NULL. [`tools/port_calls.py`](../tools/port_calls.py) finds every such call in the developer program's files and
 rates what it would do. Run it in `source/`:
 
 ```
@@ -884,6 +887,9 @@ Crash and wrong value block: they give exit status 1. The classes:
 - **A1**: the caller passes a pointer into an integer parameter: the function keeps its low 32 bits.
 - **A2**: the function reads a pointer where the caller passes an integer (a pointer cast to `s32`, an `s32` variable
   or field, a constant), or a literal 0 on the stack, which leaves the pointer's upper half unset.
+- **A3**: a literal 0 where the function reads a pointer, as the fifth argument or later. Harmless with System V, which
+  passes it in a register, where the function sees NULL; 64-bit Windows passes it on the stack, where the caller writes
+  only the 4 bytes of an `s32`, and the pointer's upper half keeps whatever was there.
 - **B**: the function returns a pointer and the caller reads an integer, or the reverse.
 - **C1**: a float and an integer in each other's place: the N64 passes both in the same register, the PC in different
   ones. Also an integer that the caller's PC declaration converts to a float by value where the N64 passed the integer
@@ -919,9 +925,10 @@ sees, the definition and where it is, the reason, the allow file's reason if it 
 
 ### Prototypes on PC
 
-A caller whose declaration gives a parameter a narrower integer type than the definition (F3), or reads a narrow
-result at full width (F2), gets the definition's types for the PC in a `TARGET_PC` block, and the N64 keeps its own
-declaration, on which its code depends:
+A caller whose declaration gives a parameter a narrower integer type than the definition (F3) or an integer where the
+definition has a pointer that it passes a literal 0 for (A3), or that reads a narrow result at full width (F2), gets
+the definition's types for the PC in a `TARGET_PC` block, and the N64 keeps its own declaration, on which its code
+depends:
 
 ```c
 #ifdef TARGET_PC
@@ -938,7 +945,11 @@ a match where a dropped item's slot, `-1` for "held by nobody", reached `func_80
 above; the item followed wrestler 255, past the end of memory (`func_80001DC4`). The music volume (`MusSetMasterVolume`)
 and a song's fade (`MusHandleStop`) went to the port's music player with their upper halves unset in the same way. A
 scan of every game file's declarations against the definitions, the port's own included, then fixed 121 declarations
-in 90 files, and class F3 was added here, so `--files-from port/game_files.txt` checks the whole program.
+in 90 files, and class F3 was added here, so `--files-from port/game_files.txt` checks the whole program. The next
+day the developer match, run with the Windows build, crashed in `func_80008CE8`, as a player's match did:
+`func_800C3110` and `stepRecordedFramePlayback` declare its fifth parameter, a pointer (`f32 *vec`), as `s32` and
+pass 0, which Windows passes on the stack, so the function read a pointer whose upper half was left over from earlier
+calls. Class A3 was added for it; it found these two calls and no others.
 
 ### The allow file
 

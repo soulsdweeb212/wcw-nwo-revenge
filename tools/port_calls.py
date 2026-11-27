@@ -17,7 +17,10 @@ argument travels.
 - On 64-bit Windows (the Microsoft x64 convention, which the port's Windows build uses) a caller sets only the bits of
   the type its declaration gives an argument, where the System V compilers widen an 8- or 16-bit integer to 32 bits.
   So an integer narrower than its parameter (an s8 -1 where the function reads an s16) arrives with the rest of the
-  register unset: 255, or anything (class F3). The tool rates that alone for Windows; the rest it rates for System V.
+  register unset: 255, or anything (class F3). And there only the first four arguments travel in registers (rcx, rdx,
+  r8 and r9, or xmm0 to xmm3); from the fifth on, each one has 8 bytes of the stack, of which the caller writes only
+  its own type's: a literal 0 passed as an s32 where the function reads a pointer leaves the pointer's upper half as
+  it was (class A3). The tool rates those two alone for Windows; the rest it rates for System V.
 This tool finds every call in the set whose caller sees the called function differently from its definition, in a way
 that changes what happens on such a PC, and rates the effect.
 
@@ -121,8 +124,8 @@ DUMP_FLAGS = ["-fsyntax-only", "-ferror-limit=0", "-fno-color-diagnostics", "-Xc
 # Effects. A call's effect is the worst of its findings', unless the called function lies outside the set (SDK,
 # replaced) or clang could not build the call (not rated). Crash and wrong value block: exit status 1.
 # - crash: a pointer is cut to 32 bits, or the function reads a pointer from a place that holds something else.
-# - wrong value: the function gets, or the caller gets back, a different number than on the N64 (for F3, on 64-bit
-#   Windows only).
+# - wrong value: the function gets, or the caller gets back, a different number than on the N64.
+# A3 and F3 are rated for 64-bit Windows only.
 # - clang-only: an integer argument wider than its parameter. GCC at any optimisation and clang at -O0 narrow it in the
 #   called function, as the N64 code does; clang at -O1 and above counts on the caller to have narrowed it.
 # - harmless: the two sides differ, but the PC does what the N64 does.
@@ -143,6 +146,7 @@ BLOCKING = (CRASH, WRONG)
 CLASSES = {
     "A1": "pointer into an integer parameter",
     "A2": "integer where a pointer is read",
+    "A3": "literal 0 for a pointer on the stack (64-bit Windows)",
     "B": "pointer and integer results mixed up",
     "C1": "float and integer mixed up",
     "C2": "64-bit argument after the N64's pad",
@@ -161,8 +165,8 @@ CLASSES = {
 
 def caller_side(finding: tuple, d: dict) -> bool:
     """Whether a finding is the caller's own fault, whatever types the called function has: an integer passed where
-    the function reads a pointer (A2), a missing argument (D), or a pointer result read as an integer (B)."""
-    return finding[0] in ("A2", "D") or (finding[0] == "B" and d["ret_class"][0] == "p")
+    the function reads a pointer (A2, A3), a missing argument (D), or a pointer result read as an integer (B)."""
+    return finding[0] in ("A2", "A3", "D") or (finding[0] == "B" and d["ret_class"][0] == "p")
 
 
 def plural(n: int, word: str) -> str:
@@ -756,6 +760,12 @@ def sysv_places(kinds: list) -> list:
     return places
 
 
+# 64-bit Windows (Microsoft x64): the first four arguments travel in registers by their place in the list (rcx, rdx, r8
+# and r9, or xmm0 to xmm3 for floats); every later one has 8 bytes of the stack, of which the caller writes only its
+# own type's.
+WIN64_REGISTER_ARGUMENTS = 4
+
+
 def sources(args: list, params: list, model) -> list:
     """For each parameter: the number of the argument the caller wrote where the function reads the parameter, None
     when no argument went there, '?' when that place is not modelled."""
@@ -875,11 +885,15 @@ def call_findings(call: dict, d: dict, float_externs: dict | None = None) -> lis
         if d["reads"][j] == 0:
             out.append(("Z", HARMLESS, f"{what} is never read"))
         elif code == "null":
-            if sysv_places(params)[j][0] == "gpr":
-                out.append(("Z", HARMLESS, f"{what} gets a literal 0 in a register: the PC sees NULL"))
-            else:
+            if sysv_places(params)[j][0] != "gpr":
                 out.append(("A2", CRASH, f"{what} gets a literal 0 on the stack, which leaves the pointer's upper "
                                          "half unset"))
+            elif j >= WIN64_REGISTER_ARGUMENTS:
+                out.append(("A3", CRASH, f"{what} gets a literal 0, which 64-bit Windows passes on the stack (from "
+                                         "the fifth argument on), where the caller writes only 4 of the pointer's 8 "
+                                         "bytes"))
+            else:
+                out.append(("Z", HARMLESS, f"{what} gets a literal 0 in a register: the PC sees NULL"))
         elif code == "pointer from integer":
             a = call["args"][i]
             if "PointerToIntegral" in a["conversions"]:

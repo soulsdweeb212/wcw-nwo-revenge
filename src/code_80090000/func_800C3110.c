@@ -48,7 +48,14 @@ s16 func_80008574(s32);
 #else
 s16 func_80008574(s16);
 #endif
+#ifdef TARGET_PC
+/* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). The fifth parameter is a
+ * pointer (f32 *vec), which the N64 declaration passes as an s32 0: 64-bit Windows passes it on the stack, where an
+ * s32 leaves the pointer's upper half unset. */
+void func_80008CE8(s16, s16, s16, void *, f32 *, u8);
+#else
 void func_80008CE8(s32, s16, s16, void *, s32, s32);
+#endif
 void func_8000CD18(s32, f32, f32);
 void func_8000D238(s32, u16);
 s16 func_800C2E50(Wr3110 *);
