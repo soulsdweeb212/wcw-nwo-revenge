@@ -1625,12 +1625,12 @@
    "own": {}
   },
   {
-   "name": "func_80008CE8",
+   "name": "poseEntityAtAnimFrame",
    "seg": "main",
    "vram": 2147519720,
    "rom": 39144,
-   "asm": "asm/nonmatchings/main/func_80008CE8.s",
-   "c": "src/main/func_80008CE8.c",
+   "asm": "asm/nonmatchings/main/poseEntityAtAnimFrame.s",
+   "c": "src/main/poseEntityAtAnimFrame.c",
    "own": {}
   },
   {

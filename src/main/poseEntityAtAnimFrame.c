@@ -1,7 +1,7 @@
 /* @header
- * func_80008CE8
+ * poseEntityAtAnimFrame  (originally func_80008CE8)
  * VRAM 0x80008CE8 | ROM 0x98E8 | size 0x784
- * asm: asm/nonmatchings/main/func_80008CE8.s
+ * asm: asm/nonmatchings/main/poseEntityAtAnimFrame.s
  */
 #include "common.h"
 
@@ -118,7 +118,23 @@ void multiplyMatrix4x4(f32 arg0[4][4], f32 arg1[4][4], f32 arg2[4][4]);
 void multiplyMatrix4x4(f32 *, f32 *, f32 *);
 #endif
 
-void func_80008CE8(s16 entity, s16 anim, s16 frame, f32 *pos, f32 *vec, u8 flags) {
+/* poseEntityAtAnimFrame: poses wrestler slot `entity` (0-3) at frame `frame` of animation `anim`, standing at pos (x,
+ * y and z; the s32 after them is the way the wrestler faces). Its callers are func_800C3110, func_800D43DC and
+ * stepRecordedFramePlayback. In order:
+ * - When the animation changes, or frame 0 comes again, it starts the animation's stream over: the same animation
+ *   again can rewind the copy already in the slot's buffer (D_800485A0); any other is loaded again
+ *   (initializeResourceStream).
+ * - A frame it has not decoded yet, below the animation's frame count, is decoded: func_8000A310 decodes the even
+ *   frames and the last one, func_8000A3DC the others. With bit 1 of flags (value 2), func_80009D98 eases the first 5
+ *   frames of a new animation from the old pose.
+ * - vec, when it is not NULL, holds the two look angles that updateEntityTargetLookAngles turns toward the opponent;
+ *   they set body part 5's rotation. updateBodyPartTransforms then builds each body part's local matrix.
+ * - With bit 0 of flags (value 1), when a new animation has started, pos moves on the ground (x and z) so that body
+ *   part 1 stays where it was and the body does not jump.
+ * - The body's root matrix is built from pos and the facing angle, func_80001DC4 works out each body part's world
+ *   matrix, and two points of every body part but part 20 are moved into the world too.
+ * - When it decoded a frame, func_8000AD00 gets the next frame's number. */
+void poseEntityAtAnimFrame(s16 entity, s16 anim, s16 frame, f32 *pos, f32 *vec, u8 flags) {
     f32 scratch[16];
     f32 old[3];
     f32 f0;

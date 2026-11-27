@@ -21,9 +21,9 @@ typedef s32 M2C_UNK32;
 
 #ifdef TARGET_PC
 /* PC: the callers pass three floats, which the function stores at +0x30, +0x34 and +0x38 of the 4x4 float matrix at
- * arg0, its translation. func_80008CE8, func_80012CD0, updateBodyPartTransforms and func_8009A69C declare all three
- * f32. buildEntityPartTransforms declares the last one s32 and passes a float's bits there; on the PC it reads that
- * float as f32 and passes it.
+ * arg0, its translation. poseEntityAtAnimFrame, func_80012CD0, updateBodyPartTransforms and func_8009A69C declare all
+ * three f32. buildEntityPartTransforms declares the last one s32 and passes a float's bits there; on the PC it reads
+ * that float as f32 and passes it.
  * On the N64 they travel in a1 to a3, integer registers, where the N64 definition takes them as s32 and stores their
  * bits; on PC floats travel in float registers, so the PC definition takes them as f32 and stores the same bits
  * (port_decls.h declares it so). */

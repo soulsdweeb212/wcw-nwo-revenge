@@ -1004,7 +1004,6 @@ src/main/func_80008810.c
 src/main/func_80008AF0.c
 src/main/func_80008B5C.c
 src/main/func_80008C94.c
-src/main/func_80008CE8.c
 src/main/func_8000946C.c
 src/main/func_80009990.c
 src/main/func_80009D98.c
@@ -1132,6 +1131,7 @@ src/main/lookupResourceDescriptor.c
 src/main/multiplyMatrix4x4.c
 src/main/nw2Sqrtf.c
 src/main/playEntitySound.c
+src/main/poseEntityAtAnimFrame.c
 src/main/readRomSynchronousChunks.c
 src/main/releaseAllResources1211C.c
 src/main/releaseHeapBlock.c

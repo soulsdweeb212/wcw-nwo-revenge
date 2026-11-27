@@ -30,9 +30,9 @@ void func_8000946C(s32, s16, s16);
 /* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). The fifth parameter is a
  * pointer (f32 *vec), which the N64 declaration passes as an s32 0: 64-bit Windows passes it on the stack, where an
  * s32 leaves the pointer's upper half unset. */
-void func_80008CE8(s16, s16, s16, f32 *, f32 *, u8);
+void poseEntityAtAnimFrame(s16, s16, s16, f32 *, f32 *, u8);
 #else
-void func_80008CE8(s32, s16, s16, f32 *, s32, s8);
+void poseEntityAtAnimFrame(s32, s16, s16, f32 *, s32, s8);
 #endif
 #ifdef TARGET_PC
 /* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). */
@@ -98,7 +98,7 @@ void stepRecordedFramePlayback(void) {
         {
             s32 slot = player;
             recOffset = (s32)D_800F97DA * 12 + slot * 0x1C20;
-            func_80008CE8(slot, *(s16 *)(D_800EB6D8 + recOffset), clipFrame, &vec.x, 0, (s8)poseFlags);
+            poseEntityAtAnimFrame(slot, *(s16 *)(D_800EB6D8 + recOffset), clipFrame, &vec.x, 0, (s8)poseFlags);
             D_800FABD8 &= ~D_800E3F38[slot];
         }
     }

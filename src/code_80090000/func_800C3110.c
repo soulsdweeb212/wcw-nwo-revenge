@@ -52,9 +52,9 @@ s16 func_80008574(s16);
 /* PC: the parameter and return types of the definitions (docs/port.md, "Prototypes on PC"). The fifth parameter is a
  * pointer (f32 *vec), which the N64 declaration passes as an s32 0: 64-bit Windows passes it on the stack, where an
  * s32 leaves the pointer's upper half unset. */
-void func_80008CE8(s16, s16, s16, void *, f32 *, u8);
+void poseEntityAtAnimFrame(s16, s16, s16, void *, f32 *, u8);
 #else
-void func_80008CE8(s32, s16, s16, void *, s32, s32);
+void poseEntityAtAnimFrame(s32, s16, s16, void *, s32, s32);
 #endif
 void func_8000CD18(s32, f32, f32);
 void func_8000D238(s32, u16);
@@ -86,7 +86,7 @@ void func_800C3110(s32 a, s32 b) {
         w->f6B4 = 0;
         w->f6B6 = 0;
     }
-    func_80008CE8(id, w->f6B2, w->f6B4, &w->f680, 0, w->f6BF);
+    poseEntityAtAnimFrame(id, w->f6B2, w->f6B4, &w->f680, 0, w->f6BF);
     if (w->f6C4.w == 4) {
         updatePartDrawGroups(id);
         func_8000CD18(id, 90.0f, 0.0f);

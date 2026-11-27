@@ -946,7 +946,7 @@ above; the item followed wrestler 255, past the end of memory (`func_80001DC4`).
 and a song's fade (`MusHandleStop`) went to the port's music player with their upper halves unset in the same way. A
 scan of every game file's declarations against the definitions, the port's own included, then fixed 121 declarations
 in 90 files, and class F3 was added here, so `--files-from port/game_files.txt` checks the whole program. The next
-day the developer match, run with the Windows build, crashed in `func_80008CE8`, as a player's match did:
+day the developer match, run with the Windows build, crashed in `poseEntityAtAnimFrame`, as a player's match did:
 `func_800C3110` and `stepRecordedFramePlayback` declare its fifth parameter, a pointer (`f32 *vec`), as `s32` and
 pass 0, which Windows passes on the stack, so the function read a pointer whose upper half was left over from earlier
 calls. Class A3 was added for it; it found these two calls and no others.

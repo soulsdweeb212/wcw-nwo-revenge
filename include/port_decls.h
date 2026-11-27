@@ -161,8 +161,8 @@ extern void *D_800482D4;
  * streams (func_8000946C, initializeResourceStream, func_80009990) hand it to osEPiStartDma. */
 extern void *D_8004859C;
 /* main .bss: the four 0x6200-byte heap buffers of the resource streams, one per stream slot; func_80008810 allocates
- * them and func_80008AF0 frees them; func_8000946C, initializeResourceStream and func_80008CE8 point their slot's
- * stream at them. */
+ * them and func_80008AF0 frees them; func_8000946C, initializeResourceStream and poseEntityAtAnimFrame point their
+ * slot's stream at them. */
 extern u8 *D_800485A0[];
 /* main .bss: four slots of 23 display records (Nw2Descr4BA8, common.h), one slot per wrestler, beside the 23 objects
  * of D_800517D0's slot: buildObjectChain fills records 0-19 of a slot (func_8000C91C passes D_80050800[n]) and
@@ -247,7 +247,7 @@ extern Nw2TexPair D_80070458[4];
 /* main .bss: the four stream records, one per wrestler's animation stream (Nw2AnimStream, common.h: a read cursor and
  * a destination inside D_800485A0[n], the ROM address of the next chunk, the cartridge requests and their queues).
  * func_80008810 sets them up; initializeResourceStream and func_8000946C start a stream; func_80009990 reads on;
- * func_8000A310 and func_8000A3DC decode frames at the cursor; func_80008CE8 plays a frame; func_8000AD00 and
+ * func_8000A310 and func_8000A3DC decode frames at the cursor; poseEntityAtAnimFrame plays a frame; func_8000AD00 and
  * func_800085E4 read id; func_80008C94 sets mtx. On the N64 its labels (D_800706AC, D_800706B0, D_800706C2,
  * D_800706C4 and others) reach its fields; on PC they do not exist, and files read the records by field name. */
 extern Nw2AnimStream D_800706A8[4];

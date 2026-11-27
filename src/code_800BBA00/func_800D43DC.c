@@ -21,11 +21,11 @@ extern Col43DC D_800EB6B8[];
 s32 updateEntityTargetLookAngles(s8, void *);
 void func_800D427C(void *, s16, s32);
 #ifdef TARGET_PC
-/* PC: the types of func_80008CE8's definition. Its fifth parameter is a pointer (f32 *vec), which the N64 declaration
- * passes as an s32. */
-void func_80008CE8(s16, s16, s16, f32 *, f32 *, u8);
+/* PC: the types of poseEntityAtAnimFrame's definition. Its fifth parameter is a pointer (f32 *vec), which the N64
+ * declaration passes as an s32. */
+void poseEntityAtAnimFrame(s16, s16, s16, f32 *, f32 *, u8);
 #else
-void func_80008CE8(s8, s16, s16, void *, s32, s32);
+void poseEntityAtAnimFrame(s8, s16, s16, void *, s32, s32);
 #endif
 void func_800D43DC(void)
 {
@@ -67,9 +67,9 @@ void func_800D43DC(void)
                      * on PC the low byte is byte 0 and byte 3 is the high byte, always 0. So the PC reads the s32 and
                      * keeps its low byte. Bit 0 of the mode keeps the body where it stands when a new animation
                      * starts, moving the root instead; bit 1 eases the first frames from the old pose. */
-                    func_80008CE8(D_800F9D10[i].id, D_800F9D10[i].animId, D_800F9D10[i].animFrame, &D_800F9D10[i].x, mask, (u8)*(s32 *)&D_800EB6B8[i]);
+                    poseEntityAtAnimFrame(D_800F9D10[i].id, D_800F9D10[i].animId, D_800F9D10[i].animFrame, &D_800F9D10[i].x, mask, (u8)*(s32 *)&D_800EB6B8[i]);
 #else
-                    func_80008CE8(D_800F9D10[i].id, D_800F9D10[i].animId, D_800F9D10[i].animFrame, &D_800F9D10[i].x, mask, (&D_800EB6B8[i])->b3);
+                    poseEntityAtAnimFrame(D_800F9D10[i].id, D_800F9D10[i].animId, D_800F9D10[i].animFrame, &D_800F9D10[i].x, mask, (&D_800EB6B8[i])->b3);
 #endif
                     continue;
                 }
@@ -80,9 +80,9 @@ void func_800D43DC(void)
             }
 #ifdef TARGET_PC
             /* PC: the mode's low byte, as above. */
-            func_80008CE8(D_800F9D10[i].id, D_800F9D10[i].animId, D_800F9D10[i].animFrame, &D_800F9D10[i].x, mask, (u8)*(s32 *)&D_800EB6B8[i]);
+            poseEntityAtAnimFrame(D_800F9D10[i].id, D_800F9D10[i].animId, D_800F9D10[i].animFrame, &D_800F9D10[i].x, mask, (u8)*(s32 *)&D_800EB6B8[i]);
 #else
-            func_80008CE8(D_800F9D10[i].id, D_800F9D10[i].animId, D_800F9D10[i].animFrame, &D_800F9D10[i].x, mask, (&D_800EB6B8[i])->b3);
+            poseEntityAtAnimFrame(D_800F9D10[i].id, D_800F9D10[i].animId, D_800F9D10[i].animFrame, &D_800F9D10[i].x, mask, (&D_800EB6B8[i])->b3);
 #endif
             if (D_800F9D10[i].animFramesLeft > 0)
             {

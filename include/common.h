@@ -1737,7 +1737,7 @@ typedef struct {
  * D_800F97E2 is s16 tick counter (not u16); D_800E6D48/50/58 are const f64
  * scale factors. Declare these globals locally for legacy compatibility.
  * func_80010200(s16,s16,s32), func_8000DB90(s32,s32),
- * func_8000946C(s32,s16,s16), func_80008CE8(s32,s16,s16,f32*,s32,s8),
+ * func_8000946C(s32,s16,s16), poseEntityAtAnimFrame(s32,s16,s16,f32*,s32,s8),
  * func_80012364(s16,s8,s8,f32*) are the matched local signatures.
  */
 
